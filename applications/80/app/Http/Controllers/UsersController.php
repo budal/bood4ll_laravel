@@ -25,6 +25,9 @@ class UsersController extends Controller
             
             'emptyMessage' => __("There is no users to manage."),
 
+            'routeEdit' => "authorization.edit",
+            'routeDelete' => "authorization.delete",
+
             'titles' => [
                 "name" => __("Name"),
                 "email" => __("E-Mail Address"),

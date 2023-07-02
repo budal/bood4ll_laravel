@@ -25,6 +25,7 @@ class AuthorizationController extends Controller
             
             'emptyMessage' => __("There is no authorizations to manage."),
 
+            'routeCreate' => "authorization.create",
             'routeEdit' => "authorization.edit",
             'routeDelete' => "authorization.delete",
 
@@ -47,7 +48,7 @@ class AuthorizationController extends Controller
      */
     public function create()
     {
-        //
+        return 4;
     }
 
     /**
@@ -58,7 +59,7 @@ class AuthorizationController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        return 3;
     }
 
     /**
