@@ -295,11 +295,6 @@ const logout = () => {
             <main>
                 <slot />
             </main>
-
-            <!-- Page Footer -->
-            <footer class="w-full text-right pr-2 border-t border-grey text-sm dark:border-gray-700 dark:text-gray-400 dark:bg-gray-800">
-                <Link href="budal.dev" class="font-bold">budal.dev</Link>
-            </footer>
         </div>
     </div>
 </template>
