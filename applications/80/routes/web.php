@@ -41,7 +41,7 @@ Route::middleware([
     Route::get('help',  [AppsController::class, 'index'])->name('help');
 });
 
-Route::group(['prefix' => 'admin', 'middleware' => config('jetstream.middleware', ['web'])], function () {
+Route::group(['prefix' => 'apps', 'middleware' => config('jetstream.middleware', ['web'])], function () {
   $authMiddleware = config('jetstream.guard')
           ? 'auth:'.config('jetstream.guard')
           : 'auth';
@@ -50,19 +50,25 @@ Route::group(['prefix' => 'admin', 'middleware' => config('jetstream.middleware'
           ? config('jetstream.auth_session')
           : null;
 
-  Route::group(['middleware' => array_values(array_filter([$authMiddleware, $authSessionMiddleware]))], function () {
-      Route::get('apps/users', [UsersController::class, 'index'])->name('apps/users');
+  Route::group(['prefix' => 'users', 'middleware' => array_values(array_filter([$authMiddleware, $authSessionMiddleware]))], function () {
+      Route::get('', [UsersController::class, 'index'])->name('users.index');
   });
 
-  Route::group(['middleware' => array_values(array_filter([$authMiddleware, $authSessionMiddleware]))], function () {
-      Route::get('apps/authorization', [AuthorizationController::class, 'index'])->name('apps/authorization');
+  Route::group(['prefix' => 'authorization', 'middleware' => array_values(array_filter([$authMiddleware, $authSessionMiddleware]))], function () {
+      Route::get('', [AuthorizationController::class, 'index'])->name('authorization.index');
+      Route::get('create', [AuthorizationController::class, 'create'])->name('authorization.create');
+      Route::post('{id}', [AuthorizationController::class, 'store'])->name('authorization.store');
+      Route::get('{id}', [AuthorizationController::class, 'edit'])->name('authorization.edit');
+      Route::put('{id}', [AuthorizationController::class, 'update'])->name('authorization.update');
+      Route::delete('{id}', [AuthorizationController::class, 'destroy'])->name('authorization.delete');
+      Route::put('{id}/restore', [AuthorizationController::class, 'restore'])->name('authorization.restore');
   });
 
-  Route::group(['middleware' => array_values(array_filter([$authMiddleware, $authSessionMiddleware]))], function () {
-      Route::get('apps/units', [UsersController::class, 'index'])->name('apps/units');
+  Route::group(['prefix' => 'units', 'middleware' => array_values(array_filter([$authMiddleware, $authSessionMiddleware]))], function () {
+      Route::get('', [UsersController::class, 'index'])->name('units.index');
   });
 
-  Route::group(['middleware' => array_values(array_filter([$authMiddleware, $authSessionMiddleware]))], function () {
-      Route::get('apps/schedule', [UsersController::class, 'index'])->name('apps/schedule');
+  Route::group(['prefix' => 'schedule', 'middleware' => array_values(array_filter([$authMiddleware, $authSessionMiddleware]))], function () {
+      Route::get('', [UsersController::class, 'index'])->name('schedule.index');
   });
 })->name('apps');

@@ -25,6 +25,9 @@ class AuthorizationController extends Controller
             
             'emptyMessage' => __("There is no authorizations to manage."),
 
+            'routeEdit' => "authorization.edit",
+            'routeDelete' => "authorization.delete",
+
             'titles' => [
                 "name" => __("Name"),
                 "email" => __("E-Mail Address"),
@@ -77,7 +80,7 @@ class AuthorizationController extends Controller
      */
     public function edit($id)
     {
-        //
+        return 1;
     }
 
     /**
@@ -100,6 +103,7 @@ class AuthorizationController extends Controller
      */
     public function destroy($id)
     {
+        return 2;
         //
     }
 }

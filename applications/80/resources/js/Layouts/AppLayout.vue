@@ -45,19 +45,18 @@ const logout = () => {
                                     <ApplicationMark class="block h-9 w-auto" />
                                 </Link>
                             </div>
-
                             <!-- Navigation Links -->
                             <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                                 <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
                                     {{ $t('Dashboard') }}
                                 </NavLink>
-                                <NavLink :href="route('apps')" :active="( route().current().split('/')[0] == 'apps' ? true : false )">
+                                <NavLink :href="route('apps')" :active="( $page.url.search(/apps/i) !== -1 ? true : false )">
                                     {{ $t('Apps') }}
                                 </NavLink>
-                                <NavLink :href="route('reports')" :active="( route().current().split('/')[0] == 'reports' ? true : false )">
+                                <NavLink :href="route('reports')" :active="( $page.url.search(/reports/i) !== -1 ? true : false )">
                                     {{ $t('Reports') }}
                                 </NavLink>
-                                <NavLink :href="route('help')" :active="( route().current().split('/')[0] == 'help' ? true : false )">
+                                <NavLink :href="route('help')" :active="( $page.url.search(/help/i) !== -1 ? true : false )">
                                     {{ $t('Help') }}
                                 </NavLink>
                             </div>
