@@ -36,7 +36,7 @@ export default {
                             </div>
                         </div>
                         <div class="p-3 grid grid-cols-1 md:grid-cols-3 bg-opacity-25 dark:border-gray-700 dark:text-gray-400 dark:bg-gray-800">
-                            <Link v-for="item in content" :href="route(item.route)" class="m-1 border rounded-lg duration-500 bg-gray-50 hover:bg-gray-300 hover:dark:bg-gray-700 hover:scale-105 dark:border-gray-700">
+                            <Link v-for="item in content" :href="route(item.route)" class="m-2 border rounded-lg duration-500 bg-gray-50 hover:bg-gray-300 hover:dark:bg-gray-700 hover:scale-105 dark:border-gray-700">
                                 <div class="p-3 border-gray-200 md:border-1">
                                     <div class="flex items-center">
                                         <p class="w-8 h-8 text-gray-100">
