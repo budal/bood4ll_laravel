@@ -88,6 +88,7 @@ services:
       - postgres
 
   redis:
+    container_name: redis_db
     image: redis:alpine
     restart: always
     networks:
@@ -98,14 +99,14 @@ services:
 
   redis-commander:
     image: rediscommander/redis-commander
-    restart: unless-stopped
+    restart: always
     networks:
       - bood4ll_laravel_network
-    ports:
-      - 6000:8081
     environment:
-      REDIS_HOST: redis
-      REDIS_PORT: 16379
+      - REDIS_HOST=redis
+      - REDIS_PORT=16379
+    ports:
+      - 8081:8081
     depends_on:
       - redis
 
