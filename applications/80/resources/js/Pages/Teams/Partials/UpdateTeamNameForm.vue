@@ -1,5 +1,5 @@
 <script setup>
-import { useForm } from '@inertiajs/inertia-vue3';
+import { useForm } from '@inertiajs/vue3';
 import ActionMessage from '@/Components/ActionMessage.vue';
 import FormSection from '@/Components/FormSection.vue';
 import InputError from '@/Components/InputError.vue';
@@ -27,11 +27,11 @@ const updateTeamName = () => {
 <template>
     <FormSection @submitted="updateTeamName">
         <template #title>
-            {{ $t('Team Name') }}
+            Team Name
         </template>
 
         <template #description>
-            {{ $t("The team's name and owner information.") }}
+            The team's name and owner information.
         </template>
 
         <template #form>
@@ -43,7 +43,7 @@ const updateTeamName = () => {
                     <img class="w-12 h-12 rounded-full object-cover" :src="team.owner.profile_photo_url" :alt="team.owner.name">
 
                     <div class="ml-4 leading-tight">
-                        <div>{{ team.owner.name }}</div>
+                        <div class="text-gray-900">{{ team.owner.name }}</div>
                         <div class="text-gray-700 text-sm">
                             {{ team.owner.email }}
                         </div>
@@ -60,7 +60,6 @@ const updateTeamName = () => {
                     v-model="form.name"
                     type="text"
                     class="mt-1 block w-full"
-                    placeholder="Team Name"
                     :disabled="! permissions.canUpdateTeam"
                 />
 
@@ -70,11 +69,11 @@ const updateTeamName = () => {
 
         <template v-if="permissions.canUpdateTeam" #actions>
             <ActionMessage :on="form.recentlySuccessful" class="mr-3">
-                {{ $t('Saved.') }}
+                Saved.
             </ActionMessage>
 
             <PrimaryButton :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                {{ $t('Save') }}
+                Save
             </PrimaryButton>
         </template>
     </FormSection>

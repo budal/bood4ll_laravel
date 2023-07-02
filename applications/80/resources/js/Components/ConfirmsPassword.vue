@@ -21,10 +21,6 @@ defineProps({
         type: String,
         default: 'Confirm',
     },
-    placeholder: {
-        type: String,
-        default: 'Password',
-    },
 });
 
 const confirmingPassword = ref(false);
@@ -82,11 +78,11 @@ const closeModal = () => {
 
         <DialogModal :show="confirmingPassword" @close="closeModal">
             <template #title>
-                {{ $t(title) }}
+                {{ title }}
             </template>
 
             <template #content>
-                {{ $t(content) }}
+                {{ content }}
 
                 <div class="mt-4">
                     <TextInput
@@ -94,7 +90,8 @@ const closeModal = () => {
                         v-model="form.password"
                         type="password"
                         class="mt-1 block w-3/4"
-                        :placeholder=$t(placeholder)
+                        placeholder="Password"
+                        autocomplete="current-password"
                         @keyup.enter="confirmPassword"
                     />
 
@@ -104,7 +101,7 @@ const closeModal = () => {
 
             <template #footer>
                 <SecondaryButton @click="closeModal">
-                    {{ $t('Cancel') }}
+                    Cancel
                 </SecondaryButton>
 
                 <PrimaryButton
@@ -113,7 +110,7 @@ const closeModal = () => {
                     :disabled="form.processing"
                     @click="confirmPassword"
                 >
-                    {{ $t(button) }}
+                    {{ button }}
                 </PrimaryButton>
             </template>
         </DialogModal>

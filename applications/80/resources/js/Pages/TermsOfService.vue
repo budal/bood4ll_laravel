@@ -1,18 +1,14 @@
 <script setup>
-import { Head } from '@inertiajs/inertia-vue3';
+import { Head } from '@inertiajs/vue3';
 import AuthenticationCardLogo from '@/Components/AuthenticationCardLogo.vue';
 
 defineProps({
-    title: {
-        type: String,
-        default: 'Terms of Service',
-    },
     terms: String,
 });
 </script>
 
 <template>
-    <Head :title=$t(title) />
+    <Head title="Terms of Service" />
 
     <div class="font-sans text-gray-900 antialiased">
         <div class="pt-4 bg-gray-100">

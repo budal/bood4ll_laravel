@@ -6,6 +6,7 @@ use Inertia\Inertia;
 
 use App\Http\Controllers\AppsController;
 use App\Http\Controllers\UsersController;
+use App\Http\Controllers\AuthorizationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -32,22 +33,36 @@ Route::middleware([
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
-    Route::get('dashboard', function () { return Inertia::render('Main/Dashboard'); })->name('dashboard');
+    Route::get('/dashboard', function () {
+        return Inertia::render('Dashboard');
+    })->name('dashboard');
     Route::get('apps',  [AppsController::class, 'index'])->name('apps');
-    Route::get('reports', function () { return Inertia::render('Main/Reports'); })->name('reports');
-    Route::get('help', function () { return Inertia::render('Main/Help'); })->name('help');
+    Route::get('reports', [AppsController::class, 'index'])->name('reports');
+    Route::get('help',  [AppsController::class, 'index'])->name('help');
 });
 
 Route::group(['middleware' => config('jetstream.middleware', ['web'])], function () {
-    $authMiddleware = config('jetstream.guard')
-            ? 'auth:'.config('jetstream.guard')
-            : 'auth';
+  $authMiddleware = config('jetstream.guard')
+          ? 'auth:'.config('jetstream.guard')
+          : 'auth';
 
-    $authSessionMiddleware = config('jetstream.auth_session', false)
-            ? config('jetstream.auth_session')
-            : null;
+  $authSessionMiddleware = config('jetstream.auth_session', false)
+          ? config('jetstream.auth_session')
+          : null;
 
-    Route::group(['middleware' => array_values(array_filter([$authMiddleware, $authSessionMiddleware]))], function () {
-        Route::get('apps/users', [UsersController::class, 'index'])->name('apps/users');
-    });
+  Route::group(['middleware' => array_values(array_filter([$authMiddleware, $authSessionMiddleware]))], function () {
+      Route::get('apps/users', [UsersController::class, 'index'])->name('apps/users');
+  });
+
+  Route::group(['middleware' => array_values(array_filter([$authMiddleware, $authSessionMiddleware]))], function () {
+      Route::get('apps/authorization', [AuthorizationController::class, 'index'])->name('apps/authorization');
+  });
+
+  Route::group(['middleware' => array_values(array_filter([$authMiddleware, $authSessionMiddleware]))], function () {
+      Route::get('apps/units', [UsersController::class, 'index'])->name('apps/units');
+  });
+
+  Route::group(['middleware' => array_values(array_filter([$authMiddleware, $authSessionMiddleware]))], function () {
+      Route::get('apps/schedule', [UsersController::class, 'index'])->name('apps/schedule');
+  });
 });

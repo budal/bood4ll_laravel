@@ -1,5 +1,5 @@
 <script setup>
-import { useForm } from '@inertiajs/inertia-vue3';
+import { useForm } from '@inertiajs/vue3';
 import FormSection from '@/Components/FormSection.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
@@ -21,11 +21,11 @@ const createTeam = () => {
 <template>
     <FormSection @submitted="createTeam">
         <template #title>
-            {{ $t('Team Settings') }}
+            Team Details
         </template>
 
         <template #description>
-            {{ $t('Create a new team to collaborate with others on projects.') }}
+            Create a new team to collaborate with others on projects.
         </template>
 
         <template #form>
@@ -33,12 +33,12 @@ const createTeam = () => {
                 <InputLabel value="Team Owner" />
 
                 <div class="flex items-center mt-2">
-                    <img class="object-cover w-12 h-12 rounded-full" :src="$page.props.user.profile_photo_url" :alt="$page.props.user.name">
+                    <img class="object-cover w-12 h-12 rounded-full" :src="$page.props.auth.user.profile_photo_url" :alt="$page.props.auth.user.name">
 
                     <div class="ml-4 leading-tight">
-                        <div>{{ $page.props.user.name }}</div>
+                        <div class="text-gray-900">{{ $page.props.auth.user.name }}</div>
                         <div class="text-sm text-gray-700">
-                            {{ $page.props.user.email }}
+                            {{ $page.props.auth.user.email }}
                         </div>
                     </div>
                 </div>
@@ -51,7 +51,6 @@ const createTeam = () => {
                     v-model="form.name"
                     type="text"
                     class="block w-full mt-1"
-                    placeholder="Team Name"
                     autofocus
                 />
                 <InputError :message="form.errors.name" class="mt-2" />
@@ -60,7 +59,7 @@ const createTeam = () => {
 
         <template #actions>
             <PrimaryButton :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                {{ $t('Create') }}
+                Create
             </PrimaryButton>
         </template>
     </FormSection>

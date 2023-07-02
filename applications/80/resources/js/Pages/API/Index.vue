@@ -13,7 +13,7 @@ defineProps({
     <AppLayout title="API Tokens">
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ $t('API Tokens') }}
+                API Tokens
             </h2>
         </template>
 

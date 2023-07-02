@@ -1,19 +1,12 @@
 <script setup>
 import { ref } from 'vue';
-import { Head, useForm } from '@inertiajs/inertia-vue3';
+import { Head, useForm } from '@inertiajs/vue3';
 import AuthenticationCard from '@/Components/AuthenticationCard.vue';
 import AuthenticationCardLogo from '@/Components/AuthenticationCardLogo.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
-
-defineProps({
-    title: {
-        type: String,
-        default: 'Secure Area',
-    },
-});
 
 const form = useForm({
     password: '',
@@ -33,7 +26,7 @@ const submit = () => {
 </script>
 
 <template>
-    <Head :title=$t(title) />
+    <Head title="Secure Area" />
 
     <AuthenticationCard>
         <template #logo>
@@ -41,7 +34,7 @@ const submit = () => {
         </template>
 
         <div class="mb-4 text-sm text-gray-600">
-            {{ $t('This is a secure area of the application. Please confirm your password before continuing.') }}
+            This is a secure area of the application. Please confirm your password before continuing.
         </div>
 
         <form @submit.prevent="submit">
@@ -53,7 +46,6 @@ const submit = () => {
                     v-model="form.password"
                     type="password"
                     class="mt-1 block w-full"
-                    placeholder="Password"
                     required
                     autocomplete="current-password"
                     autofocus
@@ -63,7 +55,7 @@ const submit = () => {
 
             <div class="flex justify-end mt-4">
                 <PrimaryButton class="ml-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                    {{ $t('Confirm') }}
+                    Confirm
                 </PrimaryButton>
             </div>
         </form>

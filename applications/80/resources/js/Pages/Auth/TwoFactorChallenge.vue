@@ -1,19 +1,12 @@
 <script setup>
 import { nextTick, ref } from 'vue';
-import { Head, useForm } from '@inertiajs/inertia-vue3';
+import { Head, useForm } from '@inertiajs/vue3';
 import AuthenticationCard from '@/Components/AuthenticationCard.vue';
 import AuthenticationCardLogo from '@/Components/AuthenticationCardLogo.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
-
-const props = defineProps({
-    title: {
-        type: String,
-        default: 'Two Factor Authentication',
-    },
-});
 
 const recovery = ref(false);
 
@@ -45,7 +38,7 @@ const submit = () => {
 </script>
 
 <template>
-    <Head :title=$t(title) />
+    <Head title="Two-factor Confirmation" />
 
     <AuthenticationCard>
         <template #logo>
@@ -54,11 +47,11 @@ const submit = () => {
 
         <div class="mb-4 text-sm text-gray-600">
             <template v-if="! recovery">
-                {{ $t('Please confirm access to your account by entering the authentication code provided by your authenticator application.') }}
+                Please confirm access to your account by entering the authentication code provided by your authenticator application.
             </template>
 
             <template v-else>
-                {{ $t('Please confirm access to your account by entering one of your emergency recovery codes.') }}
+                Please confirm access to your account by entering one of your emergency recovery codes.
             </template>
         </div>
 
@@ -72,7 +65,6 @@ const submit = () => {
                     type="text"
                     inputmode="numeric"
                     class="mt-1 block w-full"
-                    placeholder="Code"
                     autofocus
                     autocomplete="one-time-code"
                 />
@@ -87,7 +79,6 @@ const submit = () => {
                     v-model="form.recovery_code"
                     type="text"
                     class="mt-1 block w-full"
-                    placeholder="Recovery Code"
                     autocomplete="one-time-code"
                 />
                 <InputError class="mt-2" :message="form.errors.recovery_code" />
@@ -96,16 +87,16 @@ const submit = () => {
             <div class="flex items-center justify-end mt-4">
                 <button type="button" class="text-sm text-gray-600 hover:text-gray-900 underline cursor-pointer" @click.prevent="toggleRecovery">
                     <template v-if="! recovery">
-                        {{ $t('Use a recovery code') }}
+                        Use a recovery code
                     </template>
 
                     <template v-else>
-                        {{ $t('Use an authentication code') }}
+                        Use an authentication code
                     </template>
                 </button>
 
                 <PrimaryButton class="ml-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                    {{ $t('Log in') }}
+                    Log in
                 </PrimaryButton>
             </div>
         </form>

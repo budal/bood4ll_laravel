@@ -1,5 +1,5 @@
 <script setup>
-import { Head, useForm } from '@inertiajs/inertia-vue3';
+import { Head, useForm } from '@inertiajs/vue3';
 import AuthenticationCard from '@/Components/AuthenticationCard.vue';
 import AuthenticationCardLogo from '@/Components/AuthenticationCardLogo.vue';
 import InputError from '@/Components/InputError.vue';
@@ -8,10 +8,6 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 
 const props = defineProps({
-    title: {
-        type: String,
-        default: 'Reset Password',
-    },
     email: String,
     token: String,
 });
@@ -31,7 +27,7 @@ const submit = () => {
 </script>
 
 <template>
-    <Head :title=$t(title) />
+    <Head title="Reset Password" />
 
     <AuthenticationCard>
         <template #logo>
@@ -46,9 +42,9 @@ const submit = () => {
                     v-model="form.email"
                     type="email"
                     class="mt-1 block w-full"
-                    placeholder="Email"
                     required
                     autofocus
+                    autocomplete="username"
                 />
                 <InputError class="mt-2" :message="form.errors.email" />
             </div>
@@ -60,7 +56,6 @@ const submit = () => {
                     v-model="form.password"
                     type="password"
                     class="mt-1 block w-full"
-                    placeholder="Password"
                     required
                     autocomplete="new-password"
                 />
@@ -74,7 +69,6 @@ const submit = () => {
                     v-model="form.password_confirmation"
                     type="password"
                     class="mt-1 block w-full"
-                    placeholder="Confirm Password"
                     required
                     autocomplete="new-password"
                 />
@@ -83,7 +77,7 @@ const submit = () => {
 
             <div class="flex items-center justify-end mt-4">
                 <PrimaryButton :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                    {{ $t('Reset Password') }}
+                    Reset Password
                 </PrimaryButton>
             </div>
         </form>

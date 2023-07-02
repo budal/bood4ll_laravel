@@ -1,18 +1,14 @@
 <script setup>
-import { Head } from '@inertiajs/inertia-vue3';
+import { Head } from '@inertiajs/vue3';
 import AuthenticationCardLogo from '@/Components/AuthenticationCardLogo.vue';
 
 defineProps({
-    title: {
-        type: String,
-        default: 'Privacy Policy',
-    },
     policy: String,
 });
 </script>
 
 <template>
-    <Head :title=$t(title) />
+    <Head title="Privacy Policy" />
 
     <div class="font-sans text-gray-900 antialiased">
         <div class="pt-4 bg-gray-100">

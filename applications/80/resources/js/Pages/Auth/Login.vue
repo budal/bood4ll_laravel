@@ -1,5 +1,5 @@
 <script setup>
-import { Head, Link, useForm } from '@inertiajs/inertia-vue3';
+import { Head, Link, useForm } from '@inertiajs/vue3';
 import AuthenticationCard from '@/Components/AuthenticationCard.vue';
 import AuthenticationCardLogo from '@/Components/AuthenticationCardLogo.vue';
 import Checkbox from '@/Components/Checkbox.vue';
@@ -9,10 +9,6 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 
 defineProps({
-    title: {
-        type: String,
-        default: 'Log in',
-    },
     canResetPassword: Boolean,
     status: String,
 });
@@ -34,7 +30,7 @@ const submit = () => {
 </script>
 
 <template>
-    <Head :title=$t(title) />
+    <Head title="Log in" />
 
     <AuthenticationCard>
         <template #logo>
@@ -42,7 +38,7 @@ const submit = () => {
         </template>
 
         <div v-if="status" class="mb-4 font-medium text-sm text-green-600">
-            {{ $t(status) }}
+            {{ status }}
         </div>
 
         <form @submit.prevent="submit">
@@ -53,9 +49,9 @@ const submit = () => {
                     v-model="form.email"
                     type="email"
                     class="mt-1 block w-full"
-                    placeholder="Email"
                     required
                     autofocus
+                    autocomplete="username"
                 />
                 <InputError class="mt-2" :message="form.errors.email" />
             </div>
@@ -67,7 +63,6 @@ const submit = () => {
                     v-model="form.password"
                     type="password"
                     class="mt-1 block w-full"
-                    placeholder="Password"
                     required
                     autocomplete="current-password"
                 />
@@ -77,17 +72,17 @@ const submit = () => {
             <div class="block mt-4">
                 <label class="flex items-center">
                     <Checkbox v-model:checked="form.remember" name="remember" />
-                    <span class="ml-2 text-sm text-gray-600">{{ $t('Remember me') }}</span>
+                    <span class="ml-2 text-sm text-gray-600">Remember me</span>
                 </label>
             </div>
 
             <div class="flex items-center justify-end mt-4">
-                <Link v-if="canResetPassword" :href="route('password.request')" class="underline text-sm text-gray-600 hover:text-gray-900">
-                    {{ $t('Forgot your password?') }}
+                <Link v-if="canResetPassword" :href="route('password.request')" class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    Forgot your password?
                 </Link>
 
                 <PrimaryButton class="ml-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                    {{ $t('Log in') }}
+                    Log in
                 </PrimaryButton>
             </div>
         </form>
