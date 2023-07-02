@@ -51,13 +51,13 @@ const logout = () => {
                                 <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
                                     {{ $t('Dashboard') }}
                                 </NavLink>
-                                <NavLink :href="route('apps')" :active="route().current('apps')">
+                                <NavLink :href="route('apps')" :active="( route().current().split('/')[0] == 'apps' ? true : false )">
                                     {{ $t('Apps') }}
                                 </NavLink>
-                                <NavLink :href="route('reports')" :active="route().current('reports')">
+                                <NavLink :href="route('reports')" :active="( route().current().split('/')[0] == 'reports' ? true : false )">
                                     {{ $t('Reports') }}
                                 </NavLink>
-                                <NavLink :href="route('help')" :active="route().current('help')">
+                                <NavLink :href="route('help')" :active="( route().current().split('/')[0] == 'help' ? true : false )">
                                     {{ $t('Help') }}
                                 </NavLink>
                             </div>

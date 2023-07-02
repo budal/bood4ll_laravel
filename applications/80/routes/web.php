@@ -41,7 +41,7 @@ Route::middleware([
     Route::get('help',  [AppsController::class, 'index'])->name('help');
 });
 
-Route::group(['middleware' => config('jetstream.middleware', ['web'])], function () {
+Route::group(['prefix' => 'admin', 'middleware' => config('jetstream.middleware', ['web'])], function () {
   $authMiddleware = config('jetstream.guard')
           ? 'auth:'.config('jetstream.guard')
           : 'auth';
@@ -65,4 +65,4 @@ Route::group(['middleware' => config('jetstream.middleware', ['web'])], function
   Route::group(['middleware' => array_values(array_filter([$authMiddleware, $authSessionMiddleware]))], function () {
       Route::get('apps/schedule', [UsersController::class, 'index'])->name('apps/schedule');
   });
-});
+})->name('apps');
