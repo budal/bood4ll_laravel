@@ -56,15 +56,22 @@ let routeParent = route().current().split('.')[0];
                                     </thead>
                                     <tbody class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800">
                                         <tr v-for="item in items.data" :key="item.id" class="text-gray-700 dark:text-gray-400 md:border-1 duration-500 hover:bg-gray-100 hover:dark:bg-gray-700">
-                                            <td v-for="(title, index) in titles" :key="index" class="px-4 py-3 text-sm">
-                                                <span v-if="index === 'image'">{{ item[index] }}
+                                            <td class="px-4 py-3">
+                                                <div class="flex items-center text-sm">
                                                     <div class="relative hidden w-8 h-8 mr-3 rounded-full md:block">
                                                         <img v-if="item.profile_photo_path" class="object-cover w-full h-full rounded-full" :src="'../storage/' + item.profile_photo_path" alt="" loading="lazy" />
                                                         <img v-if="!item.profile_photo_path" class="object-cover w-full h-full rounded-full" :src="'https://ui-avatars.com/api/?name='+ $t(item.name) +'&color=7F9CF5&background=EBF4FF' + item.profile_photo_path" alt="" loading="lazy" />
                                                         <div class="absolute inset-0 rounded-full shadow-inner" aria-hidden="true"></div>
                                                     </div>
-                                                </span>
-                                                <span v-else>{{ item[index] }}</span>
+                                                    <div>
+                                                        <p class="font-semi bold">{{ item.name }}</p>
+                                                        <p class="text-xs text-gray-600 dark:text-gray-400">{{ item.email }}</p>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="px-4 py-3 text-sm">{{ item.email }}</td>
+                                            <td class="px-4 py-3 text-xs">
+                                                <span class="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full dark:bg-green-700 dark:text-green-100">1</span>
                                             </td>
                                             <td class="px-4 py-3">
                                                 <div class="flex items-center space-x-4 text-sm place-content-center">

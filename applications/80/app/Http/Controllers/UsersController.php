@@ -18,6 +18,11 @@ class UsersController extends Controller
         $items = User::orderBy('name', 'asc')
                     ->paginate(100);
 
+        $items->each( function($item) {
+            $item->verified = $item->verified($item->email_verified_at);
+            // $item->specialties = $item->specialties($item->id)->pluck('name')->all();
+        } );
+      
         $content = [
             'title' => __("Users"),
             'subtitle' => __("Select the user to manage"),
@@ -29,8 +34,10 @@ class UsersController extends Controller
             'routeDelete' => "authorization.delete",
 
             'titles' => [
+                "image" => "",
                 "name" => __("Name"),
                 "email" => __("E-Mail Address"),
+                "verified" => __("Verified"),
                 "permissions" => __("Permissions"),
             ],
 

@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use App\Models\User;
+use App\Models\Team;
 
 class AuthorizationController extends Controller
 {
@@ -15,7 +15,7 @@ class AuthorizationController extends Controller
      */
     public function index()
     {
-        $items = User::orderBy('name', 'asc')
+        $items = Team::orderBy('name', 'asc')
                     ->paginate(100);
 
         $content = [
@@ -25,14 +25,10 @@ class AuthorizationController extends Controller
             
             'emptyMessage' => __("There is no authorizations to manage."),
 
-            'routeCreate' => "authorization.create",
-            'routeEdit' => "authorization.edit",
-            'routeDelete' => "authorization.delete",
-
             'titles' => [
                 "name" => __("Name"),
-                "email" => __("E-Mail Address"),
-                "permissions" => __("Permissions"),
+                "user_id" => __("E-Mail Address"),
+                "personal_team" => __("Permissions"),
             ],
 
             'items' => $items

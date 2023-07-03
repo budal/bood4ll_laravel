@@ -52,6 +52,12 @@ Route::group(['prefix' => 'apps', 'middleware' => config('jetstream.middleware',
 
   Route::group(['prefix' => 'users', 'middleware' => array_values(array_filter([$authMiddleware, $authSessionMiddleware]))], function () {
       Route::get('', [UsersController::class, 'index'])->name('users.index');
+      Route::get('create', [UsersController::class, 'create'])->name('users.create');
+      Route::post('{id}', [UsersController::class, 'store'])->name('users.store');
+      Route::get('{id}', [UsersController::class, 'edit'])->name('users.edit');
+      Route::put('{id}', [UsersController::class, 'update'])->name('users.update');
+      Route::delete('{id}', [UsersController::class, 'destroy'])->name('users.delete');
+      Route::put('{id}/restore', [UsersController::class, 'restore'])->name('users.restore');
   });
 
   Route::group(['prefix' => 'authorization', 'middleware' => array_values(array_filter([$authMiddleware, $authSessionMiddleware]))], function () {
