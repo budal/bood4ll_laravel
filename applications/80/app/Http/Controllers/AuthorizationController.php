@@ -16,12 +16,12 @@ class AuthorizationController extends Controller
     public function index()
     {
         $items = Team::orderBy('name', 'asc')
-                    ->paginate(1);
+                    ->paginate(100);
 
         $content = [
-            'routeCreate' => 'authorization.create',
-            'routeEdit' => 'authorization.edit',
-            'routeDelete' => 'authorization.delete',
+            'routeCreate' => 'apps.authorization.create',
+            'routeEdit' => 'apps.authorization.edit',
+            'routeDelete' => 'apps.authorization.delete',
             
             'title' => "Authorization",
             'subtitle' => "Select the authorization to manage",
