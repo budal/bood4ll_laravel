@@ -16,7 +16,7 @@ class AuthorizationController extends Controller
     public function index()
     {
         $items = Team::orderBy('name', 'asc')
-                    ->paginate(100);
+                    ->paginate(1);
 
         $content = [
             'routeCreate' => 'authorization.create',
