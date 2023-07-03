@@ -6,6 +6,9 @@ import { Link } from '@inertiajs/vue3';
 <script>
 export default {
     props: {
+        routeCreate: String,
+        routeEdit: String,
+        routeDelete: String,
         title: String,
         subtitle: String,
         description: String,
@@ -14,8 +17,6 @@ export default {
         items: Object,
     }
 }
-
-let routeParent = route().current().split('.')[0];
 </script>
 
 <template>
@@ -25,6 +26,8 @@ let routeParent = route().current().split('.')[0];
                 {{ $t(title) }}
             </h2>
         </template>
+        {{console.log(routeDelete)}}
+
 
         <div class="py-12 dark:bg-gray-900">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 ">
@@ -32,7 +35,7 @@ let routeParent = route().current().split('.')[0];
                     <div v-if="items">
                         <div v-if="subtitle || description" class="p-6 sm:px-20 bg-white border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800">
                             <div class="mt-6 text-gray-500 float-right">
-                              <Link use:inertia :href="route(routeParent + '.create')" method="get" as="button" class="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-red-600 rounded-lg dark:text-gray-400 focus:outline-none focus:shadow-outline-gray" aria-label="Delete">
+                              <Link use:inertia :href="route('authorization.create')" method="get" as="button" class="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-red-600 rounded-lg dark:text-gray-400 focus:outline-none focus:shadow-outline-gray" aria-label="Delete">
                                   <svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 48 48" width="48px" height="48px"><path fill="#4caf50" d="M44,24c0,11.045-8.955,20-20,20S4,35.045,4,24S12.955,4,24,4S44,12.955,44,24z"/><path fill="#fff" d="M21,14h6v20h-6V14z"/><path fill="#fff" d="M14,21h20v6H14V21z"/></svg>
                               </Link>
                             </div>
@@ -57,7 +60,7 @@ let routeParent = route().current().split('.')[0];
                                     <tbody class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800">
                                         <tr v-for="item in items.data" :key="item.id" class="text-gray-700 dark:text-gray-400 md:border-1 duration-500 hover:bg-gray-100 hover:dark:bg-gray-700">
                                             <td v-for="(title, index) in titles" :key="index" class="px-4 py-3 text-sm">
-                                                <span v-if="index === 'image'">{{ item[index] }}
+                                                <span v-if="index === 'image'">
                                                     <div class="relative hidden w-8 h-8 mr-3 rounded-full md:block">
                                                         <img v-if="item.profile_photo_path" class="object-cover w-full h-full rounded-full" :src="'../storage/' + item.profile_photo_path" alt="" loading="lazy" />
                                                         <img v-if="!item.profile_photo_path" class="object-cover w-full h-full rounded-full" :src="'https://ui-avatars.com/api/?name='+ $t(item.name) +'&color=7F9CF5&background=EBF4FF' + item.profile_photo_path" alt="" loading="lazy" />
@@ -68,12 +71,12 @@ let routeParent = route().current().split('.')[0];
                                             </td>
                                             <td class="px-4 py-3">
                                                 <div class="flex items-center space-x-4 text-sm place-content-center">
-                                                    <Link :href="route(routeParent + '.edit', item.id)" method="get" as="button" class="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-blue-600 rounded-lg dark:text-gray-400 focus:outline-none focus:shadow-outline-gray" aria-label="Edit">
+                                                    <Link :href="route('authorization.edit', item.id)" method="get" as="button" class="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-blue-600 rounded-lg dark:text-gray-400 focus:outline-none focus:shadow-outline-gray" aria-label="Edit">
                                                         <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" >
                                                             <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"></path>
                                                         </svg>
                                                     </Link>
-                                                    <Link :href="route(routeParent + '.delete', item.id)" method="delete" as="button" class="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-red-600 rounded-lg dark:text-gray-400 focus:outline-none focus:shadow-outline-gray" aria-label="Delete">
+                                                    <Link :href="route('authorization.delete', item.id)" method="delete" as="button" class="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-red-600 rounded-lg dark:text-gray-400 focus:outline-none focus:shadow-outline-gray" aria-label="Delete">
                                                         <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
                                                             <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path>
                                                         </svg>

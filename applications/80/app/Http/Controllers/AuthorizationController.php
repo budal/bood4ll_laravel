@@ -19,6 +19,10 @@ class AuthorizationController extends Controller
                     ->paginate(100);
 
         $content = [
+            'routeCreate' => 'authorization.create',
+            'routeEdit' => 'authorization.edit',
+            'routeDelete' => 'authorization.delete',
+            
             'title' => __("Authorization"),
             'subtitle' => __("Select the authorization to manage"),
             'description' => __("Manage the registered authorizations in the system."),
@@ -44,7 +48,7 @@ class AuthorizationController extends Controller
      */
     public function create()
     {
-        return 4;
+        return 9;
     }
 
     /**

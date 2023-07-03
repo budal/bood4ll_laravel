@@ -30,9 +30,6 @@ class UsersController extends Controller
             
             'emptyMessage' => __("There is no users to manage."),
 
-            'routeEdit' => "authorization.edit",
-            'routeDelete' => "authorization.delete",
-
             'titles' => [
                 "image" => "",
                 "name" => __("Name"),
@@ -54,6 +51,7 @@ class UsersController extends Controller
      */
     public function create()
     {
+        return 1;
         //
     }
 
