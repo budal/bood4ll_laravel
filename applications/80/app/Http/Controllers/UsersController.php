@@ -26,7 +26,7 @@ class UsersController extends Controller
         $content = [
             'routeCreate' => 'apps.users.create',
             'routeEdit' => 'apps.users.edit',
-            'routeDelete' => 'apps.users.delete',
+            'routeDestroy' => 'apps.users.destroy',
 
             'title' => "Users",
             'subtitle' => "Select the user to manage",

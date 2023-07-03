@@ -11,7 +11,7 @@ const form = useForm({
 });
 
 const createTeam = () => {
-    form.post(route('teams.store'), {
+    form.post(route('apps.authorization.create'), {
         errorBag: 'createTeam',
         preserveScroll: true,
     });

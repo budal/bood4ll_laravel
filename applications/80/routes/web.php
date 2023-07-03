@@ -97,11 +97,7 @@ Route::group(['prefix' => 'apps', 'middleware' => config('jetstream.middleware',
 
           // Teams...
           if (Jetstream::hasTeamFeatures()) {
-              Route::get('/teams/create', [TeamController::class, 'create'])->name('teams.create');
-              Route::post('/teams', [TeamController::class, 'store'])->name('teams.store');
-              Route::get('/teams/{team}', [TeamController::class, 'show'])->name('teams.show');
               Route::put('/teams/{team}', [TeamController::class, 'update'])->name('teams.update');
-              Route::delete('/teams/{team}', [TeamController::class, 'destroy'])->name('teams.destroy');
               Route::put('/current-team', [CurrentTeamController::class, 'update'])->name('current-team.update');
               Route::post('/teams/{team}/members', [TeamMemberController::class, 'store'])->name('team-members.store');
               Route::put('/teams/{team}/members/{user}', [TeamMemberController::class, 'update'])->name('team-members.update');
@@ -123,17 +119,18 @@ Route::group(['prefix' => 'apps', 'middleware' => config('jetstream.middleware',
       Route::post('{id}', [UsersController::class, 'store'])->name('apps.users.store');
       Route::get('{id}', [UsersController::class, 'edit'])->name('apps.users.edit');
       Route::put('{id}', [UsersController::class, 'update'])->name('apps.users.update');
-      Route::delete('{id}', [UsersController::class, 'destroy'])->name('apps.users.delete');
+      Route::delete('{id}', [UsersController::class, 'destroy'])->name('apps.users.destroy');
       Route::put('{id}/restore', [UsersController::class, 'restore'])->name('apps.users.restore');
   });
 
   Route::group(['prefix' => 'authorization', 'middleware' => array_values(array_filter([$authMiddleware, $authSessionMiddleware]))], function () {
       Route::get('', [AuthorizationController::class, 'index'])->name('apps.authorization.index');
-      Route::get('create', [AuthorizationController::class, 'create'])->name('apps.authorization.create');
-      Route::post('{id}', [AuthorizationController::class, 'store'])->name('apps.authorization.store');
-      Route::get('{id}', [AuthorizationController::class, 'edit'])->name('apps.authorization.edit');
+      Route::get('create', [TeamController::class, 'create'])->name('apps.authorization.create');
+      Route::post('{id}', [TeamController::class, 'store'])->name('apps.authorization.store');
+      Route::get('{id}', [TeamController::class, 'show'])->name('apps.authorization.show');
+      Route::get('{id}', [TeamController::class, 'show'])->name('apps.authorization.edit');
       Route::put('{id}', [AuthorizationController::class, 'update'])->name('apps.authorization.update');
-      Route::delete('{id}', [AuthorizationController::class, 'destroy'])->name('apps.authorization.delete');
+      Route::delete('{id}', [TeamController::class, 'destroy'])->name('apps.authorization.destroy');
       Route::put('{id}/restore', [AuthorizationController::class, 'restore'])->name('apps.authorization.restore');
   });
 

@@ -110,6 +110,8 @@
     "read" : "ler" ,
     "update" : "atualizar" ,
     "delete" : "apagar" ,
+    "Delete Item" : "Apagar item",
+    "Are you sure you want to delete this item? Once a team is deleted, all of its resources and data will be permanently deleted." : "Você deseja apagar esse item? Uma vez apagado, todos os recursos e informações serão permanentementes excluídos.",
     "The provided password does not match your current password.": "A senha informada não condiz com sua senha atual.",
     "For your security, please confirm your password to continue.": "Para sua segurança, confirme sua senha antes de continuar.",
     "Manage API Tokens" : "Gerenciador de Tokens de API" ,
@@ -208,6 +210,7 @@
     "There is no apps to use." : "Você não possui nenhum aplicativo liberado.",
     "There is no items to show." : "Não há itens para exibir.",
     "There is no users to manage." : "Não há usuários para administrar.",
+    "There is no authorizations to manage" : "Não há autorizações para administrar.",
     "Showing :start of :end": "Exibindo :start de :end",
     "Showing :from-:to of :total": "Exibindo :from-:to de :total",
     "" : ""

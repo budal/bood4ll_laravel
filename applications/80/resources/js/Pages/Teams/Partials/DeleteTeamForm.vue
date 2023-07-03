@@ -18,7 +18,7 @@ const confirmTeamDeletion = () => {
 };
 
 const deleteTeam = () => {
-    form.delete(route('teams.destroy', props.team), {
+    form.delete(route('apps.authorization.destroy', props.team), {
         errorBag: 'deleteTeam',
     });
 };
@@ -41,7 +41,7 @@ const deleteTeam = () => {
 
             <div class="mt-5">
                 <DangerButton @click="confirmTeamDeletion">
-                    Delete Team
+                    Delete Team q
                 </DangerButton>
             </div>
 

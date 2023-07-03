@@ -21,12 +21,12 @@ class AuthorizationController extends Controller
         $content = [
             'routeCreate' => 'apps.authorization.create',
             'routeEdit' => 'apps.authorization.edit',
-            'routeDelete' => 'apps.authorization.delete',
+            'routeDestroy' => 'apps.authorization.destroy',
             
             'title' => "Authorization",
             'subtitle' => "Select the authorization to manage",
             'description' => "Manage app authorizations and permissions assignable to users.",
-            
+
             'emptyMessage' => "There is no authorizations to manage.",
 
             'titles' => [
