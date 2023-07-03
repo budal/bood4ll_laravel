@@ -24,6 +24,10 @@ class UsersController extends Controller
         } );
       
         $content = [
+            'routeCreate' => 'users.create',
+            'routeEdit' => 'users.edit',
+            'routeDelete' => 'users.delete',
+
             'title' => __("Users"),
             'subtitle' => __("Select the user to manage"),
             'description' => __("Manage the registered users of the system."),
@@ -51,7 +55,7 @@ class UsersController extends Controller
      */
     public function create()
     {
-        return 1;
+        return "A";
         //
     }
 
@@ -85,6 +89,7 @@ class UsersController extends Controller
      */
     public function edit($id)
     {
+        return "B";
         //
     }
 
@@ -108,6 +113,7 @@ class UsersController extends Controller
      */
     public function destroy($id)
     {
+        return "C";
         //
     }
 }
