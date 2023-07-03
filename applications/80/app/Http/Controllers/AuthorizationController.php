@@ -23,16 +23,16 @@ class AuthorizationController extends Controller
             'routeEdit' => 'authorization.edit',
             'routeDelete' => 'authorization.delete',
             
-            'title' => __("Authorization"),
-            'subtitle' => __("Select the authorization to manage"),
-            'description' => __("Manage the registered authorizations in the system."),
+            'title' => "Authorization",
+            'subtitle' => "Select the authorization to manage",
+            'description' => "Manage app authorizations and permissions assignable to users.",
             
-            'emptyMessage' => __("There is no authorizations to manage."),
+            'emptyMessage' => "There is no authorizations to manage.",
 
             'titles' => [
-                "name" => __("Name"),
-                "user_id" => __("E-Mail Address"),
-                "personal_team" => __("Permissions"),
+                "name" => "Name",
+                "user_id" => "E-Mail Address",
+                "personal_team" => "Permissions",
             ],
 
             'items' => $items

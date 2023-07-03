@@ -28,18 +28,18 @@ class UsersController extends Controller
             'routeEdit' => 'users.edit',
             'routeDelete' => 'users.delete',
 
-            'title' => __("Users"),
-            'subtitle' => __("Select the user to manage"),
-            'description' => __("Manage the registered users of the system."),
+            'title' => "Users",
+            'subtitle' => "Select the user to manage",
+            'description' => "Manage users' data registered in the system.",
             
-            'emptyMessage' => __("There is no users to manage."),
+            'emptyMessage' => "There is no users to manage.",
 
             'titles' => [
                 "image" => "",
-                "name" => __("Name"),
-                "email" => __("E-Mail Address"),
-                "verified" => __("Verified"),
-                "permissions" => __("Permissions"),
+                "name" => "Name",
+                "email" => "E-Mail Address",
+                "verified" => "Verified",
+                "permissions" => "Permissions",
             ],
 
             'items' => $items
