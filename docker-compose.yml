@@ -9,7 +9,7 @@ services:
     networks:
       - bood4ll_laravel_network
     ports:
-      - "80:80"
+      - "80:8000"
       - "5173:5173"
     volumes:
       - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf
