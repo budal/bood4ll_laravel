@@ -1,6 +1,7 @@
 version: "3.9"
 services:
   web:
+    container_name: budal_web
     restart: always
     build: 
       context: .
@@ -9,9 +10,7 @@ services:
       - bood4ll_laravel_network
     ports:
       - "80:80"
-      - "443:443"
       - "5173:5173"
-      - "8080:8080"
     volumes:
       - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf
       - ./docker/nginx/sites:/etc/nginx/sites-available
@@ -24,10 +23,8 @@ services:
       - DB_DATABASE=db_bood4ll
       - DB_USERNAME=postgres
       - DB_PASSWORD=admin
-      - CACHE_DRIVER=redis
-      - SESSION_DRIVER=database
-      - REDIS_HOST=redis
-      - REDIS_PORT=16379
+      - CACHE_DRIVER=file
+      - SESSION_DRIVER=file
       - MAIL_HOST=mailhog
       - MAIL_PORT=25
       - MAIL_FROM_ADDRESS="noreply@localhost"
@@ -45,9 +42,9 @@ services:
         "
     depends_on:
       - postgres
-      - redis
   
   postgres:
+    container_name: budal_postgres
     image: postgres:alpine
     restart: always
     networks:
@@ -63,6 +60,7 @@ services:
     command: -p 15432
 
   pgadmin:
+    container_name: budal_pgadmin
     image: dpage/pgadmin4
     entrypoint: >
       /bin/sh -c "
@@ -84,34 +82,14 @@ services:
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
       PGADMIN_CONFIG_SERVER_MODE: 'False'
       PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: 'False'
+      GUNICORN_ACCESS_LOGFILE: '/dev/null'
     depends_on:
       - postgres
 
-  redis:
-    container_name: redis_db
-    image: redis:alpine
-    restart: always
-    networks:
-      - bood4ll_laravel_network
-    ports:
-      - 16379:16379
-    command: ["redis-server", "--bind", "redis", "--port", "16379"]
-
-  redis-commander:
-    image: rediscommander/redis-commander
-    restart: always
-    networks:
-      - bood4ll_laravel_network
-    environment:
-      - REDIS_HOST=redis
-      - REDIS_PORT=16379
-    ports:
-      - 8081:8081
-    depends_on:
-      - redis
-
   mailhog:
+    container_name: budal_mailhog
     image: mailhog/mailhog:latest
+    entrypoint: ["/bin/sh", "-c", "MailHog &>/dev/null"]
     restart: always
     networks:
       - bood4ll_laravel_network
