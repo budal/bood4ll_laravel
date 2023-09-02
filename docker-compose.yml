@@ -1,11 +1,15 @@
 version: "3.9"
 services:
   web:
-    container_name: budal_web
-    restart: always
     build: 
       context: .
       dockerfile: ./Dockerfile
+      args:
+        - UID=${UID:-1000}
+        - USER=${USER:-laravel}
+        - APPDIR=${APPDIR:-/var/www}
+    restart: always
+    container_name: budal_web
     networks:
       - bood4ll_laravel_network
     ports:
@@ -14,17 +18,17 @@ services:
     volumes:
       - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf
       - ./docker/nginx/sites:/etc/nginx/sites-available
-      - ./applications:/var/www
-      - web-nodemodules-volume:/var/www/applications/80/node_modules
-      - web-vendor-volume:/var/www/applications/80/vendor
+      - ./app:${APPDIR:-/var/www}
+      - web-nodemodules-volume:${APPDIR:-/var/www}/node_modules
+      - web-vendor-volume:${APPDIR:-/var/www}/vendor
     environment:
-      - APP_NAME=${APP_NAME}
-      - DB_CONNECTION=${DB_CONNECTION:-psql}
+      - APP_NAME=${APP_NAME:-Bood4ll}
+      - DB_CONNECTION=${DB_CONNECTION:-pgsql}
       - DB_HOST=${DB_HOST:-postgres}
       - DB_PORT=${DB_PORT:-5432}
-      - DB_DATABASE=${DB_DATABASE:-postgres}
+      - DB_DATABASE=${DB_DATABASE:-db_bood4ll}
       - DB_USERNAME=${DB_USERNAME:-postgres}
-      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_PASSWORD=${DB_PASSWORD:-admin}
       - MAIL_HOST=${MAIL_HOST}
       - MAIL_PORT=${MAIL_PORT}
       - MAIL_FROM_ADDRESS=${MAIL_FROM_ADDRESS}
@@ -59,48 +63,48 @@ services:
       POSTGRES_PASSWORD: ${DB_PASSWORD}
     command: -p ${DB_PORT:-5432}
 
-  pgadmin:
-    container_name: budal_pgadmin
-    image: dpage/pgadmin4
-    entrypoint: >
-      /bin/sh -c "
-        echo '
-          {
-            \"Servers\": {
-              \"1\": {
-                \"Name\": \"${APP_NAME}\",
-                \"Group\": \"Servers\",
-                \"Host\": \"${DB_HOST:-postgres}\",
-                \"Port\": ${DB_PORT:-5432},
-                \"MaintenanceDB\": \"postgres\",
-                \"Username\": \"${DB_USERNAME:-postgres}\",
-                \"PassFile\": \"/var/lib/pgadmin/pgpass\",
-                \"SSLMode\": \"prefer\"
-              }
-            }
-          }
-        ' > /var/lib/pgadmin/servers;
-        echo '${DB_HOST:-postgres}:${DB_PORT:-5432}:*:${DB_USERNAME:-postgres}:${DB_PASSWORD}' > /var/lib/pgadmin/pgpass;
-        chmod 600 /var/lib/pgadmin/pgpass;
-        chown pgadmin /var/lib/pgadmin/pgpass;
-        /entrypoint.sh
-      "
-    restart: always  
-    networks:
-      - bood4ll_laravel_network
-    ports:
-      - ${PGADMIN_PORT:-5050}:80
-    volumes:
-      - pgadmin-volume:/var/lib/pgadmin
-    environment:
-      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
-      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
-      PGADMIN_SERVER_JSON_FILE: '/var/lib/pgadmin/servers'
-      PGADMIN_CONFIG_SERVER_MODE: 'False'
-      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: 'False'
-      GUNICORN_ACCESS_LOGFILE: '/dev/null'
-    depends_on:
-      - postgres
+  # pgadmin:
+  #   container_name: budal_pgadmin
+  #   image: dpage/pgadmin4
+  #   entrypoint: >
+  #     /bin/sh -c "
+  #       echo '
+  #         {
+  #           \"Servers\": {
+  #             \"1\": {
+  #               \"Name\": \"${APP_NAME}\",
+  #               \"Group\": \"Servers\",
+  #               \"Host\": \"${DB_HOST:-postgres}\",
+  #               \"Port\": ${DB_PORT:-5432},
+  #               \"MaintenanceDB\": \"postgres\",
+  #               \"Username\": \"${DB_USERNAME:-postgres}\",
+  #               \"PassFile\": \"/var/lib/pgadmin/pgpass\",
+  #               \"SSLMode\": \"prefer\"
+  #             }
+  #           }
+  #         }
+  #       ' > /var/lib/pgadmin/servers;
+  #       echo '${DB_HOST:-postgres}:${DB_PORT:-5432}:*:${DB_USERNAME:-postgres}:${DB_PASSWORD}' > /var/lib/pgadmin/pgpass;
+  #       chmod 600 /var/lib/pgadmin/pgpass;
+  #       chown pgadmin /var/lib/pgadmin/pgpass;
+  #       /entrypoint.sh
+  #     "
+  #   restart: always  
+  #   networks:
+  #     - bood4ll_laravel_network
+  #   ports:
+  #     - ${PGADMIN_PORT:-5050}:80
+  #   volumes:
+  #     - pgadmin-volume:/var/lib/pgadmin
+  #   environment:
+  #     PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
+  #     PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+  #     PGADMIN_SERVER_JSON_FILE: '/var/lib/pgadmin/servers'
+  #     PGADMIN_CONFIG_SERVER_MODE: 'False'
+  #     PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: 'False'
+  #     GUNICORN_ACCESS_LOGFILE: '/dev/null'
+  #   depends_on:
+  #     - postgres
 
   redis:
     container_name: budal_redis
