@@ -3,7 +3,7 @@ services:
   web:
     build: 
       context: .
-      dockerfile: ./Dockerfile
+      dockerfile: ./docker/nginx/Dockerfile
       args:
         - UID=${UID:-1000}
         - USER=${USER:-laravel}
@@ -22,16 +22,26 @@ services:
       - web-vendor-volume:${APPDIR:-/var/www}/vendor
     environment:
       - APP_NAME=${APP_NAME:-Bood4ll}
+
       - DB_CONNECTION=${DB_CONNECTION:-pgsql}
       - DB_HOST=${DB_HOST:-postgres}
       - DB_PORT=${DB_PORT:-5432}
       - DB_DATABASE=${DB_DATABASE:-db_bood4ll}
       - DB_USERNAME=${DB_USERNAME:-postgres}
       - DB_PASSWORD=${DB_PASSWORD:-admin}
-      - MAIL_HOST=${MAIL_HOST}
-      - MAIL_PORT=${MAIL_PORT}
-      - MAIL_FROM_ADDRESS=${MAIL_FROM_ADDRESS}
-      - MAIL_FROM_NAME=${MAIL_FROM_NAME}
+
+      - CACHE_DRIVER=${CACHE_DRIVER:-redis}
+      - SESSION_DRIVER=${SESSION_DRIVER:-redis}
+      - SESSION_LIFETIME=${SESSION_LIFETIME:-120}
+
+      - REDIS_HOST=${REDIS_HOST:-redis}
+      # - REDIS_PASSWORD=${REDIS_PASSWORD:-null}
+      - REDIS_PORT=${REDIS_PORT:-6379}
+
+      - MAIL_HOST=${MAIL_HOST:-mailpit}
+      - MAIL_PORT=${MAIL_PORT:-1025}
+      - MAIL_FROM_ADDRESS=${MAIL_FROM_ADDRESS:-"hello@example.com"}
+      - MAIL_FROM_NAME=${MAIL_FROM_NAME:-"Bood4ll"}
 
     depends_on:
       - postgres
@@ -49,7 +59,7 @@ services:
     environment:
       POSTGRES_DB: ${DB_DATABASE:-postgres}
       POSTGRES_USER: ${DB_USERNAME:-postgres}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_PASSWORD: ${DB_PASSWORD-admin}
     command: -p ${DB_PORT:-5432}
 
   pgadmin:
@@ -57,9 +67,25 @@ services:
     image: dpage/pgadmin4
     entrypoint: >
       /bin/sh -c "
-        cp -f /pgadmin4/pgpass /var/lib/pgadmin/;
+        echo '
+          {
+            \"Servers\": {
+              \"1\": {
+                \"Name\": \"${APP_NAME:-Bood4ll}\",
+                \"Group\": \"Servers\",
+                \"Host\": \"${DB_HOST:-postgres}\",
+                \"Port\": ${DB_PORT:-5432},
+                \"MaintenanceDB\": \"postgres\",
+                \"Username\": \"${DB_USERNAME:-postgres}\",
+                \"PassFile\": \"/var/lib/pgadmin/pgpass\",
+                \"SSLMode\": \"prefer\"
+              }
+            }
+          }
+        ' > /var/lib/pgadmin/servers;
+        echo '${DB_HOST:-postgres}:${DB_PORT:-5432}:*:${DB_USERNAME:-postgres}:${DB_PASSWORD}' > /var/lib/pgadmin/pgpass;
         chmod 600 /var/lib/pgadmin/pgpass;
-        chown pgadmin:pgadmin /var/lib/pgadmin/pgpass;
+        chown pgadmin /var/lib/pgadmin/pgpass;
         /entrypoint.sh
       "
     restart: always  
@@ -80,6 +106,35 @@ services:
       GUNICORN_ACCESS_LOGFILE: '/dev/null'
     depends_on:
       - postgres
+
+  # pgadmin:
+  #   container_name: budal_pgadmin
+  #   image: dpage/pgadmin4
+  #   entrypoint: >
+  #     /bin/sh -c "
+  #       cp -f /pgadmin4/pgpass /var/lib/pgadmin/;
+  #       chmod 600 /var/lib/pgadmin/pgpass;
+  #       chown pgadmin:pgadmin /var/lib/pgadmin/pgpass;
+  #       /entrypoint.sh
+  #     "
+  #   restart: always  
+  #   networks:
+  #     - bood4ll_laravel_network
+  #   ports:
+  #     - ${PGADMIN_PORT:-5050}:80
+  #   volumes:
+  #     - ./docker/pgadmin/servers.json:/pgadmin4/servers.json
+  #     - ./docker/pgadmin/pgpass:/pgadmin4/pgpass
+  #     - pgadmin-volume:/var/lib/pgadmin
+  #   environment:
+  #     PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
+  #     PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+  #     PGADMIN_SERVER_JSON_FILE: '/var/lib/pgadmin/servers'
+  #     PGADMIN_CONFIG_SERVER_MODE: 'False'
+  #     PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: 'False'
+  #     GUNICORN_ACCESS_LOGFILE: '/dev/null'
+  #   depends_on:
+  #     - postgres
 
   redis:
     container_name: budal_redis
@@ -117,10 +172,10 @@ services:
     networks:
       - bood4ll_laravel_network
     ports:
-      - ${MAIL_PORT}:1025
+      - ${MAIL_PORT:-1025}:1025
       - ${MAILSERVER_PORT:-7070}:8025
     # environment:
-    #   - MH_SMTP_BIND_ADDR=0.0.0.0:${MAIL_PORT}
+    #   - MH_SMTP_BIND_ADDR=0.0.0.0:${MAIL_PORT:-1025}
 
 networks:
   bood4ll_laravel_network:
