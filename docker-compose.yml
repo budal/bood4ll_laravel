@@ -16,9 +16,8 @@ services:
       - "80:8000"
       - "5173:5173"
     volumes:
-      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf
-      - ./docker/nginx/sites:/etc/nginx/sites-available
       - ./app:${APPDIR:-/var/www}
+      - ./app/.env.example:${APPDIR:-/var/www}/.env
       - web-nodemodules-volume:${APPDIR:-/var/www}/node_modules
       - web-vendor-volume:${APPDIR:-/var/www}/vendor
     environment:
@@ -34,16 +33,6 @@ services:
       - MAIL_FROM_ADDRESS=${MAIL_FROM_ADDRESS}
       - MAIL_FROM_NAME=${MAIL_FROM_NAME}
 
-    command: >
-        bash -c "
-          chmod -R 777 storage
-          cp .env.example .env
-          composer install
-          php artisan key:generate
-          php artisan migrate --seed
-          npm install
-          /usr/bin/supervisord -c /etc/supervisor/supervisord.conf
-        "
     depends_on:
       - postgres
   
@@ -63,48 +52,34 @@ services:
       POSTGRES_PASSWORD: ${DB_PASSWORD}
     command: -p ${DB_PORT:-5432}
 
-  # pgadmin:
-  #   container_name: budal_pgadmin
-  #   image: dpage/pgadmin4
-  #   entrypoint: >
-  #     /bin/sh -c "
-  #       echo '
-  #         {
-  #           \"Servers\": {
-  #             \"1\": {
-  #               \"Name\": \"${APP_NAME}\",
-  #               \"Group\": \"Servers\",
-  #               \"Host\": \"${DB_HOST:-postgres}\",
-  #               \"Port\": ${DB_PORT:-5432},
-  #               \"MaintenanceDB\": \"postgres\",
-  #               \"Username\": \"${DB_USERNAME:-postgres}\",
-  #               \"PassFile\": \"/var/lib/pgadmin/pgpass\",
-  #               \"SSLMode\": \"prefer\"
-  #             }
-  #           }
-  #         }
-  #       ' > /var/lib/pgadmin/servers;
-  #       echo '${DB_HOST:-postgres}:${DB_PORT:-5432}:*:${DB_USERNAME:-postgres}:${DB_PASSWORD}' > /var/lib/pgadmin/pgpass;
-  #       chmod 600 /var/lib/pgadmin/pgpass;
-  #       chown pgadmin /var/lib/pgadmin/pgpass;
-  #       /entrypoint.sh
-  #     "
-  #   restart: always  
-  #   networks:
-  #     - bood4ll_laravel_network
-  #   ports:
-  #     - ${PGADMIN_PORT:-5050}:80
-  #   volumes:
-  #     - pgadmin-volume:/var/lib/pgadmin
-  #   environment:
-  #     PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
-  #     PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
-  #     PGADMIN_SERVER_JSON_FILE: '/var/lib/pgadmin/servers'
-  #     PGADMIN_CONFIG_SERVER_MODE: 'False'
-  #     PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: 'False'
-  #     GUNICORN_ACCESS_LOGFILE: '/dev/null'
-  #   depends_on:
-  #     - postgres
+  pgadmin:
+    container_name: budal_pgadmin
+    image: dpage/pgadmin4
+    entrypoint: >
+      /bin/sh -c "
+        cp -f /pgadmin4/pgpass /var/lib/pgadmin/;
+        chmod 600 /var/lib/pgadmin/pgpass;
+        chown pgadmin:pgadmin /var/lib/pgadmin/pgpass;
+        /entrypoint.sh
+      "
+    restart: always  
+    networks:
+      - bood4ll_laravel_network
+    ports:
+      - ${PGADMIN_PORT:-5050}:80
+    volumes:
+      - ./docker/pgadmin/servers.json:/pgadmin4/servers.json
+      - ./docker/pgadmin/pgpass:/pgadmin4/pgpass
+      - pgadmin-volume:/var/lib/pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+      PGADMIN_SERVER_JSON_FILE: '/var/lib/pgadmin/servers'
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: 'False'
+      GUNICORN_ACCESS_LOGFILE: '/dev/null'
+    depends_on:
+      - postgres
 
   redis:
     container_name: budal_redis

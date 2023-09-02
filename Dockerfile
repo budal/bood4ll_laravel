@@ -35,8 +35,8 @@ RUN cp /usr/local/etc/php/php.ini-production /usr/local/etc/php/php.ini
 
 RUN apt install -y nginx
 
-ARG USER=bood4ll
-ARG UID=1000
+COPY ./docker/nginx/nginx.conf /etc/nginx/nginx.conf
+COPY ./docker/nginx/sites /etc/nginx/sites-available
 
 RUN useradd -G www-data,root -u $UID -d /home/${USER} ${USER}
 RUN mkdir -p /home/${USER}/.composer && \
@@ -49,7 +49,22 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 RUN curl -fsSL https://deb.nodesource.com/setup_current.x | bash -
 RUN apt install -y nodejs
 
-RUN chmod 755 -R /var/www
-RUN chown -R www-data: /var/www
-
 WORKDIR ${APPDIR}
+
+RUN chmod 775 -R .
+RUN chown -R www-data:${USER} .
+
+COPY --chown=www-data:${USER} ./app .
+
+RUN chmod 777 -R ./bootstrap/cache
+
+RUN composer install
+RUN php artisan key:generate
+
+RUN npm install
+
+COPY ./run.sh /tmp    
+RUN chmod +x /tmp/run.sh
+ENTRYPOINT ["/tmp/run.sh"]
+
+# USER ${USER}

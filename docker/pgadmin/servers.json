@@ -1,0 +1,14 @@
+{
+  "Servers": {
+    "1": {
+      "Name": "${APP_NAME}",
+      "Group": "Servers",
+      "Host": "${DB_HOST:-postgres}",
+      "Port": "${DB_PORT:-5432}",
+      "MaintenanceDB": "postgres",
+      "Username": "${DB_USERNAME:-postgres}",
+      "PassFile": "/var/lib/pgadmin/pgpass",
+      "SSLMode": "prefer"
+    }
+  }
+}
