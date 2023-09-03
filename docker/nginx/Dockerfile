@@ -23,7 +23,7 @@ RUN curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg -
 
 RUN echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_${NODE_MAJOR}.x nodistro main" |  tee /etc/apt/sources.list.d/nodesource.list
 
-RUN  apt update
+RUN apt update
 
 RUN apt install -y \
     nodejs \
@@ -56,16 +56,15 @@ COPY ./docker/nginx/sites /etc/nginx/sites-available
 COPY ./docker/nginx/run.sh /tmp    
 RUN chmod +x /tmp/run.sh
 
-WORKDIR ${APPDIR}
-
+RUN chmod 777 -R /var/run
 RUN chmod 777 -R /var/log/supervisor
 
-RUN chmod 775 -R .
+WORKDIR ${APPDIR}
+
+COPY ./app/.env.example ./.env
+COPY ./app .
+
 RUN chown -R ${USER}:${USER} .
-
-COPY --chown=${USER}:${USER} ./app .
-
-RUN chmod 777 -R ./bootstrap/cache
 
 USER ${USER}
 

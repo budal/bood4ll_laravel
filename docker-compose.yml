@@ -1,6 +1,7 @@
 version: "3.9"
 services:
   web:
+    container_name: budal_web
     build: 
       context: .
       dockerfile: ./docker/nginx/Dockerfile
@@ -8,20 +9,26 @@ services:
         - UID=${UID:-1000}
         - USER=${USER:-laravel}
         - APPDIR=${APPDIR:-/var/www}
-    restart: always
-    container_name: budal_web
+    restart: unless-stopped
     networks:
-      - bood4ll_laravel_network
+      - budal_laravel_network
     ports:
       - "80:8000"
       - "5173:5173"
     volumes:
-      - ./app:${APPDIR:-/var/www}
       - ./app/.env.example:${APPDIR:-/var/www}/.env
+      - ./app:${APPDIR:-/var/www}
       - web-nodemodules-volume:${APPDIR:-/var/www}/node_modules
       - web-vendor-volume:${APPDIR:-/var/www}/vendor
     environment:
       - APP_NAME=${APP_NAME:-Bood4ll}
+      - APP_ENV=${APP_ENV:-local}
+      - APP_DEBUG=${APP_DEBUG:-true}
+      - APP_URL=${APP_URL:-http://localhost}
+
+      - LOG_CHANNEL=daily
+      - LOG_DEPRECATIONS_CHANNEL=null
+      - LOG_LEVEL=debug
 
       - DB_CONNECTION=${DB_CONNECTION:-pgsql}
       - DB_HOST=${DB_HOST:-postgres}
@@ -30,44 +37,34 @@ services:
       - DB_USERNAME=${DB_USERNAME:-postgres}
       - DB_PASSWORD=${DB_PASSWORD:-admin}
 
-      - CACHE_DRIVER=${CACHE_DRIVER:-redis}
-      - SESSION_DRIVER=${SESSION_DRIVER:-redis}
-      - SESSION_LIFETIME=${SESSION_LIFETIME:-120}
+      - BROADCAST_DRIVER=log
+      - CACHE_DRIVER=redis
+      - FILESYSTEM_DISK=local
+      - QUEUE_CONNECTION=database
+      - SESSION_DRIVER=redis
+      - SESSION_LIFETIME=120
 
       - REDIS_HOST=${REDIS_HOST:-redis}
-      # - REDIS_PASSWORD=${REDIS_PASSWORD:-null}
+      - REDIS_PASSWORD=${REDIS_PASSWORD:-null}
       - REDIS_PORT=${REDIS_PORT:-6379}
 
       - MAIL_HOST=${MAIL_HOST:-mailpit}
       - MAIL_PORT=${MAIL_PORT:-1025}
+      - MAIL_USERNAME=${MAIL_USERNAME:-null}
+      - MAIL_PASSWORD=${MAIL_PASSWORD:-null}
+      - MAIL_ENCRYPTION=${MAIL_ENCRYPTION:-null}
       - MAIL_FROM_ADDRESS=${MAIL_FROM_ADDRESS:-"hello@example.com"}
       - MAIL_FROM_NAME=${MAIL_FROM_NAME:-"Bood4ll"}
-
     depends_on:
       - postgres
-
-  npm:
-    image: node:alpine
-    container_name: npm
-    volumes:
-      - ./app:${APPDIR:-/var/www}
-      - ./app/.env.example:${APPDIR:-/var/www}/.env
-    ports:
-      - 3000:3000
-      - 3001:3001
-    working_dir: ${APPDIR:-/var/www}
-    profiles: ["npm"]
-    entrypoint: ['npm']
-    networks:
-      - bood4ll_laravel_network
-
+      - redis
 
   postgres:
     container_name: budal_postgres
     image: postgres:alpine
-    restart: always
+    restart: unless-stopped
     networks:
-      - bood4ll_laravel_network
+      - budal_laravel_network
     ports:
       - ${DB_PORT:-5432}:${DB_PORT:-5432}
     volumes:
@@ -104,9 +101,9 @@ services:
         chown pgadmin /var/lib/pgadmin/pgpass;
         /entrypoint.sh
       "
-    restart: always  
+    restart: unless-stopped  
     networks:
-      - bood4ll_laravel_network
+      - budal_laravel_network
     ports:
       - ${PGADMIN_PORT:-5050}:80
     volumes:
@@ -135,7 +132,7 @@ services:
   #     "
   #   restart: always  
   #   networks:
-  #     - bood4ll_laravel_network
+  #     - budal_laravel_network
   #   ports:
   #     - ${PGADMIN_PORT:-5050}:80
   #   volumes:
@@ -155,46 +152,42 @@ services:
   redis:
     container_name: budal_redis
     image: redis:alpine
-    restart: always
+    restart: unless-stopped
     networks:
-      - bood4ll_laravel_network
+      - budal_laravel_network
     ports:
       - ${REDIS_PORT:-6379}:${REDIS_PORT:-6379}
     volumes:
       - redis-volume:/data
-    command: /bin/sh -c "redis-server --port ${REDIS_PORT:-6379}"
-    # command: /bin/sh -c "redis-server --port ${REDIS_PORT:-6379} --requirepass ${REDIS_PASSWORD}"
+    command: /bin/sh -c "redis-server --port ${REDIS_PORT:-6379} --requirepass ${REDIS_PASSWORD:-null}"
 
   redis-commander:
     container_name: budal_redis-commander
     image: rediscommander/redis-commander
     restart: unless-stopped
     networks:
-      - bood4ll_laravel_network
+      - budal_laravel_network
     ports:
       - ${REDIS_COMANDER_PORT:-6060}:8081
     environment:
       REDIS_HOST: ${REDIS_HOST:-redis}
       REDIS_PORT: ${REDIS_PORT:-6379}
-      # REDIS_PASSWORD: ${REDIS_PASSWORD}
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-null}
     depends_on:
       - redis
 
   mailpit:
     container_name: budal_mailpit
     image: axllent/mailpit:latest
-    # entrypoint: ["/bin/sh", "-c", "MailHog &>/dev/null"]
-    restart: always
+    restart: unless-stopped
     networks:
-      - bood4ll_laravel_network
+      - budal_laravel_network
     ports:
       - ${MAIL_PORT:-1025}:1025
       - ${MAILSERVER_PORT:-7070}:8025
-    # environment:
-    #   - MH_SMTP_BIND_ADDR=0.0.0.0:${MAIL_PORT:-1025}
 
 networks:
-  bood4ll_laravel_network:
+  budal_laravel_network:
     driver: bridge
 
 volumes:
