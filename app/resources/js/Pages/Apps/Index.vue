@@ -9,9 +9,24 @@ defineProps<{
     status?: string;
 }>();
 
-const apps = {
-    "/users": "Users"
-}
+const items = [
+    {
+        title: "Users",
+        route: "apps.users",
+        description: "Manage users informations and authorizations",
+    },
+    {
+        title: "Roles",
+        route: "apps.users",
+        description: "Define roles for access to specific resources",
+    },
+    {
+        title: "Units",
+        route: "apps.users",
+        description: "Manage users informations and authorizations",
+    },
+
+]
 </script>
 
 <template>
@@ -26,8 +41,8 @@ const apps = {
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
                 <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
                     <section>
-                        <div class="grid grid-cols-3 gap-5">
-                            <Button title="Users" />
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
+                            <Button v-for="item in items" :title="item.title" :description="item.description" :href="route(item.route)" />
                         </div>
                     </section>
                 </div>

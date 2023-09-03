@@ -5,6 +5,7 @@ import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
+import TailwindIndicator from '@/Components/TailwindIndicator.vue';
 import { Link } from '@inertiajs/vue3';
 
 const showingNavigationDropdown = ref(false);
@@ -26,19 +27,18 @@ const showingNavigationDropdown = ref(false);
                                     />
                                 </Link>
                             </div>
-
                             <!-- Navigation Links -->
                             <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                                <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
+                                <NavLink :href="route('dashboard')" :active="route(route().current()).includes(route('dashboard'))">
                                     Dashboard
                                 </NavLink>
-                                <NavLink :href="route('apps')" :active="route().current('apps')">
+                                <NavLink :href="route('apps')" :active="route(route().current()).includes(route('apps'))">
                                     Apps
                                 </NavLink>
-                                <NavLink :href="route('reports')" :active="route().current('reports')">
+                                <NavLink :href="route('reports')" :active="route(route().current()).includes(route('reports'))">
                                     Reports
                                 </NavLink>
-                                <NavLink :href="route('help')" :active="route().current('help')">
+                                <NavLink :href="route('help')" :active="route(route().current()).includes(route('help'))">
                                     Help
                                 </NavLink>
                             </div>
@@ -76,6 +76,7 @@ const showingNavigationDropdown = ref(false);
                                         <DropdownLink :href="route('profile.edit')"> Profile </DropdownLink>
                                         <DropdownLink :href="route('messages')"> Messages </DropdownLink>
                                         <DropdownLink :href="route('schedule')"> Schedule </DropdownLink>
+                                        <DropdownLink :href="route('settings')"> Settings </DropdownLink>
                                         <DropdownLink :href="route('logout')" method="post" as="button">
                                             Log Out
                                         </DropdownLink>
@@ -123,16 +124,16 @@ const showingNavigationDropdown = ref(false);
                     class="sm:hidden"
                 >
                     <div class="pt-2 pb-3 space-y-1">
-                        <ResponsiveNavLink :href="route('dashboard')" :active="route().current('dashboard')">
+                        <ResponsiveNavLink :href="route('dashboard')" :active="route(route().current()).includes(route('dashboard'))">
                             Dashboard
                         </ResponsiveNavLink>
-                        <ResponsiveNavLink :href="route('apps')" :active="route().current('apps')">
+                        <ResponsiveNavLink :href="route('apps')" :active="route(route().current()).includes(route('apps'))">
                             Apps
                         </ResponsiveNavLink>
-                        <ResponsiveNavLink :href="route('reports')" :active="route().current('reports')">
+                        <ResponsiveNavLink :href="route('reports')" :active="route(route().current()).includes(route('reports'))">
                             Reports
                         </ResponsiveNavLink>
-                        <ResponsiveNavLink :href="route('help')" :active="route().current('help')">
+                        <ResponsiveNavLink :href="route('help')" :active="route(route().current()).includes(route('help'))">
                             Help
                         </ResponsiveNavLink>
                     </div>
@@ -150,6 +151,7 @@ const showingNavigationDropdown = ref(false);
                             <ResponsiveNavLink :href="route('profile.edit')" :active="route().current('profile.edit')"> Profile </ResponsiveNavLink>
                             <ResponsiveNavLink :href="route('messages')" :active="route().current('messages')"> Messages </ResponsiveNavLink>
                             <ResponsiveNavLink :href="route('schedule')" :active="route().current('schedule')"> Schedule </ResponsiveNavLink>
+                            <ResponsiveNavLink :href="route('settings')" :active="route().current('settings')"> Settings </ResponsiveNavLink>
                             <ResponsiveNavLink :href="route('logout')" method="post" as="button">
                                 Log Out
                             </ResponsiveNavLink>
@@ -169,6 +171,7 @@ const showingNavigationDropdown = ref(false);
             <main>
                 <slot />
             </main>
+            <TailwindIndicator />
         </div>
     </div>
 </template>

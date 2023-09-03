@@ -41,6 +41,8 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/schedule', [ProfileController::class, 'edit'])->name('schedule');
     
+    Route::get('/settings', [ProfileController::class, 'edit'])->name('settings');
+    
 
     
     
@@ -49,7 +51,7 @@ Route::middleware('auth')->group(function () {
     Route::prefix('apps')->name('apps.')->group(function () {
         Route::middleware('verified')->group(function () {
             Route::controller(UsersController::class)->group(function () {
-                Route::get('/users', 'edit');
+                Route::get('/users', 'edit')->name('users');
             });
         });
     });
