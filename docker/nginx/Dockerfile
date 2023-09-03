@@ -58,6 +58,8 @@ RUN chmod +x /tmp/run.sh
 
 WORKDIR ${APPDIR}
 
+RUN chmod 777 -R /var/log/supervisor
+
 RUN chmod 775 -R .
 RUN chown -R ${USER}:${USER} .
 
@@ -73,7 +75,5 @@ RUN php artisan key:generate
 RUN npm install
 
 ENTRYPOINT ["/tmp/run.sh"]
-
-USER root
 
 CMD ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisor/supervisord.conf"]

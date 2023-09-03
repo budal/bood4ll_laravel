@@ -45,7 +45,23 @@ services:
 
     depends_on:
       - postgres
-  
+
+  npm:
+    image: node:alpine
+    container_name: npm
+    volumes:
+      - ./app:${APPDIR:-/var/www}
+      - ./app/.env.example:${APPDIR:-/var/www}/.env
+    ports:
+      - 3000:3000
+      - 3001:3001
+    working_dir: ${APPDIR:-/var/www}
+    profiles: ["npm"]
+    entrypoint: ['npm']
+    networks:
+      - bood4ll_laravel_network
+
+
   postgres:
     container_name: budal_postgres
     image: postgres:alpine
