@@ -61,7 +61,7 @@ RUN chmod 777 -R /var/log/supervisor
 
 WORKDIR ${APPDIR}
 
-COPY ./app/.env.example ./.env
+COPY ./app/.env.example .env
 COPY ./app .
 
 RUN chown -R ${USER}:${USER} .

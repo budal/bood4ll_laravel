@@ -1,6 +1,9 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\AppsController;
+use App\Http\Controllers\Authorization\UsersController;
+
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -33,6 +36,29 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::get('/messages', [ProfileController::class, 'edit'])->name('messages');
+
+    Route::get('/schedule', [ProfileController::class, 'edit'])->name('schedule');
+    
+
+    
+    
+    Route::get('/apps', [AppsController::class, 'index'])->name('apps');
+    
+    Route::prefix('apps')->name('apps.')->group(function () {
+        Route::middleware('verified')->group(function () {
+            Route::controller(UsersController::class)->group(function () {
+                Route::get('/users', 'edit');
+            });
+        });
+    });
+
+
+    Route::get('/reports', [ProfileController::class, 'edit'])->name('reports');
+
+    Route::get('/help', [ProfileController::class, 'edit'])->name('help');
 });
+
 
 require __DIR__.'/auth.php';
