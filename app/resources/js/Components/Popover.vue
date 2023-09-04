@@ -45,7 +45,7 @@ const classes = computed(() =>
           <div
             class="overflow-hidden rounded-lg shadow-lg ring-1 ring-black ring-opacity-5"
           >
-            <div class="relative grid gap-8 bg-white dark:bg-gray-800 p-7 lg:grid-cols-2">
+            <div class="grid gap-8 bg-white dark:bg-gray-800 p-7 lg:grid-cols-2">
               <Link
                 v-for="item in items"
                 :key="item.name"

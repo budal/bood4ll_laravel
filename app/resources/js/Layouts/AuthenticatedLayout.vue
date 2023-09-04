@@ -63,9 +63,9 @@ const items = [
                                 <NavLinkPopover :items=items :active="route(route().current()).includes(route('apps'))">
                                     Apps
                                 </NavLinkPopover>
-                                <NavLink :href="route('reports')" :active="route(route().current()).includes(route('reports'))">
+                                <NavLinkPopover :items=items :active="route(route().current()).includes(route('reports'))">
                                     Reports
-                                </NavLink>
+                                </NavLinkPopover>
                                 <NavLink :href="route('help')" :active="route(route().current()).includes(route('help'))">
                                     Help
                                 </NavLink>
