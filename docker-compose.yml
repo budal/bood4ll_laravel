@@ -70,7 +70,7 @@ services:
     volumes:
       - postgres-volume:/var/lib/postgresql/data
     environment:
-      POSTGRES_DB: ${DB_DATABASE:-postgres}
+      POSTGRES_DB: ${DB_DATABASE:-db_bood4ll}
       POSTGRES_USER: ${DB_USERNAME:-bood4ll}
       POSTGRES_PASSWORD: ${DB_PASSWORD-admin}
     command: -p ${DB_PORT:-5432}
