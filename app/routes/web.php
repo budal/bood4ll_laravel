@@ -51,7 +51,7 @@ Route::middleware('auth')->group(function () {
     Route::prefix('apps')->name('apps.')->group(function () {
         Route::middleware('verified')->group(function () {
             Route::controller(UsersController::class)->group(function () {
-                Route::get('/users', 'edit')->name('users');
+                Route::get('/users', 'index')->name('users');
             });
         });
     });

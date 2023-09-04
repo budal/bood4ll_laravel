@@ -73,13 +73,27 @@ const showingNavigationDropdown = ref(false);
                                     </template>
 
                                     <template #content>
-                                        <DropdownLink :href="route('profile.edit')"> Profile </DropdownLink>
-                                        <DropdownLink :href="route('messages')"> Messages </DropdownLink>
-                                        <DropdownLink :href="route('schedule')"> Schedule </DropdownLink>
-                                        <DropdownLink :href="route('settings')"> Settings </DropdownLink>
-                                        <DropdownLink :href="route('logout')" method="post" as="button">
-                                            Log Out
-                                        </DropdownLink>
+                                        <div class="divide-y divide-gray-100 dark:divide-slate-600">
+                                            <div class="py-1" role="none">
+                                                <DropdownLink :href="route('profile.edit')"> Profile </DropdownLink>
+                                                <DropdownLink :href="route('settings')"> Settings </DropdownLink>
+                                            </div>
+                                            <div class="py-1" role="none">
+                                                <DropdownLink :href="route('messages')"> Messages </DropdownLink>
+                                                <DropdownLink :href="route('schedule')"> Schedule </DropdownLink>
+                                            </div>
+                                            <div class="py-1" role="none">
+                                                <DropdownLink :href="route('logout')" method="post" as="button">
+                                                    Log Out
+                                                </DropdownLink>
+                                            </div>
+                                        </div>
+
+
+
+
+
+
                                     </template>
                                 </Dropdown>
                             </div>
@@ -149,9 +163,9 @@ const showingNavigationDropdown = ref(false);
 
                         <div class="mt-3 space-y-1">
                             <ResponsiveNavLink :href="route('profile.edit')" :active="route().current('profile.edit')"> Profile </ResponsiveNavLink>
+                            <ResponsiveNavLink :href="route('settings')" :active="route().current('settings')"> Settings </ResponsiveNavLink>
                             <ResponsiveNavLink :href="route('messages')" :active="route().current('messages')"> Messages </ResponsiveNavLink>
                             <ResponsiveNavLink :href="route('schedule')" :active="route().current('schedule')"> Schedule </ResponsiveNavLink>
-                            <ResponsiveNavLink :href="route('settings')" :active="route().current('settings')"> Settings </ResponsiveNavLink>
                             <ResponsiveNavLink :href="route('logout')" method="post" as="button">
                                 Log Out
                             </ResponsiveNavLink>

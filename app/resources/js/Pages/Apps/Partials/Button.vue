@@ -10,12 +10,9 @@ defineProps<{
 
 <template>
     <Link :href=href>
-        <div
-            class="px-4 py-5 bg-gray-800 dark:bg-gray-200 border border-transparent rounded-md font-semibold text-xs text-white dark:text-gray-800 tracking-widest hover:bg-gray-700 dark:hover:bg-white focus:bg-gray-700 dark:focus:bg-white active:bg-gray-900 dark:active:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150"
-        >
-            <h2 class="font-semibold text-xl text-white dark:text-gray-800 leading-tight">{{ title }}</h2>
-            <p class="mt-1 text-sm text-gray-200 dark:text-gray-500">{{ description }}</p>
+        <div class="h-full bg-white hover:bg-gray-200 dark:bg-slate-900 hover:dark:bg-slate-700 rounded-lg px-6 py-8 ring-1 ring-slate-900/5 shadow-xl transition ease-in-out duration-700">
+            <h3 class="text-slate-900 dark:text-white text-base font-medium tracking-tight">{{ title }}</h3>
+            <p class="text-slate-500 dark:text-slate-400 mt-2 text-sm">{{ description }}</p>
         </div>
     </Link>
-
 </template>

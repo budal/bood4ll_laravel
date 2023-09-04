@@ -19,7 +19,7 @@ class UsersController extends Controller
      */
     public function index(Request $request): Response
     {
-        return Inertia::render('Profile/Edit', [
+        return Inertia::render('Users/Index', [
             'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
             'status' => session('status'),
         ]);
