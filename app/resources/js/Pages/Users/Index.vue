@@ -66,11 +66,11 @@ const items = [
 </script>
 
 <template>
-    <Head title="Users" />
+    <Head title="Users Management" />
 
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Users</h2>
+            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Users Management</h2>
         </template>
 
         <div class="py-12">

@@ -100,7 +100,7 @@ const items = [
                                     </template>
 
                                     <template #content>
-                                        <div class="divide-y divide-gray-100 dark:divide-slate-600">
+                                        <div class="divide-y divide-gray-100 dark:divide-gray-600">
                                             <div class="py-1" role="none">
                                                 <DropdownLink :href="route('profile.edit')"> Profile </DropdownLink>
                                                 <DropdownLink :href="route('settings')"> Settings </DropdownLink>
