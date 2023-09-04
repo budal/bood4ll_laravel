@@ -8,7 +8,7 @@ defineProps<{
 
 <template>
   <ul role="list" class="mt-2 divide-y divide-gray-100 dark:divide-gray-600">
-    <li v-for="item in items" :key="item.email" class="flex justify-between gap-x-6 py-5">
+    <li v-for="item in items" :key="item.email" class="flex justify-between gap-x-6 px-3 py-3 hover:bg-gray-50 dark:hover:bg-gray-700">
       <div class="flex min-w-0 gap-x-4">
         <img class="h-12 w-12 flex-none rounded-full bg-gray-50 dark:bg-gray-600" :src="item.imageUrl" alt="" />
         <div class="min-w-0 flex-auto">
