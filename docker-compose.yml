@@ -34,7 +34,7 @@ services:
       - DB_HOST=${DB_HOST:-postgres}
       - DB_PORT=${DB_PORT:-5432}
       - DB_DATABASE=${DB_DATABASE:-db_bood4ll}
-      - DB_USERNAME=${DB_USERNAME:-postgres}
+      - DB_USERNAME=${DB_USERNAME:-bood4ll}
       - DB_PASSWORD=${DB_PASSWORD:-admin}
 
       - BROADCAST_DRIVER=log
@@ -45,7 +45,7 @@ services:
       - SESSION_LIFETIME=120
 
       - REDIS_HOST=${REDIS_HOST:-redis}
-      - REDIS_PASSWORD=${REDIS_PASSWORD:-null}
+      - REDIS_PASSWORD=${REDIS_PASSWORD:-redis}
       - REDIS_PORT=${REDIS_PORT:-6379}
 
       - MAIL_HOST=${MAIL_HOST:-mailpit}
@@ -71,7 +71,7 @@ services:
       - postgres-volume:/var/lib/postgresql/data
     environment:
       POSTGRES_DB: ${DB_DATABASE:-postgres}
-      POSTGRES_USER: ${DB_USERNAME:-postgres}
+      POSTGRES_USER: ${DB_USERNAME:-bood4ll}
       POSTGRES_PASSWORD: ${DB_PASSWORD-admin}
     command: -p ${DB_PORT:-5432}
 
@@ -89,14 +89,14 @@ services:
                 \"Host\": \"${DB_HOST:-postgres}\",
                 \"Port\": ${DB_PORT:-5432},
                 \"MaintenanceDB\": \"postgres\",
-                \"Username\": \"${DB_USERNAME:-postgres}\",
+                \"Username\": \"${DB_USERNAME:-bood4ll}\",
                 \"PassFile\": \"/var/lib/pgadmin/pgpass\",
                 \"SSLMode\": \"prefer\"
               }
             }
           }
         ' > /var/lib/pgadmin/servers;
-        echo '${DB_HOST:-postgres}:${DB_PORT:-5432}:*:${DB_USERNAME:-postgres}:${DB_PASSWORD}' > /var/lib/pgadmin/pgpass;
+        echo '${DB_HOST:-postgres}:${DB_PORT:-5432}:*:${DB_USERNAME:-bood4ll}:${DB_PASSWORD:-admin}' > /var/lib/pgadmin/pgpass;
         chmod 600 /var/lib/pgadmin/pgpass;
         chown pgadmin /var/lib/pgadmin/pgpass;
         /entrypoint.sh
@@ -159,7 +159,7 @@ services:
       - ${REDIS_PORT:-6379}:${REDIS_PORT:-6379}
     volumes:
       - redis-volume:/data
-    command: /bin/sh -c "redis-server --port ${REDIS_PORT:-6379} --requirepass ${REDIS_PASSWORD:-null}"
+    command: /bin/sh -c "redis-server --port ${REDIS_PORT:-6379} --requirepass ${REDIS_PASSWORD:-redis}"
 
   redis-commander:
     container_name: budal_redis-commander
@@ -172,7 +172,7 @@ services:
     environment:
       REDIS_HOST: ${REDIS_HOST:-redis}
       REDIS_PORT: ${REDIS_PORT:-6379}
-      REDIS_PASSWORD: ${REDIS_PASSWORD:-null}
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-redis}
     depends_on:
       - redis
 
