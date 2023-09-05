@@ -2,7 +2,7 @@
 import Table from '@/Components/Table.vue';
 
 defineProps<{
-    items?: object;
+    items: any;
 }>();
 </script>
 

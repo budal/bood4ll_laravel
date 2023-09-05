@@ -20,8 +20,21 @@ class UsersController extends Controller
     public function index(Request $request): Response
     {
         return Inertia::render('Users/Index', [
-            'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
-            'status' => session('status'),
+            'filters' => $request->all('search', 'role', 'trashed'),
+
+
+            'items' => Auth::user()->users()
+                ->orderByName()
+                // ->filter(Request::only('search', 'role', 'trashed'))
+                ->get()
+                ->transform(fn ($item) => [
+                    'id' => $item->id,
+                    'name' => $item->name,
+                    'email' => $item->email,
+                    // 'owner' => $item->owner,
+                    // 'photo' => $item->photo_path ? URL::route('image', ['path' => $item->photo_path, 'w' => 40, 'h' => 40, 'fit' => 'crop']) : null,
+                    'deleted_at' => $item->deleted_at,
+                ]),
         ]);
     }
 

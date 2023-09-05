@@ -41,6 +41,7 @@ return new class extends Migration
             $table->json('dependents')->nullable();
             $table->rememberToken();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

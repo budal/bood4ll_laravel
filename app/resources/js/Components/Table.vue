@@ -2,7 +2,7 @@
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/vue/20/solid'
 
 defineProps<{
-    items: object;
+    items: any;
 }>();
 </script>
 
@@ -29,8 +29,11 @@ defineProps<{
         </div>
       </div>
     </li>
+    <li v-if="items.length === 0" class="flex justify-between gap-x-6 px-3 py-3">
+      <p class="text-sm leading-6 text-gray-400 dark:text-gray-600">No items to show.</p>
+    </li>
   </ul>
-  <div class="flex items-center justify-between border-t border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 px-4 py-3 sm:px-6">
+  <div v-if="items.length > 0" class="flex items-center justify-between bg-white dark:bg-gray-800 px-4 py-3 sm:px-6">
     <div class="flex flex-1 justify-between sm:hidden">
       <a href="#" class="relative inline-flex items-center rounded-md border border-gray-300 dark:border-gray-700 bg-gray-800 dark:bg-gray-200 px-4 py-2 text-sm uppercase font-medium text-white dark:text-gray-800 hover:bg-gray-700 dark:hover:bg-white focus:bg-gray-700 dark:focus:bg-white active:bg-gray-900 dark:active:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">Previous</a>
       <a href="#" class="relative ml-3 inline-flex items-center rounded-md border border-gray-300 dark:border-gray-700 bg-gray-800 dark:bg-gray-200 px-4 py-2 text-sm uppercase font-medium text-white dark:text-gray-800 hover:bg-gray-700 dark:hover:bg-white focus:bg-gray-700 dark:focus:bg-white active:bg-gray-900 dark:active:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">Next</a>
