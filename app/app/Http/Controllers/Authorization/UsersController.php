@@ -21,10 +21,11 @@ class UsersController extends Controller
      */
     public function index(Request $request): Response
     {
+        print_r($request->all('search'));
         return Inertia::render('Users/Index', [
             'filters' => $request->all('search'),
 
-            'items' => User::orderByName()
+            'items' => User::orderBy('name')
                 ->filter($request->only('search'))
                 ->get()
         ]);

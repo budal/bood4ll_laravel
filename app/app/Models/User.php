@@ -61,23 +61,23 @@ class User extends Authenticatable
     //     return $this->first_name.' '.$this->last_name;
     // }
 
-    public function setPasswordAttribute($password)
-    {
-        $this->attributes['password'] = Hash::needsRehash($password) ? Hash::make($password) : $password;
-    }
+    // public function setPasswordAttribute($password)
+    // {
+    //     $this->attributes['password'] = Hash::needsRehash($password) ? Hash::make($password) : $password;
+    // }
 
-    public function scopeOrderByName($query)
-    {
-        $query->orderBy('name');
-    }
+    // public function scopeOrderByName($query)
+    // {
+    //     $query->orderBy('name');
+    // }
 
-    public function scopeWhereRole($query, $role)
-    {
-        switch ($role) {
-            case 'user': return $query->where('owner', false);
-            case 'owner': return $query->where('owner', true);
-        }
-    }
+    // public function scopeWhereRole($query, $role)
+    // {
+    //     switch ($role) {
+    //         case 'user': return $query->where('owner', false);
+    //         case 'owner': return $query->where('owner', true);
+    //     }
+    // }
 
     public function scopeFilter($query, array $filters)
     {
