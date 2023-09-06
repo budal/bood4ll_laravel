@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, watch, onBeforeUnmount } from 'vue'
-import { router, Link, useForm } from '@inertiajs/vue3';
+import { router, Link } from '@inertiajs/vue3';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/vue/20/solid'
 import debounce from "lodash.debounce";
 import SearchInput from '@/Components/SearchInput.vue';
@@ -19,18 +19,13 @@ const debouncedWatch = debounce(() => {
       method: 'get',
       preserveState: true,
     })
-}, 1000);
+}, 300);
 
 watch(value, debouncedWatch);
 
 onBeforeUnmount(() => {
   debouncedWatch.cancel();
 })
-
-const form = useForm({
-    search: '',
-});
-
 </script>
 
 <template>
