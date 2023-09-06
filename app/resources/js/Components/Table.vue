@@ -14,7 +14,7 @@ const form = useForm({
 </script>
 
 <template>
-  <SearchInput placeholder="Search..." class="mt-3 " v-model="form.search" />
+  <SearchInput placeholder="Search..." class="mt-3 w-96" v-model="form.search" />
   <div>
     <ul role="list" class="mt-2 divide-y divide-gray-100 dark:divide-gray-600">
       <li v-for="item in items" :key="item.email" class="flex justify-between gap-x-6 px-3 py-3 hover:bg-gray-50 dark:hover:bg-gray-700">
