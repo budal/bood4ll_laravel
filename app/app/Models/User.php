@@ -22,6 +22,7 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'username',
         'email',
         'password',
     ];
@@ -56,36 +57,13 @@ class User extends Authenticatable
         return $this->where($field ?? 'id', $value)->withTrashed()->firstOrFail();
     }
 
-    // public function getNameAttribute()
-    // {
-    //     return $this->first_name.' '.$this->last_name;
-    // }
-
-    // public function setPasswordAttribute($password)
-    // {
-    //     $this->attributes['password'] = Hash::needsRehash($password) ? Hash::make($password) : $password;
-    // }
-
-    // public function scopeOrderByName($query)
-    // {
-    //     $query->orderBy('name');
-    // }
-
-    // public function scopeWhereRole($query, $role)
-    // {
-    //     switch ($role) {
-    //         case 'user': return $query->where('owner', false);
-    //         case 'owner': return $query->where('owner', true);
-    //     }
-    // }
-
     public function scopeFilter($query, array $filters)
     {
         $query->when($filters['search'] ?? null, function ($query, $search) {
             $query->where(function ($query) use ($search) {
-                $query->where('name', 'like', '%'.$search.'%')
-                    ->orWhere('username', 'like', '%'.$search.'%')
-                    ->orWhere('email', 'like', '%'.$search.'%');
+                $query->where('name', 'ilike', '%'.$search.'%')
+                    ->orWhere('username', 'ilike', '%'.$search.'%')
+                    ->orWhere('email', 'ilike', '%'.$search.'%');
             });
         // })->when($filters['role'] ?? null, function ($query, $role) {
         //     $query->whereRole($role);

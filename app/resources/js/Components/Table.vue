@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import { Link, useForm } from '@inertiajs/vue3';
+import { ref, watch, onBeforeUnmount } from 'vue'
+import { router, Link, useForm } from '@inertiajs/vue3';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/vue/20/solid'
+import debounce from "lodash.debounce";
 import SearchInput from '@/Components/SearchInput.vue';
 
 defineProps<{
@@ -8,14 +10,43 @@ defineProps<{
     items: any;
 }>();
 
+const value = ref("");
+
+const debouncedWatch = debounce(() => {
+    router.visit('http://localhost/apps/users?search='+value.value, {
+      method: 'get',
+      replace: false,
+      preserveState: true,
+      preserveScroll: false,
+      only: [],
+      headers: {},
+      errorBag: null,
+      forceFormData: false,
+      onCancelToken: cancelToken => {},
+      onCancel: () => {},
+      onBefore: visit => {},
+      onStart: visit => {},
+      onProgress: progress => {},
+      onSuccess: page => {},
+      onError: errors => {},
+      onFinish: visit => {},
+    })
+}, 1000);
+
+watch(value, debouncedWatch);
+
+onBeforeUnmount(() => {
+  debouncedWatch.cancel();
+})
+
 const form = useForm({
-    search: 'sss',
+    search: '',
 });
 
 </script>
 
 <template>
-  <SearchInput placeholder="Search..." class="mt-3 w-96" v-model="form.search" />
+  <SearchInput placeholder="Search..." class="mt-3 w-96" v-model="value" />
   <div>
     <ul role="list" class="mt-2 divide-y divide-gray-100 dark:divide-gray-600">
       <li v-for="item in items.data" :key="item.id" class="flex justify-between gap-x-6 px-3 py-3 hover:bg-gray-50 dark:hover:bg-gray-700">
@@ -23,7 +54,7 @@ const form = useForm({
           <img class="h-12 w-12 flex-none rounded-full bg-gray-50 dark:bg-gray-600" :src="item.imageUrl" alt="" />
           <div class="min-w-0 flex-auto">
             <p class="text-sm font-semibold leading-6 text-gray-900 dark:text-gray-100">{{ item.name }}</p>
-            <p class="mt-1 truncate text-xs leading-5 text-gray-600 dark:text-gray-400">{{ item.email }}</p>
+            <p class="mt-1 truncate text-xs leading-5 text-gray-600 dark:text-gray-400">{{ item.username }} / {{ item.email }}</p>
           </div>
         </div>
         <div class="hidden shrink-0 sm:flex sm:flex-col sm:items-end">

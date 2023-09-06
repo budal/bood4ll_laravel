@@ -25,9 +25,9 @@ class UsersController extends Controller
             'filters' => $request->all('search'),
 
             'items' => User::orderBy('name')
-                ->filter($request->only('search'))
+                ->filter($request->all('search'))
                 ->paginate(10)
-                ->appends($request->all('search'))
+                ->appends($request->all('search', 'active'))
         ]);
     }
 
