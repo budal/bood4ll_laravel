@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Inertia\Response;
 
+use App\Models\User;
+
 class UsersController extends Controller
 {
     /**
@@ -20,21 +22,11 @@ class UsersController extends Controller
     public function index(Request $request): Response
     {
         return Inertia::render('Users/Index', [
-            'filters' => $request->all('search', 'role', 'trashed'),
+            'filters' => $request->all('search'),
 
-
-            'items' => Auth::user()->users()
-                ->orderByName()
-                // ->filter(Request::only('search', 'role', 'trashed'))
+            'items' => User::orderByName()
+                ->filter($request->only('search'))
                 ->get()
-                ->transform(fn ($item) => [
-                    'id' => $item->id,
-                    'name' => $item->name,
-                    'email' => $item->email,
-                    // 'owner' => $item->owner,
-                    // 'photo' => $item->photo_path ? URL::route('image', ['path' => $item->photo_path, 'w' => 40, 'h' => 40, 'fit' => 'crop']) : null,
-                    'deleted_at' => $item->deleted_at,
-                ]),
         ]);
     }
 

@@ -11,9 +11,6 @@ defineProps<{
 </script>
 
 <template>
-  {{ 
-    console.log(items)
-  }}
     <Head title="Users Management" />
 
     <AuthenticatedLayout>
