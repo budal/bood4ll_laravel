@@ -12,24 +12,12 @@ defineProps<{
 
 const value = ref("");
 
+// console.log(filters)
+
 const debouncedWatch = debounce(() => {
     router.visit('http://localhost/apps/users?search='+value.value, {
       method: 'get',
-      replace: false,
       preserveState: true,
-      preserveScroll: false,
-      only: [],
-      headers: {},
-      errorBag: null,
-      forceFormData: false,
-      onCancelToken: cancelToken => {},
-      onCancel: () => {},
-      onBefore: visit => {},
-      onStart: visit => {},
-      onProgress: progress => {},
-      onSuccess: page => {},
-      onError: errors => {},
-      onFinish: visit => {},
     })
 }, 1000);
 
@@ -46,7 +34,7 @@ const form = useForm({
 </script>
 
 <template>
-  <SearchInput placeholder="Search..." class="mt-3 w-96" v-model="value" />
+  <SearchInput placeholder="Search..." class="mt-3 w-96" :value="filters.search" v-model="value" />
   <div>
     <ul role="list" class="mt-2 divide-y divide-gray-100 dark:divide-gray-600">
       <li v-for="item in items.data" :key="item.id" class="flex justify-between gap-x-6 px-3 py-3 hover:bg-gray-50 dark:hover:bg-gray-700">
