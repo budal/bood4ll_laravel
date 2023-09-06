@@ -21,7 +21,6 @@ class UsersController extends Controller
      */
     public function index(Request $request): Response
     {
-        print_r($request->all('search'));
         return Inertia::render('Users/Index', [
             'filters' => $request->all('search'),
 
