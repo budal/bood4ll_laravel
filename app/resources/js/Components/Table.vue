@@ -1,23 +1,24 @@
 <script setup lang="ts">
+import { Link, useForm } from '@inertiajs/vue3';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/vue/20/solid'
-import { useForm } from '@inertiajs/vue3';
 import SearchInput from '@/Components/SearchInput.vue';
-import TextInput from '@/Components/TextInput.vue';
 
 defineProps<{
+    filters: any;
     items: any;
 }>();
 
 const form = useForm({
-    search: '',
+    search: 'sss',
 });
+
 </script>
 
 <template>
   <SearchInput placeholder="Search..." class="mt-3 w-96" v-model="form.search" />
   <div>
     <ul role="list" class="mt-2 divide-y divide-gray-100 dark:divide-gray-600">
-      <li v-for="item in items" :key="item.email" class="flex justify-between gap-x-6 px-3 py-3 hover:bg-gray-50 dark:hover:bg-gray-700">
+      <li v-for="item in items.data" :key="item.id" class="flex justify-between gap-x-6 px-3 py-3 hover:bg-gray-50 dark:hover:bg-gray-700">
         <div class="flex min-w-0 gap-x-4">
           <img class="h-12 w-12 flex-none rounded-full bg-gray-50 dark:bg-gray-600" :src="item.imageUrl" alt="" />
           <div class="min-w-0 flex-auto">
@@ -38,54 +39,58 @@ const form = useForm({
           </div>
         </div>
       </li>
-      <li v-if="items.length === 0" class="flex justify-between gap-x-6 px-3 py-3">
+      <li v-if="items.data.length === 0" class="flex justify-between gap-x-6 px-3 py-3">
         <p class="text-sm leading-6 text-gray-400 dark:text-gray-600">No items to show.</p>
       </li>
     </ul>
-    <div v-if="items.length > 0" class="flex items-center justify-between bg-white dark:bg-gray-800 px-4 py-3 sm:px-6">
-      <div class="flex flex-1 justify-between sm:hidden">
-        <a href="#" class="relative inline-flex items-center rounded-md border border-gray-300 dark:border-gray-700 bg-gray-800 dark:bg-gray-200 px-4 py-2 text-sm uppercase font-medium text-white dark:text-gray-800 hover:bg-gray-700 dark:hover:bg-white focus:bg-gray-700 dark:focus:bg-white active:bg-gray-900 dark:active:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">Previous</a>
-        <a href="#" class="relative ml-3 inline-flex items-center rounded-md border border-gray-300 dark:border-gray-700 bg-gray-800 dark:bg-gray-200 px-4 py-2 text-sm uppercase font-medium text-white dark:text-gray-800 hover:bg-gray-700 dark:hover:bg-white focus:bg-gray-700 dark:focus:bg-white active:bg-gray-900 dark:active:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">Next</a>
+    <div v-if="items.last_page > 1" class="flex items-center justify-between bg-white dark:bg-gray-800 px-4 py-3 sm:px-6">
+      <div class="w-full flex justify-between sm:hidden">
+        <div>
+          <Link v-if="items.prev_page_url" :href="items.prev_page_url" class="inline-flex items-center rounded-md border border-gray-300 dark:border-gray-700 bg-gray-800 dark:bg-gray-200 px-4 py-2 text-sm uppercase font-medium text-white dark:text-gray-800 hover:bg-gray-700 dark:hover:bg-white focus:bg-gray-700 dark:focus:bg-white active:bg-gray-900 dark:active:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">Previous</Link>
+        </div>
+        <div>
+          <Link v-if="items.next_page_url" :href="items.next_page_url" class="inline-flex items-center rounded-md border border-gray-300 dark:border-gray-700 bg-gray-800 dark:bg-gray-200 px-4 py-2 text-sm uppercase font-medium text-white dark:text-gray-800 hover:bg-gray-700 dark:hover:bg-white focus:bg-gray-700 dark:focus:bg-white active:bg-gray-900 dark:active:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">Next</Link>
+        </div>
       </div>
       <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
-        <div>
-          <p class="text-sm text-gray-800 dark:text-white">
-            Showing
-            {{ ' ' }}
-            <span class="font-medium">1</span>
-            {{ ' ' }}
-            to
-            {{ ' ' }}
-            <span class="font-medium">10</span>
-            {{ ' ' }}
-            of
-            {{ ' ' }}
-            <span class="font-medium">97</span>
-            {{ ' ' }}
-            results
+        <div class="">
+          <p class="hidden lg:block text-xs text-gray-800 dark:text-white">
+            Showing {{ items.from }} to {{ items.to }} of {{ items.total }} results
           </p>
         </div>
         <div>
           <nav class="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
-            <a href="#" class="relative inline-flex items-center rounded-l-md px-2 py-2 bg-gray-800 dark:bg-gray-200 text-white dark:text-gray-800 ring-1 ring-inset ring-gray-600 dark:ring-gray-300 hover:bg-gray-700 dark:hover:bg-white focus:z-20 focus:outline-offset-0">
+            <span 
+                v-if="!items.prev_page_url"
+                aria-current="page" class="relative inline-flex items-center rounded-l-md px-1 py-2 bg-gray-800 dark:bg-gray-200 text-white dark:text-gray-800 ring-1 ring-inset ring-gray-600 dark:ring-gray-300 hover:bg-gray-700 dark:hover:bg-white focus:z-20 focus:outline-offset-0">
+            </span>
+            <Link v-if="items.prev_page_url" :href="items.prev_page_url" class="relative inline-flex items-center rounded-l-md px-2 py-2 bg-gray-800 dark:bg-gray-200 text-white dark:text-gray-800 ring-1 ring-inset ring-gray-600 dark:ring-gray-300 hover:bg-gray-700 dark:hover:bg-white focus:z-20 focus:outline-offset-0">
               <span class="sr-only">Previous</span>
               <ChevronLeftIcon class="h-5 w-5" aria-hidden="true" />
-            </a>
-            <a href="#" aria-current="page" class="relative z-10 inline-flex items-center bg-indigo-600 px-4 py-2 text-sm font-semibold text-white dark:text-gray-800 focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">1</a>
-            <a href="#" class="relative inline-flex items-center px-4 py-2 text-sm font-semibold bg-gray-800 dark:bg-gray-200 text-white dark:text-gray-800 ring-1 ring-inset ring-gray-600 dark:ring-gray-300 hover:bg-gray-700 dark:hover:bg-white focus:z-20 focus:outline-offset-0">2</a>
-            <a href="#" class="relative hidden items-center px-4 py-2 text-sm font-semibold bg-gray-800 dark:bg-gray-200 text-white dark:text-gray-800 ring-1 ring-inset ring-gray-600 dark:ring-gray-300 hover:bg-gray-700 dark:hover:bg-white focus:z-20 focus:outline-offset-0 md:inline-flex">3</a>
-            <span class="relative inline-flex items-center px-4 py-2 text-sm font-semibold bg-gray-800 dark:bg-gray-200 text-white dark:text-gray-800 ring-1 ring-inset ring-gray-600 dark:ring-gray-300 focus:outline-offset-0">...</span>
-            <a href="#" class="relative hidden items-center px-4 py-2 text-sm font-semibold bg-gray-800 dark:bg-gray-200 text-white dark:text-gray-800 ring-1 ring-inset ring-gray-600 dark:ring-gray-300 hover:bg-gray-700 dark:hover:bg-white focus:z-20 focus:outline-offset-0 md:inline-flex">8</a>
-            <a href="#" class="relative inline-flex items-center px-4 py-2 text-sm font-semibold bg-gray-800 dark:bg-gray-200 text-white dark:text-gray-800 ring-1 ring-inset ring-gray-600 dark:ring-gray-300 hover:bg-gray-700 dark:hover:bg-white focus:z-20 focus:outline-offset-0">9</a>
-            <a href="#" class="relative inline-flex items-center px-4 py-2 text-sm font-semibold bg-gray-800 dark:bg-gray-200 text-white dark:text-gray-800 ring-1 ring-inset ring-gray-600 dark:ring-gray-300 hover:bg-gray-700 dark:hover:bg-white focus:z-20 focus:outline-offset-0">10</a>
-            <a href="#" class="relative inline-flex items-center rounded-r-md px-2 py-2 bg-gray-800 dark:bg-gray-200 text-white dark:text-gray-800 ring-1 ring-inset ring-gray-600 dark:ring-gray-300 hover:bg-gray-700 dark:hover:bg-white focus:z-20 focus:outline-offset-0">
+            </Link>
+            <span v-for="(item, key) in items.links">
+              <Link
+                v-if="item.label > 0 && item.label != items.current_page"
+                :key="item.key" :href="item.url" :active="item.active" class="relative inline-flex items-center px-4 py-2 text-sm font-semibold bg-gray-800 dark:bg-gray-200 text-white dark:text-gray-800 ring-1 ring-inset ring-gray-600 dark:ring-gray-300 hover:bg-gray-700 dark:hover:bg-white focus:z-20 focus:outline-offset-0">
+                {{ item.label }}
+              </Link>
+              <span 
+                v-if="item.label == items.current_page"
+                aria-current="page" class="relative z-10 inline-flex items-center bg-gray-400 px-4 py-2 text-sm font-semibold text-white dark:text-gray-800 focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-400">
+                {{ item.label }}
+              </span>
+            </span>
+            <Link v-if="items.next_page_url" :href="items.next_page_url" class="relative inline-flex items-center rounded-r-md px-2 py-2 bg-gray-800 dark:bg-gray-200 text-white dark:text-gray-800 ring-1 ring-inset ring-gray-600 dark:ring-gray-300 hover:bg-gray-700 dark:hover:bg-white focus:z-20 focus:outline-offset-0">
               <span class="sr-only">Next</span>
               <ChevronRightIcon class="h-5 w-5" aria-hidden="true" />
-            </a>
+            </Link>
+            <span 
+                v-if="!items.next_page_url"
+                aria-current="page" class="relative inline-flex items-center rounded-r-md px-1 py-2 bg-gray-800 dark:bg-gray-200 text-white dark:text-gray-800 ring-1 ring-inset ring-gray-600 dark:ring-gray-300 hover:bg-gray-700 dark:hover:bg-white focus:z-20 focus:outline-offset-0">
+            </span>
           </nav>
         </div>
       </div>
     </div>
-
   </div>
 </template>

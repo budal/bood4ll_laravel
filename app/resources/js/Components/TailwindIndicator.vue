@@ -1,3 +1,7 @@
+<script setup lang="ts">
+//  console.log(process.env.VUE_APP_NOT_SECRET_CODE)
+</script>
+
 <template>
   <div className="fixed bottom-1 right-1 z-50 flex h-6 w-6 items-center justify-center rounded-full bg-gray-800 p-3 font-mono text-xs text-white">
     <div className="block sm:hidden">xs</div>
