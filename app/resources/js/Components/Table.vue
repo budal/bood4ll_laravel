@@ -2,6 +2,7 @@
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/vue/20/solid'
 import { useForm } from '@inertiajs/vue3';
 import SearchInput from '@/Components/SearchInput.vue';
+import TextInput from '@/Components/TextInput.vue';
 
 defineProps<{
     items: any;
@@ -13,10 +14,8 @@ const form = useForm({
 </script>
 
 <template>
+  <SearchInput placeholder="Search..." class="mt-3 " v-model="form.search" />
   <div>
-    <div class="grid mt-3 sticky top-2 justify-end">
-        <SearchInput v-model="form.search" />
-    </div>
     <ul role="list" class="mt-2 divide-y divide-gray-100 dark:divide-gray-600">
       <li v-for="item in items" :key="item.email" class="flex justify-between gap-x-6 px-3 py-3 hover:bg-gray-50 dark:hover:bg-gray-700">
         <div class="flex min-w-0 gap-x-4">
