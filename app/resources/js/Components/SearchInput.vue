@@ -166,8 +166,8 @@ export default defineComponent({
                 @keydown="onKeydown"
             />
             
-            <!-- <button v-if="showClearIcon" class="text-white absolute inset-y-2 right-2 px-2 rounded-lg text-sm dark:bg-gray-900 dark:hover:bg-gray-700 ring-0" aria-label="Clear" @mousedown="clear" @keydown.space.enter="clear">X</button> -->
-            <span v-if="showShortcutIcon" class="dark:text-gray-300 absolute inset-y-2 right-2 px-2 rounded-lg text-sm p-1 bg-gray-200 dark:bg-gray-600 ring-0">{{ shortcutKey }}</span>
+            <button v-if="showClearIcon" class="dark:text-gray-300 absolute inset-y-2 right-2 px-2 rounded-lg text-xs p-1 bg-gray-200 dark:bg-gray-700 ring-0" aria-label="Clear" @mousedown="clear" @keydown.space.enter="clear">Esc</button>
+            <span v-if="showShortcutIcon" class="dark:text-gray-300 absolute inset-y-2 right-2 px-2 rounded-lg text-sm p-1 bg-gray-200 dark:bg-gray-700 ring-0">{{ shortcutKey }}</span>
         </div>
     </div>
 </template>
