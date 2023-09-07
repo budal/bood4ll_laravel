@@ -75,7 +75,7 @@ onBeforeUnmount(() => {
       <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
         <div class="">
           <p class="hidden lg:block text-xs text-gray-800 dark:text-white">
-            Showing {{ items.from }} to {{ items.to }} of {{ items.total }} results
+            {{ $t('Showing :from to :to of :total results', { from: items.from, to: items.to, total: items.total }) }}
           </p>
         </div>
         <div>

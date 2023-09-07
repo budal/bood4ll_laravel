@@ -16,7 +16,11 @@ createInertiaApp({
         createApp({ render: () => h(App, props) })
             .use(plugin)
             .use(i18nVue, { 
-                resolve: (lang) => import(`../../lang/${lang}.json`) 
+                lang: 'pt_BR',
+                resolve: lang => {
+                    const langs = import.meta.glob('../../lang/*.json', { eager: true });
+                    return langs[`../../lang/${lang}.json`].default;
+                },
             })
             .use(ZiggyVue, Ziggy)
             .mount(el);
