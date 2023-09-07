@@ -12,8 +12,10 @@ const props = defineProps<{
 
 const value = ref("");
 
+const routeCurrent = route(route().current());
+
 const debouncedWatch = debounce(() => {
-    router.visit('http://localhost/apps/users?search='+value.value, {
+    router.visit(routeCurrent+'?search='+value.value, {
       method: 'get',
       preserveState: true,
     })
@@ -30,39 +32,19 @@ onBeforeUnmount(() => {
 <template>
   <SearchInput :placeholder="$t('Search...')" class="mt-3 w-96" :value="filters.search" v-model="value" />
   <div>
-    <ul role="list" class="mt-2 divide-y divide-gray-100 dark:divide-gray-600">
-      <template v-for="(item, key) in items.data">
-        <li
-          v-if="items.data[key].name[0] != items.data[key-1]?.name[0]"
-          class="sticky top-[60px] px-4 py-3 flex items-center font-semibold text-sm text-slate-900 dark:text-slate-200 bg-slate-50/90 dark:bg-slate-700/90 backdrop-blur-sm ring-1 ring-slate-900/10 dark:ring-black/10">
-          {{ items.data[key].name[0] }}
-        </li>
-        <li class="flex justify-between gap-x-6 px-3 py-3 hover:bg-gray-50 dark:hover:bg-gray-700">
-          <div class="flex min-w-0 gap-x-4">
-            <img class="h-12 w-12 flex-none rounded-full bg-gray-50 dark:bg-gray-600" :src="item.imageUrl" alt="" />
-            <div class="min-w-0 flex-auto">
-              <p class="text-sm font-semibold leading-6 text-gray-900 dark:text-gray-100">{{ item.name }}</p>
-              <p class="mt-1 truncate text-xs leading-5 text-gray-600 dark:text-gray-400">{{ item.username }} / {{ item.email }}</p>
+    <div class="mt-3 rounded-lg relative mx-auto bg-white dark:bg-slate-800 shadow-lg ring-1 ring-slate-900/5 -my-px">
+      <div class="relative">
+        <div class="divide-y dark:divide-slate-200/5">
+          <template  v-for="item in items.data">
+            <div class="flex items-center gap-4 p-4">
+              <img class="w-12 h-12 rounded-full" src="https://images.unsplash.com/photo-1501196354995-cbb51c65aaea?ixlib=rb-1.2.1&amp;ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&amp;auto=format&amp;fit=facearea&amp;facepad=4&amp;w=256&amp;h=256&amp;q=80">
+              <strong class="text-slate-900 text-sm font-medium dark:text-slate-200">{{ item.name }}</strong>
             </div>
-          </div>
-          <div class="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
-            <p class="text-sm leading-6 text-gray-900 dark:text-gray-100">{{ item.role }}</p>
-            <p v-if="item.lastSeen" class="mt-1 text-xs leading-5 text-gray-600 dark:text-gray-400">
-              Last seen <time :datetime="item.lastSeenDateTime">{{ item.lastSeen }}</time>
-            </p>
-            <div v-else class="mt-1 flex items-center gap-x-1.5">
-              <div class="flex-none rounded-full bg-emerald-500/20 p-1">
-                <div class="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-              </div>
-              <p class="text-xs leading-5 text-gray-600 dark:text-gray-400">Online</p>
-            </div>
-          </div>
-        </li>
-      </template>
-      <li v-if="items.data.length === 0" class="flex justify-between gap-x-6 px-3 py-3">
-        <p class="text-sm leading-6 text-gray-400 dark:text-gray-600">{{ $t('No items to show.') }}</p>
-      </li>
-    </ul>
+          </template>
+          <p v-if="items.data.length === 0" class="text-md text-center p-6 text-gray-400 dark:text-gray-600">{{ $t('No items to show.') }}</p>
+        </div>
+      </div>
+    </div>
     <div v-if="items.last_page > 1" class="flex items-center justify-between bg-white dark:bg-gray-800 px-4 py-3 sm:px-6">
       <div class="w-full flex justify-between sm:hidden">
         <div>
@@ -73,13 +55,13 @@ onBeforeUnmount(() => {
         </div>
       </div>
       <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
-        <div class="">
+        <div>
           <p class="hidden lg:block text-xs text-gray-800 dark:text-white">
             {{ $t('Showing :from to :to of :total results', { from: items.from, to: items.to, total: items.total }) }}
           </p>
         </div>
         <div>
-          <nav class="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
+          <nav class="inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
             <span 
                 v-if="!items.prev_page_url"
                 aria-current="page" class="relative inline-flex items-center rounded-l-md px-1 py-2 bg-gray-800 dark:bg-gray-200 text-white dark:text-gray-800 ring-1 ring-inset ring-gray-600 dark:ring-gray-300 hover:bg-gray-700 dark:hover:bg-white focus:z-20 focus:outline-offset-0">
