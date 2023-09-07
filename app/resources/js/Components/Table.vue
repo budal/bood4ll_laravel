@@ -28,7 +28,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <SearchInput placeholder="Search..." class="mt-3 w-96" :value="filters.search" v-model="value" />
+  <SearchInput :placeholder="$t('Search...')" class="mt-3 w-96" :value="filters.search" v-model="value" />
   <div>
     <ul role="list" class="mt-2 divide-y divide-gray-100 dark:divide-gray-600">
       <template v-for="(item, key) in items.data">
@@ -60,16 +60,16 @@ onBeforeUnmount(() => {
         </li>
       </template>
       <li v-if="items.data.length === 0" class="flex justify-between gap-x-6 px-3 py-3">
-        <p class="text-sm leading-6 text-gray-400 dark:text-gray-600">No items to show.</p>
+        <p class="text-sm leading-6 text-gray-400 dark:text-gray-600">{{ $t('No items to show.') }}</p>
       </li>
     </ul>
     <div v-if="items.last_page > 1" class="flex items-center justify-between bg-white dark:bg-gray-800 px-4 py-3 sm:px-6">
       <div class="w-full flex justify-between sm:hidden">
         <div>
-          <Link v-if="items.prev_page_url" :href="items.prev_page_url" class="inline-flex items-center rounded-md border border-gray-300 dark:border-gray-700 bg-gray-800 dark:bg-gray-200 px-4 py-2 text-sm uppercase font-medium text-white dark:text-gray-800 hover:bg-gray-700 dark:hover:bg-white focus:bg-gray-700 dark:focus:bg-white active:bg-gray-900 dark:active:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">Previous</Link>
+          <Link v-if="items.prev_page_url" :href="items.prev_page_url" class="inline-flex items-center rounded-md border border-gray-300 dark:border-gray-700 bg-gray-800 dark:bg-gray-200 px-4 py-2 text-sm uppercase font-medium text-white dark:text-gray-800 hover:bg-gray-700 dark:hover:bg-white focus:bg-gray-700 dark:focus:bg-white active:bg-gray-900 dark:active:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">{{ $t('Previous')}}</Link>
         </div>
         <div>
-          <Link v-if="items.next_page_url" :href="items.next_page_url" class="inline-flex items-center rounded-md border border-gray-300 dark:border-gray-700 bg-gray-800 dark:bg-gray-200 px-4 py-2 text-sm uppercase font-medium text-white dark:text-gray-800 hover:bg-gray-700 dark:hover:bg-white focus:bg-gray-700 dark:focus:bg-white active:bg-gray-900 dark:active:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">Next</Link>
+          <Link v-if="items.next_page_url" :href="items.next_page_url" class="inline-flex items-center rounded-md border border-gray-300 dark:border-gray-700 bg-gray-800 dark:bg-gray-200 px-4 py-2 text-sm uppercase font-medium text-white dark:text-gray-800 hover:bg-gray-700 dark:hover:bg-white focus:bg-gray-700 dark:focus:bg-white active:bg-gray-900 dark:active:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">{{ $t('Next')}}</Link>
         </div>
       </div>
       <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
@@ -85,7 +85,7 @@ onBeforeUnmount(() => {
                 aria-current="page" class="relative inline-flex items-center rounded-l-md px-1 py-2 bg-gray-800 dark:bg-gray-200 text-white dark:text-gray-800 ring-1 ring-inset ring-gray-600 dark:ring-gray-300 hover:bg-gray-700 dark:hover:bg-white focus:z-20 focus:outline-offset-0">
             </span>
             <Link v-if="items.prev_page_url" :href="items.prev_page_url" class="relative inline-flex items-center rounded-l-md px-2 py-2 bg-gray-800 dark:bg-gray-200 text-white dark:text-gray-800 ring-1 ring-inset ring-gray-600 dark:ring-gray-300 hover:bg-gray-700 dark:hover:bg-white focus:z-20 focus:outline-offset-0">
-              <span class="sr-only">Previous</span>
+              <span class="sr-only">{{ $t('Previous')}}</span>
               <ChevronLeftIcon class="h-5 w-5" aria-hidden="true" />
             </Link>
             <span v-for="item in items.links">
@@ -101,7 +101,7 @@ onBeforeUnmount(() => {
               </span>
             </span>
             <Link v-if="items.next_page_url" :href="items.next_page_url" class="relative inline-flex items-center rounded-r-md px-2 py-2 bg-gray-800 dark:bg-gray-200 text-white dark:text-gray-800 ring-1 ring-inset ring-gray-600 dark:ring-gray-300 hover:bg-gray-700 dark:hover:bg-white focus:z-20 focus:outline-offset-0">
-              <span class="sr-only">Next</span>
+              <span class="sr-only">{{ $t('Next')}}</span>
               <ChevronRightIcon class="h-5 w-5" aria-hidden="true" />
             </Link>
             <span 

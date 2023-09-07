@@ -59,10 +59,10 @@ const classes = computed(() =>
                 </div>
                 <div class="ml-4">
                   <p class="text-sm font-medium text-gray-900 dark:text-gray-100">
-                    {{ item.title }}
+                    {{ $t(item.title) }}
                   </p>
                   <p class="text-sm text-gray-600 dark:text-gray-400">
-                    {{ item.description }}
+                    {{ $t(item.description) }}
                   </p>
                 </div>
               </Link>

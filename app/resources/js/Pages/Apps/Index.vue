@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import Button from './Partials/Button.vue';
+import Apps from './Partials/Apps.vue';
 
 import { Head } from '@inertiajs/vue3';
 
@@ -13,17 +13,17 @@ const items = [
     {
         title: "Users",
         route: "apps.users",
-        description: "Manage users informations and authorizations",
+        description: "Manage users informations and authorizations.",
     },
     {
         title: "Roles",
         route: "apps.users",
-        description: "Define roles for access to specific resources",
+        description: "Set roles for access to specific resources.",
     },
     {
         title: "Units",
         route: "apps.users",
-        description: "Manage users informations and authorizations",
+        description: "Manage staff allocation units.",
     },
 
 ]
@@ -34,7 +34,7 @@ const items = [
 
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Apps</h2>
+            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">{{ $t('Apps') }}</h2>
         </template>
 
         <div class="py-12">
@@ -42,15 +42,15 @@ const items = [
                 <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
                     <section>
                         <header>
-                            <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">Apps</h2>
+                            <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">{{ $t('Apps') }}</h2>
 
                             <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                                Select the application you want to use.
+                                {{ $t('Select the application you want to use.') }}
                             </p>
                         </header>
 
                         <div class="mt-6 grid grid-cols-1 items-stretch sm:grid-cols-2 md:grid-cols-3 gap-5">
-                            <Button v-for="item in items" :title="item.title" :description="item.description" :href="route(item.route)" />
+                            <Apps v-for="item in items" :title="item.title" :description="item.description" :href="route(item.route)" />
                         </div>
                     </section>
                 </div>
