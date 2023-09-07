@@ -33,7 +33,7 @@
   
   "This is a secure area of the application. Please confirm your password before continuing.": "Esta é uma área segura do aplicativo. Por favor, confirme sua senha antes de continuar.",
   
-  "Dashboard": "Painel de controle",
+  "Dashboard": "Painel",
   "Apps": "Aplicativos",
   "Reports": "Relatórios",
   "Help": "Ajuda",
@@ -71,7 +71,7 @@
   "Users": "Usuários",
   "Manage users informations and authorizations.": "Gerencie as informações dos usuários e suas autorizações.",
   "Users management": "Gerenciamento de usuários",
-  
+
   "": "",
   "": "",
   "": "",
