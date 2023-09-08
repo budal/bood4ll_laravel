@@ -1,27 +1,31 @@
 <script setup lang="ts">
 import { ref, watch, onBeforeUnmount } from 'vue'
 import { router, Link } from '@inertiajs/vue3';
-import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/vue/20/solid'
+import { ChevronLeftIcon, ChevronRightIcon, PencilSquareIcon, TrashIcon } from '@heroicons/vue/20/solid'
 import debounce from "lodash.debounce";
 import SearchInput from '@/Components/SearchInput.vue';
+import PrimaryButton from './PrimaryButton.vue';
 
 const props = defineProps<{
     filters: any;
     items: any;
 }>();
 
-const value = ref("");
+const search = ref("");
 
 const routeCurrent = route(route().current());
 
 const debouncedWatch = debounce(() => {
-    router.visit(routeCurrent+'?search='+value.value, {
+    router.visit(routeCurrent+'?search='+search.value, {
       method: 'get',
       preserveState: true,
     })
 }, 300);
 
-watch(value, debouncedWatch);
+const classTH = `border-b dark:border-slate-600 p-5 text-slate-400 dark:text-slate-200 text-left bg-white dark:bg-slate-800`
+const classTD = `border-t border-slate-200 dark:border-slate-600 p-3 text-slate-500 dark:text-slate-400`
+
+watch(search, debouncedWatch);
 
 onBeforeUnmount(() => {
   debouncedWatch.cancel();
@@ -30,20 +34,78 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <SearchInput :placeholder="$t('Search...')" class="mt-3 w-96" :value="filters.search" v-model="value" />
+  <div class="flex justify-between">
+    <SearchInput :placeholder="$t('Search...')" class="z-50 mt-3 mb-3 w-96" :value="filters.search" v-model="search" />
+    <div class="flex items-center gap-4">
+      <PrimaryButton as="Link" href="1">{{ $t('Add') }}</PrimaryButton>
+      <Transition
+          enter-active-class="transition ease-in-out"
+          enter-from-class="opacity-0"
+          leave-active-class="transition ease-in-out"
+          leave-to-class="opacity-0"
+      >
+      </Transition>
+    </div>
+  </div>
   <div>
-    <div class="mt-3 rounded-lg relative mx-auto bg-white dark:bg-slate-800 shadow-lg ring-1 ring-slate-900/5 -my-px">
-      <div class="relative">
-        <div class="divide-y dark:divide-slate-200/5">
-          <template  v-for="item in items.data">
-            <div class="flex items-center gap-4 p-4">
+    <div class="relative ">
+      <table class="border-collapse table-auto w-full text-sm shadow-lg rounded-lg -my-px">
+        <thead v-if="items.data.length" class="bg-white dark:bg-slate-800">
+          <tr>
+            <th :class="classTH">
+            </th>
+            <th :class="classTH">
+              Song
+            </th>
+            <th :class="classTH">
+              Artist
+            </th>
+            <th :class="classTH">
+              Year
+            </th>
+            <th :class="classTH">
+            </th>
+          </tr>
+        </thead>
+        <tbody v-for="item in items.data" class="bg-white dark:bg-slate-800">
+          <tr>
+            <td :class="classTD">
               <img class="w-12 h-12 rounded-full" src="https://images.unsplash.com/photo-1501196354995-cbb51c65aaea?ixlib=rb-1.2.1&amp;ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&amp;auto=format&amp;fit=facearea&amp;facepad=4&amp;w=256&amp;h=256&amp;q=80">
+            </td>
+            <td :class="classTD">
               <strong class="text-slate-900 text-sm font-medium dark:text-slate-200">{{ item.name }}</strong>
-            </div>
-          </template>
-          <p v-if="items.data.length === 0" class="text-md text-center p-6 text-gray-400 dark:text-gray-600">{{ $t('No items to show.') }}</p>
-        </div>
-      </div>
+              <p class="truncate text-xs leading-5 text-gray-600 dark:text-gray-400">{{ item.username }} / {{ item.email }}</p>
+            </td>
+            <td :class="classTD">
+              Earth, Wind, and Fire
+            </td>
+            <td :class="classTD">
+              1975
+            </td>
+            <td class="border-t border-slate-200 dark:border-slate-600 p-3 text-slate-500 dark:text-slate-400 text-right">
+              <Link :href="route('apps.users.edit', item.id)" class="mr-1 inline-flex items-center rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-800 dark:bg-gray-200 p-2 text-sm text-white dark:text-gray-800 hover:bg-gray-700 dark:hover:bg-white focus:bg-gray-700 dark:focus:bg-white active:bg-gray-900 dark:active:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
+                <PencilSquareIcon
+                  class="h-5 w-5"
+                  aria-hidden="true"
+                />
+              </Link>
+              <Link href="#" class="inline-flex items-center rounded-md border border-gray-300 dark:border-gray-700 bg-gray-800 dark:bg-gray-200 p-2 text-sm text-white dark:text-gray-800 hover:bg-gray-700 dark:hover:bg-white focus:bg-gray-700 dark:focus:bg-white active:bg-gray-900 dark:active:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
+                <TrashIcon
+                  class="h-5 w-5"
+                  aria-hidden="true"
+                />
+              </Link>
+            </td>
+          </tr>
+        </tbody>
+        <tbody v-if="!items.data.length" class="bg-white dark:bg-slate-800">
+          <tr>
+            <td class="p-10 text-slate-500 dark:text-slate-400">
+              {{ $t('No items to show.') }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
     <div v-if="items.last_page > 1" class="flex items-center justify-between bg-white dark:bg-gray-800 px-4 py-3 sm:px-6">
       <div class="w-full flex justify-between sm:hidden">

@@ -26,6 +26,8 @@
         "@headlessui/vue": "^1.7.16",
         "@heroicons/vue": "^2.0.18",
         "laravel-vue-i18n": "^2.7.1",
-        "lodash.debounce": "^4.0.8"
+        "lodash.debounce": "^4.0.8",
+        "oh-vue-icons": "^1.0.0-rc3",
+        "remove": "^0.1.5"
     }
 }

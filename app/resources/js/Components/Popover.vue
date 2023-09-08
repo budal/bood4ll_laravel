@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { Popover, PopoverButton, PopoverPanel } from '@headlessui/vue'
-import { ChevronDownIcon } from '@heroicons/vue/20/solid'
 import { computed } from 'vue';
 import { Link } from '@inertiajs/vue3';
+import { Popover, PopoverButton, PopoverPanel } from '@headlessui/vue'
+import { ChevronDownIcon } from '@heroicons/vue/20/solid'
 
 const props = defineProps<{
     items: object;
@@ -19,7 +19,7 @@ const classes = computed(() =>
 <template>
   <div>
     <Popover v-slot="{ open }">
-      <PopoverButton>
+      <PopoverButton class="ring-0">
         <div :class=classes>
           <span class="ml-1 pt-5 pb-5">
             <slot />

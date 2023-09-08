@@ -31,15 +31,18 @@ class UsersController extends Controller
         ]);
     }
 
+    public function create()
+    {
+        return Inertia::render('Users/Create');
+    }
+
         /**
      * Display the user's profile form.
      */
     public function edit(Request $request): Response
     {
-        return Inertia::render('Profile/Edit', [
-            'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
-            'status' => session('status'),
-        ]);
+        // return Inertia::render('Users/Edit', [
+        // ]);
     }
 
     /**
