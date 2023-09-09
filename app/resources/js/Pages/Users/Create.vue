@@ -11,11 +11,11 @@ defineProps<{
 </script>
 
 <template>
-    <Head :title="$t('User edit')" />
+    <Head :title="$t('User creation')" />
 
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">{{ $t('User edit') }}</h2>
+            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">{{ $t('User creation') }}</h2>
         </template>
 
         <div class="py-12">

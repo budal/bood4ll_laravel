@@ -52,8 +52,8 @@ Route::middleware('auth')->group(function () {
         Route::middleware('verified')->group(function () {
             Route::controller(UsersController::class)->group(function () {
                 Route::get('/users', 'index')->name('users');
-                Route::get('/users/new', 'create')->name('users.create');
-                Route::get('/users/{uuid}/edit', 'edit')->name('users.edit');
+                Route::get('/users/create', 'create')->name('users.create');
+                Route::get('/users/{uuid}', 'edit')->name('users.edit');
             });
         });
     });

@@ -26,7 +26,7 @@ class UsersController extends Controller
 
             'items' => User::orderBy('name')
                 ->filter($request->all('search'))
-                ->paginate(10)
+                ->paginate(20)
                 ->appends($request->all('search', 'active'))
         ]);
     }
@@ -43,7 +43,7 @@ class UsersController extends Controller
     {
         // print_r($user->get());
 
-        return Inertia::render('Users/Create', [
+        return Inertia::render('Users/Edit', [
             'data' => $user->get()
         ]);
     }

@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref, watch, onBeforeUnmount } from 'vue'
 import { router, Link } from '@inertiajs/vue3';
-import { ChevronLeftIcon, ChevronRightIcon, PencilSquareIcon, TrashIcon } from '@heroicons/vue/20/solid'
 import debounce from "lodash.debounce";
+import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/vue/20/solid'
 import SearchInput from '@/Components/SearchInput.vue';
 import PrimaryButton from './PrimaryButton.vue';
 
@@ -37,7 +37,10 @@ onBeforeUnmount(() => {
   <div class="flex justify-between">
     <SearchInput :placeholder="$t('Search...')" class="z-50 mt-3 mb-3 w-96" :value="filters.search" v-model="search" />
     <div class="flex items-center gap-4">
-      <PrimaryButton as="Link" href="1">{{ $t('New') }}</PrimaryButton>
+      <Link v-if="route('apps.users.create')" :href="route('apps.users.create')">
+        <PrimaryButton>{{ $t('New') }}</PrimaryButton>
+      </Link>
+
       <Transition
           enter-active-class="transition ease-in-out"
           enter-from-class="opacity-0"
@@ -48,7 +51,7 @@ onBeforeUnmount(() => {
     </div>
   </div>
   <div>
-    <div class="relative ">
+    <div>
       <table class="border-collapse table-auto w-full text-sm shadow-lg rounded-lg -my-px">
         <thead v-if="items.data.length" class="bg-white dark:bg-slate-800">
           <tr>
@@ -68,7 +71,7 @@ onBeforeUnmount(() => {
           </tr>
         </thead>
         <tbody v-for="item in items.data" class="bg-white dark:bg-slate-800">
-          <tr>
+          <tr class="group/item hover:bg-slate-200 dark:hover:bg-slate-700">
             <td :class="classTD">
               <img class="w-12 h-12 rounded-full" src="https://images.unsplash.com/photo-1501196354995-cbb51c65aaea?ixlib=rb-1.2.1&amp;ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&amp;auto=format&amp;fit=facearea&amp;facepad=4&amp;w=256&amp;h=256&amp;q=80">
             </td>
@@ -83,17 +86,13 @@ onBeforeUnmount(() => {
               1975
             </td>
             <td class="border-t border-slate-200 dark:border-slate-600 p-3 text-slate-500 dark:text-slate-400 text-right">
-              <Link :href="route('apps.users.edit', {uuid: item.uuid})" class="mr-1 inline-flex items-center rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-800 dark:bg-gray-200 p-2 text-sm text-white dark:text-gray-800 hover:bg-gray-700 dark:hover:bg-white focus:bg-gray-700 dark:focus:bg-white active:bg-gray-900 dark:active:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
-                <PencilSquareIcon
-                  class="h-5 w-5"
-                  aria-hidden="true"
-                />
-              </Link>
-              <Link href="#" class="inline-flex items-center rounded-md border border-gray-300 dark:border-gray-700 bg-gray-800 dark:bg-gray-200 p-2 text-sm text-white dark:text-gray-800 hover:bg-gray-700 dark:hover:bg-white focus:bg-gray-700 dark:focus:bg-white active:bg-gray-900 dark:active:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
-                <TrashIcon
-                  class="h-5 w-5"
-                  aria-hidden="true"
-                />
+              <Link :href="route('apps.users.edit', {uuid: item.uuid})" class="group/edit md:invisible hover:bg-slate-200 group-hover/item:visible">
+                <PrimaryButton>
+                  <ChevronRightIcon
+                    class="h-5 w-5 group-hover/edit:translate-x-0.5 group-hover/edit:text-slate-500"
+                    aria-hidden="true"
+                  />
+                </PrimaryButton>
               </Link>
             </td>
           </tr>
