@@ -13,7 +13,7 @@ use Ramsey\Uuid\Uuid;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -54,14 +54,13 @@ class User extends Authenticatable
 
     public function resolveRouteBinding($value, $field = null)
     {
-        return $this->where($field ?? 'uuid', $value)->firstOrFail();
+        return $this->where($field ?? 'uuid', $value)->withTrashed()->firstOrFail();
     }
 
     public function scopeFilter($query, array $filters)
     {
         $query->when($filters['search'] ?? null, function ($query, $search) {
             $query->where(function ($query) use ($search) {
-                // $query->where('name', 'ilike', '%'.$search.'%')
                 $query->where('name', 'ilike', '%'.$search.'%')
                     ->orWhere('username', 'ilike', '%'.$search.'%')
                     ->orWhere('email', 'ilike', '%'.$search.'%');

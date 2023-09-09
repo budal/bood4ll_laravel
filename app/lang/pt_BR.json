@@ -16,6 +16,8 @@
   "Reset Password": "Redefinir senha",
   "Confirm password": "Confirme sua senha",
   "Search...": "Pesquisar...",
+  "Add": "Adicionar",
+  "New": "Novo",
 
   "Remember me": "Manter conectado",
   "Not registered?": "Não Registrado?",
@@ -61,7 +63,6 @@
   
   "Select the application you want to use.": "Selecione o aplicativo que você deseja usar",
 
-  
   "Roles": "Funções",
   "Set roles for access to specific resources.": "Configure as funções para acesso a recursos específicos.",
   
@@ -71,7 +72,5 @@
   "Users": "Usuários",
   "Manage users informations and authorizations.": "Gerencie as informações dos usuários e suas autorizações.",
   "Users management": "Gerenciamento de usuários",
-
-  "Add": "Adicionar",
-  "New": "Novo"
+  "User edition": "Edição do usuário"
 }

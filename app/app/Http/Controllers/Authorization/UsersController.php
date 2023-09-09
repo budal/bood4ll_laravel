@@ -36,15 +36,13 @@ class UsersController extends Controller
         return Inertia::render('Users/Create');
     }
 
-        /**
+    /**
      * Display the user's profile form.
      */
     public function edit(User $user): Response
     {
-        // print_r($user->get());
-
         return Inertia::render('Users/Edit', [
-            'data' => $user->get()
+            'data' => $user
         ]);
     }
 

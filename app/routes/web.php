@@ -53,7 +53,9 @@ Route::middleware('auth')->group(function () {
             Route::controller(UsersController::class)->group(function () {
                 Route::get('/users', 'index')->name('users');
                 Route::get('/users/create', 'create')->name('users.create');
-                Route::get('/users/{uuid}', 'edit')->name('users.edit');
+                Route::post('/users/create', 'create')->name('users.store');
+                Route::get('/users/edit/{user}', 'edit')->name('users.edit');
+                Route::patch('/users/edit/{user}', 'edit')->name('users.update');
             });
         });
     });

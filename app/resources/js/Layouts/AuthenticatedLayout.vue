@@ -12,7 +12,7 @@ import NavLinkPopover from '@/Components/Popover.vue';
 
 const showingNavigationDropdown = ref(false);
 
-const routeCurrent = route.name;
+const routeCurrent = window.location.href;
 
 const items = [
     {

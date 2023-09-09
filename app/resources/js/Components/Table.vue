@@ -13,7 +13,7 @@ const props = defineProps<{
 
 const search = ref("");
 
-const routeCurrent = route(route().current());
+const routeCurrent = window.location.href;
 
 const debouncedWatch = debounce(() => {
     router.visit(routeCurrent+'?search='+search.value, {
@@ -85,8 +85,8 @@ const classTD = "p-2"
               1975
             </td>
             <td :class="`${classTD} text-right`">
-              <Link :href="route('apps.users.edit', {uuid: item.uuid})" class="group/edit md:invisible hover:bg-slate-200 group-hover/item:visible">
-                <PrimaryButton>
+              <Link :href="route('apps.users.edit', item.uuid)" class="group/edit md:invisible hover:bg-slate-200 group-hover/item:visible">
+                <PrimaryButton class="p-1">
                   <ChevronRightIcon
                     class="h-5 w-5 group-hover/edit:translate-x-0.5 group-hover/edit:text-slate-500"
                     aria-hidden="true"
