@@ -22,14 +22,13 @@ const debouncedWatch = debounce(() => {
     })
 }, 300);
 
-const classTH = `border-b dark:border-slate-600 p-5 text-slate-400 dark:text-slate-200 text-left bg-white dark:bg-slate-800`
-const classTD = `border-t border-slate-200 dark:border-slate-600 p-3 text-slate-500 dark:text-slate-400`
-
 watch(search, debouncedWatch);
 
 onBeforeUnmount(() => {
   debouncedWatch.cancel();
 })
+
+const classTD = "p-2"
 
 </script>
 
@@ -51,41 +50,41 @@ onBeforeUnmount(() => {
     </div>
   </div>
   <div>
-    <div>
-      <table class="border-collapse table-auto w-full text-sm shadow-lg rounded-lg -my-px">
-        <thead v-if="items.data.length" class="bg-white dark:bg-slate-800">
-          <tr>
-            <th :class="classTH">
+    <div class="rounded-xl overflow-hidden border-2 border-slate-200 dark:border-slate-600">
+      <table class="table-auto w-full text-sm shadow-lg">
+        <thead v-if="items.data.length">
+          <tr class="bg-gray-200 dark:bg-slate-900 p-3 text-slate-1000 dark:text-white text-left">
+            <th :class="`${classTD}`">
             </th>
-            <th :class="classTH">
+            <th :class="`${classTD}`">
               Song
             </th>
-            <th :class="classTH">
+            <th :class="`${classTD}`">
               Artist
             </th>
-            <th :class="classTH">
+            <th :class="`${classTD}`">
               Year
             </th>
-            <th :class="classTH">
+            <th :class="`${classTD}`">
             </th>
           </tr>
         </thead>
-        <tbody v-for="item in items.data" class="bg-white dark:bg-slate-800">
-          <tr class="group/item hover:bg-slate-200 dark:hover:bg-slate-700">
-            <td :class="classTD">
+        <tbody v-for="item in items.data">
+          <tr class="group/item bg-white hover:bg-gray-100 dark:bg-slate-800 hover:dark:bg-slate-700 border-t border-slate-200 dark:border-slate-600 text-slate-500 dark:text-slate-400">
+            <td :class="`${classTD}`">
               <img class="w-12 h-12 rounded-full" src="https://images.unsplash.com/photo-1501196354995-cbb51c65aaea?ixlib=rb-1.2.1&amp;ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&amp;auto=format&amp;fit=facearea&amp;facepad=4&amp;w=256&amp;h=256&amp;q=80">
             </td>
-            <td :class="classTD">
+            <td :class="`${classTD}`">
               <strong class="text-slate-900 text-sm font-medium dark:text-slate-200">{{ item.name }}</strong>
               <p class="truncate text-xs leading-5 text-gray-600 dark:text-gray-400">{{ item.username }} / {{ item.email }}</p>
             </td>
-            <td :class="classTD">
+            <td :class="`${classTD}`">
               Earth, Wind, and Fire
             </td>
-            <td :class="classTD">
+            <td :class="`${classTD}`">
               1975
             </td>
-            <td class="border-t border-slate-200 dark:border-slate-600 p-3 text-slate-500 dark:text-slate-400 text-right">
+            <td :class="`${classTD} text-right`">
               <Link :href="route('apps.users.edit', {uuid: item.uuid})" class="group/edit md:invisible hover:bg-slate-200 group-hover/item:visible">
                 <PrimaryButton>
                   <ChevronRightIcon
@@ -97,9 +96,9 @@ onBeforeUnmount(() => {
             </td>
           </tr>
         </tbody>
-        <tbody v-if="!items.data.length" class="bg-white dark:bg-slate-800">
+        <tbody v-if="!items.data.length">
           <tr>
-            <td class="p-10 text-slate-500 dark:text-slate-400">
+            <td :class="`${classTD} text-right`">
               {{ $t('No items to show.') }}
             </td>
           </tr>
