@@ -54,7 +54,7 @@ class User extends Authenticatable
 
     public function resolveRouteBinding($value, $field = null)
     {
-        return $this->where($field ?? 'id', $value)->firstOrFail();
+        return $this->where($field ?? 'uuid', $value)->firstOrFail();
     }
 
     public function scopeFilter($query, array $filters)

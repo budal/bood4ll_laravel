@@ -37,7 +37,7 @@ onBeforeUnmount(() => {
   <div class="flex justify-between">
     <SearchInput :placeholder="$t('Search...')" class="z-50 mt-3 mb-3 w-96" :value="filters.search" v-model="search" />
     <div class="flex items-center gap-4">
-      <PrimaryButton as="Link" href="1">{{ $t('Add') }}</PrimaryButton>
+      <PrimaryButton as="Link" href="1">{{ $t('New') }}</PrimaryButton>
       <Transition
           enter-active-class="transition ease-in-out"
           enter-from-class="opacity-0"
@@ -83,7 +83,7 @@ onBeforeUnmount(() => {
               1975
             </td>
             <td class="border-t border-slate-200 dark:border-slate-600 p-3 text-slate-500 dark:text-slate-400 text-right">
-              <Link :href="route('apps.users.edit', item.id)" class="mr-1 inline-flex items-center rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-800 dark:bg-gray-200 p-2 text-sm text-white dark:text-gray-800 hover:bg-gray-700 dark:hover:bg-white focus:bg-gray-700 dark:focus:bg-white active:bg-gray-900 dark:active:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
+              <Link :href="route('apps.users.edit', {uuid: item.uuid})" class="mr-1 inline-flex items-center rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-800 dark:bg-gray-200 p-2 text-sm text-white dark:text-gray-800 hover:bg-gray-700 dark:hover:bg-white focus:bg-gray-700 dark:focus:bg-white active:bg-gray-900 dark:active:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
                 <PencilSquareIcon
                   class="h-5 w-5"
                   aria-hidden="true"

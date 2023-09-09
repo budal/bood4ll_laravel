@@ -11,6 +11,7 @@ defineProps<{
 </script>
 
 <template>
+    {{ console.log(data) }}
     <Head :title="$t('User edit')" />
 
     <AuthenticatedLayout>
