@@ -9,11 +9,16 @@ import PrimaryButton from './PrimaryButton.vue';
 const props = defineProps<{
     filters: any;
     items: any;
+    indexRoute: string;
+    createRoute?: string;
+    editRoute?: string;
+      destroyRoute?: string;
+      restoreRoute?: string;
 }>();
 
 const search = ref("");
 
-const routeCurrent = window.location.href;
+const routeCurrent = route(props.indexRoute);
 
 const debouncedWatch = debounce(() => {
     router.visit(routeCurrent+'?search='+search.value, {
@@ -36,7 +41,7 @@ const classTD = "p-2"
   <div class="flex justify-between">
     <SearchInput :placeholder="$t('Search...')" class="z-50 mt-3 mb-3 w-96" :value="filters.search" v-model="search" />
     <div class="flex items-center gap-4">
-      <Link v-if="route('apps.users.create')" :href="route('apps.users.create')">
+      <Link v-if="createRoute" :href="route(createRoute)">
         <PrimaryButton>{{ $t('New') }}</PrimaryButton>
       </Link>
 
@@ -65,7 +70,7 @@ const classTD = "p-2"
             <th :class="`${classTD}`">
               Year
             </th>
-            <th :class="`${classTD}`">
+            <th v-if="editRoute" :class="`${classTD}`">
             </th>
           </tr>
         </thead>
@@ -84,8 +89,8 @@ const classTD = "p-2"
             <td :class="`${classTD}`">
               1975
             </td>
-            <td :class="`${classTD} text-right`">
-              <Link :href="route('apps.users.edit', item.uuid)" class="group/edit md:invisible hover:bg-slate-200 group-hover/item:visible">
+            <td v-if="editRoute" :class="`${classTD} text-right`">
+              <Link :href="route(editRoute, item.uuid)" class="group/edit md:invisible hover:bg-slate-200 group-hover/item:visible">
                 <PrimaryButton class="p-1">
                   <ChevronRightIcon
                     class="h-5 w-5 group-hover/edit:translate-x-0.5 group-hover/edit:text-slate-500"

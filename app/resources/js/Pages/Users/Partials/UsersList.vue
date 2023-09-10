@@ -4,6 +4,13 @@ import Table from '@/Components/Table.vue';
 defineProps<{
     filters: any;
     items: any;
+    indexRoute: string;
+    createRoute?: string;
+    storeRoute?: string;
+    editRoute?: string;
+    updateRoute?: string;
+    destroyRoute?: string;
+    restoreRoute?: string;
 }>();
 </script>
 
@@ -17,6 +24,14 @@ defineProps<{
           </p>
       </header>
 
-      <Table :filters="filters" :items="items" />
+      <Table 
+        :filters="filters" 
+        :items="items" 
+        :indexRoute="indexRoute" 
+        :createRoute="createRoute" 
+        :editRoute="editRoute" 
+        :destroyRoute="destroyRoute" 
+        :restoreRoute="restoreRoute" 
+    />
   </section>
 </template>

@@ -5,7 +5,7 @@ import { Popover, PopoverButton, PopoverPanel } from '@headlessui/vue'
 import { ChevronDownIcon } from '@heroicons/vue/20/solid'
 
 const props = defineProps<{
-    items: object;
+    items: any;
     active?: boolean;
 }>();
 

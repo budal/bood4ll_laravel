@@ -3,18 +3,69 @@ import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
-import { Link, useForm, usePage } from '@inertiajs/vue3';
+import { useForm } from '@inertiajs/vue3';
+import { nextTick, ref } from 'vue';
+import { toast } from 'vue3-toastify';
+
+const passwordInput = ref<HTMLInputElement | null>(null);
 
 const props = defineProps<{
     data?: any;
-}>();
-
-const route = window.location.href;
+}>();    
 
 const form = useForm({
+    uuid: props.data?.uuid || '',
     name: props.data?.name || '',
     email: props.data?.email || '',
 });
+
+const update = (uuid : string) => {
+    toast.success('Wow so easy !');
+
+    // nextTick(() => passwordInput.value?.focus());
+
+    if (uuid) {
+        form.patch(route('apps.users.update', props.data.uuid), {
+            preserveScroll: true,
+            onSuccess: () => {
+                form.reset();
+            },
+            onError: () => {
+                // if (form.errors.password) {
+                //     form.reset('password', 'password_confirmation');
+                //     passwordInput.value?.focus();
+                // }
+                // if (form.errors.current_password) {
+                //     form.reset('current_password');
+                //     currentPasswordInput.value?.focus();
+                // }
+            },
+            onFinish: () => {
+                // form.reset('password', 'password_confirmation');
+            },
+        });
+    } else {
+        form.post(route('apps.users.create'), {
+            preserveScroll: true,
+            onSuccess: () => {
+                form.reset();
+            },
+            onError: () => {
+                // if (form.errors.password) {
+                //     form.reset('password', 'password_confirmation');
+                //     passwordInput.value?.focus();
+                // }
+                // if (form.errors.current_password) {
+                //     form.reset('current_password');
+                //     currentPasswordInput.value?.focus();
+                // }
+            },
+            onFinish: () => {
+                // form.reset('password', 'password_confirmation');
+            },
+        });
+    }
+};
 
 </script>
 
@@ -28,7 +79,7 @@ const form = useForm({
             </p>
         </header>
 
-        <form @submit.prevent="form.patch(route)" class="mt-6 space-y-6">
+        <form @submit.prevent="update(form.uuid)" class="mt-6 space-y-6">
             <div>
                 <InputLabel for="name" :value="$t('Name')" />
 
@@ -61,7 +112,10 @@ const form = useForm({
             </div>
 
             <div class="flex items-center gap-4">
-                <PrimaryButton :disabled="form.processing">{{ $t('Save') }}</PrimaryButton>
+                <PrimaryButton 
+                    :class="{ 'opacity-25': form.processing }"
+                    :disabled="form.processing">{{ $t('Save') }}
+                </PrimaryButton>
 
                 <Transition
                     enter-active-class="transition ease-in-out"
