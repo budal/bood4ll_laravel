@@ -65,7 +65,7 @@ const classTD = "p-2"
         <thead v-if="items.data.length">
           <tr class="bg-gray-200 dark:bg-slate-900 p-3 text-slate-1000 dark:text-white text-left">
             <th :class="`${classTD}`">
-              <Checkbox name="remember" v-model:checked="form.remember" />
+              <Checkbox name="remember" @click="toggleSelection" :checked="allEmailsSelected" class="w-6 h-6 rounded" />
             </th>
             <th :class="`${classTD}`">
             </th>
@@ -86,7 +86,7 @@ const classTD = "p-2"
           <tr class="group/item bg-white hover:bg-gray-100 dark:bg-slate-800 hover:dark:bg-slate-700 border-t border-slate-200 dark:border-slate-600 text-slate-500 dark:text-slate-400">
             <td :class="`${classTD}`">
               <label class="flex items-center">
-                <Checkbox name="remember" v-model:checked="form.remember" />
+                <Checkbox name="remember" :checked="false" class="w-6 h-6 rounded" />
                 <span class="ml-2 text-sm text-gray-600 dark:text-gray-400" />
               </label>
             </td>
