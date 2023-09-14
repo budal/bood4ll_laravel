@@ -6,6 +6,7 @@ import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/vue/20/solid'
 import { ref, watch, onBeforeUnmount } from 'vue'
 import { router, Link, useForm } from '@inertiajs/vue3';
 import debounce from "lodash.debounce";
+import { reactive } from 'vue';
 
 const props = defineProps<{
     filters: any;
@@ -40,6 +41,16 @@ onBeforeUnmount(() => {
 
 const classTD = "p-2"
 
+
+
+
+
+
+
+
+
+
+
 </script>
 
 <template>
@@ -55,8 +66,7 @@ const classTD = "p-2"
           enter-from-class="opacity-0"
           leave-active-class="transition ease-in-out"
           leave-to-class="opacity-0"
-      >
-      </Transition>
+      />
     </div>
   </div>
   <div>
