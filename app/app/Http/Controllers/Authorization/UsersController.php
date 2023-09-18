@@ -27,7 +27,8 @@ class UsersController extends Controller
                 [
                     'type' => 'avatar',
                     'title' => 'Avatar',
-                    'field' => 'uuid'
+                    'field' => 'uuid',
+                    'fallback' => 'name'
                 ],
                 [
                     'type' => 'composite',

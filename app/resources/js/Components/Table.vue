@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import SearchInput from '@/Components/SearchInput.vue';
 import PrimaryButton from './PrimaryButton.vue';
 import DangerButton from './DangerButton.vue';
+import Avatar from '@/Components/Avatar.vue';
 import Checkbox from '@/Components/Checkbox.vue';
+import SearchInput from '@/Components/SearchInput.vue';
 import { ChevronLeftIcon, ChevronRightIcon, PlusIcon, TrashIcon } from '@heroicons/vue/20/solid'
 import { ref, computed, reactive, watch, onBeforeUnmount } from 'vue'
 import { router, Link } from '@inertiajs/vue3';
@@ -73,13 +74,13 @@ const classTD = "p-2"
 
 <template>
   <div class="flex justify-between">
-    <div class="flex items-center gap-4">
+    <div class="flex-none items-center pt-3">
       <Link v-if="destroyRoute" :href="route(destroyRoute)"><DangerButton><TrashIcon class="h-5 w-5" /></DangerButton></Link>
     </div>
-    <div class="flex items-center gap-4">
-      <SearchInput :placeholder="$t('Search...')" class="z-50 mt-3 mb-3 w-96" :value="filters.search" v-model="search" />
+    <div class="flex-1 items-center px-4">
+      <SearchInput :placeholder="$t('Search...')" class="z-50 mt-3 mb-3 w-full" :value="filters.search" v-model="search" />
     </div>
-    <div class="flex items-center gap-4">
+    <div class="flex-none items-center pt-3">
       <Link v-if="createRoute" :href="route(createRoute)"><PrimaryButton><PlusIcon class="h-5 w-5" /></PrimaryButton></Link>
     </div>
   </div>
@@ -91,9 +92,11 @@ const classTD = "p-2"
             <th v-if="destroyRoute" :class="`${classTD}`">
               <Checkbox name="remember" :checked="itemsSelected" @click="toggleSelection" class="w-8 h-8 rounded-full" />
             </th>
-            <th v-for="content in titles" :class="`${classTD}`">
-              {{ $t(content.title) }}
-            </th>
+            <template v-for="(content, id) in titles">
+              <th :class="`${classTD}`">
+                {{ $t(content.title) }}
+              </th>
+            </template>
             <th v-if="editRoute" :class="`${classTD}`"></th>
           </tr>
         </thead>
@@ -104,7 +107,7 @@ const classTD = "p-2"
             </td>
             <template v-for="content in titles">
               <td v-if="content.type == 'avatar'" :class="`${classTD}`">
-                <img class="w-12 h-12 rounded-full" :src="`${item[content.field]}`">
+                <Avatar class="w-12 h-12 rounded-full" :name="`${item[content.fallback]}`" />
               </td>
               <td v-if="content.type == 'composite'" :class="`${classTD}`">
                 <strong class="text-slate-900 text-sm font-medium dark:text-slate-200">{{ item[content.fields[0]] }}</strong>
