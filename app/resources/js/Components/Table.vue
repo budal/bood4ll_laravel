@@ -87,7 +87,7 @@ const classTD = "p-2"
       <table class="table-auto w-full text-sm shadow-lg">
         <thead v-if="items.data.length">
           <tr class="bg-gray-200 dark:bg-slate-900 p-3 text-slate-1000 dark:text-white text-left">
-            <th :class="`${classTD}`">
+            <th v-if="destroyRoute" :class="`${classTD}`">
               <Checkbox name="remember" :checked="itemsSelected" @click="toggleSelection" class="w-8 h-8 rounded-full" />
             </th>
             <th :class="`${classTD}`">
@@ -104,11 +104,8 @@ const classTD = "p-2"
         </thead>
         <tbody>
           <tr v-for="item in items.data" :key="item.id" class="group/item bg-white hover:bg-gray-100 dark:bg-slate-800 hover:dark:bg-slate-700 border-t border-slate-200 dark:border-slate-600 text-slate-500 dark:text-slate-400">
-            <td :class="`${classTD}`">
-              <label class="flex items-center">
-                <Checkbox class="w-8 h-8 rounded-full" :checked="selectedEmails.has(item)" :value="item.id" :id="item.id" @click="toggle(item)" />
-                <span class="ml-2 text-sm text-gray-600 dark:text-gray-400" />
-              </label>
+            <td v-if="destroyRoute" :class="`${classTD}`">
+              <Checkbox class="w-8 h-8 rounded-full" :checked="selectedEmails.has(item)" :value="item.id" :id="item.id" @click="toggle(item)" />
             </td>
             <td :class="`${classTD}`">
               <img class="w-12 h-12 rounded-full" src="https://images.unsplash.com/photo-1501196354995-cbb51c65aaea?ixlib=rb-1.2.1&amp;ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&amp;auto=format&amp;fit=facearea&amp;facepad=4&amp;w=256&amp;h=256&amp;q=80">
