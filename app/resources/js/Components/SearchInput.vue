@@ -32,6 +32,10 @@ export default defineComponent({
       type: String,
       default: ''
     },
+    name: {
+      type: String,
+      default: 'searchBox'
+    },
     value: {
       type: String,
       default: ''
@@ -161,6 +165,8 @@ export default defineComponent({
                 type="search"
                 data-search-input="true"
                 :data-shortcut-enabled="shortcutListenerEnabled"
+                :id="name"
+                :name="name"
                 :value="modelValue || value"
                 @input="$emit('update:modelValue', ($event.target as HTMLInputElement).value)"
                 @focus="hasFocus = true"
