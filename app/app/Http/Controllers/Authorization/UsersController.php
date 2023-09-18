@@ -23,7 +23,33 @@ class UsersController extends Controller
     {
         return Inertia::render('Users/Index', [
             'filters' => $request->all('search'),
-
+            'titles' => [
+                [
+                    'type' => 'avatar',
+                    'title' => 'Avatar',
+                    'field' => 'uuid'
+                ],
+                [
+                    'type' => 'composite',
+                    'title' => 'User',
+                    'fields' => ['name', 'email']
+                ],
+                [
+                    'type' => 'simple',
+                    'title' => 'Username',
+                    'field' => 'username'
+                ],
+                [
+                    'type' => 'simple',
+                    'title' => 'Active',
+                    'field' => 'active'
+                ],
+                [
+                    'type' => 'simple',
+                    'title' => 'Confirmed',
+                    'field' => 'confirmed'
+                ]
+            ],
             'items' => User::orderBy('name')
                 ->filter($request->all('search'))
                 ->paginate(20)

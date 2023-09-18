@@ -11,6 +11,7 @@ import debounce from "lodash.debounce";
 const props = defineProps<{
     filters: any;
     items: any;
+    titles: any;
     indexRoute: string;
     createRoute?: string;
     editRoute?: string;
@@ -90,16 +91,10 @@ const classTD = "p-2"
             <th v-if="destroyRoute" :class="`${classTD}`">
               <Checkbox name="remember" :checked="itemsSelected" @click="toggleSelection" class="w-8 h-8 rounded-full" />
             </th>
-            <th :class="`${classTD}`">
+            <th v-for="content in titles" :class="`${classTD}`">
+              {{ $t(content.title) }}
             </th>
-            <th :class="`${classTD}`">
-              Song
-            </th>
-            <th :class="`${classTD}`">
-              Year
-            </th>
-            <th v-if="editRoute" :class="`${classTD}`">
-            </th>
+            <th v-if="editRoute" :class="`${classTD}`"></th>
           </tr>
         </thead>
         <tbody>
@@ -107,16 +102,18 @@ const classTD = "p-2"
             <td v-if="destroyRoute" :class="`${classTD}`">
               <Checkbox class="w-8 h-8 rounded-full" :checked="selectedEmails.has(item)" :value="item.id" :id="item.id" @click="toggle(item)" />
             </td>
-            <td :class="`${classTD}`">
-              <img class="w-12 h-12 rounded-full" src="https://images.unsplash.com/photo-1501196354995-cbb51c65aaea?ixlib=rb-1.2.1&amp;ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&amp;auto=format&amp;fit=facearea&amp;facepad=4&amp;w=256&amp;h=256&amp;q=80">
-            </td>
-            <td :class="`${classTD}`">
-              <strong class="text-slate-900 text-sm font-medium dark:text-slate-200">{{ item.name }}</strong>
-              <p class="truncate text-xs leading-5 text-gray-600 dark:text-gray-400">{{ item.username }} / {{ item.email }}</p>
-            </td>
-            <td :class="`${classTD}`">
-              1975
-            </td>
+            <template v-for="content in titles">
+              <td v-if="content.type == 'avatar'" :class="`${classTD}`">
+                <img class="w-12 h-12 rounded-full" :src="`${item[content.field]}`">
+              </td>
+              <td v-if="content.type == 'composite'" :class="`${classTD}`">
+                <strong class="text-slate-900 text-sm font-medium dark:text-slate-200">{{ item[content.fields[0]] }}</strong>
+                <p class="truncate text-xs leading-5 text-gray-600 dark:text-gray-400">{{ item[content.fields[1]] }}</p>
+              </td>
+              <td v-if="content.type == 'simple'" :class="`${classTD}`">
+                {{ item[content.field] }}
+              </td>
+            </template>
             <td v-if="editRoute" :class="`${classTD} text-right`">
               <Link :href="route(editRoute, item.uuid)" class="group/edit md:invisible hover:bg-slate-200 group-hover/item:visible">
                 <PrimaryButton class="p-1">

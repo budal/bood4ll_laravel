@@ -7,6 +7,7 @@ import { Head } from '@inertiajs/vue3';
 defineProps<{
     filters: any;
     items: any;
+    titles: any;
 }>();
 
 </script>
@@ -25,6 +26,7 @@ defineProps<{
                     <UsersList 
                         :filters="filters" 
                         :items="items" 
+                        :titles="titles" 
                         indexRoute="apps.users" 
                         createRoute="apps.users.create" 
                         editRoute="apps.users.edit" 
