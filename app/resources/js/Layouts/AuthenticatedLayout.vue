@@ -9,8 +9,13 @@ import Avatar from '@/Components/Avatar.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import TailwindIndicator from '@/Components/TailwindIndicator.vue';
 import NavLinkPopover from '@/Components/Popover.vue';
+import { useDark, useToggle } from "@vueuse/core"
+import { MoonIcon, SunIcon } from '@heroicons/vue/20/solid';
 
 const showingNavigationDropdown = ref(false);
+
+const isDark = useDark();
+const toggleDark = useToggle(isDark);
 
 const routeCurrent = window.location.href;
 
@@ -74,6 +79,12 @@ const items = [
                         </div>
 
                         <div class="hidden sm:flex sm:items-center sm:ml-6">
+                            <div class="ml-3 relative">
+                                <button @click="toggleDark()">
+                                    <SunIcon v-if="isDark" class="w-5 h-5 text-white" />
+                                    <MoonIcon v-if="!isDark" class="w-5 h-5" />
+                                </button>
+                            </div>
                             <div class="ml-3 relative">
                                 <Dropdown align="right" width="48">
                                     <template #trigger>
