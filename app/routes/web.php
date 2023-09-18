@@ -56,6 +56,7 @@ Route::middleware('auth')->group(function () {
                 Route::post('/users/create', 'create')->name('users.store');
                 Route::get('/users/edit/{user}', 'edit')->name('users.edit');
                 Route::patch('/users/edit/{user}', 'edit')->name('users.update');
+                Route::post('/users/destroy', 'destroy')->name('users.destroy');
             });
         });
     });

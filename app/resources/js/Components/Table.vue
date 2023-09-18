@@ -3,7 +3,7 @@ import SearchInput from '@/Components/SearchInput.vue';
 import PrimaryButton from './PrimaryButton.vue';
 import DangerButton from './DangerButton.vue';
 import Checkbox from '@/Components/Checkbox.vue';
-import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/vue/20/solid'
+import { ChevronLeftIcon, ChevronRightIcon, PlusIcon, TrashIcon } from '@heroicons/vue/20/solid'
 import { ref, computed, reactive, watch, onBeforeUnmount } from 'vue'
 import { router, Link } from '@inertiajs/vue3';
 import debounce from "lodash.debounce";
@@ -14,7 +14,7 @@ const props = defineProps<{
     indexRoute: string;
     createRoute?: string;
     editRoute?: string;
-      destroyRoute?: string;
+    destroyRoute?: string;
       restoreRoute?: string;
 }>();
 
@@ -73,13 +73,13 @@ const classTD = "p-2"
 <template>
   <div class="flex justify-between">
     <div class="flex items-center gap-4">
-      <Link v-if="createRoute" :href="route(createRoute)"><DangerButton>{{ $t('Erase all') }}</DangerButton></Link>
+      <Link v-if="destroyRoute" :href="route(destroyRoute)"><DangerButton><TrashIcon class="h-5 w-5" /></DangerButton></Link>
     </div>
     <div class="flex items-center gap-4">
       <SearchInput :placeholder="$t('Search...')" class="z-50 mt-3 mb-3 w-96" :value="filters.search" v-model="search" />
     </div>
     <div class="flex items-center gap-4">
-      <Link v-if="createRoute" :href="route(createRoute)"><PrimaryButton>{{ $t('New') }}</PrimaryButton></Link>
+      <Link v-if="createRoute" :href="route(createRoute)"><PrimaryButton><PlusIcon class="h-5 w-5" /></PrimaryButton></Link>
     </div>
   </div>
   <div>
