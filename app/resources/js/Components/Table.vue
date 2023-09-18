@@ -4,7 +4,7 @@ import PrimaryButton from './PrimaryButton.vue';
 import DangerButton from './DangerButton.vue';
 import Checkbox from '@/Components/Checkbox.vue';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/vue/20/solid'
-import { ref, computed, watch, onBeforeUnmount } from 'vue'
+import { ref, computed, reactive, watch, onBeforeUnmount } from 'vue'
 import { router, Link } from '@inertiajs/vue3';
 import debounce from "lodash.debounce";
 
@@ -23,10 +23,10 @@ const search = ref("");
 const routeCurrent = route(props.indexRoute);
 
 const debouncedWatch = debounce(() => {
-    router.visit(routeCurrent+'?search='+search.value, {
-      method: 'get',
-      preserveState: true,
-    })
+  router.visit(routeCurrent+'?search='+search.value, {
+    method: 'get',
+    preserveState: true,
+  })
 }, 500);
 
 watch(search, debouncedWatch);
@@ -35,52 +35,36 @@ onBeforeUnmount(() => {
   debouncedWatch.cancel();
 })
 
+let selectedEmails = reactive(new Set())
 
+let selectAll = (items: any) => {
+  items.forEach((item: unknown) => {
+    selectedEmails.add(item)
+  })
+}
 
+let clear = () => {
+  selectedEmails.clear()
+}
 
-
-const selectedIds = ref([]);
-
-const isAllSelected = computed(() => {
-  return selectedIds.value === props.items.data.value;
-});
-
-function selectAll() {
-  if (isAllSelected.value) {
-    selectedIds.value = [];
+let toggle = function(item: any) {
+  if(selectedEmails.has(item)) {
+    selectedEmails.delete(item)
   } else {
-    selectedIds.value = props.items.data.map(item => item.id);
+    selectedEmails.add(item)
   }
-  console.log(selectedIds.value)
 }
 
-function selectMe() {
-  return selectedIds.value === props.items.value;
+let numberSelected = computed(() => selectedEmails.size)
+let itemsSelected = computed(() => numberSelected.value == props.items.data.length)
+
+function toggleSelection() {
+  if(itemsSelected.value) {
+    clear()
+  } else {
+    selectAll(props.items.data)
+  }
 }
-
-
-
-
-
-
-
-
-// const isAllSelected = ref(false);
-
-// const selectAll = () => {
-// }
-
-// const selectMe = () => {
-//   console.log(selectedIds)
-
-// }
-
-
-
-
-
-
-
 
 const classTD = "p-2"
 
@@ -104,7 +88,7 @@ const classTD = "p-2"
         <thead v-if="items.data.length">
           <tr class="bg-gray-200 dark:bg-slate-900 p-3 text-slate-1000 dark:text-white text-left">
             <th :class="`${classTD}`">
-              <Checkbox name="remember" :checked="false" @click="selectAll" class="w-6 h-6 rounded" />
+              <Checkbox name="remember" :checked="itemsSelected" @click="toggleSelection" class="w-6 h-6 rounded-full" />
             </th>
             <th :class="`${classTD}`">
             </th>
@@ -122,7 +106,7 @@ const classTD = "p-2"
           <tr v-for="item in items.data" :key="item.id" class="group/item bg-white hover:bg-gray-100 dark:bg-slate-800 hover:dark:bg-slate-700 border-t border-slate-200 dark:border-slate-600 text-slate-500 dark:text-slate-400">
             <td :class="`${classTD}`">
               <label class="flex items-center">
-                <Checkbox class="w-6 h-6 rounded" :checked="false" :value="item.id" @click="selectMe" />
+                <Checkbox class="w-6 h-6 rounded-full" :checked="selectedEmails.has(item)" :value="item.id" @click="toggle(item)" />
                 <span class="ml-2 text-sm text-gray-600 dark:text-gray-400" />
               </label>
             </td>
