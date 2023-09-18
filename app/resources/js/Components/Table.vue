@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import SearchInput from '@/Components/SearchInput.vue';
 import PrimaryButton from './PrimaryButton.vue';
+import DangerButton from './DangerButton.vue';
 import Checkbox from '@/Components/Checkbox.vue';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/vue/20/solid'
-import { ref, watch, onBeforeUnmount } from 'vue'
-import { router, Link, useForm } from '@inertiajs/vue3';
+import { ref, computed, watch, onBeforeUnmount } from 'vue'
+import { router, Link } from '@inertiajs/vue3';
 import debounce from "lodash.debounce";
-import { reactive } from 'vue';
 
 const props = defineProps<{
     filters: any;
@@ -18,10 +18,6 @@ const props = defineProps<{
       restoreRoute?: string;
 }>();
 
-const form = useForm({
-    remember: false,
-});
-
 const search = ref("");
 
 const routeCurrent = route(props.indexRoute);
@@ -31,7 +27,7 @@ const debouncedWatch = debounce(() => {
       method: 'get',
       preserveState: true,
     })
-}, 300);
+}, 500);
 
 watch(search, debouncedWatch);
 
@@ -39,34 +35,67 @@ onBeforeUnmount(() => {
   debouncedWatch.cancel();
 })
 
+
+
+
+
+const selectedIds = ref([]);
+
+const isAllSelected = computed(() => {
+  return selectedIds.value === props.items.data.value;
+});
+
+function selectAll() {
+  if (isAllSelected.value) {
+    selectedIds.value = [];
+  } else {
+    selectedIds.value = props.items.data.map(item => item.id);
+  }
+  console.log(selectedIds.value)
+}
+
+function selectMe() {
+  return selectedIds.value === props.items.value;
+}
+
+
+
+
+
+
+
+
+// const isAllSelected = ref(false);
+
+// const selectAll = () => {
+// }
+
+// const selectMe = () => {
+//   console.log(selectedIds)
+
+// }
+
+
+
+
+
+
+
+
 const classTD = "p-2"
-
-
-
-
-
-
-
-
-
-
 
 </script>
 
 <template>
   <div class="flex justify-between">
-    <SearchInput :placeholder="$t('Search...')" class="z-50 mt-3 mb-3 w-96" :value="filters.search" v-model="search" />
     <div class="flex items-center gap-4">
-      <Link v-if="createRoute" :href="route(createRoute)">
-        <PrimaryButton>{{ $t('New') }}</PrimaryButton>
-      </Link>
-
-      <Transition
-          enter-active-class="transition ease-in-out"
-          enter-from-class="opacity-0"
-          leave-active-class="transition ease-in-out"
-          leave-to-class="opacity-0"
-      />
+      <Link v-if="createRoute" :href="route(createRoute)"><DangerButton>{{ $t('Erase all') }}</DangerButton></Link>
+    </div>
+    <div class="flex items-center gap-4">
+      <SearchInput :placeholder="$t('Search...')" class="z-50 mt-3 mb-3 w-96" :value="filters.search" v-model="search" />
+    </div>
+    <div class="flex items-center gap-4">
+      <Link v-if="createRoute" :href="route(createRoute)"><PrimaryButton>{{ $t('New') }}</PrimaryButton></Link>
     </div>
   </div>
   <div>
@@ -75,15 +104,12 @@ const classTD = "p-2"
         <thead v-if="items.data.length">
           <tr class="bg-gray-200 dark:bg-slate-900 p-3 text-slate-1000 dark:text-white text-left">
             <th :class="`${classTD}`">
-              <Checkbox name="remember" @click="toggleSelection" :checked="allEmailsSelected" class="w-6 h-6 rounded" />
+              <Checkbox name="remember" :checked="false" @click="selectAll" class="w-6 h-6 rounded" />
             </th>
             <th :class="`${classTD}`">
             </th>
             <th :class="`${classTD}`">
               Song
-            </th>
-            <th :class="`${classTD}`">
-              Artist
             </th>
             <th :class="`${classTD}`">
               Year
@@ -92,11 +118,11 @@ const classTD = "p-2"
             </th>
           </tr>
         </thead>
-        <tbody v-for="item in items.data">
-          <tr class="group/item bg-white hover:bg-gray-100 dark:bg-slate-800 hover:dark:bg-slate-700 border-t border-slate-200 dark:border-slate-600 text-slate-500 dark:text-slate-400">
+        <tbody>
+          <tr v-for="item in items.data" :key="item.id" class="group/item bg-white hover:bg-gray-100 dark:bg-slate-800 hover:dark:bg-slate-700 border-t border-slate-200 dark:border-slate-600 text-slate-500 dark:text-slate-400">
             <td :class="`${classTD}`">
               <label class="flex items-center">
-                <Checkbox name="remember" :checked="false" class="w-6 h-6 rounded" />
+                <Checkbox class="w-6 h-6 rounded" :checked="false" :value="item.id" @click="selectMe" />
                 <span class="ml-2 text-sm text-gray-600 dark:text-gray-400" />
               </label>
             </td>
@@ -106,9 +132,6 @@ const classTD = "p-2"
             <td :class="`${classTD}`">
               <strong class="text-slate-900 text-sm font-medium dark:text-slate-200">{{ item.name }}</strong>
               <p class="truncate text-xs leading-5 text-gray-600 dark:text-gray-400">{{ item.username }} / {{ item.email }}</p>
-            </td>
-            <td :class="`${classTD}`">
-              Earth, Wind, and Fire
             </td>
             <td :class="`${classTD}`">
               1975
@@ -124,9 +147,7 @@ const classTD = "p-2"
               </Link>
             </td>
           </tr>
-        </tbody>
-        <tbody v-if="!items.data.length">
-          <tr>
+          <tr v-if="!items.data.length">
             <td :class="`${classTD} text-right`">
               {{ $t('No items to show.') }}
             </td>
