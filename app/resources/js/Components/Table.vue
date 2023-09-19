@@ -37,35 +37,39 @@ onBeforeUnmount(() => {
   debouncedWatch.cancel();
 })
 
-let selectedEmails = reactive(new Set())
+let selectedItems = reactive(new Set())
 
 let selectAll = (items: any) => {
   items.forEach((item: unknown) => {
-    selectedEmails.add(item)
+    selectedItems.add(item)
   })
 }
 
 let clear = () => {
-  selectedEmails.clear()
+  selectedItems.clear()
 }
 
 let toggle = function(item: any) {
-  if(selectedEmails.has(item)) {
-    selectedEmails.delete(item)
+  if (selectedItems.has(item)) {
+    selectedItems.delete(item)
   } else {
-    selectedEmails.add(item)
+    selectedItems.add(item)
   }
 }
 
-let numberSelected = computed(() => selectedEmails.size)
+let numberSelected = computed(() => selectedItems.size)
 let itemsSelected = computed(() => numberSelected.value == props.items.data.length)
 
-function toggleSelection() {
-  if(itemsSelected.value) {
+const toggleSelection = () => {
+  if (itemsSelected.value) {
     clear()
   } else {
     selectAll(props.items.data)
   }
+}
+
+const deleteSelected = () => {
+  console.log(selectedItems)
 }
 
 const classTD = "p-2"
@@ -75,7 +79,7 @@ const classTD = "p-2"
 <template>
   <div class="flex justify-between my-4">
     <div class="flex-none items-center">
-      <Link v-if="destroyRoute" :href="route(destroyRoute)"><DangerButton :disabled="numberSelected === 0"><TrashIcon class="h-6 w-6" /></DangerButton></Link>
+      <DangerButton v-if="destroyRoute" :disabled="numberSelected === 0" @click="deleteSelected"><TrashIcon class="h-6 w-6" /></DangerButton>
     </div>
     <div class="flex-1 items-center px-4">
       <SearchInput :placeholder="$t('Search...')" class="w-full" :value="filters.search" v-model="search" />
@@ -103,7 +107,7 @@ const classTD = "p-2"
         <tbody>
           <tr v-for="item in items.data" :key="item.id" class="group/item bg-white hover:bg-gray-100 dark:bg-slate-800 hover:dark:bg-slate-700 border-t border-slate-200 dark:border-slate-600 text-slate-500 dark:text-slate-400">
             <td v-if="destroyRoute" :class="`${classTD}`">
-              <Checkbox class="w-8 h-8 rounded-full" :checked="selectedEmails.has(item)" :value="item.id" :id="item.id" @click="toggle(item)" />
+              <Checkbox class="w-8 h-8 rounded-full" :checked="selectedItems.has(item)" :value="item.id" :id="item.id" @click="toggle(item)" />
             </td>
             <template v-for="content in titles">
               <td v-if="content.type == 'avatar'" :class="`${classTD}`">
