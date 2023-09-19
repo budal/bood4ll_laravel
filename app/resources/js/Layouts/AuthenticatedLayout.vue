@@ -8,7 +8,7 @@ import NavLink from '@/Components/NavLink.vue';
 import Avatar from '@/Components/Avatar.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import TailwindIndicator from '@/Components/TailwindIndicator.vue';
-import NavLinkPopover from '@/Components/Popover.vue';
+import NavPopover from '@/Components/NavPopover.vue';
 import { useDark, useToggle } from "@vueuse/core"
 import { MoonIcon, SunIcon } from '@heroicons/vue/20/solid';
 
@@ -66,12 +66,12 @@ const items = [
                                 <NavLink :href="route('dashboard')" :active="routeCurrent.includes(route('dashboard'))">
                                     {{ $t('Dashboard') }}
                                 </NavLink>
-                                <NavLinkPopover :items=items :active="routeCurrent.includes(route('apps'))">
+                                <NavPopover :items=items :active="routeCurrent.includes(route('apps'))">
                                     {{ $t('Apps') }}
-                                </NavLinkPopover>
-                                <NavLinkPopover :items=items :active="routeCurrent.includes(route('reports'))">
+                                </NavPopover>
+                                <NavPopover :items=items :active="routeCurrent.includes(route('reports'))">
                                     {{ $t('Reports') }}
-                                </NavLinkPopover>
+                                </NavPopover>
                                 <NavLink :href="route('help')" :active="routeCurrent.includes(route('help'))">
                                     {{ $t('Help') }}
                                 </NavLink>

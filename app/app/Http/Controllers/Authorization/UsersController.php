@@ -22,6 +22,7 @@ class UsersController extends Controller
     public function index(Request $request): Response
     {
         return Inertia::render('Users/Index', [
+            'status' => session('status'),
             'filters' => $request->all('search'),
             'titles' => [
                 [
@@ -94,19 +95,20 @@ class UsersController extends Controller
      */
     public function destroy(Request $request): RedirectResponse
     {
-        $request->validate([
-            'password' => ['required', 'current_password'],
-        ]);
+        // $request->validate([
+        //     'password' => ['required', 'current_password'],
+        // ]);
 
-        $user = $request->user();
+        // $user = $request->user();
 
-        Auth::logout();
+        // Auth::logout();
 
-        $user->delete();
+        // $user->delete();
 
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
+        // $request->session()->invalidate();
+        // $request->session()->regenerateToken();
 
-        return Redirect::to('/');
+        // return Redirect::to('/');
+        return back()->with('status', 'Profile updated!');
     }
 }

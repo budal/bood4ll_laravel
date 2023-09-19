@@ -2,6 +2,7 @@
 import Table from '@/Components/Table.vue';
 
 defineProps<{
+    status: any;
     filters: any;
     items: any;
     titles: any;
@@ -26,6 +27,7 @@ defineProps<{
       </header>
 
       <Table 
+        :status="status" 
         :filters="filters" 
         :items="items" 
         :titles="titles" 
