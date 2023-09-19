@@ -75,13 +75,13 @@ const classTD = "p-2"
 <template>
   <div class="flex justify-between my-4">
     <div class="flex-none items-center">
-      <Link v-if="destroyRoute" :href="route(destroyRoute)"><DangerButton><TrashIcon class="h-5 w-5" /></DangerButton></Link>
+      <Link v-if="destroyRoute" :href="route(destroyRoute)"><DangerButton><TrashIcon class="h-6 w-6" /></DangerButton></Link>
     </div>
     <div class="flex-1 items-center px-4">
       <SearchInput :placeholder="$t('Search...')" class="w-full" :value="filters.search" v-model="search" />
     </div>
     <div class="flex-none items-center">
-      <Link v-if="createRoute" :href="route(createRoute)"><PrimaryButton><PlusIcon class="h-5 w-5" /></PrimaryButton></Link>
+      <Link v-if="createRoute" :href="route(createRoute)"><PrimaryButton><PlusIcon class="h-6 w-6" /></PrimaryButton></Link>
     </div>
   </div>
   <div>
