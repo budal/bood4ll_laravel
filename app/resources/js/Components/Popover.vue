@@ -40,7 +40,7 @@ const classes = computed(() =>
         leave-to-class="translate-y-1 opacity-0"
       >
         <PopoverPanel class="absolute left-1/2 z-10 mt-3 -translate-x-1/2 transform px-4 sm:px-0 w-screen max-w-xl md:max-w-3xl lg:max-w-5xl" >
-          <div class="overflow-hidden rounded-lg shadow-lg ring-1 ring-black ring-opacity-20" >
+          <div class="overflow-hidden rounded-lg shadow-lg ring-1 ring-black ring-opacity-20">
             <div class="grid gap-8 bg-white dark:bg-gray-800 p-7 md:grid-cols-2 lg:grid-cols-3">
               <Link
                 v-for="item in items"
