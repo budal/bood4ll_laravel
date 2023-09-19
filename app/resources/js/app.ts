@@ -20,6 +20,7 @@ createInertiaApp({
             .use(Vue3Toasity, {
                 autoClose: 3000,
                 limit: 5,
+                theme: 'auto',
                 style: {
                     opacity: '0.9',
                     userSelect: 'initial',
