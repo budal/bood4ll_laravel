@@ -79,17 +79,26 @@ const deleteSelected = () => {
 }
 
 const form = useForm({
-  password: '',
+  uuids: [],
 });
 
+let selectedItemsUUIDs = reactive(new Set())
+
 const deleteUser = () => {
-  // console.log(selectedItems)
-    form.delete(route(props.destroyRoute), {
-        preserveScroll: true,
-        onSuccess: () => closeModal(),
-        onError: () => toast.error('Wow so easy !'),//session('status')
-        onFinish: () => toast.success(props.status),//,
-    });
+  const uuids = selectedItems.forEach((item: any) => {
+    selectedItemsUUIDs.add(item.uuid)
+  })
+
+  form.uuids = selectedItemsUUIDs
+  
+  console.log(selectedItemsUUIDs)
+
+  form.delete(route(props.destroyRoute), {
+      preserveScroll: true,
+      onSuccess: () => closeModal(),
+      onError: () => toast.error('Wow so easy !'),//session('status')
+      onFinish: () => toast.success(props.status),//,
+  });
 };
 
 const closeModal = () => {
@@ -135,7 +144,7 @@ const classTD = "p-2"
       <SearchInput :placeholder="$t('Search...')" class="w-full" :value="filters.search" v-model="search" />
     </div>
     <div class="flex-none items-center">
-      <Link v-if="createRoute" :href="route(createRoute)"><PrimaryButton><PlusIcon class="h-6 w-6" /></PrimaryButton></Link>
+      <Link v-if="createRoute" as="button" :href="route(createRoute)"><PrimaryButton><PlusIcon class="h-6 w-6" /></PrimaryButton></Link>
     </div>
   </div>
   <div>
@@ -155,9 +164,9 @@ const classTD = "p-2"
           </tr>
         </thead>
         <tbody>
-          <tr v-for="item in items.data" :key="item.id" class="group/item bg-white hover:bg-gray-100 dark:bg-slate-800 hover:dark:bg-slate-700 border-t border-slate-200 dark:border-slate-600 text-slate-500 dark:text-slate-400">
+          <tr v-for="item in items.data" :key="`tr-${item.uuid}`" class="group/item bg-white hover:bg-gray-100 dark:bg-slate-800 hover:dark:bg-slate-700 border-t border-slate-200 dark:border-slate-600 text-slate-500 dark:text-slate-400">
             <td v-if="destroyRoute" :class="`${classTD}`">
-              <Checkbox class="w-8 h-8 rounded-full" :checked="selectedItems.has(item)" :value="item.id" :id="item.id" @click="toggle(item)" />
+              <Checkbox class="w-8 h-8 rounded-full" :checked="selectedItems.has(item)" :value="item.uuid" :id="`checkbox-${item.uuid}`" @click="toggle(item)" />
             </td>
             <template v-for="content in titles">
               <td v-if="content.type == 'avatar'" :class="`${classTD}`">
@@ -172,7 +181,7 @@ const classTD = "p-2"
               </td>
             </template>
             <td v-if="editRoute" :class="`${classTD} text-right`">
-              <Link :href="route(editRoute, item.uuid)" class="group/edit md:invisible hover:bg-slate-200 group-hover/item:visible">
+              <Link :href="route(editRoute, item.uuid)" as="button" class="rounded-lg group/edit md:invisible hover:bg-slate-200 group-hover/item:visible">
                 <PrimaryButton class="p-1">
                   <ChevronRightIcon
                     class="h-5 w-5 group-hover/edit:translate-x-0.5 group-hover/edit:text-slate-500"

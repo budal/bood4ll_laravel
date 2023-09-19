@@ -3,7 +3,9 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AppsController;
 use App\Http\Controllers\Authorization\UsersController;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
 
+use Illuminate\Http\Request;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -28,6 +30,22 @@ Route::get('/', function () {
     ]);
 });
 
+Route::get('/email/verify', function () {
+    return Inertia::render('Auth/VerifyEmail');
+})->middleware('auth')->name('verification.notice');    
+
+Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
+    $request->fulfill();
+ 
+    return redirect('/dashboard');
+})->middleware(['auth', 'signed'])->name('verification.verify');
+
+Route::post('/email/verification-notification', function (Request $request) {
+    $request->user()->sendEmailVerificationNotification();
+ 
+    return back()->with('message', 'Verification link sent!');
+})->middleware(['auth', 'throttle:6,1'])->name('verification.send');
+
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
@@ -43,20 +61,17 @@ Route::middleware('auth')->group(function () {
     
     Route::get('/settings', [ProfileController::class, 'edit'])->name('settings');
     
-
-    
-    
     Route::get('/apps', [AppsController::class, 'index'])->name('apps');
     
     Route::prefix('apps')->name('apps.')->group(function () {
         Route::middleware('verified')->group(function () {
             Route::controller(UsersController::class)->group(function () {
-                Route::get('/users', 'index')->name('users');
-                Route::get('/users/create', 'create')->name('users.create');
-                Route::post('/users/create', 'create')->name('users.store');
-                Route::get('/users/edit/{user}', 'edit')->name('users.edit');
-                Route::patch('/users/edit/{user}', 'edit')->name('users.update');
-                Route::delete('/users/destroy', 'destroy')->name('users.destroy');
+                Route::get('/users', 'index')->name('users')->middleware(['password.confirm', 'verified']);
+                Route::get('/users/create', 'create')->name('users.create')->middleware(['password.confirm']);
+                Route::post('/users/create', 'create')->name('users.store')->middleware(['password.confirm']);
+                Route::get('/users/edit/{user}', 'edit')->name('users.edit')->middleware(['password.confirm']);
+                Route::patch('/users/edit/{user}', 'edit')->name('users.update')->middleware(['password.confirm']);
+                Route::delete('/users/destroy', 'destroy')->name('users.destroy')->middleware(['password.confirm']);
             });
         });
     });
