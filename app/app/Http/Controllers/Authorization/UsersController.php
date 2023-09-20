@@ -95,7 +95,17 @@ class UsersController extends Controller
      */
     public function destroy(Request $request): RedirectResponse
     {
-        dd($request->request);
+        $items = $request->all();
+
+        try {
+            $usersToDelete = User::whereIn('uuid', $items['uuids'])->delete();
+        } catch (Throwable $e) {
+            report($e);
+     
+            return false;
+        }
+        
+        // dd($usersToDelete);
         // $request->validate([
         //     'password' => ['required', 'current_password'],
         // ]);
