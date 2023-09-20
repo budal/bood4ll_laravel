@@ -95,6 +95,7 @@ class UsersController extends Controller
      */
     public function destroy(Request $request): RedirectResponse
     {
+        dd($request->request);
         // $request->validate([
         //     'password' => ['required', 'current_password'],
         // ]);

@@ -14,7 +14,7 @@ import debounce from "lodash.debounce";
 
 const props = defineProps<{
     status?: any;
-    filters: any;
+    filters?: any;
     items: any;
     titles: any;
     indexRoute: string;
@@ -85,19 +85,16 @@ const form = useForm({
 let selectedItemsUUIDs = reactive(new Set())
 
 const deleteUser = () => {
-  const uuids = selectedItems.forEach((item: any) => {
+  selectedItems.forEach((item: any) => {
     selectedItemsUUIDs.add(item.uuid)
+    form.uuids.push(item.uuid)
   })
-
-  form.uuids = selectedItemsUUIDs
-  
-  console.log(selectedItemsUUIDs)
 
   form.delete(route(props.destroyRoute), {
       preserveScroll: true,
       onSuccess: () => closeModal(),
-      onError: () => toast.error('Wow so easy !'),//session('status')
-      onFinish: () => toast.success(props.status),//,
+      onError: () => toast.error('Wow so easy !'),
+      onFinish: () => toast.success(props.status),
   });
 };
 
@@ -114,11 +111,11 @@ const classTD = "p-2"
   <Modal :show="confirmingUserDeletion" @close="closeModal">
     <div class="p-6">
       <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
-        {{ $t('Are you sure you want to delete the following items?') }}
+        {{ $t('Are you sure you want to delete the selected items?') }}
       </h2>
 
       <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-        {{ $t('The following items will be removed from the active items. Do you want to continue?') }}
+        {{ $t('The selected items will be removed from the active items. Do you want to continue?') }}
       </p>
 
       <div class="mt-6 flex justify-end">
@@ -130,7 +127,7 @@ const classTD = "p-2"
           :disabled="form.processing"
           @click="deleteUser"
         >
-            {{ $t('Delete items') }}
+            {{ $t('Erase selected') }}
         </DangerButton>
       </div>
     </div>
