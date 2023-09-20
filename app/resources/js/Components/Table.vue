@@ -26,10 +26,8 @@ const props = defineProps<{
 
 const search = ref("");
 
-const routeCurrent = route(props.indexRoute);
-
 const debouncedWatch = debounce(() => {
-  router.visit(routeCurrent+'?search='+search.value, {
+  router.visit(route(props.indexRoute) + '?search='+search.value, {
     method: 'get',
     preserveState: true,
   })
@@ -82,11 +80,8 @@ const form = useForm({
   uuids: [],
 });
 
-let selectedItemsUUIDs = reactive(new Set())
-
 const deleteUser = () => {
   selectedItems.forEach((item: any) => {
-    selectedItemsUUIDs.add(item.uuid)
     form.uuids.push(item.uuid)
   })
 
@@ -100,9 +95,8 @@ const deleteUser = () => {
 
 const closeModal = () => {
     confirmingUserDeletion.value = false;
-
-    form.reset();
 };
+
 const classTD = "p-2"
 
 </script>
