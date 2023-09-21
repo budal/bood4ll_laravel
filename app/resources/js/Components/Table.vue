@@ -128,7 +128,7 @@ const classTD = "p-2"
       </div>
     </Modal>
   
-    <div class="flex sticky top-[65px] justify-between py-4 bg-white dark:bg-gray-800 backdrop-blur-sm">
+    <div class="flex sticky top-[65px] justify-between py-4 bg-white dark:bg-gray-800 backdrop-blur-md">
       <div class="flex-none items-center">
         <DangerButton v-if="destroyRoute" :disabled="numberSelected === 0" @click="deleteSelected"><TrashIcon class="h-6 w-6" /></DangerButton>
       </div>
@@ -191,7 +191,7 @@ const classTD = "p-2"
           </tbody>
         </table>
       </div>
-      <div v-if="items.last_page > 1" class="flex items-center justify-between bg-white dark:bg-gray-800 px-4 py-3 sm:px-6">
+      <div v-if="items.last_page > 1" class="flex flex sticky bottom-0 items-center justify-between bg-white dark:bg-gray-800 px-4 py-3 sm:px-6">
         <div class="w-full flex justify-between sm:hidden">
           <div>
             <Link v-if="items.prev_page_url" :href="items.prev_page_url" class="inline-flex items-center rounded-md border border-gray-300 dark:border-gray-700 bg-gray-800 dark:bg-gray-200 px-4 py-2 text-sm uppercase font-medium text-white dark:text-gray-800 hover:bg-gray-700 dark:hover:bg-white focus:bg-gray-700 dark:focus:bg-white active:bg-gray-900 dark:active:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">{{ $t('Previous')}}</Link>

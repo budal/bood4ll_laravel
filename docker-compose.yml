@@ -15,6 +15,7 @@ services:
       - ./app/.env.example:/var/www/.env
       - ./app:/var/www
       - php-vendor-volume:/var/www/vendor
+      - node-nodemodules-volume:/var/www/node_modules
     environment:
       - APP_NAME=${APP_NAME:-Bood4ll}
       - APP_ENV=${APP_ENV:-local}
