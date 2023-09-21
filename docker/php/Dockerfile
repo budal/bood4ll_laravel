@@ -62,7 +62,7 @@ RUN pecl install redis && docker-php-ext-enable redis
 
 RUN apt clean && rm -rf /var/lib/apt/lists/*
 
-# RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 # COPY ./docker/supervisord/supervisord.conf /etc/supervisor
 # COPY ./docker/supervisord/conf /etc/supervisord.d/
@@ -78,15 +78,15 @@ RUN apt clean && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /var/www
 
-# COPY ./app/.env.example .env
-# COPY ./app .
+COPY ./app/.env.example .env
+COPY ./app .
 
 RUN chown -R ${USER}:${USER} .
 
 USER ${USER}
 
-# RUN composer install
-# RUN php artisan key:generate
+RUN composer install
+RUN php artisan key:generate
 
 # RUN npm install
 

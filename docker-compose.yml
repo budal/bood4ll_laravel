@@ -1,30 +1,27 @@
 version: "3.9"
 services:
-  web:
-    container_name: budal_web
+  php:
+    container_name: budal_php
     build: 
       context: .
-      dockerfile: ./docker/nginx/Dockerfile
+      dockerfile: ./docker/php/Dockerfile
       args:
         - UID=${UID:-1000}
         - USER=${USER:-laravel}
-        - APPDIR=${APPDIR:-/var/www}
     restart: unless-stopped
     networks:
       - budal_laravel_network
-    ports:
-      - "80:8000"
-      - "5173:5173"
     volumes:
-      - ./app/.env.example:${APPDIR:-/var/www}/.env
-      - ./app:${APPDIR:-/var/www}
-      - web-nodemodules-volume:${APPDIR:-/var/www}/node_modules
-      - web-vendor-volume:${APPDIR:-/var/www}/vendor
+      - ./app/.env.example:/var/www/.env
+      - ./app:/var/www
+      - php-vendor-volume:/var/www/vendor
     environment:
       - APP_NAME=${APP_NAME:-Bood4ll}
       - APP_ENV=${APP_ENV:-local}
       - APP_DEBUG=${APP_DEBUG:-true}
       - APP_URL=${APP_URL:-http://localhost}
+      - APP_PORT=${APP_PORT:-80}
+      - VITE_PORT=${VITE_PORT:-5173}
 
       - LOG_CHANNEL=daily
       - LOG_DEPRECATIONS_CHANNEL=null
@@ -58,6 +55,42 @@ services:
     depends_on:
       - postgres
       - redis
+
+  node:
+    container_name: budal_node
+    image: node:alpine
+    restart: unless-stopped
+    networks:
+      - budal_laravel_network
+    ports:
+      - ${VITE_PORT:-5173}:${VITE_PORT:-5173}
+    volumes:
+      - ./app/.env.example:/var/www/.env
+      - ./app/package.json:/var/www/package.json
+      - ./app:/var/www
+      - php-vendor-volume:/var/www/vendor
+      - node-nodemodules-volume:/var/www/node_modules
+    environment:
+      VITE_PORT: ${VITE_PORT:-5173}
+    working_dir: /var/www/
+    command: sh -c "npm install && npm run dev"
+
+  nginx:
+    container_name: budal_nginx
+    image: nginx:alpine
+    restart: unless-stopped
+    networks:
+      - budal_laravel_network
+    ports:
+      - "${APP_PORT:-80}:80"
+    volumes:
+      - ./app:/var/www
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+      # - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf
+      # - ./docker/nginx/sites:/etc/nginx/sites-available
+    depends_on:
+      - php
+      - node
 
   postgres:
     container_name: budal_postgres
@@ -105,12 +138,13 @@ services:
     networks:
       - budal_laravel_network
     ports:
-      - ${PGADMIN_PORT:-5050}:80
+      - ${PGADMIN_PORT:-5050}:${PGADMIN_PORT:-5050}
     volumes:
       - ./docker/pgadmin/servers.json:/pgadmin4/servers.json
       - ./docker/pgadmin/pgpass:/pgadmin4/pgpass
       - pgadmin-volume:/var/lib/pgadmin
     environment:
+      PGADMIN_LISTEN_PORT: ${PGADMIN_PORT:-5050}
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
       PGADMIN_SERVER_JSON_FILE: '/var/lib/pgadmin/servers'
@@ -119,35 +153,6 @@ services:
       GUNICORN_ACCESS_LOGFILE: '/dev/null'
     depends_on:
       - postgres
-
-  # pgadmin:
-  #   container_name: budal_pgadmin
-  #   image: dpage/pgadmin4
-  #   entrypoint: >
-  #     /bin/sh -c "
-  #       cp -f /pgadmin4/pgpass /var/lib/pgadmin/;
-  #       chmod 600 /var/lib/pgadmin/pgpass;
-  #       chown pgadmin:pgadmin /var/lib/pgadmin/pgpass;
-  #       /entrypoint.sh
-  #     "
-  #   restart: always  
-  #   networks:
-  #     - budal_laravel_network
-  #   ports:
-  #     - ${PGADMIN_PORT:-5050}:80
-  #   volumes:
-  #     - ./docker/pgadmin/servers.json:/pgadmin4/servers.json
-  #     - ./docker/pgadmin/pgpass:/pgadmin4/pgpass
-  #     - pgadmin-volume:/var/lib/pgadmin
-  #   environment:
-  #     PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
-  #     PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
-  #     PGADMIN_SERVER_JSON_FILE: '/var/lib/pgadmin/servers'
-  #     PGADMIN_CONFIG_SERVER_MODE: 'False'
-  #     PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: 'False'
-  #     GUNICORN_ACCESS_LOGFILE: '/dev/null'
-  #   depends_on:
-  #     - postgres
 
   redis:
     container_name: budal_redis
@@ -168,8 +173,9 @@ services:
     networks:
       - budal_laravel_network
     ports:
-      - ${REDIS_COMANDER_PORT:-6060}:8081
+      - ${REDIS_COMANDER_PORT:-6060}:${REDIS_COMANDER_PORT:-6060}
     environment:
+      PORT: ${REDIS_COMANDER_PORT:-6060}
       REDIS_HOST: ${REDIS_HOST:-redis}
       REDIS_PORT: ${REDIS_PORT:-6379}
       REDIS_PASSWORD: ${REDIS_PASSWORD:-redis}
@@ -183,16 +189,19 @@ services:
     networks:
       - budal_laravel_network
     ports:
-      - ${MAIL_PORT:-1025}:1025
-      - ${MAILSERVER_PORT:-7070}:8025
+      - ${MAIL_PORT:-1025}:${MAIL_PORT:-1025}
+      - ${MAILSERVER_PORT:-7070}:${MAILSERVER_PORT:-7070}
+    environment:
+      MP_SMTP_BIND_ADDR: "0.0.0.0:${MAIL_PORT:-1025}"
+      MP_UI_BIND_ADDR: "0.0.0.0:${MAILSERVER_PORT:-7070}"
 
 networks:
   budal_laravel_network:
     driver: bridge
 
 volumes:
-  web-nodemodules-volume:
-  web-vendor-volume:
+  php-vendor-volume:
+  node-nodemodules-volume:
   postgres-volume:
   pgadmin-volume:
   redis-volume:

@@ -6,7 +6,7 @@ import i18n from 'laravel-vue-i18n/vite';
 export default defineConfig({
     server: {
         host: '0.0.0.0',
-        port: 5173,
+        port: process.env.VITE_PORT,
         open: false,
         hmr: {
             host: 'localhost'
