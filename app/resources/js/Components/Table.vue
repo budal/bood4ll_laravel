@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import PrimaryButton from './PrimaryButton.vue';
+import SecondaryButton from '@/Components/SecondaryButton.vue';
 import DangerButton from './DangerButton.vue';
-import Avatar from '@/Components/Avatar.vue';
 import Checkbox from '@/Components/Checkbox.vue';
 import Modal from '@/Components/Modal.vue';
-import SecondaryButton from '@/Components/SecondaryButton.vue';
+import Avatar from '@/Components/Avatar.vue';
 import SearchInput from '@/Components/SearchInput.vue';
 import { ChevronLeftIcon, ChevronRightIcon, PlusIcon, TrashIcon } from '@heroicons/vue/20/solid'
 import { ref, computed, reactive, watch, onBeforeUnmount } from 'vue'
