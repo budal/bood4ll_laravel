@@ -128,7 +128,7 @@ const classTD = "p-2"
       </div>
     </Modal>
   
-    <div class="flex sticky top-[65px] justify-between py-4 bg-white dark:bg-gray-800 backdrop-blur-md">
+    <div class="flex sticky top-20 justify-between rounded-xl backdrop-blur-sm p-2 my-2 -mx-3 bg-white/30 dark:bg-gray-800/30">
       <div class="flex-none items-center">
         <DangerButton v-if="destroyRoute" :disabled="numberSelected === 0" @click="deleteSelected"><TrashIcon class="h-6 w-6" /></DangerButton>
       </div>
@@ -141,63 +141,66 @@ const classTD = "p-2"
     </div>
     <div>
       <div class="rounded-xl overflow-hidden border-2 border-slate-200 dark:border-slate-600">
-        <table class="table-auto w-full text-sm shadow-lg">
-          <thead v-if="items.data.length">
-            <tr class="bg-gray-200 dark:bg-slate-900 p-3 text-slate-1000 dark:text-white text-left">
-              <th v-if="destroyRoute" :class="`${classTD}`">
-                <Checkbox name="remember" :checked="itemsSelected" @click="toggleSelection" class="w-8 h-8 rounded-full" />
-              </th>
-              <template v-for="(content, id) in titles">
-                <th :class="`${classTD}`">
-                  {{ $t(content.title) }}
+        <div class="overflow-x-auto flex">
+          <table class="table-auto w-full text-sm shadow-lg">
+            <thead v-if="items.data.length">
+              <tr class="bg-gray-200 dark:bg-slate-900 p-3 text-slate-1000 dark:text-white text-left">
+                <th v-if="destroyRoute" :class="`${classTD}`">
+                  <Checkbox name="remember" :checked="itemsSelected" @click="toggleSelection" class="w-8 h-8 rounded-full" />
                 </th>
-              </template>
-              <th v-if="editRoute" :class="`${classTD}`"></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="item in items.data" :key="`tr-${item.uuid}`" class="group/item bg-white hover:bg-gray-100 dark:bg-slate-800 hover:dark:bg-slate-700 border-t border-slate-200 dark:border-slate-600 text-slate-500 dark:text-slate-400">
-              <td v-if="destroyRoute" :class="`${classTD}`">
-                <Checkbox class="w-8 h-8 rounded-full" :checked="selectedItems.has(item)" :value="item.uuid" :id="`checkbox-${item.uuid}`" @click="toggle(item)" />
-              </td>
-              <template v-for="content in titles">
-                <td v-if="content.type == 'avatar'" :class="`${classTD}`">
-                  <Avatar class="w-12 h-12 rounded-full" :name="`${item[content.fallback]}`" />
+                <template v-for="(content, id) in titles">
+                  <th :class="`${classTD}`">
+                    {{ $t(content.title) }}
+                  </th>
+                </template>
+                <th v-if="editRoute" :class="`${classTD}`"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="item in items.data" :key="`tr-${item.uuid}`" class="group/item bg-white hover:bg-gray-100 dark:bg-slate-800 hover:dark:bg-slate-700 border-t border-slate-200 dark:border-slate-600 text-slate-500 dark:text-slate-400">
+                <td v-if="destroyRoute" :class="`${classTD}`">
+                  <Checkbox class="w-8 h-8 rounded-full" :checked="selectedItems.has(item)" :value="item.uuid" :id="`checkbox-${item.uuid}`" @click="toggle(item)" />
                 </td>
-                <td v-if="content.type == 'composite'" :class="`${classTD}`">
-                  <strong class="text-slate-900 text-sm font-medium dark:text-slate-200">{{ item[content.fields[0]] }}</strong>
-                  <p class="truncate text-xs leading-5 text-gray-600 dark:text-gray-400">{{ item[content.fields[1]] }}</p>
+                <template v-for="content in titles">
+                  <td v-if="content.type == 'avatar'" :class="`${classTD}`">
+                    <Avatar class="w-12 h-12 rounded-full" :name="`${item[content.fallback]}`" />
+                  </td>
+                  <td v-if="content.type == 'composite'" :class="`${classTD}`">
+                    <strong class="text-slate-900 text-sm font-medium dark:text-slate-200">{{ item[content.fields[0]] }}</strong>
+                    <p class="truncate text-xs leading-5 text-gray-600 dark:text-gray-400">{{ item[content.fields[1]] }}</p>
+                  </td>
+                  <td v-if="content.type == 'simple'" :class="`${classTD}`">
+                    {{ item[content.field] }}
+                  </td>
+                </template>
+                <td v-if="editRoute" :class="`${classTD} text-right`">
+                  <Link :href="route(editRoute, item.uuid)" as="button">
+                    <PrimaryButton><ChevronRightIcon class="h-5 w-5"/></PrimaryButton>
+                  </Link>
                 </td>
-                <td v-if="content.type == 'simple'" :class="`${classTD}`">
-                  {{ item[content.field] }}
+              </tr>
+              <tr v-if="!items.data.length">
+                <td :class="`${classTD} text-center`">
+                  <p class="text-lg leading-5 text-gray-600 dark:text-gray-400">{{ $t('No items to show.') }}</p>
                 </td>
-              </template>
-              <td v-if="editRoute" :class="`${classTD} text-right`">
-                <Link :href="route(editRoute, item.uuid)" as="button" class="rounded-lg group/edit md:invisible hover:bg-slate-200 group-hover/item:visible">
-                  <PrimaryButton class="p-1">
-                    <ChevronRightIcon
-                      class="h-5 w-5 group-hover/edit:translate-x-0.5 group-hover/edit:text-slate-500"
-                      aria-hidden="true"
-                    />
-                  </PrimaryButton>
-                </Link>
-              </td>
-            </tr>
-            <tr v-if="!items.data.length">
-              <td :class="`${classTD} text-center`">
-                <p class="text-lg leading-5 text-gray-600 dark:text-gray-400">{{ $t('No items to show.') }}</p>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
-      <div v-if="items.last_page > 1" class="flex flex sticky bottom-0 items-center justify-between bg-white dark:bg-gray-800 px-4 py-3 sm:px-6">
-        <div class="w-full flex justify-between sm:hidden">
-          <div>
-            <Link v-if="items.prev_page_url" :href="items.prev_page_url" class="inline-flex items-center rounded-md border border-gray-300 dark:border-gray-700 bg-gray-800 dark:bg-gray-200 px-4 py-2 text-sm uppercase font-medium text-white dark:text-gray-800 hover:bg-gray-700 dark:hover:bg-white focus:bg-gray-700 dark:focus:bg-white active:bg-gray-900 dark:active:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">{{ $t('Previous')}}</Link>
+      <div v-if="items.last_page > 1" class="flex sticky bottom-2 justify-between rounded-xl backdrop-blur-sm p-2 my-2 -mx-3 bg-white/30 dark:bg-gray-800/30">
+        <div class="w-full flex flex-row sm:hidden">
+          <div class="basis-1/3 text-left">
+            <Link v-if="items.prev_page_url" :href="items.prev_page_url" class="inline-flex rounded-md border border-gray-300 dark:border-gray-700 bg-gray-800 dark:bg-gray-200 px-4 py-2 text-sm uppercase font-medium text-white dark:text-gray-800 hover:bg-gray-700 dark:hover:bg-white focus:bg-gray-700 dark:focus:bg-white active:bg-gray-900 dark:active:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">{{ $t('Previous')}}</Link>
           </div>
-          <div>
-            <Link v-if="items.next_page_url" :href="items.next_page_url" class="inline-flex items-center rounded-md border border-gray-300 dark:border-gray-700 bg-gray-800 dark:bg-gray-200 px-4 py-2 text-sm uppercase font-medium text-white dark:text-gray-800 hover:bg-gray-700 dark:hover:bg-white focus:bg-gray-700 dark:focus:bg-white active:bg-gray-900 dark:active:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">{{ $t('Next')}}</Link>
+          <div class="basis-1/3 text-center">
+            <span 
+              aria-current="page" class="relative z-10 inline-flex rounded-md bg-gray-400 px-4 py-2 text-sm font-semibold text-white dark:text-gray-800 focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-400">
+              {{ `${items.current_page} - ${items.last_page}` }}
+            </span>
+          </div>
+          <div class="basis-1/3 text-right">
+            <Link v-if="items.next_page_url" :href="items.next_page_url" class="inline-flex rounded-md border border-gray-300 dark:border-gray-700 bg-gray-800 dark:bg-gray-200 px-4 py-2 text-sm uppercase font-medium text-white dark:text-gray-800 hover:bg-gray-700 dark:hover:bg-white focus:bg-gray-700 dark:focus:bg-white active:bg-gray-900 dark:active:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">{{ $t('Next')}}</Link>
           </div>
         </div>
         <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
