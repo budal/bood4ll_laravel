@@ -1,5 +1,5 @@
 <script setup lang="ts">
-//  console.log(process.env.VUE_APP_NOT_SECRET_CODE)
+ console.log(process.env.DB_CONNECTION)
 </script>
 
 <template>

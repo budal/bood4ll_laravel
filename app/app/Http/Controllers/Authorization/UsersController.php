@@ -120,6 +120,6 @@ class UsersController extends Controller
         // $request->session()->regenerateToken();
 
         // return Redirect::to('/');
-        return back()->with('status', 'Users removed succesfully!');
+        return back()->withInput()->with('status', 'Users removed succesfully!');
     }
 }
