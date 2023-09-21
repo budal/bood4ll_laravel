@@ -214,7 +214,7 @@ const classTD = "p-2"
             </p>
           </div>
           <div>
-            <nav class="inline-flex -space-x-px rounded-md shadow-sm gap-1" aria-label="Pagination">
+            <nav class="inline-flex shadow-sm gap-[2px]" aria-label="Pagination">
               <Link v-if="items.prev_page_url" :href="items.prev_page_url" as="button" class="text-sm">
                 <PrimaryButton>
                   <span class="sr-only">{{ $t('Previous')}}</span>
