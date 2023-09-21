@@ -130,13 +130,13 @@ const classTD = "p-2"
   
     <div class="flex sticky top-20 justify-between rounded-xl backdrop-blur-sm p-2 my-2 -mx-3 bg-white/30 dark:bg-gray-800/30">
       <div class="flex-none items-center">
-        <DangerButton v-if="destroyRoute" :disabled="numberSelected === 0" @click="deleteSelected"><TrashIcon class="h-6 w-6" /></DangerButton>
+        <DangerButton v-if="destroyRoute" :disabled="numberSelected === 0" @click="deleteSelected" class="mr-2"><TrashIcon class="h-6 w-6" /></DangerButton>
       </div>
-      <div class="flex-1 items-center px-4">
+      <div class="flex-1 items-center">
         <SearchInput :placeholder="$t('Search...')" class="w-full" :value="filters.search" v-model="search" />
       </div>
       <div class="flex-none items-center">
-        <Link v-if="createRoute" as="button" :href="route(createRoute)"><PrimaryButton><PlusIcon class="h-6 w-6" /></PrimaryButton></Link>
+        <Link v-if="createRoute" as="button" :href="route(createRoute)" class="ml-2"><PrimaryButton><PlusIcon class="h-6 w-6" /></PrimaryButton></Link>
       </div>
     </div>
     <div>
@@ -189,56 +189,54 @@ const classTD = "p-2"
         </div>
       </div>
       <div v-if="items.last_page > 1" class="flex sticky bottom-2 justify-between rounded-xl backdrop-blur-sm p-2 my-2 -mx-3 bg-white/30 dark:bg-gray-800/30">
-        <div class="w-full flex flex-row sm:hidden">
+        <div class="w-full flex flex-row md:hidden">
           <div class="basis-1/3 text-left">
-            <Link v-if="items.prev_page_url" :href="items.prev_page_url" class="inline-flex rounded-md border border-gray-300 dark:border-gray-700 bg-gray-800 dark:bg-gray-200 px-4 py-2 text-sm uppercase font-medium text-white dark:text-gray-800 hover:bg-gray-700 dark:hover:bg-white focus:bg-gray-700 dark:focus:bg-white active:bg-gray-900 dark:active:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">{{ $t('Previous')}}</Link>
+            <Link v-if="items.prev_page_url" as="button" :href="items.prev_page_url" class="text-sm">
+              <PrimaryButton>{{ $t('Previous')}}</PrimaryButton>
+            </Link>
           </div>
           <div class="basis-1/3 text-center">
             <span 
-              aria-current="page" class="relative z-10 inline-flex rounded-md bg-gray-400 px-4 py-2 text-sm font-semibold text-white dark:text-gray-800 focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-400">
+              aria-current="page" class="relative inline-flex rounded-md bg-gray-400 px-4 py-2 text-sm font-semibold text-white dark:text-gray-800">
               {{ `${items.current_page} - ${items.last_page}` }}
             </span>
           </div>
           <div class="basis-1/3 text-right">
-            <Link v-if="items.next_page_url" :href="items.next_page_url" class="inline-flex rounded-md border border-gray-300 dark:border-gray-700 bg-gray-800 dark:bg-gray-200 px-4 py-2 text-sm uppercase font-medium text-white dark:text-gray-800 hover:bg-gray-700 dark:hover:bg-white focus:bg-gray-700 dark:focus:bg-white active:bg-gray-900 dark:active:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">{{ $t('Next')}}</Link>
+            <Link v-if="items.next_page_url" as="button" :href="items.next_page_url" class="text-sm">
+              <PrimaryButton>{{ $t('Next')}}</PrimaryButton>
+            </Link>
           </div>
         </div>
-        <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+        <div class="hidden md:flex sm:flex-1 sm:items-center sm:justify-between">
           <div>
             <p class="hidden lg:block text-xs text-gray-800 dark:text-white">
               {{ $t('Showing :from to :to of :total results', { from: items.from, to: items.to, total: items.total }) }}
             </p>
           </div>
           <div>
-            <nav class="inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
-              <span 
-                  v-if="!items.prev_page_url"
-                  aria-current="page" class="relative inline-flex items-center rounded-l-md px-1 py-2 bg-gray-800 dark:bg-gray-200 text-white dark:text-gray-800 ring-1 ring-inset ring-gray-600 dark:ring-gray-300 hover:bg-gray-700 dark:hover:bg-white focus:z-20 focus:outline-offset-0">
-              </span>
-              <Link v-if="items.prev_page_url" :href="items.prev_page_url" class="relative inline-flex items-center rounded-l-md px-2 py-2 bg-gray-800 dark:bg-gray-200 text-white dark:text-gray-800 ring-1 ring-inset ring-gray-600 dark:ring-gray-300 hover:bg-gray-700 dark:hover:bg-white focus:z-20 focus:outline-offset-0">
-                <span class="sr-only">{{ $t('Previous')}}</span>
-                <ChevronLeftIcon class="h-5 w-5" aria-hidden="true" />
+            <nav class="inline-flex -space-x-px rounded-md shadow-sm gap-1" aria-label="Pagination">
+              <Link v-if="items.prev_page_url" :href="items.prev_page_url" as="button" class="text-sm">
+                <PrimaryButton>
+                  <span class="sr-only">{{ $t('Previous')}}</span>
+                  <ChevronLeftIcon class="h-4 w-4" aria-hidden="true" />
+                </PrimaryButton>
               </Link>
-              <span v-for="item in items.links">
+
+              <template v-for="item in items.links">
                 <Link
-                  v-if="item.label > 0 && item.label != items.current_page"
-                  :key="item.key" :href="item.url" :active="item.active" class="relative inline-flex items-center px-4 py-2 text-sm font-semibold bg-gray-800 dark:bg-gray-200 text-white dark:text-gray-800 ring-1 ring-inset ring-gray-600 dark:ring-gray-300 hover:bg-gray-700 dark:hover:bg-white focus:z-20 focus:outline-offset-0">
-                  {{ item.label }}
+                  v-if="item.label > 0 && item.label != items.current_page || item.label == items.current_page"
+                  :key="item.key" :href="item.url" as="button" class="text-sm"
+                >
+                  <PrimaryButton :disabled="item.label == items.current_page">{{ item.label }}</PrimaryButton>
                 </Link>
-                <span 
-                  v-if="item.label == items.current_page"
-                  aria-current="page" class="relative z-10 inline-flex items-center bg-gray-400 px-4 py-2 text-sm font-semibold text-white dark:text-gray-800 focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-400">
-                  {{ item.label }}
-                </span>
-              </span>
-              <Link v-if="items.next_page_url" :href="items.next_page_url" class="relative inline-flex items-center rounded-r-md px-2 py-2 bg-gray-800 dark:bg-gray-200 text-white dark:text-gray-800 ring-1 ring-inset ring-gray-600 dark:ring-gray-300 hover:bg-gray-700 dark:hover:bg-white focus:z-20 focus:outline-offset-0">
-                <span class="sr-only">{{ $t('Next')}}</span>
-                <ChevronRightIcon class="h-5 w-5" aria-hidden="true" />
+              </template>
+
+              <Link v-if="items.next_page_url" :href="items.next_page_url" as="button" class="text-sm">
+                <PrimaryButton>
+                  <span class="sr-only">{{ $t('Next')}}</span>
+                  <ChevronRightIcon class="h-4 w-4" aria-hidden="true" />
+                </PrimaryButton>
               </Link>
-              <span 
-                  v-if="!items.next_page_url"
-                  aria-current="page" class="relative inline-flex items-center rounded-r-md px-1 py-2 bg-gray-800 dark:bg-gray-200 text-white dark:text-gray-800 ring-1 ring-inset ring-gray-600 dark:ring-gray-300 hover:bg-gray-700 dark:hover:bg-white focus:z-20 focus:outline-offset-0">
-              </span>
             </nav>
           </div>
         </div>
