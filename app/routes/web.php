@@ -28,17 +28,17 @@ Route::get('/', function () {
         'laravelVersion' => Application::VERSION,
         'phpVersion' => PHP_VERSION,
     ]);
-});
+})->name('home')->breadcrumb('Home');
 
 Route::get('/email/verify', function () {
     return Inertia::render('Auth/VerifyEmail');
-})->middleware('auth')->name('verification.notice');    
+})->middleware('auth')->name('verification.notice')->breadcrumb('Verify EMail');    
 
 Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
     $request->fulfill();
  
     return redirect('/dashboard');
-})->middleware(['auth', 'signed'])->name('verification.verify');
+})->middleware(['auth', 'signed'])->name('verification.verify')->breadcrumb('Verify EMail');
 
 Route::post('/email/verification-notification', function (Request $request) {
     $request->user()->sendEmailVerificationNotification();
@@ -48,28 +48,28 @@ Route::post('/email/verification-notification', function (Request $request) {
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard')->breadcrumb('Dashboard');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit')->breadcrumb('Profile');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    Route::get('/messages', [ProfileController::class, 'edit'])->name('messages');
+    Route::get('/messages', [ProfileController::class, 'edit'])->name('messages')->breadcrumb('Messages');
 
-    Route::get('/schedule', [ProfileController::class, 'edit'])->name('schedule');
+    Route::get('/schedule', [ProfileController::class, 'edit'])->name('schedule')->breadcrumb('Schedule');
     
-    Route::get('/settings', [ProfileController::class, 'edit'])->name('settings');
+    Route::get('/settings', [ProfileController::class, 'edit'])->name('settings')->breadcrumb('Settings');
     
-    Route::get('/apps', [AppsController::class, 'index'])->name('apps');
+    Route::get('/apps', [AppsController::class, 'index'])->name('apps')->breadcrumb('Apps');
     
     Route::prefix('apps')->name('apps.')->group(function () {
         Route::middleware('verified')->group(function () {
             Route::controller(UsersController::class)->group(function () {
-                Route::get('/users', 'index')->name('users')->middleware(['password.confirm', 'verified']);
-                Route::get('/users/create', 'create')->name('users.create')->middleware(['password.confirm']);
+                Route::get('/users', 'index')->name('users')->middleware(['password.confirm', 'verified'])->breadcrumb('Users');
+                Route::get('/users/create', 'create')->name('users.create')->middleware(['password.confirm'])->breadcrumb('User creation', 'apps.users');
                 Route::post('/users/create', 'create')->name('users.store')->middleware(['password.confirm']);
-                Route::get('/users/edit/{user}', 'edit')->name('users.edit')->middleware(['password.confirm']);
+                Route::get('/users/edit/{user}', 'edit')->name('users.edit')->middleware(['password.confirm'])->breadcrumb('User edition');
                 Route::patch('/users/edit/{user}', 'edit')->name('users.update')->middleware(['password.confirm']);
                 Route::delete('/users/destroy', 'destroy')->name('users.destroy')->middleware(['password.confirm']);
             });
@@ -77,9 +77,9 @@ Route::middleware('auth')->group(function () {
     });
 
 
-    Route::get('/reports', [ProfileController::class, 'edit'])->name('reports');
+    Route::get('/reports', [ProfileController::class, 'edit'])->name('reports')->breadcrumb('Reports');
 
-    Route::get('/help', [ProfileController::class, 'edit'])->name('help');
+    Route::get('/help', [ProfileController::class, 'edit'])->name('help')->breadcrumb('Help');
 });
 
 

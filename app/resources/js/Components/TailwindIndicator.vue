@@ -1,5 +1,5 @@
 <script setup lang="ts">
- console.log(process.env.DB_CONNECTION)
+//  console.log(process.env.DB_CONNECTION)
 </script>
 
 <template>
