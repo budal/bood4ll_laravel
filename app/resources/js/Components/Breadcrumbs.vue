@@ -21,11 +21,17 @@ const breadcrumbs = computed(() => insertBetween(usePage().props.breadcrumbs || 
         <div class="flex gap-4 max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
             <h2 v-for="page in breadcrumbs" class="font-semibold text-xl text-gray-800 dark:text-white leading-tight">
                 <span v-if="page ==='/'" class="text-gray-400 dark:text-gray-500">/</span>
-                <Link
-                    v-else
-                    :href="page.url"
-                    :disabled="page.current"
-                >{{ $t(page.title) }}</Link>
+                <template v-else>
+                    <Link v-if="page.current !== true"
+                        :href="page.url"
+                        :disabled="page.current"
+                        >
+                        {{ $t(page.title) }}
+                    </Link>
+                    <span v-else>
+                        {{ $t(page.title) }}
+                    </span>
+                </template>
             </h2>
         </div>
     </header>
