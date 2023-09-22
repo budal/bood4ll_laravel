@@ -130,13 +130,17 @@ const classTD = "p-2"
   
     <div class="flex sticky top-20 justify-between rounded-xl backdrop-blur-sm p-2 my-2 -mx-3 bg-white/30 dark:bg-gray-800/30">
       <div class="flex-none items-center">
-        <DangerButton v-if="destroyRoute" :disabled="numberSelected === 0" @click="deleteSelected" class="mr-2"><TrashIcon class="h-6 w-6" /></DangerButton>
+        <DangerButton v-if="destroyRoute" :disabled="numberSelected === 0" @click="deleteSelected" class="mr-2">
+          <TrashIcon class="h-6 w-6" />
+        </DangerButton>
       </div>
       <div class="flex-1 items-center">
         <SearchInput :placeholder="$t('Search...')" class="w-full" :value="filters.search" v-model="search" />
       </div>
       <div class="flex-none items-center">
-        <Link v-if="createRoute" as="button" :href="route(createRoute)" class="ml-2"><PrimaryButton><PlusIcon class="h-6 w-6" /></PrimaryButton></Link>
+        <Link v-if="createRoute" as="button" :href="route(createRoute)" class="ml-2">
+          <PrimaryButton><PlusIcon class="h-6 w-6" /></PrimaryButton>
+        </Link>
       </div>
     </div>
     <div>
@@ -197,7 +201,7 @@ const classTD = "p-2"
           </div>
           <div class="basis-1/3 text-center">
             <span 
-              aria-current="page" class="relative inline-flex rounded-md bg-gray-400 px-4 py-2 text-sm font-semibold text-white dark:text-gray-800">
+              aria-current="page" class="relative inline-flex rounded-md bg-gray-600 dark:bg-gray-400 px-4 py-1 text-sm font-semibold text-white dark:text-gray-800">
               {{ `${items.current_page} - ${items.last_page}` }}
             </span>
           </div>

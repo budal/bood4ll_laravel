@@ -15,12 +15,12 @@ const breadcrumbs = computed(() => insertBetween(usePage().props.breadcrumbs || 
 </script>
 
 <template>
-    <Head :title="$t('Users')" />
+    <Head :title="$t(breadcrumbs[breadcrumbs.length -1]?.title || usePage().props.appName)" />
 
     <header v-if="breadcrumbs.length > 0" class="bg-white dark:bg-gray-800 shadow">
         <div class="flex gap-4 max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-            <h2 v-for="page in breadcrumbs" class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                <span v-if="page ==='/'">/</span>
+            <h2 v-for="page in breadcrumbs" class="font-semibold text-xl text-gray-800 dark:text-white leading-tight">
+                <span v-if="page ==='/'" class="text-gray-400 dark:text-gray-500">/</span>
                 <Link
                     v-else
                     :href="page.url"

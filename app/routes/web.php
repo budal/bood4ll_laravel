@@ -69,7 +69,7 @@ Route::middleware('auth')->group(function () {
                 Route::get('/users', 'index')->name('users')->middleware(['password.confirm', 'verified'])->breadcrumb('Users');
                 Route::get('/users/create', 'create')->name('users.create')->middleware(['password.confirm'])->breadcrumb('User creation', 'apps.users');
                 Route::post('/users/create', 'create')->name('users.store')->middleware(['password.confirm']);
-                Route::get('/users/edit/{user}', 'edit')->name('users.edit')->middleware(['password.confirm'])->breadcrumb('User edition');
+                Route::get('/users/edit/{user}', 'edit')->name('users.edit')->middleware(['password.confirm'])->breadcrumb('User edition', 'apps.users');
                 Route::patch('/users/edit/{user}', 'edit')->name('users.update')->middleware(['password.confirm']);
                 Route::delete('/users/destroy', 'destroy')->name('users.destroy')->middleware(['password.confirm']);
             });
