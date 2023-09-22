@@ -1,7 +1,9 @@
 <script setup lang="ts">
-  defineProps<{
-      name?: string;
+  const props = defineProps<{
+      name?: any;
   }>();
+
+  const layoff = props.name[0]
 </script>
 
 <template>
@@ -22,7 +24,7 @@
   </div> -->
 
   <div class="inline-flex items-center justify-center w-10 h-10 overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600">
-    <span class="font-medium text-gray-600 dark:text-gray-300">{{ name[0] }}</span>
+    <span class="font-medium text-gray-600 dark:text-gray-300">{{ layoff }}</span>
   </div>
 
 </template>

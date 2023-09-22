@@ -2,9 +2,9 @@
 import { computed } from 'vue';
 import { Link, Head, usePage } from '@inertiajs/vue3';
 
-const insertBetween = (items, insertion) => {
+const insertBetween = (items: any, insertion: string) => {
     return items.flatMap(
-        (value, index, array) =>
+        (value: any, index: number, array: string | any[]) =>
             array.length - 1 !== index
                 ? [value, insertion]
                 : value,
@@ -25,7 +25,8 @@ const breadcrumbs = computed(() => insertBetween(usePage().props.breadcrumbs || 
                     <Link v-if="page.current !== true"
                         :href="page.url"
                         :disabled="page.current"
-                        >
+                        as="button"
+                    >
                         {{ $t(page.title) }}
                     </Link>
                     <span v-else>
