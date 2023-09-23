@@ -6,7 +6,7 @@ import Checkbox from '@/Components/Checkbox.vue';
 import Modal from '@/Components/Modal.vue';
 import Avatar from '@/Components/Avatar.vue';
 import SearchInput from '@/Components/SearchInput.vue';
-import { ChevronLeftIcon, ChevronRightIcon, PlusIcon, TrashIcon } from '@heroicons/vue/20/solid'
+import { ChevronLeftIcon, ChevronRightIcon, PlusIcon, TrashIcon, AdjustmentsVerticalIcon } from '@heroicons/vue/20/solid'
 import { ref, computed, reactive, watch, onBeforeUnmount } from 'vue'
 import { toast } from 'vue3-toastify';
 import { router, useForm, Link } from '@inertiajs/vue3';
@@ -24,21 +24,7 @@ const props = defineProps<{
       restoreRoute?: string;
 }>();
 
-const search = ref("");
-
-const debouncedWatch = debounce(() => {
-  router.visit(route(props.indexRoute) + '?search='+search.value, {
-    method: 'get',
-    preserveState: true,
-  })
-}, 500);
-
-watch(search, debouncedWatch);
-
-onBeforeUnmount(() => {
-  debouncedWatch.cancel();
-})
-
+// deletion checkboxes
 let selectedItems = reactive(new Set())
 
 let selectAll = (items: any) => {
@@ -97,6 +83,37 @@ const closeModal = () => {
     confirmingUserDeletion.value = false;
 };
 
+// search
+const search = ref("");
+
+const debouncedWatch = debounce(() => {
+  router.visit(route(props.indexRoute) + '?search='+search.value, {
+    method: 'get',
+    preserveState: true,
+  })
+}, 500);
+
+watch(search, debouncedWatch);
+
+onBeforeUnmount(() => {
+  debouncedWatch.cancel();
+})
+
+// filters modal
+const filtersModal = ref(false);
+
+const openFiltersModal = () => {
+  filtersModal.value = true;
+}
+
+const refreshFilters = () => {
+};
+
+const closeFiltersModal = () => {
+  filtersModal.value = false;
+};
+
+// td class
 const classTD = "p-2"
 
 </script>
@@ -127,19 +144,47 @@ const classTD = "p-2"
         </div>
       </div>
     </Modal>
+
+    <Modal :show="filtersModal" @close="closeFiltersModal">
+      <div class="p-6">
+        <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
+          {{ $t('Manage which filters to apply to the list') }}
+        </h2>
   
+        <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
+          {{ $t('The selected items will be removed from the active items. Do you want to continue?') }}
+        </p>
+  
+        <div class="mt-6 flex justify-end">
+          <SecondaryButton @click="closeFiltersModal">{{ $t('Cancel') }}</SecondaryButton>
+
+          <PrimaryButton
+            class="ml-3"
+            :class="{ 'opacity-25': form.processing }"
+            :disabled="form.processing"
+            @click="deleteUser"
+          >
+              {{ $t('Apply') }}
+          </PrimaryButton>
+        </div>
+      </div>
+    </Modal>
+
     <div class="flex sticky top-0 sm:top-[65px] justify-between rounded-xl backdrop-blur-sm p-2 my-2 -mx-3 bg-white/30 dark:bg-gray-800/30">
       <div class="flex-none items-center">
-        <DangerButton v-if="destroyRoute" :disabled="numberSelected === 0" @click="deleteSelected" class="mr-2">
-          <TrashIcon class="h-6 w-6" />
+        <DangerButton v-if="destroyRoute" :disabled="numberSelected === 0" @click="deleteSelected" class="mr-2 h-full">
+          <TrashIcon class="h-5 w-5" />
         </DangerButton>
       </div>
       <div class="flex-1 items-center">
-        <SearchInput :placeholder="$t('Search...')" class="w-full" :value="filters.search" v-model="search" />
+        <SearchInput :placeholder="$t('Search...')" class="w-full h-full" :value="filters.search" v-model="search" />
       </div>
       <div class="flex-none items-center">
-        <Link v-if="createRoute" as="button" :href="route(createRoute)" class="ml-2">
-          <PrimaryButton><PlusIcon class="h-6 w-6" /></PrimaryButton>
+        <SecondaryButton @click="openFiltersModal" class="ml-2 h-full"><AdjustmentsVerticalIcon class="h-5 w-5" /></SecondaryButton>
+      </div>
+      <div class="flex-none items-center">
+        <Link v-if="createRoute" as="button" :href="route(createRoute)" class="h-full">
+          <PrimaryButton class="ml-2 h-full"><PlusIcon class="h-5 w-5" /></PrimaryButton>
         </Link>
       </div>
     </div>
@@ -193,7 +238,7 @@ const classTD = "p-2"
         </div>
       </div>
       <div v-if="items.last_page > 1" class="flex sticky bottom-0 justify-between rounded-xl backdrop-blur-sm p-2 my-2 -mx-3 bg-white/30 dark:bg-gray-800/30">
-        <div class="w-full flex flex-row md:hidden">
+        <div class="w-full flex flex-row sm:hidden">
           <div class="basis-1/3 text-left">
             <Link v-if="items.prev_page_url" as="button" :href="items.prev_page_url" class="text-sm">
               <PrimaryButton>{{ $t('Previous')}}</PrimaryButton>
@@ -202,7 +247,7 @@ const classTD = "p-2"
           <div class="basis-1/3 text-center">
             <span 
               aria-current="page" class="relative inline-flex rounded-md bg-gray-600 dark:bg-gray-400 px-4 py-1 text-sm font-semibold text-white dark:text-gray-800">
-              {{ `${items.current_page} - ${items.last_page}` }}
+              {{ `${items.current_page}/${items.last_page}` }}
             </span>
           </div>
           <div class="basis-1/3 text-right">
@@ -211,7 +256,7 @@ const classTD = "p-2"
             </Link>
           </div>
         </div>
-        <div class="hidden md:flex sm:flex-1 sm:items-center sm:justify-between">
+        <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
           <div>
             <p class="hidden lg:block text-xs text-gray-800 dark:text-white">
               {{ $t('Showing :from to :to of :total results', { from: items.from, to: items.to, total: items.total }) }}

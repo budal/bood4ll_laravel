@@ -46,7 +46,7 @@ const classes = computed(() =>
                 v-for="item in items"
                 :key="item.name"
                 :href="route(item.route)"
-                class="flex items-center rounded-lg p-2 transition duration-150 ease-in-out hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none ring-1 ring-gray-100 dark:ring-gray-700 focus-visible:ring focus-visible:ring-gray-100 focus-visible:ring-opacity-50 transition ease-in-out duration-500"
+                class="flex items-center rounded-lg p-2 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none ring-1 ring-gray-100 dark:ring-gray-700 focus-visible:ring focus-visible:ring-gray-100 focus-visible:ring-opacity-50 transition ease-in-out duration-500"
               >
                 <div class="flex h-20 w-20 shrink-0 items-center justify-center text-white sm:h-12 sm:w-12" >
                   <div v-html="item.icon" class="h-8 w-8 flex-none text-gray-400" aria-hidden="true"></div>

@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AppsController;
+use App\Http\Controllers\Authorization\UnitsController;
+use App\Http\Controllers\Authorization\PermissionsController;
 use App\Http\Controllers\Authorization\UsersController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 
@@ -65,6 +67,24 @@ Route::middleware('auth')->group(function () {
     
     Route::prefix('apps')->name('apps.')->group(function () {
         Route::middleware('verified')->group(function () {
+            Route::controller(UnitsController::class)->group(function () {
+                Route::get('/units', 'index')->name('units')->middleware(['password.confirm', 'verified'])->breadcrumb('Units');
+                Route::get('/units/create', 'create')->name('units.create')->middleware(['password.confirm'])->breadcrumb('Unit creation', 'apps.units');
+                Route::post('/units/create', 'create')->name('units.store')->middleware(['password.confirm']);
+                Route::get('/units/edit/{user}', 'edit')->name('units.edit')->middleware(['password.confirm'])->breadcrumb('Unit edition', 'apps.units');
+                Route::patch('/units/edit/{user}', 'edit')->name('units.update')->middleware(['password.confirm']);
+                Route::delete('/units/destroy', 'destroy')->name('units.destroy')->middleware(['password.confirm']);
+            });
+
+            Route::controller(PermissionsController::class)->group(function () {
+                Route::get('/permissions', 'index')->name('permissions')->middleware(['password.confirm', 'verified'])->breadcrumb('Permissions');
+                Route::get('/permissions/create', 'create')->name('permissions.create')->middleware(['password.confirm'])->breadcrumb('Permission creation', 'apps.permissions');
+                Route::post('/permissions/create', 'create')->name('permissions.store')->middleware(['password.confirm']);
+                Route::get('/permissions/edit/{user}', 'edit')->name('permissions.edit')->middleware(['password.confirm'])->breadcrumb('Permission edition', 'apps.permissions');
+                Route::patch('/permissions/edit/{user}', 'edit')->name('permissions.update')->middleware(['password.confirm']);
+                Route::delete('/permissions/destroy', 'destroy')->name('permissions.destroy')->middleware(['password.confirm']);
+            });
+
             Route::controller(UsersController::class)->group(function () {
                 Route::get('/users', 'index')->name('users')->middleware(['password.confirm', 'verified'])->breadcrumb('Users');
                 Route::get('/users/create', 'create')->name('users.create')->middleware(['password.confirm'])->breadcrumb('User creation', 'apps.users');

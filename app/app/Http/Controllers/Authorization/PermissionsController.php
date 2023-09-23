@@ -14,7 +14,7 @@ use Inertia\Response;
 
 use App\Models\User;
 
-class UsersController extends Controller
+class PermissionsController extends Controller
 {
     /**
      * Display the users list.

@@ -9,6 +9,7 @@
   "Confirm": "Confirmar",
   "Register": "Cadastrar",
   "Cancel": "Cancelar",
+  "Apply": "Aplicar",
   "Current Password": "Senha atual",
   "New Password": "Nova Senha",
   "Update Password": "Atualizar senha",
@@ -26,7 +27,10 @@
   
   "No items to show.": "Sem itens para exibir.",
   "Showing :from to :to of :total results": "Exibindo :from a :to de :total resultados",
-
+  "Are you sure you want to delete the selected items?": "Você tem certeza que deseja apagar os itens selecionados?",
+  "The selected items will be removed from the active items. Do you want to continue?": "Os itens selecionados serão removidos dos itens ativos. Você deseja continuar?",
+  "Manage which filters to apply to the list": "Gerencie quais filtros aplicar para a lista",
+  
   "Remember me": "Manter conectado",
   "Not registered?": "Não Registrado?",
   "Already registered?": "Já registrado?",
@@ -43,13 +47,6 @@
   
   "This is a secure area of the application. Please confirm your password before continuing.": "Esta é uma área segura do aplicativo. Por favor, confirme sua senha antes de continuar.",
   
-  "Users": "Usuários",
-  "Manage users informations and authorizations.": "Gerencie as informações dos usuários e suas autorizações.",
-  "Users management": "Gerenciamento de usuários",
-  "User creation": "Criação de usuário",
-  "User edition": "Edição de usuário",
-  "Users removed succesfully!": "Usuários removidos com sucesso!",
-  
   "Profile Information": "Informações de perfil",
   "Update your account's profile information and email address.": "Atualize as informações de perfil e endereço de e-mail da sua conta.",
   "Click here to re-send the verification email.": "Clique aqui para reenviar o e-mail de verificação.",
@@ -65,7 +62,14 @@
   "Apps": "Aplicativos",
   "Reports": "Relatórios",
   "Help": "Ajuda",
-
+  
+  "Users": "Usuários",
+  "Manage users informations and authorizations.": "Gerencie as informações dos usuários e suas autorizações.",
+  "Users management": "Gerenciamento de usuários",
+  "User creation": "Criação de usuário",
+  "User edition": "Edição de usuário",
+  "Users removed succesfully!": "Usuários removidos com sucesso!",
+  
   "Profile": "Perfil",
   "Settings": "Configurações",
   "Messages": "Mensagens",
@@ -73,14 +77,12 @@
   
   "Select the application you want to use.": "Selecione o aplicativo que você deseja usar",
   
-  "Roles": "Funções",
-  "Set roles for access to specific resources.": "Configure as funções para acesso a recursos específicos.",
+  "Permissions": "Permissões",
+  "Set permissions to access specifics resources.": "Configure permissões para acessar recursos específicos.",
   
   "Units": "Unidades",
   "Manage staff allocation units.": "Gerencie as unidades de alocação do pessoal efetivo.",
  
-  "Are you sure you want to delete the selected items?": "Você tem certeza que deseja apagar os itens selecionados?",
-  "The selected items will be removed from the active items. Do you want to continue?": "Os itens selecionados serão removidos dos itens ativos. Você deseja continuar?",
 
   "": ""
 }
