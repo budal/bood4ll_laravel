@@ -199,7 +199,7 @@ const items = [
                 <Breadcrumbs />
                 <slot />
             </main>
-            <TailwindIndicator />
         </div>
     </div>
+    <TailwindIndicator />
 </template>

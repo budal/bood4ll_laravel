@@ -21,75 +21,44 @@ class UsersController extends Controller
      */
     public function index(Request $request): Response
     {
-        $items = (new User)->newQuery();
-        
-        if (request()->has('search')) {
-            $items->where('name', 'ilike', '%'.request()->input('search').'%')
-                ->orWhere('username', 'ilike', '%'.$search.'%')
-                ->orWhere('email', 'ilike', '%'.$search.'%');
-        }
-        
-        if (request()->query('sort')) {
-            $attribute = request()->query('sort');
-            $sort_order = 'ASC';
+        $titles = [
+            [
+                'type' => 'avatar',
+                'title' => 'Avatar',
+                'field' => 'uuid',
+                'fallback' => 'name'
+            ],
+            [
+                'type' => 'composite',
+                'title' => 'User',
+                'fields' => ['name', 'email']
+            ],
+            [
+                'type' => 'simple',
+                'title' => 'Username',
+                'field' => 'username'
+            ],
+            [
+                'type' => 'simple',
+                'title' => 'Active',
+                'field' => 'active'
+            ],
+            [
+                'type' => 'simple',
+                'title' => 'Confirmed',
+                'field' => 'confirmed'
+            ]
+        ];
 
-            if (strncmp($attribute, '-', 1) === 0) {
-                $sort_order = 'DESC';
-                $attribute = substr($attribute, 1);
-            }
-
-            $items->orderBy($attribute, $sort_order);
-        } else {
-            $items->orderBy('name');
-        }
-
-        $items = $items->paginate(20)
-            ->onEachSide(2)
-            ->appends(request()->query());
-
-            // ->withQueryString()
-
-        // dd($items);
-
-        // return Inertia::render('Admin/Permission/Index', [
-        //     'items' => $items,
-        //     'filters' => request()->all('search'),
-        // ]);
-
-
-        // 'items' => User::orderBy('name')
-        // ->filter($request->all('search'))
-        // ->paginate(20)
-        // ->appends($request->all('search', 'active'))
-
-         
         return Inertia::render('Users/Index', [
             'status' => session('status'),
             'filters' => $request->all('search'),
-            'titles' => [
-                [
-                    'type' => 'avatar',
-                    'title' => 'Avatar',
-                    'field' => 'uuid',
-                    'fallback' => 'name'
-                ],
-                [
-                    'type' => 'composite',
-                    'title' => 'User',
-                    'fields' => ['name', 'email']
-                ],
-                [
-                    'type' => 'simple',
-                    'title' => 'Username',
-                    'field' => 'username'
-                ],
-                [
-                    'type' => 'simple',
-                    'title' => 'Active',
-                    'field' => 'active'
-                ],
-            ],
-            'items' => $items
+            'titles' => $titles,
+            'items' => User::filter($request->all('search'))
+                ->sort($request->sort)
+                ->paginate(20)
+                ->onEachSide(2)
+                ->appends($request->all('search', 'active'))
         ]);
     }
 

@@ -3,6 +3,7 @@ import PrimaryButton from './PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import DangerButton from './DangerButton.vue';
 import Checkbox from '@/Components/Checkbox.vue';
+import Select from '@/Components/Select.vue';
 import Modal from '@/Components/Modal.vue';
 import Avatar from '@/Components/Avatar.vue';
 import SearchInput from '@/Components/SearchInput.vue';
@@ -121,27 +122,25 @@ const classTD = "p-2"
 <template>
   <div>
     <Modal :show="confirmingUserDeletion" @close="closeModal">
-      <div class="p-6">
-        <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
-          {{ $t('Are you sure you want to delete the selected items?') }}
-        </h2>
-  
-        <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-          {{ $t('The selected items will be removed from the active items. Do you want to continue?') }}
-        </p>
-  
-        <div class="mt-6 flex justify-end">
-          <SecondaryButton @click="closeModal">{{ $t('Cancel') }}</SecondaryButton>
-  
-          <DangerButton
-            class="ml-3"
-            :class="{ 'opacity-25': form.processing }"
-            :disabled="form.processing"
-            @click="deleteUser"
-          >
-              {{ $t('Erase selected') }}
-          </DangerButton>
-        </div>
+      <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
+        {{ $t('Are you sure you want to delete the selected items?') }}
+      </h2>
+
+      <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
+        {{ $t('The selected items will be removed from the active items. Do you want to continue?') }}
+      </p>
+
+      <div class="mt-6 flex justify-end">
+        <SecondaryButton @click="closeModal">{{ $t('Cancel') }}</SecondaryButton>
+
+        <DangerButton
+          class="ml-3"
+          :class="{ 'opacity-25': form.processing }"
+          :disabled="form.processing"
+          @click="deleteUser"
+        >
+            {{ $t('Erase selected') }}
+        </DangerButton>
       </div>
     </Modal>
 
@@ -154,6 +153,8 @@ const classTD = "p-2"
         <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
           {{ $t('The selected items will be removed from the active items. Do you want to continue?') }}
         </p>
+
+        <Select />
   
         <div class="mt-6 flex justify-end">
           <SecondaryButton @click="closeFiltersModal">{{ $t('Cancel') }}</SecondaryButton>
@@ -169,6 +170,7 @@ const classTD = "p-2"
         </div>
       </div>
     </Modal>
+
 
     <div class="flex sticky top-0 sm:top-[65px] justify-between rounded-xl backdrop-blur-sm p-2 my-2 -mx-3 bg-white/30 dark:bg-gray-800/30">
       <div class="flex-none items-center">
@@ -291,5 +293,5 @@ const classTD = "p-2"
         </div>
       </div>
     </div>
-  </div>
+   </div>
 </template>
