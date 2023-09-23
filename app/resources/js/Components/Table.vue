@@ -185,9 +185,9 @@ const classTD = "p-2"
         <SecondaryButton @click="openFiltersModal" class="ml-2 h-full"><AdjustmentsVerticalIcon class="h-5 w-5" /></SecondaryButton>
       </div>
       <div class="flex-none items-center">
-        <Link v-if="createRoute" as="button" :href="route(createRoute)" class="h-full">
-          <PrimaryButton class="ml-2 h-full"><PlusIcon class="h-5 w-5" /></PrimaryButton>
-        </Link>
+        <PrimaryButton v-if="createRoute" class="ml-2 h-full" @click="form.get(route(createRoute))">
+          <PlusIcon class="h-5 w-5" />
+        </PrimaryButton>
       </div>
     </div>
     <div>
