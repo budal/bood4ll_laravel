@@ -159,7 +159,7 @@ export default defineComponent({
                 </svg>
             </div>
             <input
-                class="w-full block p-2 pl-9 placeholder:text-sm dark:placeholder-gray-400 dark:bg-gray-900 dark:text-gray-300 rounded-md border-gray-300 dark:border-gray-700 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 shadow-sm" 
+                class="w-full block p-2 pl-9 placeholder:text-sm dark:placeholder-gray-400 dark:bg-gray-900 dark:text-gray-300 rounded-md border border-gray-300 dark:border-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-gray-800 focus:ring-gray-300 dark:focus:ring-gray-500 disabled:opacity-25 transition ease-in-out duration-500 shadow-sm" 
                 :placeholder=placeholder
                 ref="inputRef"
                 type="search"
