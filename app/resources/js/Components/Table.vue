@@ -244,7 +244,7 @@ const classTD = "p-2"
       <div class="rounded-xl overflow-hidden border-2 border-slate-200 dark:border-slate-600">
         <div class="overflow-x-auto flex">
           <table class="table-auto w-full text-sm shadow-lg">
-            <thead v-if="items.data.length">
+            <thead v-if="items.total > 0">
               <tr class="bg-gray-200 dark:bg-slate-900 p-3 text-slate-1000 dark:text-white text-left">
                 <th v-if="destroyRoute" :class="`${classTD}`">
                   <Checkbox name="remember" :checked="itemsSelected" @click="toggleSelection" class="w-8 h-8 rounded-full" />
@@ -284,7 +284,7 @@ const classTD = "p-2"
                   </Link>
                 </td>
               </tr>
-              <tr v-if="!items.data.length">
+              <tr v-if="items.total == 0">
                 <td :class="`${classTD} text-center`">
                   <p class="text-lg leading-5 text-gray-600 dark:text-gray-400">{{ $t('No items to show.') }}</p>
                 </td>
@@ -293,7 +293,7 @@ const classTD = "p-2"
           </table>
         </div>
       </div>
-      <div v-if="items.last_page > 1" class="flex sticky bottom-0 justify-between rounded-xl backdrop-blur-sm p-2 my-2 -mx-3 bg-white/30 dark:bg-gray-800/30">
+      <div v-if="items.total > 0" class="flex sticky bottom-0 justify-between rounded-xl backdrop-blur-sm p-2 my-2 -mx-3 bg-white/30 dark:bg-gray-800/30">
         <div class="w-full flex flex-row sm:hidden">
           <div class="basis-1/3 text-left">
             <Link v-if="items.prev_page_url" as="button" :href="items.prev_page_url" class="text-sm">
