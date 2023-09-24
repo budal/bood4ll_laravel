@@ -62,7 +62,7 @@ const maxWidthClass = computed(() => {
                         leave-from="opacity-100 scale-100"
                         leave-to="opacity-0 scale-95"
                     >
-                        <DialogPanel :class="`${maxWidthClass} w-full max-w-md transform overflow-hidden rounded-2xl bg-white dark:bg-gray-800 p-6 text-left align-middle shadow-xl sm:w-full sm:mx-auto transition-all`">
+                        <DialogPanel :class="`${maxWidthClass} overflow-visible w-full max-w-md transform overflow-hidden rounded-2xl bg-white dark:bg-gray-800 p-6 text-left align-middle shadow-xl sm:w-full sm:mx-auto transition-all`">
                             <DialogTitle v-if="title" as="h3" class="text-lg font-medium text-gray-900 dark:text-gray-100 leading-6">
                                 {{ title }}
                             </DialogTitle>

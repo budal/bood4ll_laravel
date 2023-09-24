@@ -15,7 +15,7 @@ const selectedPerson = ref(people[0])
 </script>
 
 <template>
-  <div class="fixed top-16 w-72">
+  <div class="relative">
     <Listbox v-model="selectedPerson">
       <div class="relative mt-1">
         <ListboxButton

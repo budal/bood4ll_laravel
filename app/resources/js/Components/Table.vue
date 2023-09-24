@@ -208,7 +208,6 @@ const classTD = "p-2"
       </div>
     </Modal>
 
-
     <div class="flex sticky top-0 sm:top-[65px] justify-between rounded-xl backdrop-blur-sm p-2 my-2 -mx-3 bg-white/30 dark:bg-gray-800/30">
       <div class="flex-none items-center">
         <DangerButton v-if="destroyRoute" :disabled="numberSelected === 0" @click="deleteSelected" class="mr-2 h-full">
