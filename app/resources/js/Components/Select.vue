@@ -5,6 +5,10 @@ import { CheckIcon, ChevronUpDownIcon } from '@heroicons/vue/20/solid'
 
 const props = defineProps<{
   content: object;
+  modelValue: {
+    type: [String, Number, Boolean],
+    default: null
+  },
 }>();
 
 const selectedContent = ref(props.content[0])

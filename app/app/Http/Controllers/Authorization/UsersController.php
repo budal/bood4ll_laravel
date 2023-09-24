@@ -49,13 +49,13 @@ class UsersController extends Controller
 
         return Inertia::render('Users/Index', [
             'status' => session('status'),
-            'filters' => $request->all('search', 'sort'),
+            'filters' => $request->all('search', 'sort', 'trashed'),
             'titles' => $titles,
-            'items' => User::filter($request->all('search'))
+            'items' => User::filter($request->all('search', 'sort', 'trashed'))
                 ->sort($request->sort ?? "name")
                 ->paginate(20)
                 ->onEachSide(2)
-                ->appends($request->all('search', 'sort'))
+                // ->appends($request->all('search', 'sort', 'trashed'))
         ]);
     }
 
