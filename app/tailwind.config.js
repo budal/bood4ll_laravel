@@ -20,4 +20,7 @@ export default {
     },
 
     plugins: [forms],
+    corePlugins: {
+        scrollbar: true,
+    },
 };

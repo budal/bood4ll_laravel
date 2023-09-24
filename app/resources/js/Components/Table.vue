@@ -7,7 +7,15 @@ import Select from '@/Components/Select.vue';
 import Modal from '@/Components/Modal.vue';
 import Avatar from '@/Components/Avatar.vue';
 import SearchInput from '@/Components/SearchInput.vue';
-import { ChevronLeftIcon, ChevronRightIcon, PlusIcon, TrashIcon, AdjustmentsVerticalIcon } from '@heroicons/vue/20/solid'
+import { 
+  ChevronUpIcon, 
+  ChevronDownIcon, 
+  ChevronLeftIcon, 
+  ChevronRightIcon, 
+  PlusIcon, 
+  TrashIcon, 
+  AdjustmentsVerticalIcon 
+} from '@heroicons/vue/20/solid'
 import { ref, computed, reactive, watch, onBeforeUnmount } from 'vue'
 import { toast } from 'vue3-toastify';
 import { router, useForm, Link } from '@inertiajs/vue3';
@@ -24,6 +32,8 @@ const props = defineProps<{
     destroyRoute?: string;
       restoreRoute?: string;
 }>();
+
+const routeCurrent = window.location.href;
 
 // deletion checkboxes
 let selectedItems = reactive(new Set())
@@ -88,7 +98,14 @@ const closeModal = () => {
 const search = ref("");
 
 const debouncedWatch = debounce(() => {
-  router.visit(route(props.indexRoute) + '?search='+search.value, {
+  const searchRoute = new URL(routeCurrent);
+  
+  const sort = searchRoute.searchParams.get("sort") || ''
+  
+  searchRoute.searchParams.set("search", search.value)
+  searchRoute.searchParams.set("sort", sort)
+
+  router.visit(searchRoute, {
     method: 'get',
     preserveState: true,
   })
@@ -113,6 +130,31 @@ const refreshFilters = () => {
 const closeFiltersModal = () => {
   filtersModal.value = false;
 };
+
+// sort column
+const sort = (column: any) => {
+  let url = new URL(routeCurrent)
+  let sort = null;
+  let sortValue = url.searchParams.get("sort")
+  let searchMe = search.value || url.searchParams.get("search")
+
+  url.searchParams.set("search", searchMe)
+
+  if (sortValue == column) {
+    url.searchParams.set("sort", "-" + column)
+    sort = "asc"
+  } else if (sortValue === "-" + column) {
+    url.searchParams.set("sort", column)
+    sort = "desc"
+  } else {
+    url.searchParams.set("sort", column)
+  }
+
+  return {
+    url: url.href,
+    sort: sort,
+  }
+}
 
 // td class
 const classTD = "p-2"
@@ -145,29 +187,27 @@ const classTD = "p-2"
     </Modal>
 
     <Modal :show="filtersModal" @close="closeFiltersModal">
-      <div class="p-6">
-        <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
-          {{ $t('Manage which filters to apply to the list') }}
-        </h2>
-  
-        <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-          {{ $t('The selected items will be removed from the active items. Do you want to continue?') }}
-        </p>
+      <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
+        {{ $t('Manage which filters to apply to the list') }}
+      </h2>
 
-        <Select />
-  
-        <div class="mt-6 flex justify-end">
-          <SecondaryButton @click="closeFiltersModal">{{ $t('Cancel') }}</SecondaryButton>
+      <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
+        {{ $t('The selected items will be removed from the active items. Do you want to continue?') }}
+      </p>
 
-          <PrimaryButton
-            class="ml-3"
-            :class="{ 'opacity-25': form.processing }"
-            :disabled="form.processing"
-            @click="deleteUser"
-          >
-              {{ $t('Apply') }}
-          </PrimaryButton>
-        </div>
+      <Select />
+
+      <div class="mt-6 flex justify-end">
+        <SecondaryButton @click="closeFiltersModal">{{ $t('Cancel') }}</SecondaryButton>
+
+        <PrimaryButton
+          class="ml-3"
+          :class="{ 'opacity-25': form.processing }"
+          :disabled="form.processing"
+          @click="deleteUser"
+        >
+            {{ $t('Apply') }}
+        </PrimaryButton>
       </div>
     </Modal>
 
@@ -201,7 +241,11 @@ const classTD = "p-2"
                 </th>
                 <template v-for="(content, id) in titles">
                   <th :class="`${classTD}`">
-                    {{ $t(content.title) }}
+                    <Link :href="sort(content.field).url" class="flex gap-1">
+                      {{ $t(content.title) }}
+                      <ChevronUpIcon v-if="sort(content.field).sort == 'asc'" class="h-4 w-4" />
+                      <ChevronDownIcon v-if="sort(content.field).sort == 'desc'" class="h-4 w-4" />
+                    </Link>
                   </th>
                 </template>
                 <th v-if="editRoute" :class="`${classTD}`"></th>

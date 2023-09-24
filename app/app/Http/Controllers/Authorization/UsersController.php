@@ -31,6 +31,7 @@ class UsersController extends Controller
             [
                 'type' => 'composite',
                 'title' => 'User',
+                'field' => 'name',
                 'fields' => ['name', 'email']
             ],
             [
@@ -42,11 +43,6 @@ class UsersController extends Controller
                 'type' => 'simple',
                 'title' => 'Active',
                 'field' => 'active'
-            ],
-            [
-                'type' => 'simple',
-                'title' => 'Confirmed',
-                'field' => 'confirmed'
             ]
         ];
 
@@ -55,10 +51,10 @@ class UsersController extends Controller
             'filters' => $request->all('search'),
             'titles' => $titles,
             'items' => User::filter($request->all('search'))
-                ->sort($request->sort)
+                ->sort($request->sort ?? "name")
                 ->paginate(20)
                 ->onEachSide(2)
-                ->appends($request->all('search', 'active'))
+                ->appends($request->all('search', 'sort'))
         ]);
     }
 

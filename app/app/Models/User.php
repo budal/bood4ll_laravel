@@ -78,17 +78,13 @@ class User extends Authenticatable
 
     public function scopeSort($query, string $attribute = null): void
     {
-        if (empty($attribute)) {
-            $query->orderBy("name");
-        } else {
-            $sort_order = 'ASC';
+        $sort_order = 'ASC';
 
-            if (strncmp($attribute, '-', 1) === 0) {
-                $sort_order = 'DESC';
-                $attribute = substr($attribute, 1);
-            }
-
-            $query->orderBy($attribute, $sort_order);
+        if (strncmp($attribute, '-', 1) === 0) {
+            $sort_order = 'DESC';
+            $attribute = substr($attribute, 1);
         }
+
+        $query->orderBy($attribute, $sort_order);
     }
 }
