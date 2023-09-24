@@ -3,6 +3,8 @@ import PrimaryButton from './PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import DangerButton from './DangerButton.vue';
 import Checkbox from '@/Components/Checkbox.vue';
+import InputLabel from '@/Components/InputLabel.vue';
+import TextInput from '@/Components/TextInput.vue';
 import Select from '@/Components/Select.vue';
 import Modal from '@/Components/Modal.vue';
 import Avatar from '@/Components/Avatar.vue';
@@ -75,6 +77,7 @@ const deleteSelected = () => {
 
 const form = useForm({
   uuids: [],
+  active: ''
 });
 
 const deleteUser = () => {
@@ -192,7 +195,11 @@ const classTD = "p-2"
         {{ $t('The selected items will be removed from the active items. Do you want to continue?') }}
       </p>
 
-      <Select />
+
+      <div class="pt-3">
+        <InputLabel for="name" :value="$t('Name')" />
+        <Select />
+      </div>
 
       <div class="mt-6 flex justify-end">
         <SecondaryButton @click="closeFiltersModal">{{ $t('Cancel') }}</SecondaryButton>

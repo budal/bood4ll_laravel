@@ -19,7 +19,7 @@ const selectedPerson = ref(people[0])
     <Listbox v-model="selectedPerson">
       <div class="relative mt-1">
         <ListboxButton
-          class="relative w-full cursor-default rounded-lg bg-white py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm"
+          class="w-full cursor-default rounded-md bg-white py-2 pl-3 pr-10 text-left sm:text-sm shadow-md focus:outline-none dark:bg-gray-900 dark:text-gray-300 border border-gray-300 dark:border-gray-500 focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-gray-800 focus:ring-gray-300 dark:focus:ring-gray-500 disabled:opacity-25 transition ease-in-out duration-500"
         >
           <span class="block truncate">{{ selectedPerson.name }}</span>
           <span
@@ -38,7 +38,7 @@ const selectedPerson = ref(people[0])
           leave-to-class="opacity-0"
         >
           <ListboxOptions
-            class="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
+            class="absolute mt-1 max-h-60 w-full overflow-auto rounded-md py-1 text-base shadow-lg sm:text-sm bg-white dark:bg-gray-900 dark:text-gray-300 border border-gray-300 dark:border-gray-500 focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-gray-800 focus:ring-gray-300 dark:focus:ring-gray-500 disabled:opacity-25 transition ease-in-out duration-500"
           >
             <ListboxOption
               v-slot="{ active, selected }"
@@ -49,7 +49,7 @@ const selectedPerson = ref(people[0])
             >
               <li
                 :class="[
-                  active ? 'bg-amber-100 text-amber-900' : 'text-gray-900',
+                  active ? 'bg-gray-200 dark:bg-gray-800 text-gray-900 dark:text-gray-300' : 'text-gray-700 dark:text-gray-300',
                   'relative cursor-default select-none py-2 pl-10 pr-4',
                 ]"
               >
@@ -62,7 +62,7 @@ const selectedPerson = ref(people[0])
                 >
                 <span
                   v-if="selected"
-                  class="absolute inset-y-0 left-0 flex items-center pl-3 text-amber-600"
+                  class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-600 dark:text-gray-300"
                 >
                   <CheckIcon class="h-5 w-5" aria-hidden="true" />
                 </span>
