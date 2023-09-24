@@ -26,7 +26,8 @@ class UsersController extends Controller
                 'type' => 'avatar',
                 'title' => 'Avatar',
                 'field' => 'uuid',
-                'fallback' => 'name'
+                'fallback' => 'name',
+                'disableSort' => true
             ],
             [
                 'type' => 'composite',

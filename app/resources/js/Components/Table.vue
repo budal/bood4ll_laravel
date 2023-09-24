@@ -241,7 +241,7 @@ const classTD = "p-2"
                 </th>
                 <template v-for="(content, id) in titles">
                   <th :class="`${classTD}`">
-                    <Link :href="sort(content.field).url" class="flex gap-1">
+                    <Link v-if="content.disableSort != true" :href="sort(content.field).url" class="flex gap-1">
                       {{ $t(content.title) }}
                       <ChevronUpIcon v-if="sort(content.field).sort == 'asc'" class="h-4 w-4" />
                       <ChevronDownIcon v-if="sort(content.field).sort == 'desc'" class="h-4 w-4" />
