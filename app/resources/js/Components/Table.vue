@@ -119,6 +119,14 @@ onBeforeUnmount(() => {
 })
 
 // filters modal
+const content = [
+  { id: 'active', title: 'Only active' },
+  { id: 'trashed', title: 'Only trashed' },
+  { id: 'all', title: 'Active and trashed' },
+]
+
+const contentSelected = ref(content[0])
+
 const filtersModal = ref(false);
 
 const openFiltersModal = () => {
@@ -197,8 +205,8 @@ const classTD = "p-2"
 
 
       <div class="pt-3">
-        <InputLabel for="name" :value="$t('Name')" />
-        <Select />
+        <InputLabel for="name" :value="$t('Content')" />
+        <Select :content="content" v-model="contentSelected" />
       </div>
 
       <div class="mt-6 flex justify-end">

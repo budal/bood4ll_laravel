@@ -1,27 +1,23 @@
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue'
 import { Listbox, ListboxLabel, ListboxButton, ListboxOptions, ListboxOption} from '@headlessui/vue'
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/vue/20/solid'
 
-const people = [
-  { name: 'Wade Cooper' },
-  { name: 'Arlene Mccoy' },
-  { name: 'Devon Webb' },
-  { name: 'Tom Cook' },
-  { name: 'Tanya Fox' },
-  { name: 'Hellen Schmidt' },
-]
-const selectedPerson = ref(people[0])
+const props = defineProps<{
+  content: object;
+}>();
+
+const selectedContent = ref(props.content[0])
 </script>
 
 <template>
   <div class="relative">
-    <Listbox v-model="selectedPerson">
+    <Listbox v-model="selectedContent">
       <div class="relative mt-1">
         <ListboxButton
           class="w-full cursor-default rounded-md bg-white py-2 pl-3 pr-10 text-left sm:text-sm shadow-md focus:outline-none dark:bg-gray-900 dark:text-gray-300 border border-gray-300 dark:border-gray-500 focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-gray-800 focus:ring-gray-300 dark:focus:ring-gray-500 disabled:opacity-25 transition ease-in-out duration-500"
         >
-          <span class="block truncate">{{ selectedPerson.name }}</span>
+          <span class="block truncate">{{ $t(selectedContent.title) }}</span>
           <span
             class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2"
           >
@@ -42,9 +38,9 @@ const selectedPerson = ref(people[0])
           >
             <ListboxOption
               v-slot="{ active, selected }"
-              v-for="person in people"
-              :key="person.name"
-              :value="person"
+              v-for="item in content"
+              :key="item.id"
+              :value="item"
               as="template"
             >
               <li
@@ -58,7 +54,7 @@ const selectedPerson = ref(people[0])
                     selected ? 'font-medium' : 'font-normal',
                     'block truncate',
                   ]"
-                  >{{ person.name }}</span
+                  >{{ $t(item.title) }}</span
                 >
                 <span
                   v-if="selected"

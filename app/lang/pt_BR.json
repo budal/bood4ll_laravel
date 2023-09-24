@@ -83,6 +83,10 @@
   "Units": "Unidades",
   "Manage staff allocation units.": "Gerencie as unidades de alocação do pessoal efetivo.",
  
+  "Content": "Conteúdo",
+  "Only active": "Apenas ativos",
+  "Only trashed": "Apenas excluídos",
+  "Active and trashed": "Ativos e excluídos",
 
   "": ""
 }
