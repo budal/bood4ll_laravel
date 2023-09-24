@@ -30,16 +30,17 @@
   "Are you sure you want to delete the selected items?": "Você tem certeza que deseja apagar os itens selecionados?",
   "The selected items will be removed from the active items. Do you want to continue?": "Os itens selecionados serão removidos dos itens ativos. Você deseja continuar?",
   "Manage which filters to apply to the list": "Gerencie quais filtros aplicar para a lista",
+  "Selected filters refine searches according to your choices": "Os filtros selecionados refinam as pesquisas conforme suas escolhas",
   
   "Remember me": "Manter conectado",
   "Not registered?": "Não Registrado?",
   "Already registered?": "Já registrado?",
   "Forgot your password?": "Esqueceu sua senha?",
-
+  
   "Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.": "Esqueceu sua senha? Sem problemas. Basta nos informar seu endereço de e-mail e enviaremos por e-mail um link de redefinição de senha que permitirá que você escolha uma nova.",
   "Email Password Reset Link": "Email com link de redefinição de senha",
   "We have emailed your password reset link.": "Enviamos por email o link para redefinição de senha",
-
+  
   "Email Verification": "Verificação de email",
   "Thanks for signing up! Before getting started, could you verify your email address by clicking on the link we just emailed to you? If you didn't receive the email, we will gladly send you another.": "Obrigado por inscrever-se! Antes de começar, você poderia verificar seu endereço de e-mail clicando no link que acabamos de enviar para você? Se você não recebeu o e-mail, teremos prazer em lhe enviar outro.",
   "A new verification link has been sent to the email address you provided during registration.": "Um novo link de verificação foi enviado para o endereço de e-mail que você forneceu durante o registro.",
@@ -82,11 +83,11 @@
   
   "Units": "Unidades",
   "Manage staff allocation units.": "Gerencie as unidades de alocação do pessoal efetivo.",
- 
+  
   "Content": "Conteúdo",
   "Only active": "Apenas ativos",
   "Only trashed": "Apenas excluídos",
   "Active and trashed": "Ativos e excluídos",
-
+  
   "": ""
 }

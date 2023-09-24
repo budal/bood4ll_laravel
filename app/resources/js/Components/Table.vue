@@ -200,9 +200,8 @@ const classTD = "p-2"
       </h2>
 
       <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-        {{ $t('The selected items will be removed from the active items. Do you want to continue?') }}
+        {{ $t('Selected filters refine searches according to your choices') }}
       </p>
-
 
       <div class="pt-3">
         <InputLabel for="name" :value="$t('Content')" />
