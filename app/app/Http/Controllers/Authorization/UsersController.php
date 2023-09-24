@@ -55,7 +55,7 @@ class UsersController extends Controller
                 ->sort($request->sort ?? "name")
                 ->paginate(20)
                 ->onEachSide(2)
-                // ->appends($request->all('search', 'sort', 'trashed'))
+                ->appends($request->all('search', 'sort', 'trashed'))
         ]);
     }
 

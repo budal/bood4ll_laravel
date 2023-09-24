@@ -4,7 +4,6 @@ import SecondaryButton from '@/Components/SecondaryButton.vue';
 import DangerButton from './DangerButton.vue';
 import Checkbox from '@/Components/Checkbox.vue';
 import InputLabel from '@/Components/InputLabel.vue';
-import TextInput from '@/Components/TextInput.vue';
 import Select from '@/Components/Select.vue';
 import Modal from '@/Components/Modal.vue';
 import Avatar from '@/Components/Avatar.vue';
@@ -77,7 +76,6 @@ const deleteSelected = () => {
 
 const form = useForm({
   uuids: [],
-  active: ''
 });
 
 const deleteUser = () => {
@@ -104,7 +102,7 @@ const debouncedWatch = debounce(() => {
   const sort = searchRoute.searchParams.get("sort") || ''
   
   searchRoute.searchParams.set("search", search.value)
-  searchRoute.searchParams.set("sort", sort)
+  searchRoute.searchParams.forEach((value, key) => searchRoute.searchParams.set(key, value))
 
   router.visit(searchRoute, {
     method: 'get',
@@ -134,6 +132,16 @@ const openFiltersModal = () => {
 }
 
 const refreshFilters = () => {
+  const searchRoute = new URL(routeCurrent);
+  
+  searchRoute.searchParams.set("trashed", 'only')
+  searchRoute.searchParams.forEach((value, key) => searchRoute.searchParams.set(key, value))
+
+  router.visit(searchRoute, {
+    method: 'get',
+    preserveScroll: true,
+    onSuccess: () => closeFiltersModal(),
+  })
 };
 
 const closeFiltersModal = () => {
@@ -145,9 +153,6 @@ const sort = (column: any) => {
   let url = new URL(routeCurrent)
   let sort = null;
 
-  if (props.filters.search)
-    url.searchParams.set("search", props.filters.search)
-
   if (props.filters.sort == column) {
     url.searchParams.set("sort", "-" + column)
     sort = "asc"
@@ -157,6 +162,8 @@ const sort = (column: any) => {
   } else {
     url.searchParams.set("sort", column)
   }
+
+  url.searchParams.forEach((value, key) => url.searchParams.set(key, value))
 
   return {
     url: url.href,
@@ -215,7 +222,7 @@ const classTD = "p-2"
           class="ml-3"
           :class="{ 'opacity-25': form.processing }"
           :disabled="form.processing"
-          @click="deleteUser"
+          @click="refreshFilters"
         >
           {{ $t('Apply') }}
         </PrimaryButton>
