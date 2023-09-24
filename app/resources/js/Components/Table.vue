@@ -78,11 +78,9 @@ const form = useForm({
 });
 
 const deleteUser = () => {
-  selectedItems.forEach((item: any) => {
-    form.uuids.push(item.uuid)
-  })
+  selectedItems.forEach((item: any) => form.uuids.push(item.uuid))
 
-  form.delete(route(props.destroyRoute), {
+  form.delete(route(props.destroyRoute || ''), {
       preserveScroll: true,
       onSuccess: () => closeModal(),
       onError: () => toast.error(props.status),
@@ -135,15 +133,14 @@ const closeFiltersModal = () => {
 const sort = (column: any) => {
   let url = new URL(routeCurrent)
   let sort = null;
-  let sortValue = url.searchParams.get("sort")
-  let searchMe = search.value || url.searchParams.get("search")
 
-  url.searchParams.set("search", searchMe)
+  if (props.filters.search)
+    url.searchParams.set("search", props.filters.search)
 
-  if (sortValue == column) {
+  if (props.filters.sort == column) {
     url.searchParams.set("sort", "-" + column)
     sort = "asc"
-  } else if (sortValue === "-" + column) {
+  } else if (props.filters.sort === "-" + column) {
     url.searchParams.set("sort", column)
     sort = "desc"
   } else {
@@ -181,7 +178,7 @@ const classTD = "p-2"
           :disabled="form.processing"
           @click="deleteUser"
         >
-            {{ $t('Erase selected') }}
+          {{ $t('Erase selected') }}
         </DangerButton>
       </div>
     </Modal>
@@ -206,7 +203,7 @@ const classTD = "p-2"
           :disabled="form.processing"
           @click="deleteUser"
         >
-            {{ $t('Apply') }}
+          {{ $t('Apply') }}
         </PrimaryButton>
       </div>
     </Modal>
