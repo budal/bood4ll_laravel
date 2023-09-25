@@ -47,7 +47,17 @@ class UsersController extends Controller
             ]
         ];
 
-        return Inertia::render('Users/Index', [
+        $routes = [
+            'createRoute' => "apps.users.create",
+            'editRoute' => "apps.users.edit",
+            'destroyRoute' => "apps.users.destroy",
+            'restoreRoute' => "apps.users.restore",
+        ];
+
+        return Inertia::render('Default/Index', [
+            'title' => "Users management",
+            'subtitle' => "Manage users informations and authorizations.",
+            'routes' => $routes,
             'status' => session('status'),
             'filters' => $request->all('search', 'sort', 'trashed'),
             'titles' => $titles,

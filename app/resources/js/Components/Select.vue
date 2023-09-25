@@ -66,8 +66,8 @@ const computedValue = computed({
                     selected ? 'font-medium' : 'font-normal',
                     'block truncate',
                   ]"
-                  >{{ $t(item.title) }}</span
-                >
+                  >{{ $t(item.title) }}
+                </span>
                 <span
                   v-if="selected"
                   class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-600 dark:text-gray-300"

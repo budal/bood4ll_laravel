@@ -23,18 +23,15 @@ import { router, useForm, Link } from '@inertiajs/vue3';
 import debounce from "lodash.debounce";
 
 const props = defineProps<{
+    routes?: any;
     status?: any;
     filters?: any;
     items: any;
     titles: any;
-    indexRoute: string;
-    createRoute?: string;
-    editRoute?: string;
-    destroyRoute?: string;
-      restoreRoute?: string;
 }>();
 
-const routeCurrent = window.location.href;
+const currentRoute = window.location.href;
+
 
 // deletion checkboxes
 let selectedItems = reactive(new Set())
@@ -79,9 +76,9 @@ const form = useForm({
 });
 
 const deleteUser = () => {
-  selectedItems.forEach((item: any) => form.uuids.push(item.uuid))
+  selectedItems.forEach((item: any) => form.uuids.push((item.uuid) as never))
 
-  form.delete(route(props.destroyRoute || ''), {
+  form.delete((route(props.routes.destroyRoute) as unknown ) as string, {
       preserveScroll: true,
       onSuccess: () => closeModal(),
       onError: () => toast.error(props.status),
@@ -93,13 +90,12 @@ const closeModal = () => {
     confirmingUserDeletion.value = false;
 };
 
+
 // search
 const search = ref("");
 
 const debouncedWatch = debounce(() => {
-  const searchRoute = new URL(routeCurrent);
-  
-  const sort = searchRoute.searchParams.get("sort") || ''
+  const searchRoute = new URL(currentRoute);
   
   searchRoute.searchParams.set("search", search.value)
   searchRoute.searchParams.forEach((value, key) => searchRoute.searchParams.set(key, value))
@@ -116,8 +112,9 @@ onBeforeUnmount(() => {
   debouncedWatch.cancel();
 })
 
+
 // filters modal
-const searchRoute = new URL(routeCurrent);
+const searchRoute = new URL(currentRoute);
 
 const content = [
   { id: '', title: 'Only active' },
@@ -129,14 +126,13 @@ const trashed = searchRoute.searchParams.get("trashed") || ''
 const contentSelected = ref(content[content.map(function(e) { return e.id; }).indexOf(trashed)])
 
 const filtersModal = ref(false);
-const filtersModal2 = ref(null);
 
 const openFiltersModal = () => {
   filtersModal.value = true;
 }
 
 const refreshFilters = () => {
-  const searchRoute = new URL(routeCurrent);
+  const searchRoute = new URL(currentRoute);
   
   searchRoute.searchParams.set("trashed", contentSelected.value.id)
   searchRoute.searchParams.forEach((value, key) => searchRoute.searchParams.set(key, value))
@@ -152,10 +148,13 @@ const closeFiltersModal = () => {
   filtersModal.value = false;
 };
 
+
 // sort column
 const sort = (column: any) => {
-  let url = new URL(routeCurrent)
+  let url = new URL(currentRoute)
   let sort = null;
+
+  url.searchParams.forEach((value, key) => url.searchParams.set(key, value))
 
   if (props.filters.sort == column) {
     url.searchParams.set("sort", "-" + column)
@@ -167,13 +166,12 @@ const sort = (column: any) => {
     url.searchParams.set("sort", column)
   }
 
-  url.searchParams.forEach((value, key) => url.searchParams.set(key, value))
-
   return {
     url: url.href,
     sort: sort,
   }
 }
+
 
 // td class
 const classTD = "p-2"
@@ -235,7 +233,7 @@ const classTD = "p-2"
 
     <div class="flex sticky top-0 sm:top-[65px] justify-between rounded-xl backdrop-blur-sm p-2 my-2 -mx-3 bg-white/30 dark:bg-gray-800/30">
       <div class="flex-none items-center">
-        <DangerButton v-if="destroyRoute" :disabled="numberSelected === 0" @click="deleteSelected" class="mr-2 h-full">
+        <DangerButton v-if="props.routes.destroyRoute" :disabled="numberSelected === 0" @click="deleteSelected" class="mr-2 h-full">
           <TrashIcon class="h-5 w-5" />
         </DangerButton>
       </div>
@@ -246,18 +244,18 @@ const classTD = "p-2"
         <SecondaryButton @click="openFiltersModal" class="ml-2 h-full"><AdjustmentsVerticalIcon class="h-5 w-5" /></SecondaryButton>
       </div>
       <div class="flex-none items-center">
-        <PrimaryButton v-if="createRoute" class="ml-2 h-full" @click="form.get(route(createRoute))">
+        <PrimaryButton v-if="props.routes.createRoute" class="ml-2 h-full" @click="form.get((route(props.routes.createRoute) as unknown) as string)">
           <PlusIcon class="h-5 w-5" />
         </PrimaryButton>
       </div>
     </div>
     <div>
-      <div class="rounded-xl overflow-hidden border-2 border-gray-200 dark:border-gray-600">
+      <div v-if="items.from !== null" class="rounded-xl overflow-hidden border-2 border-gray-200 dark:border-gray-600">
         <div class="overflow-x-auto flex">
           <table class="table-auto w-full text-sm shadow-lg">
             <thead v-if="items.total > 0">
               <tr class="bg-gray-200 dark:bg-gray-900 p-3 text-gray-1000 dark:text-white text-left">
-                <th v-if="destroyRoute" :class="`${classTD}`">
+                <th v-if="props.routes.destroyRoute" :class="`${classTD}`">
                   <Checkbox name="remember" :checked="itemsSelected" @click="toggleSelection" class="w-8 h-8 rounded-full" />
                 </th>
                 <template v-for="(content, id) in titles">
@@ -269,7 +267,7 @@ const classTD = "p-2"
                     </Link>
                   </th>
                 </template>
-                <th v-if="editRoute" :class="`${classTD}`"></th>
+                <th v-if="props.routes.editRoute" :class="`${classTD}`"></th>
               </tr>
             </thead>
             <tbody>
@@ -278,7 +276,7 @@ const classTD = "p-2"
                 :key="`tr-${item.uuid}`" 
                 class="`bg-white hover:bg-gray-100 dark:bg-gray-800 hover:dark:bg-gray-700 border-t border-gray-200 dark:border-gray-600 text-gray-500 dark:text-gray-400`"
               >
-                <td v-if="destroyRoute" :class="`${classTD}`">
+                <td v-if="props.routes.destroyRoute" :class="`${classTD}`">
                   <Checkbox class="w-8 h-8 rounded-full" :checked="selectedItems.has(item)" :value="item.uuid" :id="`checkbox-${item.uuid}`" @click="toggle(item)" />
                 </td>
                 <template v-for="content in titles">
@@ -293,8 +291,8 @@ const classTD = "p-2"
                     <p class="truncate text-xs leading-5 text-gray-900 dark:text-gray-200">{{ item[content.field] }}</p>
                   </td>
                 </template>
-                <td v-if="editRoute" :class="`${classTD} text-right`">
-                  <Link :href="route(editRoute, item.uuid)" as="button">
+                <td v-if="props.routes.editRoute" :class="`${classTD} text-right`">
+                  <Link :href="((route(props.routes.editRoute, item.uuid) as unknown) as string)" as="button">
                     <PrimaryButton><ChevronRightIcon class="h-5 w-5"/></PrimaryButton>
                   </Link>
                 </td>
@@ -315,7 +313,7 @@ const classTD = "p-2"
               <PrimaryButton>{{ $t('Previous')}}</PrimaryButton>
             </Link>
           </div>
-          <div class="basis-1/3 text-center">
+          <div v-if="items.from !== null" class="basis-1/3 text-center">
             <span 
               aria-current="page" class="relative inline-flex rounded-md bg-gray-600 dark:bg-gray-400 px-4 py-1 text-sm font-semibold text-white dark:text-gray-800">
               {{ `${items.current_page}/${items.last_page}` }}
@@ -329,7 +327,7 @@ const classTD = "p-2"
         </div>
         <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
           <div>
-            <p class="hidden lg:block text-xs text-gray-800 dark:text-white">
+            <p v-if="items.from !== null" class="hidden lg:block text-xs text-gray-800 dark:text-white">
               {{ $t('Showing :from to :to of :total results', { from: items.from, to: items.to, total: items.total }) }}
             </p>
           </div>
@@ -342,7 +340,7 @@ const classTD = "p-2"
                 </PrimaryButton>
               </Link>
 
-              <template v-for="item in items.links">
+              <template v-if="items.from !== null" v-for="item in items.links">
                 <Link
                   v-if="item.label > 0 && item.label != items.current_page || item.label == items.current_page"
                   :key="item.key" :href="item.url" as="button" class="text-sm"

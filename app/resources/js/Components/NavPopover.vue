@@ -45,7 +45,7 @@ const classes = computed(() =>
               <Link
                 v-for="item in items"
                 :key="item.name"
-                :href="route(item.route)"
+                :href="((route(item.route) as unknown) as string)"
                 class="flex items-center rounded-lg p-2 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none ring-1 ring-gray-100 dark:ring-gray-700 focus-visible:ring focus-visible:ring-gray-100 focus-visible:ring-opacity-50 transition ease-in-out duration-500"
               >
                 <div class="flex h-20 w-20 shrink-0 items-center justify-center text-white sm:h-12 sm:w-12" >
