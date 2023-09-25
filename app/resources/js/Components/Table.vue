@@ -252,11 +252,11 @@ const classTD = "p-2"
       </div>
     </div>
     <div>
-      <div class="rounded-xl overflow-hidden border-2 border-slate-200 dark:border-slate-600">
+      <div class="rounded-xl overflow-hidden border-2 border-gray-200 dark:border-gray-600">
         <div class="overflow-x-auto flex">
           <table class="table-auto w-full text-sm shadow-lg">
             <thead v-if="items.total > 0">
-              <tr class="bg-gray-200 dark:bg-slate-900 p-3 text-slate-1000 dark:text-white text-left">
+              <tr class="bg-gray-200 dark:bg-gray-900 p-3 text-gray-1000 dark:text-white text-left">
                 <th v-if="destroyRoute" :class="`${classTD}`">
                   <Checkbox name="remember" :checked="itemsSelected" @click="toggleSelection" class="w-8 h-8 rounded-full" />
                 </th>
@@ -273,7 +273,11 @@ const classTD = "p-2"
               </tr>
             </thead>
             <tbody>
-              <tr v-for="item in items.data" :key="`tr-${item.uuid}`" class="group/item bg-white hover:bg-gray-100 dark:bg-slate-800 hover:dark:bg-slate-700 border-t border-slate-200 dark:border-slate-600 text-slate-500 dark:text-slate-400">
+              <tr 
+                v-for="item in items.data" 
+                :key="`tr-${item.uuid}`" 
+                class="`bg-white hover:bg-gray-100 dark:bg-gray-800 hover:dark:bg-gray-700 border-t border-gray-200 dark:border-gray-600 text-gray-500 dark:text-gray-400`"
+              >
                 <td v-if="destroyRoute" :class="`${classTD}`">
                   <Checkbox class="w-8 h-8 rounded-full" :checked="selectedItems.has(item)" :value="item.uuid" :id="`checkbox-${item.uuid}`" @click="toggle(item)" />
                 </td>
@@ -282,11 +286,11 @@ const classTD = "p-2"
                     <Avatar class="w-12 h-12 rounded-full" :name="`${item[content.fallback]}`" />
                   </td>
                   <td v-if="content.type == 'composite'" :class="`${classTD}`">
-                    <strong class="text-slate-900 text-sm font-medium dark:text-slate-200">{{ item[content.fields[0]] }}</strong>
+                    <strong class="text-gray-900 text-sm font-medium dark:text-gray-200">{{ item[content.fields[0]] }}</strong>
                     <p class="truncate text-xs leading-5 text-gray-600 dark:text-gray-400">{{ item[content.fields[1]] }}</p>
                   </td>
                   <td v-if="content.type == 'simple'" :class="`${classTD}`">
-                    {{ item[content.field] }}
+                    <p class="truncate text-xs leading-5 text-gray-900 dark:text-gray-200">{{ item[content.field] }}</p>
                   </td>
                 </template>
                 <td v-if="editRoute" :class="`${classTD} text-right`">
