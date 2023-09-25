@@ -143,25 +143,25 @@ const closeFiltersModal = () => {
 };
 
 
-// sort column
-const sort = (column: any) => {
-  let sort = null;
+// sorting column
+const sortBy = (column: any) => {
+  let sortOrder = null;
 
-  searchRoute.searchParams.forEach((value, key) => searchRoute.searchParams.set(key, value))
-
-  if (props.filters.sort == column) {
-    searchRoute.searchParams.set("sort", "-" + column)
-    sort = "asc"
-  } else if (props.filters.sort === "-" + column) {
-    searchRoute.searchParams.set("sort", column)
-    sort = "desc"
+  if (props.filters.sorted == column) {
+    searchRoute.searchParams.set("sorted", "-" + column)
+    sortOrder = "asc"
+  } else if (props.filters.sorted === "-" + column) {
+    searchRoute.searchParams.set("sorted", column)
+    sortOrder = "desc"
   } else {
-    searchRoute.searchParams.set("sort", column)
+    searchRoute.searchParams.set("sorted", column)
   }
+  
+  searchRoute.searchParams.forEach((value, key) => searchRoute.searchParams.set(key, value))
 
   return {
     url: searchRoute.href,
-    sort: sort,
+    sortMe: sortOrder,
   }
 }
 
@@ -253,10 +253,10 @@ const classTD = "p-2"
                 </th>
                 <template v-for="(content, id) in titles">
                   <th :class="`${classTD}`">
-                    <Link v-if="content.disableSort != true" :href="sort(content.field).url" class="flex gap-1">
+                    <Link v-if="content.disableSort != true" :href="sortBy(content.field).url" class="flex gap-1">
                       {{ $t(content.title) }}
-                      <ChevronUpIcon v-if="sort(content.field).sort == 'asc'" class="h-4 w-4" />
-                      <ChevronDownIcon v-if="sort(content.field).sort == 'desc'" class="h-4 w-4" />
+                      <ChevronUpIcon v-if="sortBy(content.field).sortMe == 'asc'" class="h-4 w-4" />
+                      <ChevronDownIcon v-if="sortBy(content.field).sortMe == 'desc'" class="h-4 w-4" />
                     </Link>
                   </th>
                 </template>

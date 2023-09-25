@@ -59,13 +59,13 @@ class UsersController extends Controller
             'subtitle' => "Manage users informations and authorizations.",
             'routes' => $routes,
             'status' => session('status'),
-            'filters' => $request->all('search', 'sort', 'trashed'),
+            'filters' => $request->all('search', 'sorted', 'trashed'),
             'titles' => $titles,
-            'items' => User::filter($request->all('search', 'sort', 'trashed'))
-                ->sort($request->sort ?? "name")
+            'items' => User::filter($request->all('search', 'sorted', 'trashed'))
+                ->sort($request->sorted ?? "name")
                 ->paginate(20)
                 ->onEachSide(2)
-                ->appends($request->all('search', 'sort', 'trashed'))
+                ->appends($request->all('search', 'sorted', 'trashed'))
         ]);
     }
 
