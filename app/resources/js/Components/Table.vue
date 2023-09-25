@@ -243,10 +243,10 @@ const classTD = "p-2"
       </div>
     </div>
     <div>
-      <div v-if="items.from !== null" class="rounded-xl overflow-hidden border-2 border-gray-200 dark:border-gray-600">
+      <div class="rounded-xl overflow-hidden border-2 border-gray-200 dark:border-gray-600">
         <div class="overflow-x-auto flex">
           <table class="table-auto w-full text-sm shadow-lg">
-            <thead v-if="items.total > 0">
+            <thead v-if="items.total > 0 && items.from !== null">
               <tr class="bg-gray-200 dark:bg-gray-900 p-3 text-gray-1000 dark:text-white text-left">
                 <th v-if="props.routes.destroyRoute" :class="`${classTD}`">
                   <Checkbox name="remember" :checked="itemsSelected" @click="toggleSelection" class="w-8 h-8 rounded-full" />
@@ -290,7 +290,7 @@ const classTD = "p-2"
                   </Link>
                 </td>
               </tr>
-              <tr v-if="items.total == 0">
+              <tr v-if="items.total == 0 || items.from == null">
                 <td :class="`${classTD} text-center`">
                   <p class="text-lg leading-5 text-gray-600 dark:text-gray-400">{{ $t('No items to show.') }}</p>
                 </td>
