@@ -117,15 +117,19 @@ onBeforeUnmount(() => {
 })
 
 // filters modal
+const searchRoute = new URL(routeCurrent);
+
 const content = [
-  { id: 'active', title: 'Only active' },
-  { id: 'trashed', title: 'Only trashed' },
-  { id: 'all', title: 'Active and trashed' },
+  { id: '', title: 'Only active' },
+  { id: 'only', title: 'Only trashed' },
+  { id: 'with', title: 'Active and trashed' },
 ]
 
-const contentSelected = ref(content[0])
+const trashed = searchRoute.searchParams.get("trashed") || ''
+const contentSelected = ref(content[content.map(function(e) { return e.id; }).indexOf(trashed)])
 
 const filtersModal = ref(false);
+const filtersModal2 = ref(null);
 
 const openFiltersModal = () => {
   filtersModal.value = true;
@@ -134,7 +138,7 @@ const openFiltersModal = () => {
 const refreshFilters = () => {
   const searchRoute = new URL(routeCurrent);
   
-  searchRoute.searchParams.set("trashed", 'only')
+  searchRoute.searchParams.set("trashed", contentSelected.value.id)
   searchRoute.searchParams.forEach((value, key) => searchRoute.searchParams.set(key, value))
 
   router.visit(searchRoute, {

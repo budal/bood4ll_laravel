@@ -2,26 +2,34 @@
 import { ref } from 'vue'
 import { Listbox, ListboxLabel, ListboxButton, ListboxOptions, ListboxOption} from '@headlessui/vue'
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/vue/20/solid'
+import { computed } from 'vue'
 
 const props = defineProps<{
   content: object;
   modelValue: {
-    id: any,
-    title: any,
+    id: string | number,
+    title: string
   },
 }>();
 
-const selectedContent = ref(props.content[0])
+const emit = defineEmits(['update:modelValue'])
+const computedValue = computed({
+  get: () => props.modelValue,
+  set: value => {
+    emit('update:modelValue', value)
+  }
+})
+
 </script>
 
 <template>
   <div class="relative">
-    <Listbox v-model="selectedContent">
+    <Listbox v-model="computedValue">
       <div class="relative mt-1">
         <ListboxButton
           class="w-full cursor-default rounded-md bg-white py-2 pl-3 pr-10 text-left sm:text-sm shadow-md focus:outline-none dark:bg-gray-900 dark:text-gray-300 border border-gray-300 dark:border-gray-500 focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-gray-800 focus:ring-gray-300 dark:focus:ring-gray-500 disabled:opacity-25 transition ease-in-out duration-500"
         >
-          <span class="block truncate">{{ $t(selectedContent.title) }}</span>
+          <span class="block truncate">{{ $t(computedValue.title) }}</span>
           <span
             class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2"
           >
