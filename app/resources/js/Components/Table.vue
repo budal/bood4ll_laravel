@@ -97,7 +97,7 @@ const search = ref("");
 const debouncedWatch = debounce(() => {
   searchRoute.searchParams.set("search", search.value)
   
-  searchRoute.searchParams.forEach((value, key) => searchRoute.searchParams.set(key, value))
+  // searchRoute.searchParams.forEach((value, key) => searchRoute.searchParams.set(key, value))
   router.visit(searchRoute, {
     method: 'get',
     preserveState: true,
@@ -129,7 +129,7 @@ const openFiltersModal = () => {
 
 const refreshFilters = () => {
   searchRoute.searchParams.set("trashed", contentSelected.value.id)
-  searchRoute.searchParams.forEach((value, key) => searchRoute.searchParams.set(key, value))
+  // searchRoute.searchParams.forEach((value, key) => searchRoute.searchParams.set(key, value))
 
   router.visit(searchRoute, {
     method: 'get',
@@ -157,7 +157,7 @@ const sortBy = (column: any) => {
     searchRoute.searchParams.set("sorted", column)
   }
   
-  searchRoute.searchParams.forEach((value, key) => searchRoute.searchParams.set(key, value))
+  // searchRoute.searchParams.forEach((value, key) => searchRoute.searchParams.set(key, value))
 
   return {
     url: searchRoute.href,
