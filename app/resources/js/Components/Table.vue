@@ -32,7 +32,6 @@ const props = defineProps<{
 
 const searchRoute = new URL(window.location.href);
 
-
 // deletion checkboxes
 let selectedItems = reactive(new Set())
 
@@ -97,7 +96,6 @@ const search = ref("");
 const debouncedWatch = debounce(() => {
   searchRoute.searchParams.set("search", search.value)
   
-  // searchRoute.searchParams.forEach((value, key) => searchRoute.searchParams.set(key, value))
   router.visit(searchRoute, {
     method: 'get',
     preserveState: true,
@@ -129,7 +127,6 @@ const openFiltersModal = () => {
 
 const refreshFilters = () => {
   searchRoute.searchParams.set("trashed", contentSelected.value.id)
-  // searchRoute.searchParams.forEach((value, key) => searchRoute.searchParams.set(key, value))
 
   router.visit(searchRoute, {
     method: 'get',
@@ -145,22 +142,22 @@ const closeFiltersModal = () => {
 
 // sorting column
 const sortBy = (column: any) => {
+  let url = new URL(window.location.href);
   let sortOrder = null;
+  let sortValue = url.searchParams.get("sorted")
 
-  if (props.filters.sorted == column) {
-    searchRoute.searchParams.set("sorted", "-" + column)
+  if (sortValue == column) {
+    url.searchParams.set("sorted", "-" + column)
     sortOrder = "asc"
-  } else if (props.filters.sorted === "-" + column) {
-    searchRoute.searchParams.set("sorted", column)
+  } else if (sortValue === "-" + column) {
+    url.searchParams.set("sorted", column)
     sortOrder = "desc"
   } else {
-    searchRoute.searchParams.set("sorted", column)
+    url.searchParams.set("sorted", column)
   }
   
-  // searchRoute.searchParams.forEach((value, key) => searchRoute.searchParams.set(key, value))
-
   return {
-    url: searchRoute.href,
+    url: url.href,
     sortMe: sortOrder,
   }
 }
