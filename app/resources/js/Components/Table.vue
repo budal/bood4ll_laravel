@@ -30,7 +30,7 @@ const props = defineProps<{
     titles: any;
 }>();
 
-const currentRoute = window.location.href;
+const searchRoute = new URL(window.location.href);
 
 
 // deletion checkboxes
@@ -95,11 +95,9 @@ const closeModal = () => {
 const search = ref("");
 
 const debouncedWatch = debounce(() => {
-  const searchRoute = new URL(currentRoute);
-  
   searchRoute.searchParams.set("search", search.value)
+  
   searchRoute.searchParams.forEach((value, key) => searchRoute.searchParams.set(key, value))
-
   router.visit(searchRoute, {
     method: 'get',
     preserveState: true,
@@ -114,8 +112,6 @@ onBeforeUnmount(() => {
 
 
 // filters modal
-const searchRoute = new URL(currentRoute);
-
 const content = [
   { id: '', title: 'Only active' },
   { id: 'only', title: 'Only trashed' },
@@ -132,8 +128,6 @@ const openFiltersModal = () => {
 }
 
 const refreshFilters = () => {
-  const searchRoute = new URL(currentRoute);
-  
   searchRoute.searchParams.set("trashed", contentSelected.value.id)
   searchRoute.searchParams.forEach((value, key) => searchRoute.searchParams.set(key, value))
 
@@ -151,23 +145,22 @@ const closeFiltersModal = () => {
 
 // sort column
 const sort = (column: any) => {
-  let url = new URL(currentRoute)
   let sort = null;
 
-  url.searchParams.forEach((value, key) => url.searchParams.set(key, value))
+  searchRoute.searchParams.forEach((value, key) => searchRoute.searchParams.set(key, value))
 
   if (props.filters.sort == column) {
-    url.searchParams.set("sort", "-" + column)
+    searchRoute.searchParams.set("sort", "-" + column)
     sort = "asc"
   } else if (props.filters.sort === "-" + column) {
-    url.searchParams.set("sort", column)
+    searchRoute.searchParams.set("sort", column)
     sort = "desc"
   } else {
-    url.searchParams.set("sort", column)
+    searchRoute.searchParams.set("sort", column)
   }
 
   return {
-    url: url.href,
+    url: searchRoute.href,
     sort: sort,
   }
 }
