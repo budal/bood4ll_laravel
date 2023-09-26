@@ -29,8 +29,11 @@
   "Showing :from to :to of :total results": "Exibindo :from a :to de :total resultados",
   "Are you sure you want to delete the selected items?": "Você tem certeza que deseja apagar os itens selecionados?",
   "The selected items will be removed from the active items. Do you want to continue?": "Os itens selecionados serão removidos dos itens ativos. Você deseja continuar?",
+  "Are you sure you want to restore this item?": "Você tem certeza que deseja restaurar esse item?",
+  "The selected item will be restored to the active items. Do you want to continue?": "O item selecionado será restaurado aos itens ativos. Você deseja continuar?",
   "Manage which filters to apply to the list": "Gerencie quais filtros aplicar para a lista",
   "Selected filters refine searches according to your choices": "Os filtros selecionados refinam as pesquisas conforme suas escolhas",
+  "Restore": "Restaurar",
   
   "Remember me": "Manter conectado",
   "Not registered?": "Não Registrado?",

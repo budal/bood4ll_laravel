@@ -115,21 +115,13 @@ class UsersController extends Controller
             return false;
         }
         
-        // dd($usersToDelete);
-        // $request->validate([
-        //     'password' => ['required', 'current_password'],
-        // ]);
-
-        // $user = $request->user();
-
-        // Auth::logout();
-
-        // $user->delete();
-
-        // $request->session()->invalidate();
-        // $request->session()->regenerateToken();
-
-        // return Redirect::to('/');
         return back()->withInput()->with('status', 'Users removed succesfully!');
+    }
+
+    public function restore(Request $request, $uuid)
+    {
+        User::where('uuid', $uuid)->restore();
+
+        return Redirect::back()->with('status', 'User restored.');
     }
 }

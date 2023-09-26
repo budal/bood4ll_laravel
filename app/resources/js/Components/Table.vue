@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import Button from './Button.vue';
 import PrimaryButton from './PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import DangerButton from './DangerButton.vue';
@@ -9,6 +10,7 @@ import Modal from '@/Components/Modal.vue';
 import Avatar from '@/Components/Avatar.vue';
 import SearchInput from '@/Components/SearchInput.vue';
 import { 
+  ArrowUturnLeftIcon,
   ChevronUpIcon, 
   ChevronDownIcon, 
   ChevronLeftIcon, 
@@ -74,7 +76,7 @@ const form = useForm({
   uuids: [],
 });
 
-const deleteUser = () => {
+const deleteItems = () => {
   selectedItems.forEach((item: any) => form.uuids.push((item.uuid) as never))
 
   form.delete((route(props.routes.destroyRoute) as unknown ) as string, {
@@ -87,6 +89,29 @@ const deleteUser = () => {
 
 const closeModal = () => {
     confirmingUserDeletion.value = false;
+};
+
+
+// restore
+const restoreItemModal = ref(false);
+const restoreItemID = ref('');
+
+const restore = (uuid: string) => {
+  restoreItemModal.value = true;
+  restoreItemID.value = uuid;
+}
+
+const restoreItem = () => {
+  form.post((route(props.routes.restoreRoute, restoreItemID.value) as unknown ) as string, {
+      preserveScroll: true,
+      onSuccess: () => closeRestoreModal(),
+      onError: () => toast.error(props.status),
+      onFinish: () => toast.success(props.status),
+  });
+};
+
+const closeRestoreModal = () => {
+  restoreItemModal.value = false;
 };
 
 
@@ -186,9 +211,32 @@ const classTD = "p-2"
           class="ml-3"
           :class="{ 'opacity-25': form.processing }"
           :disabled="form.processing"
-          @click="deleteUser"
+          @click="deleteItems"
         >
           {{ $t('Erase selected') }}
+        </DangerButton>
+      </div>
+    </Modal>
+
+    <Modal :show="restoreItemModal" @close="closeRestoreModal">
+      <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
+        {{ $t('Are you sure you want to restore this item?') }}
+      </h2>
+
+      <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
+        {{ $t('The selected item will be restored to the active items. Do you want to continue?') }}
+      </p>
+
+      <div class="mt-6 flex justify-end">
+        <SecondaryButton @click="closeRestoreModal">{{ $t('Cancel') }}</SecondaryButton>
+
+        <DangerButton
+          class="ml-3"
+          :class="{ 'opacity-25': form.processing }"
+          :disabled="form.processing"
+          @click="restoreItem"
+        >
+          {{ $t('Restore') }}
         </DangerButton>
       </div>
     </Modal>
@@ -266,8 +314,9 @@ const classTD = "p-2"
                 :key="`tr-${item.uuid}`" 
                 class="`bg-white hover:bg-gray-100 dark:bg-gray-800 hover:dark:bg-gray-700 border-t border-gray-200 dark:border-gray-600 text-gray-500 dark:text-gray-400`"
               >
-                <td v-if="props.routes.destroyRoute" :class="`${classTD}`">
-                  <Checkbox class="w-8 h-8 rounded-full" :checked="selectedItems.has(item)" :value="item.uuid" :id="`checkbox-${item.uuid}`" @click="toggle(item)" />
+                <td :class="`${classTD}`">
+                  <Checkbox v-if="props.routes.destroyRoute && !item.deleted_at" :class="`${classTD}`" class="w-8 h-8 rounded-full" :checked="selectedItems.has(item)" :value="item.uuid" :id="`checkbox-${item.uuid}`" @click="toggle(item)" />
+                  <PrimaryButton v-if="props.routes.restoreRoute && item.deleted_at" :class="`${classTD}`" @click="restore(item.uuid)"><ArrowUturnLeftIcon class="h-3 w-3" /></PrimaryButton>
                 </td>
                 <template v-for="content in titles">
                   <td v-if="content.type == 'avatar'" :class="`${classTD}`">
@@ -282,7 +331,7 @@ const classTD = "p-2"
                   </td>
                 </template>
                 <td v-if="props.routes.editRoute" :class="`${classTD} text-right`">
-                  <Link :href="((route(props.routes.editRoute, item.uuid) as unknown) as string)" as="button">
+                  <Link :href="((route(props.routes.editRoute, item.uuid) as unknown) as string)" as="span">
                     <PrimaryButton><ChevronRightIcon class="h-5 w-5"/></PrimaryButton>
                   </Link>
                 </td>
