@@ -1,5 +1,7 @@
 <script setup lang="ts">
-    withDefaults(
+import { computed } from 'vue';
+
+    const props = withDefaults(
         defineProps<{
             type?: 'button' | 'submit' | 'reset';
             color?: 'primary' | 'secondary' | 'danger' | 'success' | 'warning' | 'info';
@@ -15,17 +17,25 @@
             padding: 4,
             rounded: 'rounded-md',
             textSize: 'text-xs',
-            transform: 'lowercase',
+            transform: 'uppercase',
             shadowSize: 'shadow-sm',
         }
     );
+
+    const className = computed(() => {
+        if (props.color == 'primary') return `hover:scale-105 group/edit inline-flex items-center px-${props.padding} py-2 bg-primary-light dark:bg-primary-dark hover:bg-primary-light-hover dark:hover:bg-primary-dark-hover border border-primary-light dark:border-primary-dark ${props.rounded} font-semibold ${props.textSize} text-primary-light dark:text-primary-dark ${props.transform} tracking-widest ${props.shadowSize} focus:outline-none focus:ring-2 focus:ring-primary-light dark:focus:ring-primary-dark focus:ring-offset-2 focus:ring-offset-primary-light dark:focus:ring-offset-primary-dark disabled:opacity-25 transition ease-in-out duration-500`;
+        if (props.color == 'secondary') return `hover:scale-105 group/edit inline-flex items-center px-${props.padding} py-2 bg-secondary-light dark:bg-secondary-dark hover:bg-secondary-light-hover dark:hover:bg-secondary-dark-hover border border-secondary-light dark:border-secondary-dark ${props.rounded} font-semibold ${props.textSize} text-secondary-light dark:text-secondary-dark ${props.transform} tracking-widest ${props.shadowSize} focus:outline-none focus:ring-2 focus:ring-secondary-light dark:focus:ring-secondary-dark focus:ring-offset-2 focus:ring-offset-secondary-light dark:focus:ring-offset-secondary-dark disabled:opacity-25 transition ease-in-out duration-500`;
+        if (props.color == 'danger') return `hover:scale-105 group/edit inline-flex items-center px-${props.padding} py-2 bg-danger-light dark:bg-danger-dark hover:bg-danger-light-hover dark:hover:bg-danger-dark-hover border border-danger-light dark:border-danger-dark ${props.rounded} font-semibold ${props.textSize} text-danger-light dark:text-danger-dark ${props.transform} tracking-widest ${props.shadowSize} focus:outline-none focus:ring-2 focus:ring-danger-light dark:focus:ring-danger-dark focus:ring-offset-2 focus:ring-offset-danger-light dark:focus:ring-offset-danger-dark disabled:opacity-25 transition ease-in-out duration-500`;
+        if (props.color == 'success') return `hover:scale-105 group/edit inline-flex items-center px-${props.padding} py-2 bg-success-light dark:bg-success-dark hover:bg-success-light-hover dark:hover:bg-success-dark-hover border border-success-light dark:border-success-dark ${props.rounded} font-semibold ${props.textSize} text-success-light dark:text-success-dark ${props.transform} tracking-widest ${props.shadowSize} focus:outline-none focus:ring-2 focus:ring-success-light dark:focus:ring-success-dark focus:ring-offset-2 focus:ring-offset-success-light dark:focus:ring-offset-success-dark disabled:opacity-25 transition ease-in-out duration-500`;
+        if (props.color == 'warning') return `hover:scale-105 group/edit inline-flex items-center px-${props.padding} py-2 bg-warning-light dark:bg-warning-dark hover:bg-warning-light-hover dark:hover:bg-warning-dark-hover border border-warning-light dark:border-warning-dark ${props.rounded} font-semibold ${props.textSize} text-warning-light dark:text-warning-dark ${props.transform} tracking-widest ${props.shadowSize} focus:outline-none focus:ring-2 focus:ring-warning-light dark:focus:ring-warning-dark focus:ring-offset-2 focus:ring-offset-warning-light dark:focus:ring-offset-warning-dark disabled:opacity-25 transition ease-in-out duration-500`;
+        if (props.color == 'info') return `hover:scale-105 group/edit inline-flex items-center px-${props.padding} py-2 bg-info-light dark:bg-info-dark hover:bg-info-light-hover dark:hover:bg-info-dark-hover border border-info-light dark:border-info-dark ${props.rounded} font-semibold ${props.textSize} text-info-light dark:text-info-dark ${props.transform} tracking-widest ${props.shadowSize} focus:outline-none focus:ring-2 focus:ring-info-light dark:focus:ring-info-dark focus:ring-offset-2 focus:ring-offset-info-light dark:focus:ring-offset-info-dark disabled:opacity-25 transition ease-in-out duration-500`;
+            
+        // return `hover:scale-105 group/edit inline-flex items-center px-${props.padding} py-2 bg-${props.color}-light dark:bg-${props.color}-dark hover:bg-${props.color}-light-hover dark:hover:bg-${props.color}-dark-hover border border-${props.color}-light dark:border-${props.color}-dark ${props.rounded} font-semibold ${props.textSize} text-${props.color}-light dark:text-${props.color}-dark ${props.transform} tracking-widest ${props.shadowSize} focus:outline-none focus:ring-2 focus:ring-${props.color}-light dark:focus:ring-${props.color}-dark focus:ring-offset-2 focus:ring-offset-${props.color}-light dark:focus:ring-offset-${props.color}-dark disabled:opacity-25 transition ease-in-out duration-500`;
+    })
 </script>
 
 <template>
-    <button
-        :type="type"
-        :class="(`hover:scale-105 group/edit inline-flex items-center px-${padding} py-2 bg-${color}-light dark:bg-${color}-dark hover:bg-${color}-light-hover dark:hover:bg-${color}-dark-hover border border-${color}-light dark:border-${color}-dark ${rounded} font-semibold ${textSize} text-${color}-light dark:text-${color}-dark ${transform} tracking-widest ${shadowSize} focus:outline-none focus:ring-2 focus:ring-${color}-light dark:focus:ring-${color}-dark focus:ring-offset-2 focus:ring-offset-${color}-light dark:focus:ring-offset-${color}-dark disabled:opacity-25 transition ease-in-out duration-500`)"
-    >
+    <button :type="type" :class="className">
         <div class="group-hover/edit:scale-110 transition ease-in-out duration-300">
             <slot />
         </div>

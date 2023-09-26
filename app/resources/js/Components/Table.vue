@@ -1,8 +1,5 @@
 <script setup lang="ts">
 import Button from './Button.vue';
-import PrimaryButton from './PrimaryButton.vue';
-import SecondaryButton from '@/Components/SecondaryButton.vue';
-import DangerButton from './DangerButton.vue';
 import Checkbox from '@/Components/Checkbox.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import Select from '@/Components/Select.vue';
@@ -206,16 +203,17 @@ const classTD = "p-2"
       </p>
 
       <div class="mt-6 flex justify-end">
-        <SecondaryButton @click="closeModal">{{ $t('Cancel') }}</SecondaryButton>
+        <Button color="secondary" @click="closeModal">{{ $t('Cancel') }}</Button>
 
-        <DangerButton
+        <Button 
+          color="danger"
           class="ml-3"
           :class="{ 'opacity-25': form.processing }"
           :disabled="form.processing"
           @click="deleteItems"
         >
           {{ $t('Erase selected') }}
-        </DangerButton>
+        </Button>
       </div>
     </Modal>
 
@@ -229,16 +227,17 @@ const classTD = "p-2"
       </p>
 
       <div class="mt-6 flex justify-end">
-        <SecondaryButton @click="closeRestoreModal">{{ $t('Cancel') }}</SecondaryButton>
+        <Button color="secondary" @click="closeRestoreModal">{{ $t('Cancel') }}</Button>
 
-        <DangerButton
+        <Button 
+          color="success"
           class="ml-3"
           :class="{ 'opacity-25': form.processing }"
           :disabled="form.processing"
           @click="restoreItem"
         >
           {{ $t('Restore') }}
-        </DangerButton>
+        </Button>
       </div>
     </Modal>
 
@@ -257,35 +256,35 @@ const classTD = "p-2"
       </div>
 
       <div class="mt-6 flex justify-end">
-        <SecondaryButton @click="closeFiltersModal">{{ $t('Cancel') }}</SecondaryButton>
+        <Button color="secondary" @click="closeFiltersModal">{{ $t('Cancel') }}</Button>
 
-        <PrimaryButton
+        <Button color="primary"
           class="ml-3"
           :class="{ 'opacity-25': form.processing }"
           :disabled="form.processing"
           @click="refreshFilters"
         >
           {{ $t('Apply') }}
-        </PrimaryButton>
+        </Button>
       </div>
     </Modal>
 
     <div class="flex sticky top-0 sm:top-[65px] justify-between rounded-xl backdrop-blur-sm p-2 my-2 -mx-3 bg-white/30 dark:bg-gray-800/30">
       <div class="flex-none items-center">
-        <DangerButton v-if="props.routes.destroyRoute" :disabled="numberSelected === 0" @click="deleteSelected" class="mr-2 h-full">
+        <Button color="danger" v-if="props.routes.destroyRoute" :disabled="numberSelected === 0" @click="deleteSelected" class="mr-2 h-full">
           <TrashIcon class="h-5 w-5" />
-        </DangerButton>
+        </Button>
       </div>
       <div class="flex-1 items-center">
         <SearchInput :placeholder="$t('Search...')" class="w-full h-full" :value="filters.search" v-model="search" />
       </div>
       <div class="flex-none items-center">
-        <SecondaryButton @click="openFiltersModal" class="ml-2 h-full"><AdjustmentsVerticalIcon class="h-5 w-5" /></SecondaryButton>
+        <Button color="secondary" @click="openFiltersModal" class="ml-2 h-full"><AdjustmentsVerticalIcon class="h-5 w-5" /></Button>
       </div>
       <div class="flex-none items-center">
-        <PrimaryButton v-if="props.routes.createRoute" class="ml-2 h-full" @click="form.get((route(props.routes.createRoute) as unknown) as string)">
+        <Button color="primary" v-if="props.routes.createRoute" class="ml-2 h-full" @click="form.get((route(props.routes.createRoute) as unknown) as string)">
           <PlusIcon class="h-5 w-5" />
-        </PrimaryButton>
+        </Button>
       </div>
     </div>
     <div>
@@ -317,7 +316,7 @@ const classTD = "p-2"
               >
                 <td :class="`${classTD}`">
                   <Checkbox v-if="props.routes.destroyRoute && !item.deleted_at" :class="`${classTD}`" class="w-8 h-8 rounded-full" :checked="selectedItems.has(item)" :value="item.uuid" :id="`checkbox-${item.uuid}`" @click="toggle(item)" />
-                  <PrimaryButton v-if="props.routes.restoreRoute && item.deleted_at" :class="`${classTD}`" @click="restore(item.uuid)"><ArrowUturnLeftIcon class="h-3 w-3" /></PrimaryButton>
+                  <Button color="warning" padding="2" v-if="props.routes.restoreRoute && item.deleted_at" :class="`${classTD}`" @click="restore(item.uuid)"><ArrowUturnLeftIcon class="h-3 w-3" /></Button>
                 </td>
                 <template v-for="content in titles">
                   <td v-if="content.type == 'avatar'" :class="`${classTD}`">
@@ -333,7 +332,7 @@ const classTD = "p-2"
                 </template>
                 <td v-if="props.routes.editRoute" :class="`${classTD} text-right`">
                   <Link :href="((route(props.routes.editRoute, item.uuid) as unknown) as string)" as="span">
-                    <PrimaryButton><ChevronRightIcon class="h-5 w-5"/></PrimaryButton>
+                    <Button color="primary"><ChevronRightIcon class="h-5 w-5"/></Button>
                   </Link>
                 </td>
               </tr>
@@ -350,7 +349,7 @@ const classTD = "p-2"
         <div class="w-full flex flex-row sm:hidden">
           <div class="basis-1/3 text-left">
             <Link v-if="items.prev_page_url" as="button" :href="items.prev_page_url" class="text-sm">
-              <PrimaryButton>{{ $t('Previous')}}</PrimaryButton>
+              <Button color="primary">{{ $t('Previous')}}</Button>
             </Link>
           </div>
           <div v-if="items.from !== null" class="basis-1/3 text-center">
@@ -361,7 +360,7 @@ const classTD = "p-2"
           </div>
           <div class="basis-1/3 text-right">
             <Link v-if="items.next_page_url" as="button" :href="items.next_page_url" class="text-sm">
-              <PrimaryButton>{{ $t('Next')}}</PrimaryButton>
+              <Button color="primary">{{ $t('Next')}}</Button>
             </Link>
           </div>
         </div>
@@ -374,10 +373,10 @@ const classTD = "p-2"
           <div>
             <nav class="inline-flex shadow-sm gap-[2px]" aria-label="Pagination">
               <Link v-if="items.prev_page_url" :href="items.prev_page_url" as="button" class="text-sm">
-                <PrimaryButton>
+                <Button color="primary">
                   <span class="sr-only">{{ $t('Previous')}}</span>
                   <ChevronLeftIcon class="h-4 w-4" aria-hidden="true" />
-                </PrimaryButton>
+                </Button>
               </Link>
 
               <template v-if="items.from !== null" v-for="item in items.links">
@@ -385,15 +384,15 @@ const classTD = "p-2"
                   v-if="item.label > 0 && item.label != items.current_page || item.label == items.current_page"
                   :key="item.key" :href="item.url" as="button" class="text-sm"
                 >
-                  <PrimaryButton :disabled="item.label == items.current_page">{{ item.label }}</PrimaryButton>
+                  <Button color="primary" :disabled="item.label == items.current_page">{{ item.label }}</Button>
                 </Link>
               </template>
 
               <Link v-if="items.next_page_url" :href="items.next_page_url" as="button" class="text-sm">
-                <PrimaryButton>
+                <Button color="primary">
                   <span class="sr-only">{{ $t('Next')}}</span>
                   <ChevronRightIcon class="h-4 w-4" aria-hidden="true" />
-                </PrimaryButton>
+                </Button>
               </Link>
             </nav>
           </div>
