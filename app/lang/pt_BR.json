@@ -39,6 +39,11 @@
   "Not registered?": "Não Registrado?",
   "Already registered?": "Já registrado?",
   "Forgot your password?": "Esqueceu sua senha?",
+  "These credentials do not match our records.": "Essas credenciais não foram encontradas em nossos registros.",
+  "The email has already been taken.": "Esse email já foi registrado.",
+  "The password field confirmation does not match.": "A confirmação da senha não confere.",
+  "The password field must be at least 8 characters.": "A senha deve possuir no mínimo 8 caracteres.",
+  "The provided password is incorrect.": "A senha informada está incorreta.",
   
   "Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.": "Esqueceu sua senha? Sem problemas. Basta nos informar seu endereço de e-mail e enviaremos por e-mail um link de redefinição de senha que permitirá que você escolha uma nova.",
   "Email Password Reset Link": "Email com link de redefinição de senha",
