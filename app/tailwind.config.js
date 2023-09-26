@@ -41,10 +41,10 @@ export default {
                     'dark-hover': colors.gray[700],
                 },
                 warning: {
-                    'light': colors.white,
-                    'light-hover': colors.gray[50],
-                    'dark': colors.gray[800],
-                    'dark-hover': colors.gray[700],
+                    'light': colors.yellow,
+                    'light-hover': colors.yellow[50],
+                    'dark': colors.yellow[800],
+                    'dark-hover': colors.yellow[700],
                 },
                 info: {
                     'light': colors.white,

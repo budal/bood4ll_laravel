@@ -8,6 +8,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -71,7 +72,7 @@ class UsersController extends Controller
 
     public function create()
     {
-        return Inertia::render('Users/Create');
+        return Inertia::render('Default/Create');
     }
 
     /**
@@ -79,7 +80,31 @@ class UsersController extends Controller
      */
     public function edit(User $user): Response
     {
-        return Inertia::render('Users/Edit', [
+        // dd(DB::getSchemaBuilder()->getColumnListing('users'), $user->getFillable(), $user);
+        
+        $body = [
+            [
+                'title' => "Profile Information",
+                'subtitle' => "Update your account's profile information and email address",
+                'fields' => [
+                    [
+                        'type' => "input",
+                        'name' => "name",
+                        'title' => "Name",
+                        'size' => "basis-1/2",
+                    ],
+                    [
+                        'type' => "input",
+                        'name' => "email",
+                        'title' => "Email",
+                        'size' => "basis-1/2",
+                    ],
+                ]
+            ]
+        ];
+
+        return Inertia::render('Default/Edit', [
+            'body' => $body,
             'data' => $user
         ]);
     }
@@ -118,9 +143,9 @@ class UsersController extends Controller
         return back()->withInput()->with('status', 'Users removed succesfully!');
     }
 
-    public function restore(Request $request, $uuid)
+    public function restore(User $user)
     {
-        User::where('uuid', $uuid)->restore();
+        $user->restore();
 
         return Redirect::back()->with('status', 'User restored.');
     }

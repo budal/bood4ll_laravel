@@ -10,6 +10,7 @@ import { toast } from 'vue3-toastify';
 const passwordInput = ref<HTMLInputElement | null>(null);
 
 const props = defineProps<{
+    body: any;
     data?: any;
 }>();    
 
@@ -70,47 +71,34 @@ const update = (uuid : string) => {
 </script>
 
 <template>
-    <section>
+    <section v-for="body in props.body">
         <header>
-            <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">{{ $t('Profile Information') }}</h2>
+            <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">{{ $t(body.title) }}</h2>
 
             <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                {{ $t("Update your account's profile information and email address.") }}
+                {{ $t(body.subtitle) }}
             </p>
         </header>
-
+        
         <form @submit.prevent="update(form.uuid)" class="mt-6 space-y-6">
-            <div>
-                <InputLabel for="name" :value="$t('Name')" />
-
-                <TextInput
-                    id="name"
-                    type="text"
-                    class="mt-1 block w-full"
-                    v-model="form.name"
-                    required
-                    autofocus
-                    autocomplete="name"
-                />
-
-                <InputError class="mt-2" :message="form.errors.name" />
+            <div class="flex gap-4">
+                <div v-for="field in body.fields" :class="field.size + ' mb-4'">
+                    <InputLabel :for="field.name" :value="$t(field.title)" />
+    
+                    <TextInput
+                        :id="field.name"
+                        :type="field.type"
+                        class="mt-1 block w-full"
+                        v-model="form[field.name]"
+                        required
+                        autofocus
+                        :autocomplete="field.name"
+                    />
+    
+                    <InputError class="mt-2" :message="form.errors.name" />
+                </div>
             </div>
-
-            <div>
-                <InputLabel for="email" :value="$t('Email')" />
-
-                <TextInput
-                    id="email"
-                    type="email"
-                    class="mt-1 block w-full"
-                    v-model="form.email"
-                    required
-                    autocomplete="username"
-                />
-
-                <InputError class="mt-2" :message="form.errors.email" />
-            </div>
-
+    
             <div class="flex items-center gap-4">
                 <PrimaryButton 
                     :class="{ 'opacity-25': form.processing }"
