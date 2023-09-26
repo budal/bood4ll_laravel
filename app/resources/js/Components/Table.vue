@@ -23,6 +23,7 @@ import { ref, computed, reactive, watch, onBeforeUnmount } from 'vue'
 import { toast } from 'vue3-toastify';
 import { router, useForm, Link } from '@inertiajs/vue3';
 import debounce from "lodash.debounce";
+import { trans } from 'laravel-vue-i18n';
 
 const props = defineProps<{
     routes?: any;
@@ -82,8 +83,8 @@ const deleteItems = () => {
   form.delete((route(props.routes.destroyRoute) as unknown ) as string, {
       preserveScroll: true,
       onSuccess: () => closeModal(),
-      onError: () => toast.error(props.status),
-      onFinish: () => toast.success(props.status),
+      onError: () => toast.error(trans(props.status)),
+      onFinish: () => toast.success(trans(props.status)),
   });
 };
 
@@ -105,8 +106,8 @@ const restoreItem = () => {
   form.post((route(props.routes.restoreRoute, restoreItemID.value) as unknown ) as string, {
       preserveScroll: true,
       onSuccess: () => closeRestoreModal(),
-      onError: () => toast.error(props.status),
-      onFinish: () => toast.success(props.status),
+      onError: () => toast.error(trans(props.status)),
+      onFinish: () => toast.success(trans(props.status)),
   });
 };
 
