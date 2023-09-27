@@ -104,23 +104,41 @@ class UsersController extends Controller
         ];
     }
 
-    public function create()
+    public function create(User $user)
     {
+        $collection = collect(DB::getSchemaBuilder()->getColumnListing($user->getTable()));
+        $keyed = $collection->mapWithKeys(function ($value, $key) { return [$value => '']; });
+         
         return Inertia::render('Default/Create', [
-            'body' => $this->__form()
+            'body' => $this->__form(),
+            'data' => $keyed->all()
         ]);
     }
 
+    public function store(ProfileUpdateRequest $request): RedirectResponse
+    {
+        dd($request);
+        // $request->user()->fill($request->validated());
+
+        // if ($request->user()->isDirty('email')) {
+        //     $request->user()->email_verified_at = null;
+        // }
+
+        // $request->user()->save();
+
+        // return Redirect::route('profile.edit');
+    }
+    
     /**
      * Display the user's profile form.
      */
     public function edit(User $user): Response
     {
-        // dd(DB::getSchemaBuilder()->getColumnListing('users'), $user->getFillable(), $user);
+        // dd(DB::getSchemaBuilder()->getColumnListing('users'), $user->getTable(), $user->getFillable(), $user);
         
         return Inertia::render('Default/Edit', [
             'body' => $this->__form(),
-            'data' => $user
+            'data' => collect($user)->all()
         ]);
     }
 
@@ -129,15 +147,17 @@ class UsersController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        dd($request);
+        
+        // $request->user()->fill($request->validated());
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
-        }
+        // if ($request->user()->isDirty('email')) {
+        //     $request->user()->email_verified_at = null;
+        // }
 
-        $request->user()->save();
+        // $request->user()->save();
 
-        return Redirect::route('profile.edit');
+        // return Redirect::route('profile.edit');
     }
 
     /**

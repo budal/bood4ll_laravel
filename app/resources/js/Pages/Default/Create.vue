@@ -4,6 +4,7 @@ import FormInfo from './Partials/FormInfo.vue';
 
 defineProps<{
     body: any;
+    data: any;
 }>();
 
 </script>
@@ -13,7 +14,7 @@ defineProps<{
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
                 <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
-                    <FormInfo :body="body"/>
+                    <FormInfo method="post" :body="body" :data="data" />
                 </div>
             </div>
         </div>

@@ -4,71 +4,52 @@ import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { useForm } from '@inertiajs/vue3';
+import { onBeforeMount } from 'vue';
 import { nextTick, ref } from 'vue';
 import { toast } from 'vue3-toastify';
 
 const passwordInput = ref<HTMLInputElement | null>(null);
 
 const props = defineProps<{
+    method: any;
     body: any;
     data?: any;
 }>();    
 
+const url = window.location.href;
+
 const form = useForm({
-    uuid: props.data?.uuid || '',
-    name: props.data?.name || '',
-    email: props.data?.email || '',
-    username: props.data?.username || '',
+    formData: [],
 });
 
-const update = (uuid : string) => {
-    toast.success('Wow so easy !');
-
-    // nextTick(() => passwordInput.value?.focus());
-
-    if (uuid) {
-        form.patch(route('apps.users.update', props.data.uuid), {
-            preserveScroll: true,
-            onSuccess: () => {
-                form.reset();
-            },
-            onError: () => {
-                // if (form.errors.password) {
-                //     form.reset('password', 'password_confirmation');
-                //     passwordInput.value?.focus();
-                // }
-                // if (form.errors.current_password) {
-                //     form.reset('current_password');
-                //     currentPasswordInput.value?.focus();
-                // }
-            },
-            onFinish: () => {
-                // form.reset('password', 'password_confirmation');
-            },
-        });
-    } else {
-        form.post(route('apps.users.create'), {
-            preserveScroll: true,
-            onSuccess: () => {
-                form.reset();
-            },
-            onError: () => {
-                // if (form.errors.password) {
-                //     form.reset('password', 'password_confirmation');
-                //     passwordInput.value?.focus();
-                // }
-                // if (form.errors.current_password) {
-                //     form.reset('current_password');
-                //     currentPasswordInput.value?.focus();
-                // }
-            },
-            onFinish: () => {
-                // form.reset('password', 'password_confirmation');
-            },
-        });
+onBeforeMount(() => {
+    for (let key in props.data) {
+        form.formData[key] = props.data[key] || ''
     }
-};
+})
 
+const sendForm = () => {
+    form.submit(props.method, url, {
+        preserveScroll: true,
+        onSuccess: () => {
+            toast.success(url);
+            // form.reset();
+        },
+        onError: () => {
+                // if (form.errors.password) {
+                //     form.reset('password', 'password_confirmation');
+                //     passwordInput.value?.focus();
+                // }
+                // if (form.errors.current_password) {
+                //     form.reset('current_password');
+                //     currentPasswordInput.value?.focus();
+                // }
+            },
+        onFinish: () => {
+            // form.reset('password', 'password_confirmation');
+        },
+    })
+}
 </script>
 
 <template>
@@ -81,7 +62,7 @@ const update = (uuid : string) => {
             </p>
         </header>
         
-        <form @submit.prevent="update(form.uuid)" class="space-y-6 mt-2">
+        <form @submit.prevent="sendForm" class="space-y-6 mt-2">
             <div class="flex flex-col">
                 <div v-for="group in body.fields" :class="`grid sm:grid-cols-${body.cols} sm:gap-4`">
                     <div v-for="field in group" :class="`${field.span ? `sm:col-span-${field.span}` : ''} mt-4`">
@@ -91,13 +72,13 @@ const update = (uuid : string) => {
                             :id="field.name"
                             :type="field.type"
                             class="mt-1 block w-full"
-                            v-model="form[field.name]"
+                            v-model="form.formData[field.name]"
                             required
                             autofocus
                             :autocomplete="field.name"
                         />
         
-                        <InputError class="mt-2" :message="form.errors.name" />
+                        <InputError class="mt-2" :message="form.errors[field.name]" />
                     </div>
                 </div>
             </div>
