@@ -12,7 +12,12 @@ export default {
         './resources/views/**/*.blade.php',
         './resources/js/**/*.vue',
     ],
-
+    safelist: [
+        {
+          pattern: /grid-cols-(1|2|3|4|5)/,
+          variants: ['sm', 'hover', 'focus'],
+        },
+      ],
     theme: {
         extend: {
             colors: {

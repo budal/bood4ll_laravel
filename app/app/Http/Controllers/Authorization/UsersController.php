@@ -70,9 +70,45 @@ class UsersController extends Controller
         ]);
     }
 
+    
+    public function __form()
+    {
+        return [
+            [
+                'title' => "Profile Information",
+                'subtitle' => "Update your account's profile information and email address",
+                'cols' => 2,
+                'fields' => [
+                    [
+                        [
+                            'type' => "input",
+                            'name' => "name",
+                            'title' => "Name",
+                        ],
+                        [
+                            'type' => "input",
+                            'name' => "email",
+                            'title' => "Email",
+                        ],
+                    ],
+                    [
+                        [
+                            'type' => "input",
+                            'name' => "username",
+                            'title' => "Username",
+                            'span' => 2,
+                        ],
+                    ],
+                ]
+            ]
+        ];
+    }
+
     public function create()
     {
-        return Inertia::render('Default/Create');
+        return Inertia::render('Default/Create', [
+            'body' => $this->__form()
+        ]);
     }
 
     /**
@@ -82,29 +118,8 @@ class UsersController extends Controller
     {
         // dd(DB::getSchemaBuilder()->getColumnListing('users'), $user->getFillable(), $user);
         
-        $body = [
-            [
-                'title' => "Profile Information",
-                'subtitle' => "Update your account's profile information and email address",
-                'fields' => [
-                    [
-                        'type' => "input",
-                        'name' => "name",
-                        'title' => "Name",
-                        'size' => "basis-1/2",
-                    ],
-                    [
-                        'type' => "input",
-                        'name' => "email",
-                        'title' => "Email",
-                        'size' => "basis-1/2",
-                    ],
-                ]
-            ]
-        ];
-
         return Inertia::render('Default/Edit', [
-            'body' => $body,
+            'body' => $this->__form(),
             'data' => $user
         ]);
     }

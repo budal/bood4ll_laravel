@@ -18,6 +18,7 @@ const form = useForm({
     uuid: props.data?.uuid || '',
     name: props.data?.name || '',
     email: props.data?.email || '',
+    username: props.data?.username || '',
 });
 
 const update = (uuid : string) => {
@@ -80,22 +81,24 @@ const update = (uuid : string) => {
             </p>
         </header>
         
-        <form @submit.prevent="update(form.uuid)" class="mt-6 space-y-6">
-            <div class="flex gap-4">
-                <div v-for="field in body.fields" :class="field.size + ' mb-4'">
-                    <InputLabel :for="field.name" :value="$t(field.title)" />
-    
-                    <TextInput
-                        :id="field.name"
-                        :type="field.type"
-                        class="mt-1 block w-full"
-                        v-model="form[field.name]"
-                        required
-                        autofocus
-                        :autocomplete="field.name"
-                    />
-    
-                    <InputError class="mt-2" :message="form.errors.name" />
+        <form @submit.prevent="update(form.uuid)" class="space-y-6 mt-2">
+            <div class="flex flex-col">
+                <div v-for="group in body.fields" :class="`grid sm:grid-cols-${body.cols} sm:gap-4`">
+                    <div v-for="field in group" :class="`${field.span ? `sm:col-span-${field.span}` : ''} mt-4`">
+                        <InputLabel :for="field.name" :value="$t(field.title)" />
+        
+                        <TextInput
+                            :id="field.name"
+                            :type="field.type"
+                            class="mt-1 block w-full"
+                            v-model="form[field.name]"
+                            required
+                            autofocus
+                            :autocomplete="field.name"
+                        />
+        
+                        <InputError class="mt-2" :message="form.errors.name" />
+                    </div>
                 </div>
             </div>
     
