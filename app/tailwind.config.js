@@ -17,7 +17,7 @@ export default {
           pattern: /grid-cols-(1|2|3|4|5)/,
           variants: ['sm', 'hover', 'focus'],
         },
-      ],
+    ],
     theme: {
         extend: {
             colors: {
