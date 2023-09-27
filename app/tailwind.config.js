@@ -86,7 +86,7 @@ export default {
             },
             borderColor: {
                 primary: {
-                    'light': colors.gray[300],
+                    'light': colors.gray[900],
                     'dark': colors.gray[500],
                 },
                 secondary: {
