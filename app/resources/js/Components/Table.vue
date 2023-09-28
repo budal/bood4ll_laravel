@@ -70,11 +70,11 @@ const deleteSelected = () => {
 }
 
 const form = useForm({
-  uuids: [],
+  ids: [],
 });
 
 const deleteItems = () => {
-  selectedItems.forEach((item: any) => form.uuids.push((item.uuid) as never))
+  selectedItems.forEach((item: any) => form.ids.push((item.id) as never))
 
   form.delete((route(props.routes.destroyRoute) as unknown ) as string, {
       preserveScroll: true,
@@ -93,9 +93,9 @@ const closeModal = () => {
 const restoreItemModal = ref(false);
 const restoreItemID = ref('');
 
-const restore = (uuid: string) => {
+const restore = (id: string) => {
   restoreItemModal.value = true;
-  restoreItemID.value = uuid;
+  restoreItemID.value = id;
 }
 
 const restoreItem = () => {
@@ -310,12 +310,12 @@ const classTD = "p-2"
             <tbody>
               <tr 
                 v-for="item in items.data" 
-                :key="`tr-${item.uuid}`" 
+                :key="`tr-${item.id}`" 
                 class="`bg-white hover:bg-gray-100 dark:bg-gray-800 hover:dark:bg-gray-700 border-t border-gray-200 dark:border-gray-600 text-gray-500 dark:text-gray-400`"
               >
                 <td :class="`${classTD}`">
-                  <Checkbox v-if="props.routes.destroyRoute && !item.deleted_at" :class="`${classTD}`" class="w-8 h-8 rounded-full" :checked="selectedItems.has(item)" :value="item.uuid" :id="`checkbox-${item.uuid}`" @click="toggle(item)" />
-                  <Button color="warning" padding="2" v-if="props.routes.restoreRoute && item.deleted_at" :class="`${classTD}`" @click="restore(item.uuid)"><ArrowUturnLeftIcon class="h-3 w-3" /></Button>
+                  <Checkbox v-if="props.routes.destroyRoute && !item.deleted_at" :class="`${classTD}`" class="w-8 h-8 rounded-full" :checked="selectedItems.has(item)" :value="item.id" :id="`checkbox-${item.id}`" @click="toggle(item)" />
+                  <Button color="warning" padding="2" v-if="props.routes.restoreRoute && item.deleted_at" :class="`${classTD}`" @click="restore(item.id)"><ArrowUturnLeftIcon class="h-3 w-3" /></Button>
                 </td>
                 <template v-for="content in titles">
                   <td v-if="content.type == 'avatar'" :class="`${classTD}`">
@@ -330,7 +330,7 @@ const classTD = "p-2"
                   </td>
                 </template>
                 <td v-if="props.routes.editRoute" :class="`${classTD} text-right`">
-                  <Link :href="((route(props.routes.editRoute, item.uuid) as unknown) as string)" as="span">
+                  <Link :href="((route(props.routes.editRoute, item.id) as unknown) as string)" as="span">
                     <Button color="primary"><ChevronRightIcon class="h-5 w-5"/></Button>
                   </Link>
                 </td>

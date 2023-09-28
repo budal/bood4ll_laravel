@@ -26,7 +26,7 @@ class UsersController extends Controller
             [
                 'type' => 'avatar',
                 'title' => 'Avatar',
-                'field' => 'uuid',
+                'field' => 'id',
                 'fallback' => 'name',
                 'disableSort' => true
             ],
@@ -168,7 +168,7 @@ class UsersController extends Controller
         $items = $request->all();
 
         try {
-            $usersToDelete = User::whereIn('uuid', $items['uuids'])->delete();
+            $usersToDelete = User::whereIn('id', $items['ids'])->delete();
         } catch (Throwable $e) {
             report($e);
      

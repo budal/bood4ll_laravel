@@ -27,12 +27,7 @@ defineProps<{
                                 {{ $t(subtitle) }}
                             </p>
                         </header>
-                        <Table 
-                            :routes="routes" 
-                            :filters="filters" 
-                            :items="items" 
-                            :titles="titles" 
-                        />
+                        <Table :routes="routes" :filters="filters" :items="items" :titles="titles" />
                     </div>
                 </div>
             </div>

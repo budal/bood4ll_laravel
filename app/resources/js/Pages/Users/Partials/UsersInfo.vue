@@ -14,18 +14,18 @@ const props = defineProps<{
 }>();    
 
 const form = useForm({
-    uuid: props.data?.uuid || '',
+    id: props.data?.id || '',
     name: props.data?.name || '',
     email: props.data?.email || '',
 });
 
-const update = (uuid : string) => {
+const update = (id : string) => {
     toast.success('Wow so easy !');
 
     // nextTick(() => passwordInput.value?.focus());
 
-    if (uuid) {
-        form.patch(route('apps.users.update', props.data.uuid), {
+    if (id) {
+        form.patch(route('apps.users.update', props.data.id), {
             preserveScroll: true,
             onSuccess: () => {
                 form.reset();
@@ -79,7 +79,7 @@ const update = (uuid : string) => {
             </p>
         </header>
 
-        <form @submit.prevent="update(form.uuid)" class="mt-6 space-y-6">
+        <form @submit.prevent="update(form.id)" class="mt-6 space-y-6">
             <div>
                 <InputLabel for="name" :value="$t('Name')" />
 
