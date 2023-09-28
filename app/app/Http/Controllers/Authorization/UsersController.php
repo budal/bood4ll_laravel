@@ -116,7 +116,7 @@ class UsersController extends Controller
 
     public function store(ProfileUpdateRequest $request): RedirectResponse
     {
-        // dd($request);
+        dd($request);
         // $request->user()->fill($request->validated());
 
         // if ($request->user()->isDirty('email')) {
@@ -125,8 +125,7 @@ class UsersController extends Controller
 
         // $request->user()->save();
 
-        // return Redirect::route('profile.edit');
-        return Redirect::back()->with('status', 'User edited.');
+        return Redirect::route('apps.users')->with('status', 'User created.');
     }
     
     /**
