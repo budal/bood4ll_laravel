@@ -29,7 +29,6 @@ defineProps<{
                         </header>
                         <Table 
                             :routes="routes" 
-                            :status="status" 
                             :filters="filters" 
                             :items="items" 
                             :titles="titles" 

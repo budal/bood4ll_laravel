@@ -18,13 +18,12 @@ import {
 } from '@heroicons/vue/20/solid'
 import { ref, computed, reactive, watch, onBeforeUnmount } from 'vue'
 import { toast } from 'vue3-toastify';
-import { router, useForm, Link } from '@inertiajs/vue3';
+import { router, useForm, usePage, Link } from '@inertiajs/vue3';
 import debounce from "lodash.debounce";
 import { trans } from 'laravel-vue-i18n';
 
 const props = defineProps<{
     routes?: any;
-    status?: any;
     filters?: any;
     items: any;
     titles: any;
@@ -80,8 +79,8 @@ const deleteItems = () => {
   form.delete((route(props.routes.destroyRoute) as unknown ) as string, {
       preserveScroll: true,
       onSuccess: () => closeModal(),
-      onError: () => toast.error(trans(props.status)),
-      onFinish: () => toast.success(trans(props.status)),
+      onError: () => toast.error(trans(usePage().props.status as string)),
+      onFinish: () => toast.success(trans(usePage().props.status as string)),
   });
 };
 
@@ -103,8 +102,8 @@ const restoreItem = () => {
   form.post((route(props.routes.restoreRoute, restoreItemID.value) as unknown ) as string, {
       preserveScroll: true,
       onSuccess: () => closeRestoreModal(),
-      onError: () => toast.error(trans(props.status)),
-      onFinish: () => toast.success(trans(props.status)),
+      onError: () => toast.error(trans(usePage().props.status as string)),
+      onFinish: () => toast.success(trans(usePage().props.status as string)),
   });
 };
 

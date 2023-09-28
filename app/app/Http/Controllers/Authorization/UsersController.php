@@ -59,7 +59,6 @@ class UsersController extends Controller
             'title' => "Users management",
             'subtitle' => "Manage users informations and authorizations.",
             'routes' => $routes,
-            'status' => session('status'),
             'filters' => $request->all('search', 'sorted', 'trashed'),
             'titles' => $titles,
             'items' => User::filter($request->all('search', 'sorted', 'trashed'))
@@ -147,7 +146,7 @@ class UsersController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        dd($request);
+        // dd($request);
         
         // $request->user()->fill($request->validated());
 
@@ -158,6 +157,7 @@ class UsersController extends Controller
         // $request->user()->save();
 
         // return Redirect::route('profile.edit');
+        return Redirect::back()->with('status', 'User edited.');
     }
 
     /**
@@ -175,7 +175,7 @@ class UsersController extends Controller
             return false;
         }
         
-        return back()->withInput()->with('status', 'Users removed succesfully!');
+        return back()->with('status', 'Users removed succesfully!');
     }
 
     public function restore(User $user)

@@ -38,6 +38,7 @@ class HandleInertiaRequests extends Middleware
                 'user' => $request->user(),
             ],
             'breadcrumbs' => $request->route()->breadcrumbs()->jsonSerialize(),
+            'status' => session('status'),
             'ziggy' => fn () => [
                 ...(new Ziggy)->toArray(),
                 'location' => $request->url(),

@@ -3,10 +3,11 @@ import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
-import { useForm } from '@inertiajs/vue3';
-import { onBeforeMount } from 'vue';
+import { useForm, usePage } from '@inertiajs/vue3';
+import { onBeforeMount, reactive } from 'vue';
 import { nextTick, ref } from 'vue';
 import { toast } from 'vue3-toastify';
+import { trans } from 'laravel-vue-i18n';
 
 const passwordInput = ref<HTMLInputElement | null>(null);
 
@@ -18,22 +19,28 @@ const props = defineProps<{
 
 const url = window.location.href;
 
-const form = useForm({
-    formData: [],
-});
+const form = useForm({});
+
+function dynamicFields() {
+    const data = {}
+    for (let key in props.data) { data[key] = form[key] }
+    return data
+}
 
 onBeforeMount(() => {
     for (let key in props.data) {
-        form.formData[key] = props.data[key] || ''
+        form[key] = props.data[key] || ''
     }
 })
 
 const sendForm = () => {
+    form.transform(() => ({ ...dynamicFields() }))
+
     form.submit(props.method, url, {
         preserveScroll: true,
         onSuccess: () => {
-            toast.success(url);
-            // form.reset();
+            toast.success(trans(usePage().props.status as string));
+            form.reset();
         },
         onError: () => {
                 // if (form.errors.password) {
@@ -70,9 +77,10 @@ const sendForm = () => {
         
                         <TextInput
                             :id="field.name"
+                            :name="field.name"
                             :type="field.type"
                             class="mt-1 block w-full"
-                            v-model="form.formData[field.name]"
+                            v-model="form[field.name]"
                             required
                             autofocus
                             :autocomplete="field.name"
