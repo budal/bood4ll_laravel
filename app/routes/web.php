@@ -70,6 +70,7 @@ Route::middleware('auth')->group(function () {
         Route::middleware('verified')->group(function () {
             Route::controller(UsersController::class)->group(function () {
                 Route::get('/users', 'index')->name('users')->middleware(['password.confirm', 'verified'])->breadcrumb('Users');
+                Route::get('/users1', 'index1')->name('users1');
                 Route::get('/users/create', 'create')->name('users.create')->middleware(['password.confirm'])->breadcrumb('User creation', 'apps.users');
                 Route::post('/users/create', 'store')->name('users.store')->middleware(['password.confirm']);
                 Route::get('/users/edit/{user}', 'edit')->name('users.edit')->middleware(['password.confirm'])->breadcrumb('User edition', 'apps.users');

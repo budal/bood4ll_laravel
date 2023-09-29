@@ -70,6 +70,71 @@ class UsersController extends Controller
         ]);
     }
 
+
+
+
+
+
+
+
+
+    public function index1(Request $request): array
+    {
+        $titles = [
+            [
+                'type' => 'avatar',
+                'title' => 'Avatar',
+                'field' => 'id',
+                'fallback' => 'name',
+                'disableSort' => true
+            ],
+            [
+                'type' => 'composite',
+                'title' => 'User',
+                'field' => 'name',
+                'fields' => ['name', 'email']
+            ],
+            [
+                'type' => 'simple',
+                'title' => 'Username',
+                'field' => 'username'
+            ],
+            [
+                'type' => 'simple',
+                'title' => 'Active',
+                'field' => 'active'
+            ]
+        ];
+
+        $routes = [
+            'createRoute' => "apps.users.create",
+            'editRoute' => "apps.users.edit",
+            'destroyRoute' => "apps.users.destroy",
+            'restoreRoute' => "apps.users.restore",
+        ];
+
+        return [
+            'title' => "Users management",
+            'subtitle' => "Manage users informations and authorizations.",
+            'softDelete' => User::hasGlobalScope('Illuminate\Database\Eloquent\SoftDeletingScope'),
+            'routes' => $routes,
+            'filters' => $request->all('search', 'sorted', 'trashed'),
+            'titles' => $titles,
+            'items' => User::filter($request->all('search', 'sorted', 'trashed'))
+                ->sort($request->sorted ?? "name")
+                ->paginate(20)
+                ->onEachSide(2)
+                ->appends($request->all('search', 'sorted', 'trashed'))
+        ];
+    }
+
+
+
+
+
+
+
+
     
     public function __form()
     {

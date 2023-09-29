@@ -52,6 +52,7 @@ const categories = ref({
             :class="[
               'w-full rounded-lg py-2.5 text-sm font-medium leading-5 focus:outline-none focus:ring-2 ring-opacity-60 ring-offset-2', 
               'ring-primary-light dark:ring-primary-dark ring-offset-primary-light dark:ring-offset-primary-dark',
+              'transition ease-in-out duration-500',
               selected
                 ? 'text-primary-light dark:text-primary-dark bg-primary-light dark:bg-primary-dark shadow'
                 : 'text-primary-dark dark:text-primary-light hover:bg-primary-light/[0.12] dark:hover:bg-primary-dark/[0.12]',

@@ -21,6 +21,7 @@ import { toast } from 'vue3-toastify';
 import { router, useForm, usePage, Link } from '@inertiajs/vue3';
 import debounce from "lodash.debounce";
 import { trans } from 'laravel-vue-i18n';
+import axios from "axios";
 
 const props = defineProps<{
     softDelete?: boolean | null;
@@ -188,6 +189,20 @@ const sortBy = (column: any) => {
 
 // td class
 const classTD = "p-2"
+
+let table = {};
+
+axios
+  .get("http://localhost/apps/users1?page=3")
+  .then((res) => {
+          console.log(res.data)
+  })
+  .catch((error) => {
+          console.log(error);
+  });
+
+
+
 
 </script>
 
