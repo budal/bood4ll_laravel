@@ -80,12 +80,12 @@ Route::middleware('auth')->group(function () {
             });
 
             Route::controller(RolesController::class)->group(function () {
-                Route::get('/permissions', 'index')->name('permissions')->middleware(['password.confirm', 'verified'])->breadcrumb('Permissions');
-                Route::get('/permissions/create', 'create')->name('permissions.create')->middleware(['password.confirm'])->breadcrumb('Permission creation', 'apps.permissions');
-                Route::post('/permissions/create', 'create')->name('permissions.store')->middleware(['password.confirm']);
-                Route::get('/permissions/edit/{user}', 'edit')->name('permissions.edit')->middleware(['password.confirm'])->breadcrumb('Permission edition', 'apps.permissions');
-                Route::patch('/permissions/edit/{user}', 'edit')->name('permissions.update')->middleware(['password.confirm']);
-                Route::delete('/permissions/destroy', 'destroy')->name('permissions.destroy')->middleware(['password.confirm']);
+                Route::get('/permissions/roles', 'index')->name('permissions')->middleware(['password.confirm', 'verified'])->breadcrumb('Permissions');
+                Route::get('/permissions/roles/create', 'create')->name('permissions.create')->middleware(['password.confirm'])->breadcrumb('Permission creation', 'apps.permissions');
+                Route::post('/permissions/roles/create', 'create')->name('permissions.store')->middleware(['password.confirm']);
+                Route::get('/permissions/roles/edit/{user}', 'edit')->name('permissions.edit')->middleware(['password.confirm'])->breadcrumb('Permission edition', 'apps.permissions');
+                Route::patch('/permissions/roles/edit/{user}', 'edit')->name('permissions.update')->middleware(['password.confirm']);
+                Route::delete('/permissions/roles/destroy', 'destroy')->name('permissions.destroy')->middleware(['password.confirm']);
             });
             
             Route::controller(UnitsController::class)->group(function () {

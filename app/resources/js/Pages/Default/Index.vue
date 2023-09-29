@@ -2,6 +2,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Table from '@/Components/Table.vue';
 import Tabs from '@/Components/Tabs.vue';
+import { ref } from 'vue';
 
 defineProps<{
     title: string;
@@ -13,6 +14,13 @@ defineProps<{
     items: object;
     titles: object;
 }>();
+
+// const products = ref(null);
+// fetch('http://localhost/apps/users1?page=3')
+//   .then(response => response.json())
+//   .then(data => products.value = data);
+
+// console.log(products)
 
 </script>
 
@@ -30,7 +38,6 @@ defineProps<{
                             </p>
                         </header>
                         <Table :softDelete="softDelete" :routes="routes" :filters="filters" :items="items" :titles="titles" />
-                        <Tabs />
                     </div>
                 </div>
             </div>

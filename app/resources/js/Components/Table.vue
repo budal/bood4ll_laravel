@@ -21,7 +21,6 @@ import { toast } from 'vue3-toastify';
 import { router, useForm, usePage, Link } from '@inertiajs/vue3';
 import debounce from "lodash.debounce";
 import { trans } from 'laravel-vue-i18n';
-import axios from "axios";
 
 const props = defineProps<{
     softDelete?: boolean | null;
@@ -30,23 +29,6 @@ const props = defineProps<{
     items: any;
     titles: any;
 }>();
-
-
-
-
-
-
-
-
-
-const products = ref(null);
-fetch('http://localhost/apps/users1?page=3')
-    .then(response => response.json())
-    .then(data => products.value = data);
-
-    console.log(products)
-
-
 
 const searchRoute = new URL(window.location.href);
 
@@ -206,11 +188,6 @@ const sortBy = (column: any) => {
 
 // td class
 const classTD = "p-2"
-
-
-
-
-
 
 </script>
 
