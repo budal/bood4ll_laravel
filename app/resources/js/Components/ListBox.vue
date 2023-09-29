@@ -53,6 +53,7 @@ const computedValue = computed({
               v-for="item in content"
               :key="item.id"
               :value="item"
+              :disabled="item.disabled"
               as="template"
             >
               <li
@@ -64,6 +65,7 @@ const computedValue = computed({
                 <span
                   :class="[
                     selected ? 'font-medium' : 'font-normal',
+                    item.disabled ? 'opacity-50 dark:opacity-25 italic line-through' : '',
                     'block truncate',
                   ]"
                   >{{ $t(item.title) }}

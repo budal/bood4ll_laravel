@@ -2,7 +2,7 @@
 import Button from './Button.vue';
 import Checkbox from '@/Components/Checkbox.vue';
 import InputLabel from '@/Components/InputLabel.vue';
-import Select from '@/Components/Select.vue';
+import ListBox from '@/Components/ListBox.vue';
 import Modal from '@/Components/Modal.vue';
 import Avatar from '@/Components/Avatar.vue';
 import SearchInput from '@/Components/SearchInput.vue';
@@ -23,6 +23,7 @@ import debounce from "lodash.debounce";
 import { trans } from 'laravel-vue-i18n';
 
 const props = defineProps<{
+    softDelete?: boolean | null;
     routes?: any;
     filters?: any;
     items: any;
@@ -134,8 +135,8 @@ onBeforeUnmount(() => {
 // filters modal
 const content = [
   { id: '', title: 'Only active' },
-  { id: 'only', title: 'Only trashed' },
-  { id: 'with', title: 'Active and trashed' },
+  { id: 'only', title: 'Only trashed', disabled: props.softDelete === true ? false : true },
+  { id: 'with', title: 'Active and trashed', disabled: props.softDelete === true ? false : true },
 ]
 
 const trashed = searchRoute.searchParams.get("trashed") || ''
@@ -251,7 +252,7 @@ const classTD = "p-2"
 
       <div class="pt-3">
         <InputLabel for="name" :value="$t('Content')" />
-        <Select :content="content" v-model="contentSelected" />
+        <ListBox :content="content" v-model="contentSelected" />
       </div>
 
       <div class="mt-6 flex justify-end">

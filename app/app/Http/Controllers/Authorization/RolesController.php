@@ -13,9 +13,14 @@ use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Inertia\Response;
 
-use App\Models\User;
 
-class UsersController extends Controller
+
+use Illuminate\Database\Eloquent\Model;
+
+use App\Models\User;
+use App\Models\Role;
+
+class RolesController extends Controller
 {
     /**
      * Display the users list.
@@ -24,45 +29,28 @@ class UsersController extends Controller
     {
         $titles = [
             [
-                'type' => 'avatar',
-                'title' => 'Avatar',
-                'field' => 'id',
-                'fallback' => 'name',
-                'disableSort' => true
-            ],
-            [
                 'type' => 'composite',
                 'title' => 'User',
                 'field' => 'name',
                 'fields' => ['name', 'email']
             ],
-            [
-                'type' => 'simple',
-                'title' => 'Username',
-                'field' => 'username'
-            ],
-            [
-                'type' => 'simple',
-                'title' => 'Active',
-                'field' => 'active'
-            ]
         ];
 
         $routes = [
-            'createRoute' => "apps.users.create",
-            'editRoute' => "apps.users.edit",
-            'destroyRoute' => "apps.users.destroy",
-            'restoreRoute' => "apps.users.restore",
+            'createRoute' => "apps.permissions.create",
+            'editRoute' => "apps.permissions.edit",
+            'destroyRoute' => "apps.permissions.destroy",
+            'restoreRoute' => "apps.permissions.restore",
         ];
 
         return Inertia::render('Default/Index', [
-            'title' => "Users management",
-            'subtitle' => "Manage users informations and authorizations.",
-            'softDelete' => User::hasGlobalScope('Illuminate\Database\Eloquent\SoftDeletingScope'),
+            'title' => "Permissions management",
+            'subtitle' => "Set permissions to access specifics resources.",
+            'softDelete' => Role::hasGlobalScope('Illuminate\Database\Eloquent\SoftDeletingScope'),
             'routes' => $routes,
             'filters' => $request->all('search', 'sorted', 'trashed'),
             'titles' => $titles,
-            'items' => User::filter($request->all('search', 'sorted', 'trashed'))
+            'items' => Role::filter($request->all('search', 'sorted', 'trashed'))
                 ->sort($request->sorted ?? "name")
                 ->paginate(20)
                 ->onEachSide(2)
@@ -75,8 +63,8 @@ class UsersController extends Controller
     {
         return [
             [
-                'title' => "User profile Information",
-                'subtitle' => "User account's profile information",
+                'title' => "Permissions management",
+                'subtitle' => "Permission name and abilities",
                 'cols' => 2,
                 'fields' => [
                     [
@@ -84,19 +72,6 @@ class UsersController extends Controller
                             'type' => "input",
                             'name' => "name",
                             'title' => "Name",
-                        ],
-                        [
-                            'type' => "input",
-                            'name' => "email",
-                            'title' => "Email",
-                        ],
-                    ],
-                    [
-                        [
-                            'type' => "input",
-                            'name' => "username",
-                            'title' => "Username",
-                            'span' => 2,
                         ],
                     ],
                 ]
@@ -126,7 +101,7 @@ class UsersController extends Controller
 
         // $request->user()->save();
 
-        return Redirect::route('apps.users')->with('status', 'User created.');
+        return Redirect::route('apps.permissions')->with('status', 'User created.');
     }
     
     /**

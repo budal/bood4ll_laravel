@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Table from '@/Components/Table.vue';
+import Tabs from '@/Components/Tabs.vue';
 
 defineProps<{
     title: string;
     subtitle: string;
+    softDelete: boolean;
     routes?: object;
     status?: string;
     filters: object;
@@ -27,7 +29,8 @@ defineProps<{
                                 {{ $t(subtitle) }}
                             </p>
                         </header>
-                        <Table :routes="routes" :filters="filters" :items="items" :titles="titles" />
+                        <Table :softDelete="softDelete" :routes="routes" :filters="filters" :items="items" :titles="titles" />
+                        <Tabs />
                     </div>
                 </div>
             </div>

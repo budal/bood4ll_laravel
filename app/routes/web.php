@@ -2,9 +2,10 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AppsController;
-use App\Http\Controllers\Authorization\UnitsController;
-use App\Http\Controllers\Authorization\PermissionsController;
 use App\Http\Controllers\Authorization\UsersController;
+use App\Http\Controllers\Authorization\RolesController;
+use App\Http\Controllers\Authorization\AbilitiesController;
+use App\Http\Controllers\Authorization\UnitsController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 
 use Illuminate\Http\Request;
@@ -77,7 +78,7 @@ Route::middleware('auth')->group(function () {
                 Route::post('/users/restore/{user}', 'restore')->name('users.restore')->middleware(['password.confirm']);
             });
 
-            Route::controller(PermissionsController::class)->group(function () {
+            Route::controller(RolesController::class)->group(function () {
                 Route::get('/permissions', 'index')->name('permissions')->middleware(['password.confirm', 'verified'])->breadcrumb('Permissions');
                 Route::get('/permissions/create', 'create')->name('permissions.create')->middleware(['password.confirm'])->breadcrumb('Permission creation', 'apps.permissions');
                 Route::post('/permissions/create', 'create')->name('permissions.store')->middleware(['password.confirm']);
