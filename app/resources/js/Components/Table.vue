@@ -31,6 +31,23 @@ const props = defineProps<{
     titles: any;
 }>();
 
+
+
+
+
+
+
+
+
+const products = ref(null);
+fetch('http://localhost/apps/users1?page=3')
+    .then(response => response.json())
+    .then(data => products.value = data);
+
+    console.log(products)
+
+
+
 const searchRoute = new URL(window.location.href);
 
 // deletion checkboxes
@@ -190,16 +207,7 @@ const sortBy = (column: any) => {
 // td class
 const classTD = "p-2"
 
-let table = {};
 
-axios
-  .get("http://localhost/apps/users1?page=3")
-  .then((res) => {
-          console.log(res.data)
-  })
-  .catch((error) => {
-          console.log(error);
-  });
 
 
 
