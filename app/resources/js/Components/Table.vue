@@ -34,42 +34,83 @@ const props = defineProps<{
 
 const searchRoute = new URL(window.location.href);
 
-// deletion checkboxes
-let selectedItems = reactive(new Set())
 
-let selectAll = (items: any) => {
-  items.forEach((item: unknown) => {
-    selectedItems.add(item)
+// api
+const data = ref({});
+const loading = ref(true);
+const error = ref(null);
+
+function fetchData() {
+  loading.value = true;
+
+  return fetch(props.api, {
+    method: 'get',
+    headers: {
+      'content-type': 'application/json'
+    }
+  })
+  .then(res => {
+    if (!res.ok) {
+      const error = new Error(res.statusText);
+      error.json = res.json();
+      throw error;
+    }
+
+    return res.json();
+  })
+  .then(json => {
+    data.value = json;
+  })
+  .catch(err => {
+    error.value = err;
+    if (err.json) {
+      return err.json.then(json => {
+        error.value.message = json.message;
+      });
+    }
+  })
+  .then(() => {
+    loading.value = false;
+  });
+}
+
+
+// toggle checkboxes
+let selectedCheckBoxes = reactive(new Set())
+
+let selectAll = (checkBoxes: any) => {
+  checkBoxes.forEach((checkBox: unknown) => {
+    selectedCheckBoxes.add(checkBox)
   })
 }
 
 let clear = () => {
-  selectedItems.clear()
+  selectedCheckBoxes.clear()
 }
 
-let toggle = (item: any) => {
-  if (selectedItems.has(item)) {
-    selectedItems.delete(item)
+let toggle = (checkBox: any) => {
+  if (selectedCheckBoxes.has(checkBox)) {
+    selectedCheckBoxes.delete(checkBox)
   } else {
-    selectedItems.add(item)
+    selectedCheckBoxes.add(checkBox)
   }
 }
 
-let numberSelected = computed(() => selectedItems.size)
-let itemsSelected = computed(() => numberSelected.value == props.items.data.length)
+let totalSelectedCheckBoxes = computed(() => selectedCheckBoxes.size)
+let selectedcheckBox = computed(() => totalSelectedCheckBoxes.value == props.items.data.length)
 
 const toggleSelection = () => {
-  if (itemsSelected.value) {
+  if (selectedcheckBox.value) {
     clear()
   } else {
     selectAll(props.items.data)
   }
 }
 
-const confirmingUserDeletion = ref(false);
+const confirmingDeletionModal = ref(false);
 
-const deleteSelected = () => {
-  confirmingUserDeletion.value = true;
+const openDeletionModal = () => {
+  confirmingDeletionModal.value = true;
 }
 
 const form = useForm({
@@ -77,27 +118,27 @@ const form = useForm({
 });
 
 const deleteItems = () => {
-  selectedItems.forEach((item: any) => form.ids.push((item.id) as never))
+  selectedCheckBoxes.forEach((checkBox: any) => form.ids.push((checkBox.id) as never))
 
   form.delete((route(props.routes.destroyRoute) as unknown ) as string, {
     preserveScroll: true,
-    onSuccess: () => closeModal(),
+    onSuccess: () => closeDeletionModal(),
     onError: () => toast.error(trans(usePage().props.status as string)),
     onFinish: () => toast.success(trans(usePage().props.status as string)),
   });
 };
 
-const closeModal = () => {
-  confirmingUserDeletion.value = false;
+const closeDeletionModal = () => {
+  confirmingDeletionModal.value = false;
 };
 
 
 // restore
-const restoreItemModal = ref(false);
+const confirmRestoreModal = ref(false);
 const restoreItemID = ref('');
 
 const restore = (id: string) => {
-  restoreItemModal.value = true;
+  confirmRestoreModal.value = true;
   restoreItemID.value = id;
 }
 
@@ -111,7 +152,7 @@ const restoreItem = () => {
 };
 
 const closeRestoreModal = () => {
-  restoreItemModal.value = false;
+  confirmRestoreModal.value = false;
 };
 
 
@@ -126,12 +167,6 @@ const debouncedWatch = debounce(() => {
     preserveState: true,
   })
 }, 500);
-
-watch(search, debouncedWatch);
-
-onBeforeUnmount(() => {
-  debouncedWatch.cancel();
-})
 
 
 // filters modal
@@ -192,61 +227,26 @@ const sortBy = (column: any) => {
 const classTD = "p-2"
 
 
+// component
+watch(search, debouncedWatch);
 
-const data = ref({});
-const loading = ref(true);
-const error = ref(null);
-
-function fetchData() {
-  loading.value = true;
-
-  return fetch(props.api, {
-    method: 'get',
-    headers: {
-      'content-type': 'application/json'
-    }
-  })
-  .then(res => {
-    if (!res.ok) {
-      const error = new Error(res.statusText);
-      error.json = res.json();
-      throw error;
-    }
-
-    return res.json();
-  })
-  .then(json => {
-    data.value = json;
-  })
-  .catch(err => {
-    error.value = err;
-    if (err.json) {
-      return err.json.then(json => {
-        error.value.message = json.message;
-      });
-    }
-  })
-  .then(() => {
-    loading.value = false;
-  });
-}
+onBeforeUnmount(() => {
+  debouncedWatch.cancel();
+})
 
 onMounted(() => {
   fetchData();
 });
-
-console.log(data)
-
 </script>
 
 <template>
-  {{ data.title }}
+  {{ data.softDelete }}
 
 
   <p v-if="loading">Still loading..</p>
   <p v-if="error">{{error}}</p>
   <div>
-    <Modal :show="confirmingUserDeletion" @close="closeModal">
+    <Modal :show="confirmingDeletionModal" @close="closeDeletionModal">
       <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
         {{ $t('Are you sure you want to delete the selected items?') }}
       </h2>
@@ -256,7 +256,7 @@ console.log(data)
       </p>
 
       <div class="mt-6 flex justify-end">
-        <Button color="secondary" @click="closeModal">{{ $t('Cancel') }}</Button>
+        <Button color="secondary" @click="closeDeletionModal">{{ $t('Cancel') }}</Button>
 
         <Button 
           color="danger"
@@ -270,7 +270,7 @@ console.log(data)
       </div>
     </Modal>
 
-    <Modal :show="restoreItemModal" @close="closeRestoreModal">
+    <Modal :show="confirmRestoreModal" @close="closeRestoreModal">
       <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
         {{ $t('Are you sure you want to restore this item?') }}
       </h2>
@@ -324,7 +324,7 @@ console.log(data)
 
     <div class="flex sticky top-0 sm:top-[65px] justify-between rounded-xl backdrop-blur-sm p-2 my-2 -mx-3 bg-white/30 dark:bg-gray-800/30">
       <div class="flex-none items-center">
-        <Button color="danger" v-if="props.routes.destroyRoute" :disabled="numberSelected === 0" @click="deleteSelected" class="mr-2 h-full">
+        <Button color="danger" v-if="routes.destroyRoute" :disabled="totalSelectedCheckBoxes === 0" @click="openDeletionModal" class="mr-2 h-full">
           <TrashIcon class="h-5 w-5" />
         </Button>
       </div>
@@ -335,7 +335,7 @@ console.log(data)
         <Button color="secondary" @click="openFiltersModal" class="ml-2 h-full"><AdjustmentsVerticalIcon class="h-5 w-5" /></Button>
       </div>
       <div class="flex-none items-center">
-        <Button color="primary" v-if="props.routes.createRoute" class="ml-2 h-full" @click="form.get((route(props.routes.createRoute) as unknown) as string)">
+        <Button color="primary" v-if="routes.createRoute" class="ml-2 h-full" @click="form.get((route(routes.createRoute) as unknown) as string)">
           <PlusIcon class="h-5 w-5" />
         </Button>
       </div>
@@ -346,8 +346,8 @@ console.log(data)
           <table class="table-auto w-full text-sm shadow-lg">
             <thead v-if="items.total > 0 && items.from !== null">
               <tr class="bg-gray-200 dark:bg-gray-900 p-3 text-gray-1000 dark:text-white text-left">
-                <th v-if="props.routes.destroyRoute" :class="`${classTD}`">
-                  <Checkbox name="remember" :checked="itemsSelected" @click="toggleSelection" class="w-8 h-8 rounded-full" />
+                <th v-if="routes.destroyRoute" :class="`${classTD}`">
+                  <Checkbox name="remember" :checked="selectedcheckBox" @click="toggleSelection" class="w-8 h-8 rounded-full" />
                 </th>
                 <template v-for="(content, id) in titles">
                   <th :class="`${classTD}`">
@@ -358,7 +358,7 @@ console.log(data)
                     </Link>
                   </th>
                 </template>
-                <th v-if="props.routes.editRoute" :class="`${classTD}`"></th>
+                <th v-if="routes.editRoute" :class="`${classTD}`"></th>
               </tr>
             </thead>
             <tbody>
@@ -368,8 +368,8 @@ console.log(data)
                 class="`bg-white hover:bg-gray-100 dark:bg-gray-800 hover:dark:bg-gray-700 border-t border-gray-200 dark:border-gray-600 text-gray-500 dark:text-gray-400`"
               >
                 <td :class="`${classTD}`">
-                  <Checkbox v-if="props.routes.destroyRoute && !item.deleted_at" :class="`${classTD}`" class="w-8 h-8 rounded-full" :checked="selectedItems.has(item)" :value="item.id" :id="`checkbox-${item.id}`" @click="toggle(item)" />
-                  <Button color="warning" padding="2" v-if="props.routes.restoreRoute && item.deleted_at" :class="`${classTD}`" @click="restore(item.id)"><ArrowUturnLeftIcon class="h-3 w-3" /></Button>
+                  <Checkbox v-if="routes.destroyRoute && !item.deleted_at" :class="`${classTD}`" class="w-8 h-8 rounded-full" :checked="selectedCheckBoxes.has(item)" :value="item.id" :id="`checkbox-${item.id}`" @click="toggle(item)" />
+                  <Button color="warning" padding="2" v-if="routes.restoreRoute && item.deleted_at" :class="`${classTD}`" @click="restore(item.id)"><ArrowUturnLeftIcon class="h-3 w-3" /></Button>
                 </td>
                 <template v-for="content in titles">
                   <td v-if="content.type == 'avatar'" :class="`${classTD}`">
@@ -383,8 +383,8 @@ console.log(data)
                     <p class="truncate text-xs leading-5 text-gray-900 dark:text-gray-200">{{ item[content.field] }}</p>
                   </td>
                 </template>
-                <td v-if="props.routes.editRoute" :class="`${classTD} text-right`">
-                  <Link :href="((route(props.routes.editRoute, item.id) as unknown) as string)" as="span">
+                <td v-if="routes.editRoute" :class="`${classTD} text-right`">
+                  <Link :href="((route(routes.editRoute, item.id) as unknown) as string)" as="span">
                     <Button color="primary"><ChevronRightIcon class="h-5 w-5"/></Button>
                   </Link>
                 </td>

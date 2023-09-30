@@ -30,6 +30,7 @@ defineProps<{
                             </p>
                         </header>
                         <Table :api="'http://localhost/apps/users1'" :softDelete="softDelete" :routes="routes" :filters="filters" :items="items" :titles="titles" />
+                        <Tabs />
                     </div>
                 </div>
             </div>

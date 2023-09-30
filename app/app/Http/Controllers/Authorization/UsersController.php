@@ -114,8 +114,6 @@ class UsersController extends Controller
         ];
 
         return [
-            'title' => "Users management",
-            'subtitle' => "Manage users informations and authorizations.",
             'softDelete' => User::hasGlobalScope('Illuminate\Database\Eloquent\SoftDeletingScope'),
             'routes' => $routes,
             'filters' => $request->all('search', 'sorted', 'trashed'),
