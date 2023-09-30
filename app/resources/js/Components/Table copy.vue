@@ -240,7 +240,7 @@ console.log(data)
 </script>
 
 <template>
-  {{ data.title }}
+  {{ data.current_page }}
 
 
   <p v-if="loading">Still loading..</p>
