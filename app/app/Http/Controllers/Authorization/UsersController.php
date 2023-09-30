@@ -78,7 +78,7 @@ class UsersController extends Controller
 
 
 
-    public function index1(Request $request): array
+    public function index1(Request $request)
     {
         $titles = [
             [
@@ -113,19 +113,11 @@ class UsersController extends Controller
             'restoreRoute' => "apps.users.restore",
         ];
 
-        return [
-            'title' => "Users management",
-            'subtitle' => "Manage users informations and authorizations.",
-            'softDelete' => User::hasGlobalScope('Illuminate\Database\Eloquent\SoftDeletingScope'),
-            'routes' => $routes,
-            'filters' => $request->all('search', 'sorted', 'trashed'),
-            'titles' => $titles,
-            'items' => User::filter($request->all('search', 'sorted', 'trashed'))
+        return User::filter($request->all('search', 'sorted', 'trashed'))
                 ->sort($request->sorted ?? "name")
                 ->paginate(20)
                 ->onEachSide(2)
-                ->appends($request->all('search', 'sorted', 'trashed'))
-        ];
+                ->appends($request->all('search', 'sorted', 'trashed'));
     }
 
 

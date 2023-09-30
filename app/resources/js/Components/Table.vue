@@ -21,13 +21,15 @@ import { toast } from 'vue3-toastify';
 import { router, useForm, usePage, Link } from '@inertiajs/vue3';
 import debounce from "lodash.debounce";
 import { trans } from 'laravel-vue-i18n';
+import { onMounted } from 'vue';
 
 const props = defineProps<{
-    softDelete?: boolean | null;
-    routes?: any;
-    filters?: any;
-    items: any;
-    titles: any;
+  api?: string;
+  softDelete?: boolean | null;
+  routes?: any;
+  filters?: any;
+  items: any;
+  titles: any;
 }>();
 
 const searchRoute = new URL(window.location.href);
@@ -78,15 +80,15 @@ const deleteItems = () => {
   selectedItems.forEach((item: any) => form.ids.push((item.id) as never))
 
   form.delete((route(props.routes.destroyRoute) as unknown ) as string, {
-      preserveScroll: true,
-      onSuccess: () => closeModal(),
-      onError: () => toast.error(trans(usePage().props.status as string)),
-      onFinish: () => toast.success(trans(usePage().props.status as string)),
+    preserveScroll: true,
+    onSuccess: () => closeModal(),
+    onError: () => toast.error(trans(usePage().props.status as string)),
+    onFinish: () => toast.success(trans(usePage().props.status as string)),
   });
 };
 
 const closeModal = () => {
-    confirmingUserDeletion.value = false;
+  confirmingUserDeletion.value = false;
 };
 
 
@@ -101,10 +103,10 @@ const restore = (id: string) => {
 
 const restoreItem = () => {
   form.post((route(props.routes.restoreRoute, restoreItemID.value) as unknown ) as string, {
-      preserveScroll: true,
-      onSuccess: () => closeRestoreModal(),
-      onError: () => toast.error(trans(usePage().props.status as string)),
-      onFinish: () => toast.success(trans(usePage().props.status as string)),
+    preserveScroll: true,
+    onSuccess: () => closeRestoreModal(),
+    onError: () => toast.error(trans(usePage().props.status as string)),
+    onFinish: () => toast.success(trans(usePage().props.status as string)),
   });
 };
 
@@ -189,9 +191,60 @@ const sortBy = (column: any) => {
 // td class
 const classTD = "p-2"
 
+
+
+const data = ref({});
+const loading = ref(true);
+const error = ref(null);
+
+function fetchData() {
+  loading.value = true;
+
+  return fetch(props.api, {
+    method: 'get',
+    headers: {
+      'content-type': 'application/json'
+    }
+  })
+  .then(res => {
+    if (!res.ok) {
+      const error = new Error(res.statusText);
+      error.json = res.json();
+      throw error;
+    }
+
+    return res.json();
+  })
+  .then(json => {
+    data.value = json;
+  })
+  .catch(err => {
+    error.value = err;
+    if (err.json) {
+      return err.json.then(json => {
+        error.value.message = json.message;
+      });
+    }
+  })
+  .then(() => {
+    loading.value = false;
+  });
+}
+
+onMounted(() => {
+  fetchData();
+});
+
+console.log(data)
+
 </script>
 
 <template>
+  {{ data.current_page }}
+
+
+  <p v-if="loading">Still loading..</p>
+  <p v-if="error">{{error}}</p>
   <div>
     <Modal :show="confirmingUserDeletion" @close="closeModal">
       <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">

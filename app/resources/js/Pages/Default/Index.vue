@@ -14,14 +14,6 @@ defineProps<{
     items: object;
     titles: object;
 }>();
-
-// const products = ref(null);
-// fetch('http://localhost/apps/users1?page=3')
-//   .then(response => response.json())
-//   .then(data => products.value = data);
-
-// console.log(products)
-
 </script>
 
 <template>
@@ -37,7 +29,7 @@ defineProps<{
                                 {{ $t(subtitle) }}
                             </p>
                         </header>
-                        <Table :softDelete="softDelete" :routes="routes" :filters="filters" :items="items" :titles="titles" />
+                        <Table :api="'http://localhost/apps/users1?page=3'" :softDelete="softDelete" :routes="routes" :filters="filters" :items="items" :titles="titles" />
                     </div>
                 </div>
             </div>
