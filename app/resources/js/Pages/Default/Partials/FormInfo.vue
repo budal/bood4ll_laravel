@@ -58,6 +58,13 @@ const sendForm = () => {
         },
     })
 }
+
+const content = [
+  { id: '', title: 'Only active' },
+  { id: 'only', title: 'Only trashed' },
+  { id: 'with', title: 'Active and trashed' },
+];
+
 </script>
 
 <template>

@@ -78,7 +78,10 @@ class RolesController extends Controller
                             'name' => "abilities",
                             'title' => "Ability",
                             'content' => [
-                                1 => "asd"
+                                [
+                                    'id' => 1,
+                                    'title' => 1,
+                                ]
                             ],
                         ],
                     ],

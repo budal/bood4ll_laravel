@@ -6,6 +6,7 @@ import { computed } from 'vue'
 
 const props = defineProps<{
   content: object;
+  selected?: string | number;
   modelValue: {
     id: string | number,
     title: string
