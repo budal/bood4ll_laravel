@@ -8,6 +8,7 @@ import { onBeforeMount, reactive } from 'vue';
 import { nextTick, ref } from 'vue';
 import { toast } from 'vue3-toastify';
 import { trans } from 'laravel-vue-i18n';
+import ListBox from '@/Components/ListBox.vue';
 
 const passwordInput = ref<HTMLInputElement | null>(null);
 
@@ -75,7 +76,7 @@ const sendForm = () => {
                     <div v-for="field in group" :class="`${field.span ? `sm:col-span-${field.span}` : ''} mt-4`">
                         <InputLabel :for="field.name" :value="$t(field.title)" />
         
-                        <TextInput
+                        <TextInput v-if="field.type == 'input'"
                             :id="field.name"
                             :name="field.name"
                             :type="field.type"
@@ -84,6 +85,15 @@ const sendForm = () => {
                             required
                             autofocus
                             :autocomplete="field.name"
+                        />
+
+                        <TextInput v-if="field.type == 'select'"
+                            :content="field.content" 
+                            :id="field.name"
+                            :name="field.name"
+                            :type="field.type"
+                            class="mt-1 block w-full"
+                            v-model="form[field.name]" 
                         />
         
                         <InputError class="mt-2" :message="form.errors[field.name]" />

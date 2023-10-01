@@ -16,12 +16,11 @@ import {
   TrashIcon, 
   AdjustmentsVerticalIcon 
 } from '@heroicons/vue/20/solid'
-import { ref, computed, reactive, watch, onBeforeUnmount } from 'vue'
-import { toast } from 'vue3-toastify';
-import { router, useForm, usePage, Link } from '@inertiajs/vue3';
 import debounce from "lodash.debounce";
 import { trans } from 'laravel-vue-i18n';
-import { onMounted } from 'vue';
+import { toast } from 'vue3-toastify';
+import { router, useForm, usePage, Link } from '@inertiajs/vue3';
+import { ref, computed, reactive, watch, onBeforeUnmount } from 'vue'
 
 const props = defineProps<{
   api?: string;
@@ -33,46 +32,7 @@ const props = defineProps<{
 }>();
 
 const searchRoute = new URL(window.location.href);
-
-
-// api
-const data = ref({});
-const loading = ref(true);
-const error = ref(null);
-
-function fetchData() {
-  loading.value = true;
-
-  return fetch(props.api, {
-    method: 'get',
-    headers: {
-      'content-type': 'application/json'
-    }
-  })
-  .then(res => {
-    if (!res.ok) {
-      const error = new Error(res.statusText);
-      error.json = res.json();
-      throw error;
-    }
-
-    return res.json();
-  })
-  .then(json => {
-    data.value = json;
-  })
-  .catch(err => {
-    error.value = err;
-    if (err.json) {
-      return err.json.then(json => {
-        error.value.message = json.message;
-      });
-    }
-  })
-  .then(() => {
-    loading.value = false;
-  });
-}
+const tableItens = props.items;
 
 
 // toggle checkboxes
@@ -97,13 +57,13 @@ let toggle = (checkBox: any) => {
 }
 
 let totalSelectedCheckBoxes = computed(() => selectedCheckBoxes.size)
-let selectedcheckBox = computed(() => totalSelectedCheckBoxes.value == props.items.data.length)
+let selectedcheckBox = computed(() => totalSelectedCheckBoxes.value == tableItens.data.length)
 
 const toggleSelection = () => {
   if (selectedcheckBox.value) {
     clear()
   } else {
-    selectAll(props.items.data)
+    selectAll(tableItens.data)
   }
 }
 
@@ -168,6 +128,12 @@ const debouncedWatch = debounce(() => {
   })
 }, 500);
 
+watch(search, debouncedWatch);
+
+onBeforeUnmount(() => {
+  debouncedWatch.cancel();
+})
+
 
 // filters modal
 const content = [
@@ -225,26 +191,9 @@ const sortBy = (column: any) => {
 
 // td class
 const classTD = "p-2"
-
-
-// component
-watch(search, debouncedWatch);
-
-onBeforeUnmount(() => {
-  debouncedWatch.cancel();
-})
-
-onMounted(() => {
-  fetchData();
-});
 </script>
 
 <template>
-  {{ data.softDelete }}
-
-
-  <p v-if="loading">Still loading..</p>
-  <p v-if="error">{{error}}</p>
   <div>
     <Modal :show="confirmingDeletionModal" @close="closeDeletionModal">
       <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
@@ -344,7 +293,7 @@ onMounted(() => {
       <div class="rounded-xl overflow-hidden border-2 border-gray-200 dark:border-gray-600">
         <div class="overflow-x-auto flex">
           <table class="table-auto w-full text-sm shadow-lg">
-            <thead v-if="items.total > 0 && items.from !== null">
+            <thead v-if="tableItens.total > 0 && tableItens.from !== null">
               <tr class="bg-gray-200 dark:bg-gray-900 p-3 text-gray-1000 dark:text-white text-left">
                 <th v-if="routes.destroyRoute" :class="`${classTD}`">
                   <Checkbox name="remember" :checked="selectedcheckBox" @click="toggleSelection" class="w-8 h-8 rounded-full" />
@@ -363,7 +312,7 @@ onMounted(() => {
             </thead>
             <tbody>
               <tr 
-                v-for="item in items.data" 
+                v-for="item in tableItens.data" 
                 :key="`tr-${item.id}`" 
                 class="`bg-white hover:bg-gray-100 dark:bg-gray-800 hover:dark:bg-gray-700 border-t border-gray-200 dark:border-gray-600 text-gray-500 dark:text-gray-400`"
               >
@@ -389,7 +338,7 @@ onMounted(() => {
                   </Link>
                 </td>
               </tr>
-              <tr v-if="items.total == 0 || items.from == null">
+              <tr v-if="tableItens.total == 0 || tableItens.from == null">
                 <td :class="`${classTD} text-center`">
                   <p class="text-lg leading-5 text-gray-600 dark:text-gray-400">{{ $t('No items to show.') }}</p>
                 </td>
@@ -398,50 +347,50 @@ onMounted(() => {
           </table>
         </div>
       </div>
-      <div v-if="items.total > 0" class="flex sticky bottom-0 justify-between rounded-xl backdrop-blur-sm p-2 my-2 -mx-3 bg-white/30 dark:bg-gray-800/30">
+      <div v-if="tableItens.total > 0" class="flex sticky bottom-0 justify-between rounded-xl backdrop-blur-sm p-2 my-2 -mx-3 bg-white/30 dark:bg-gray-800/30">
         <div class="w-full flex flex-row sm:hidden">
           <div class="basis-1/3 text-left">
-            <Link v-if="items.prev_page_url" as="button" :href="items.prev_page_url" class="text-sm">
+            <Link v-if="tableItens.prev_page_url" as="button" :href="tableItens.prev_page_url" class="text-sm">
               <Button color="primary">{{ $t('Previous')}}</Button>
             </Link>
           </div>
-          <div v-if="items.from !== null" class="basis-1/3 text-center">
+          <div v-if="tableItens.from !== null" class="basis-1/3 text-center">
             <span 
               aria-current="page" class="relative inline-flex rounded-md bg-gray-600 dark:bg-gray-400 px-4 py-1 text-sm font-semibold text-white dark:text-gray-800">
-              {{ `${items.current_page}/${items.last_page}` }}
+              {{ `${tableItens.current_page}/${tableItens.last_page}` }}
             </span>
           </div>
           <div class="basis-1/3 text-right">
-            <Link v-if="items.next_page_url" as="button" :href="items.next_page_url" class="text-sm">
+            <Link v-if="tableItens.next_page_url" as="button" :href="tableItens.next_page_url" class="text-sm">
               <Button color="primary">{{ $t('Next')}}</Button>
             </Link>
           </div>
         </div>
         <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
           <div>
-            <p v-if="items.from !== null" class="hidden lg:block text-xs text-gray-800 dark:text-white">
-              {{ $t('Showing :from to :to of :total results', { from: items.from, to: items.to, total: items.total }) }}
+            <p v-if="tableItens.from !== null" class="hidden lg:block text-xs text-gray-800 dark:text-white">
+              {{ $t('Showing :from to :to of :total results', { from: tableItens.from, to: tableItens.to, total: tableItens.total }) }}
             </p>
           </div>
           <div>
             <nav class="inline-flex shadow-sm gap-[2px]" aria-label="Pagination">
-              <Link v-if="items.prev_page_url" :href="items.prev_page_url" as="button" class="text-sm">
+              <Link v-if="tableItens.prev_page_url" :href="tableItens.prev_page_url" as="button" class="text-sm">
                 <Button color="primary">
                   <span class="sr-only">{{ $t('Previous')}}</span>
                   <ChevronLeftIcon class="h-4 w-4" aria-hidden="true" />
                 </Button>
               </Link>
 
-              <template v-if="items.from !== null" v-for="item in items.links">
+              <template v-if="tableItens.from !== null" v-for="item in tableItens.links">
                 <Link
-                  v-if="item.label > 0 && item.label != items.current_page || item.label == items.current_page"
+                  v-if="item.label > 0 && item.label != tableItens.current_page || item.label == tableItens.current_page"
                   :key="item.key" :href="item.url" as="button" class="text-sm"
                 >
-                  <Button color="primary" :disabled="item.label == items.current_page">{{ item.label }}</Button>
+                  <Button color="primary" :disabled="item.label == tableItens.current_page">{{ item.label }}</Button>
                 </Link>
               </template>
 
-              <Link v-if="items.next_page_url" :href="items.next_page_url" as="button" class="text-sm">
+              <Link v-if="tableItens.next_page_url" :href="tableItens.next_page_url" as="button" class="text-sm">
                 <Button color="primary">
                   <span class="sr-only">{{ $t('Next')}}</span>
                   <ChevronRightIcon class="h-4 w-4" aria-hidden="true" />
