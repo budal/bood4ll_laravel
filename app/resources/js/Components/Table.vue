@@ -144,13 +144,15 @@ const content = [
 
 const trashed = searchRoute.searchParams.get("trashed") || ''
 
-const contentSelected2 = content[content.map(function(e) { return e.id; }).indexOf(trashed)]
-
 const contentSelected = ref(content[content.map(function(e) { return e.id; }).indexOf(trashed)])
 
-const filtersModal2 = ref(trashed);
 
-console.log(contentSelected2, contentSelected, filtersModal2)
+
+const contentSelected2 = content[content.map(function(e) { return e.id; }).indexOf(trashed)]
+const filtersModal2 = ref(trashed);
+console.log(contentSelected, contentSelected2, filtersModal2)
+
+
 
 const filtersModal = ref(false);
 

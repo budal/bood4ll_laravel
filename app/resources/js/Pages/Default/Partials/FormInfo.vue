@@ -8,7 +8,7 @@ import { onBeforeMount, reactive } from 'vue';
 import { nextTick, ref } from 'vue';
 import { toast } from 'vue3-toastify';
 import { trans } from 'laravel-vue-i18n';
-import ListBox from '@/Components/ListBox.vue';
+import Select from '@/Components/Select.vue';
 
 const passwordInput = ref<HTMLInputElement | null>(null);
 
@@ -94,13 +94,7 @@ const content = [
                             :autocomplete="field.name"
                         />
 
-                        <TextInput v-if="field.type == 'select'"
-                            :content="field.content" 
-                            :id="field.name"
-                            :name="field.name"
-                            :type="field.type"
-                            class="mt-1 block w-full"
-                            v-model="form[field.name]" 
+                        <Select v-if="field.type == 'select'"
                         />
         
                         <InputError class="mt-2" :message="form.errors[field.name]" />
