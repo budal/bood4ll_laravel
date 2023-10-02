@@ -49,8 +49,8 @@ class AbilitiesController extends Controller
             ],            
             [
                 'icon' => "ListBulletIcon",
-                'title' => "Show all permissions",
-                'route' => "apps.permissions"
+                'title' => "Show all roles",
+                'route' => "apps.roles"
             ],            
         ];
 
@@ -120,7 +120,7 @@ class AbilitiesController extends Controller
 
         // $request->user()->save();
 
-        return Redirect::route('apps.permissions')->with('status', 'User created.');
+        return Redirect::route('apps.roles')->with('status', 'User created.');
     }
     
     /**

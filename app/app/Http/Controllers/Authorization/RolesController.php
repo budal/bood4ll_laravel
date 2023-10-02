@@ -37,17 +37,17 @@ class RolesController extends Controller
         ];
 
         $routes = [
-            'createRoute' => "apps.permissions.create",
-            'editRoute' => "apps.permissions.edit",
-            'destroyRoute' => "apps.permissions.destroy",
-            'restoreRoute' => "apps.permissions.restore",
+            'createRoute' => "apps.roles.create",
+            'editRoute' => "apps.roles.edit",
+            'destroyRoute' => "apps.roles.destroy",
+            'restoreRoute' => "apps.roles.restore",
         ];
 
         $menu = [
             [
                 'icon' => "PlusIcon",
                 'title' => "Add permission",
-                'route' => "apps.permissions.create"
+                'route' => "apps.roles.create"
             ],
             [
                 'icon' => "ListBulletIcon",
@@ -57,8 +57,8 @@ class RolesController extends Controller
         ];
 
         return Inertia::render('Default/Index', [
-            'title' => "Permissions management",
-            'subtitle' => "Define permissions, grouping abilities to define specific access.",
+            'title' => "Roles management",
+            'subtitle' => "Define roles, grouping abilities to define specific access.",
             'softDelete' => Role::hasGlobalScope('Illuminate\Database\Eloquent\SoftDeletingScope'),
             'routes' => $routes,
             'filters' => $request->all('search', 'sorted', 'trashed'),
@@ -77,7 +77,7 @@ class RolesController extends Controller
     {
         return [
             [
-                'title' => "Permissions management",
+                'title' => "Roles management",
                 'subtitle' => "Permission name and abilities",
                 'cols' => 2,
                 'fields' => [
@@ -122,7 +122,7 @@ class RolesController extends Controller
 
         // $request->user()->save();
 
-        return Redirect::route('apps.permissions')->with('status', 'User created.');
+        return Redirect::route('apps.roles')->with('status', 'User created.');
     }
     
     /**
