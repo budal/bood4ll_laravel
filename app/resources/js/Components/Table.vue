@@ -285,9 +285,7 @@ const classTD = "p-2"
         <Button color="secondary" @click="openFiltersModal" class="ml-2 h-full"><AdjustmentsVerticalIcon class="h-5 w-5" /></Button>
       </div>
       <div class="flex-none items-center">
-        <Menu :menu="menu">
-
-        </Menu>
+        <Menu :menu="menu" />
       </div>
     </div>
     <div>
@@ -296,8 +294,8 @@ const classTD = "p-2"
           <table class="table-auto w-full text-sm shadow-lg">
             <thead v-if="tableItens.total > 0 && tableItens.from !== null">
               <tr class="bg-gray-200 dark:bg-gray-900 p-3 text-gray-1000 dark:text-white text-left">
-                <th v-if="routes.destroyRoute" :class="`${classTD}`">
-                  <Checkbox name="remember" :checked="selectedcheckBox" @click="toggleSelection" class="w-8 h-8 rounded-full" />
+                <th :class="`${classTD}`">
+                  <Checkbox v-if="routes.destroyRoute" name="remember" :checked="selectedcheckBox" @click="toggleSelection" class="w-8 h-8 rounded-full" />
                 </th>
                 <template v-for="(content, id) in titles">
                   <th :class="`${classTD}`">

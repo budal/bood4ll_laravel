@@ -30,7 +30,7 @@ defineProps<{
                                 {{ $t(subtitle) }}
                             </p>
                         </header>
-                        <Table :api="'http://localhost/apps/users1'" :menu="menu" :softDelete="softDelete" :routes="routes" :filters="filters" :items="items" :titles="titles" />
+                        <Table :menu="menu" :softDelete="softDelete" :routes="routes" :filters="filters" :items="items" :titles="titles" />
                     </div>
                 </div>
             </div>
