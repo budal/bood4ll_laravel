@@ -196,6 +196,7 @@ class UsersController extends Controller
                             'content' => $states,
                             'name' => "state_birth",
                             'title' => "State",
+                            'multiple' => true,
                         ],
                     ],
                 ]

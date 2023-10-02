@@ -22,24 +22,29 @@
   const emit = defineEmits(['update:modelValue']);
 
   const selectedOptions = props.content[props.content.map(function(e: any) { return e.id; }).indexOf(props.modelValue)];
-  const selectedOptionsRef = props.multiple == true ? ref([selectedOptions]) : ref(selectedOptions);
+  const selectedOptionsRef = props.multiple == true ? ref(selectedOptions ? [selectedOptions] : []) : ref(selectedOptions);
+
 </script>
 
 <template>
   <Listbox 
     v-model="selectedOptionsRef"
+    @update:modelValue="value => emit('update:modelValue', props.multiple == true ? [value.id] : value.id)"
     :multiple="multiple"
   >
     <div class="relative mt-1">
       <ListboxButton
-        class="w-full block cursor-default rounded-md bg-white py-2.5 pl-3 pr-10 text-left sm:text-sm shadow-sm focus:outline-none dark:bg-gray-900 dark:text-gray-300 border border-gray-300 dark:border-gray-500 focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-gray-800 focus:ring-gray-300 dark:focus:ring-gray-500 disabled:opacity-25 transition ease-in-out duration-500"
+        class="w-full block cursor-default rounded-md bg-white py-2 pl-3 pr-10 text-left shadow-sm focus:outline-none dark:bg-gray-900 dark:text-gray-300 border border-gray-300 dark:border-gray-500 focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-gray-800 focus:ring-gray-300 dark:focus:ring-gray-500 disabled:opacity-25 transition ease-in-out duration-500"
         v-slot="{ value }"
       >
         <span class="block truncate">
+          {{ console.log(value) }}
           {{  
-            multiple == true ? (
-              value.length > 0 ? value.map((item: any) => $t(item.title)).join(', ') : $t('Select an option')
-            ) : $t(value.title)
+            value ? (
+              multiple == true ? (
+                value.length > 0 ? value.map((item: any) => $t(item.title)).join(', ') : $t('Select an option')
+              ) : $t(value.title)
+            ) : $t('Select an option')
           }}
         </span>
         <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2" >
