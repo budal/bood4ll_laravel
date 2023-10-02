@@ -11,8 +11,9 @@ defineProps<{
     routes?: object;
     status?: string;
     filters: object;
-    items: object;
     titles: object;
+    menu?: object;
+    items: object;
 }>();
 </script>
 
@@ -29,7 +30,7 @@ defineProps<{
                                 {{ $t(subtitle) }}
                             </p>
                         </header>
-                        <Table :api="'http://localhost/apps/users1'" :softDelete="softDelete" :routes="routes" :filters="filters" :items="items" :titles="titles" />
+                        <Table :api="'http://localhost/apps/users1'" :menu="menu" :softDelete="softDelete" :routes="routes" :filters="filters" :items="items" :titles="titles" />
                     </div>
                 </div>
             </div>

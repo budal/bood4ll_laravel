@@ -19,9 +19,16 @@ class UsersController extends Controller
 {
     /**
      * Display the users list.
-     */
+     */ 
     public function index(Request $request): Response
     {
+        $routes = [
+            'createRoute' => "apps.users.create",
+            'editRoute' => "apps.users.edit",
+            'destroyRoute' => "apps.users.destroy",
+            'restoreRoute' => "apps.users.restore",
+        ];
+        
         $titles = [
             [
                 'type' => 'avatar',
@@ -29,30 +36,31 @@ class UsersController extends Controller
                 'field' => 'id',
                 'fallback' => 'name',
                 'disableSort' => true
-            ],
+            ],    
             [
                 'type' => 'composite',
                 'title' => 'User',
                 'field' => 'name',
                 'fields' => ['name', 'email']
-            ],
+            ],    
             [
                 'type' => 'simple',
                 'title' => 'Username',
                 'field' => 'username'
-            ],
+            ],    
             [
                 'type' => 'simple',
                 'title' => 'Active',
                 'field' => 'active'
-            ]
-        ];
+            ]    
+        ];    
 
-        $routes = [
-            'createRoute' => "apps.users.create",
-            'editRoute' => "apps.users.edit",
-            'destroyRoute' => "apps.users.destroy",
-            'restoreRoute' => "apps.users.restore",
+        $menu = [
+            [
+                'icon' => "PlusIcon",
+                'title' => "Add",
+                'route' => "apps.users.create"
+            ]
         ];
 
         return Inertia::render('Default/Index', [
@@ -62,6 +70,7 @@ class UsersController extends Controller
             'routes' => $routes,
             'filters' => $request->all('search', 'sorted', 'trashed'),
             'titles' => $titles,
+            'menu' => $menu,
             'items' => User::filter($request->all('search', 'sorted', 'trashed'))
                 ->sort($request->sorted ?? "name")
                 ->paginate(20)

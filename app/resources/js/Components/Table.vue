@@ -28,8 +28,9 @@ const props = defineProps<{
   softDelete?: boolean | null;
   routes?: any;
   filters?: any;
-  items: any;
+  menu?: any;
   titles: any;
+  items: any;
 }>();
 
 const searchRoute = new URL(window.location.href);
@@ -284,10 +285,8 @@ const classTD = "p-2"
         <Button color="secondary" @click="openFiltersModal" class="ml-2 h-full"><AdjustmentsVerticalIcon class="h-5 w-5" /></Button>
       </div>
       <div class="flex-none items-center">
-        <Menu>
-          <Button color="primary" v-if="routes.createRoute" class="ml-2 h-full" @click="form.get((route(routes.createRoute) as unknown) as string)">
-            <PlusIcon class="h-5 w-5" />
-          </Button>
+        <Menu :menu="menu">
+
         </Menu>
       </div>
     </div>

@@ -13,14 +13,12 @@ use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Inertia\Response;
 
-
-
 use Illuminate\Database\Eloquent\Model;
 
 use App\Models\User;
 use App\Models\Role;
 
-class RolesController extends Controller
+class AbilitiesController extends Controller
 {
     /**
      * Display the users list.
@@ -37,28 +35,28 @@ class RolesController extends Controller
         ];
 
         $routes = [
-            'createRoute' => "apps.permissions.create",
-            'editRoute' => "apps.permissions.edit",
-            'destroyRoute' => "apps.permissions.destroy",
-            'restoreRoute' => "apps.permissions.restore",
+            'createRoute' => "apps.abilities.create",
+            'editRoute' => "apps.abilities.edit",
+            'destroyRoute' => "apps.abilities.destroy",
+            'restoreRoute' => "apps.abilities.restore",
         ];
 
         $menu = [
             [
                 'icon' => "PlusIcon",
-                'title' => "Add permission",
-                'route' => "apps.permissions.create"
-            ],
+                'title' => "Add ability",
+                'route' => "apps.abilities.create"
+            ],            
             [
                 'icon' => "ListBulletIcon",
-                'title' => "Show all abilities",
-                'route' => "apps.abilities"
+                'title' => "Show all permissions",
+                'route' => "apps.permissions"
             ],            
         ];
 
         return Inertia::render('Default/Index', [
-            'title' => "Permissions management",
-            'subtitle' => "Define permissions, grouping abilities to define specific access.",
+            'title' => "Abilities management",
+            'subtitle' => "Set abilities to access specifics resources.",
             'softDelete' => Role::hasGlobalScope('Illuminate\Database\Eloquent\SoftDeletingScope'),
             'routes' => $routes,
             'filters' => $request->all('search', 'sorted', 'trashed'),
@@ -77,8 +75,8 @@ class RolesController extends Controller
     {
         return [
             [
-                'title' => "Permissions management",
-                'subtitle' => "Permission name and abilities",
+                'title' => "Abilities management",
+                'subtitle' => "Ability name and application",
                 'cols' => 2,
                 'fields' => [
                     [
