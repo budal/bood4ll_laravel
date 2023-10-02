@@ -136,6 +136,37 @@ class UsersController extends Controller
     
     public function __form()
     {
+
+
+        $states = [
+            [ 
+                'id' => 'PR', 
+                'title' => 'Paraná', 
+                'disabled' => false 
+            ],
+            [ 
+                'id' => 'SP', 
+                'title' => 'São Paulo', 
+                'disabled' => false 
+            ],
+            [ 
+                'id' => 'RJ', 
+                'title' => 'Rio de Janeiro', 
+                'disabled' => false 
+            ],
+            [ 
+                'id' => 'PI', 
+                'title' => 'Piauí', 
+                'disabled' => true 
+            ],
+            [ 
+                'id' => 'SE', 
+                'title' => 'Sergipe', 
+                'disabled' => false 
+            ],
+        ];
+
+
         return [
             [
                 'title' => "User profile Information",
@@ -159,7 +190,12 @@ class UsersController extends Controller
                             'type' => "input",
                             'name' => "username",
                             'title' => "Username",
-                            'span' => 2,
+                        ],
+                        [
+                            'type' => "select",
+                            'content' => $states,
+                            'name' => "state_birth",
+                            'title' => "State",
                         ],
                     ],
                 ]

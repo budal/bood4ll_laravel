@@ -11,6 +11,7 @@ import { trans } from 'laravel-vue-i18n';
 import Select from '@/Components/Select.vue';
 
 const passwordInput = ref<HTMLInputElement | null>(null);
+const selected = ref({id:3, title: 'Therese Wunsch'});
 
 const props = defineProps<{
     method: any;
@@ -94,7 +95,13 @@ const content = [
                             :autocomplete="field.name"
                         />
 
-                        <Select v-if="field.type == 'select'"
+                        <Select v-if="field.type == 'select'" 
+                            :id="field.name"
+                            :name="field.name"
+                            :type="field.type"
+                            :content="field.content"
+                            class="mt-1 block w-full"
+                            v-model="form[field.name]"
                         />
         
                         <InputError class="mt-2" :message="form.errors[field.name]" />
