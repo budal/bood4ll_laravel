@@ -8,16 +8,15 @@
   } from '@headlessui/vue'
   import { CheckIcon, ChevronUpDownIcon } from '@heroicons/vue/20/solid';
 
-
   const props = withDefaults(
-      defineProps<{
-        modelValue: Object | string | number;
-        content: any;
-        multiple?: boolean;
-      }>(),
-      {
-        multiple: false,
-      }
+    defineProps<{
+      modelValue: Object | string | number;
+      content: any;
+      multiple?: boolean;
+    }>(),
+    {
+      multiple: false,
+    }
   );
 
   const emit = defineEmits(['update:modelValue']);
@@ -39,7 +38,7 @@
         <span class="block truncate">
           {{  
             multiple == true ? (
-              value.map((item: any) => item.title).join(', ')
+              value.length > 0 ? value.map((item: any) => $t(item.title)).join(', ') : $t('Select an option')
             ) : $t(value.title)
           }}
         </span>

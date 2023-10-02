@@ -100,6 +100,7 @@ const content = [
                             :name="field.name"
                             :type="field.type"
                             :content="field.content"
+                            :multiple="field.multiple"
                             class="mt-1 block w-full"
                             v-model="form[field.name]"
                         />

@@ -3,6 +3,7 @@ import Button from './Button.vue';
 import Checkbox from '@/Components/Checkbox.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import ListBox from '@/Components/ListBox.vue';
+import Select from '@/Components/Select.vue';
 import Modal from '@/Components/Modal.vue';
 import Avatar from '@/Components/Avatar.vue';
 import SearchInput from '@/Components/SearchInput.vue';
@@ -142,17 +143,7 @@ const content = [
   { id: 'with', title: 'Active and trashed', disabled: props.softDelete === true ? false : true },
 ]
 
-const trashed = searchRoute.searchParams.get("trashed") || ''
-
-const contentSelected = ref(content[content.map(function(e) { return e.id; }).indexOf(trashed)])
-
-
-
-const contentSelected2 = content[content.map(function(e) { return e.id; }).indexOf(trashed)]
-const filtersModal2 = ref(trashed);
-console.log(contentSelected, contentSelected2, filtersModal2)
-
-
+const trashedRef = ref(searchRoute.searchParams.get("trashed") || '')
 
 const filtersModal = ref(false);
 
@@ -161,7 +152,7 @@ const openFiltersModal = () => {
 }
 
 const refreshFilters = () => {
-  searchRoute.searchParams.set("trashed", contentSelected.value.id)
+  searchRoute.searchParams.set("trashed", trashedRef.value)
 
   router.visit(searchRoute, {
     method: 'get',
@@ -263,7 +254,7 @@ const classTD = "p-2"
 
       <div class="pt-3">
         <InputLabel for="name" :value="$t('Content')" />
-        <ListBox :content="content" v-model="contentSelected" />
+        <Select :content="content" v-model="trashedRef" />
       </div>
 
       <div class="mt-6 flex justify-end">
