@@ -12,11 +12,14 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Inertia\Response;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Str;
 
 use Illuminate\Database\Eloquent\Model;
 
 use App\Models\User;
 use App\Models\Role;
+use App\Models\Ability;
 
 class AbilitiesController extends Controller
 {
@@ -73,6 +76,25 @@ class AbilitiesController extends Controller
     
     public function __form()
     {
+        $prefix = "apps";
+        
+        $routes = collect(Route::getRoutes())->filter(function ($route) use ($prefix) {
+            return Str::startsWith($route->uri, $prefix);
+        });
+        
+        $menu = $routes->map(function ($route) use ($prefix) {
+            $actionSegments = explode('\\', $route->action['controller']);
+            $id = $route->action['as'];
+            // $title = $id;
+            $title = $id . " (" . end($actionSegments) . ")";
+
+            return compact('id', 'title');
+        })->values()->toArray();
+
+        usort($menu, function($a, $b) {
+            return $a['title'] <=> $b['title'];
+        });
+        
         return [
             [
                 'title' => "Abilities management",
@@ -87,10 +109,9 @@ class AbilitiesController extends Controller
                         ],
                         [
                             'type' => "select",
-                            'name' => "abilities",
+                            'name' => "ability",
                             'title' => "Ability",
-                            'content' => [],
-                            'multiple' => true,
+                            'content' => $menu,
                         ],
                     ],
                 ]

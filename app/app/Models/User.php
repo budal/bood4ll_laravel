@@ -53,6 +53,11 @@ class User extends Authenticatable
         // static::creating(fn(User $user) => $user->uuid = (string) Uuid::uuid4());
     }
 
+    public function role()
+    {
+        return $this->belongsToMany(Role::class);
+    }
+    
     public function resolveRouteBinding($value, $field = null)
     {
         return $this->where($field ?? 'id', $value)->withTrashed()->firstOrFail();
