@@ -2,7 +2,7 @@
 import Button from './Button.vue';
 import Checkbox from '@/Components/Checkbox.vue';
 import InputLabel from '@/Components/InputLabel.vue';
-import ListBox from '@/Components/ListBox.vue';
+import Menu from '@/Components/Menu.vue';
 import Select from '@/Components/Select.vue';
 import Modal from '@/Components/Modal.vue';
 import Avatar from '@/Components/Avatar.vue';
@@ -284,9 +284,11 @@ const classTD = "p-2"
         <Button color="secondary" @click="openFiltersModal" class="ml-2 h-full"><AdjustmentsVerticalIcon class="h-5 w-5" /></Button>
       </div>
       <div class="flex-none items-center">
-        <Button color="primary" v-if="routes.createRoute" class="ml-2 h-full" @click="form.get((route(routes.createRoute) as unknown) as string)">
-          <PlusIcon class="h-5 w-5" />
-        </Button>
+        <Menu>
+          <Button color="primary" v-if="routes.createRoute" class="ml-2 h-full" @click="form.get((route(routes.createRoute) as unknown) as string)">
+            <PlusIcon class="h-5 w-5" />
+          </Button>
+        </Menu>
       </div>
     </div>
     <div>

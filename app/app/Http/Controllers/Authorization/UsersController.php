@@ -80,6 +80,13 @@ class UsersController extends Controller
 
     public function index1(Request $request)
     {
+        $routes = [
+            'createRoute' => "apps.users.create",
+            'editRoute' => "apps.users.edit",
+            'destroyRoute' => "apps.users.destroy",
+            'restoreRoute' => "apps.users.restore",
+        ];
+
         $titles = [
             [
                 'type' => 'avatar',
@@ -106,11 +113,11 @@ class UsersController extends Controller
             ]
         ];
 
-        $routes = [
-            'createRoute' => "apps.users.create",
-            'editRoute' => "apps.users.edit",
-            'destroyRoute' => "apps.users.destroy",
-            'restoreRoute' => "apps.users.restore",
+        $menu = [
+            [
+                'icon' => "PlusIcon",
+                'route' => "apps.users.create"
+            ]
         ];
 
         return [
@@ -118,6 +125,7 @@ class UsersController extends Controller
             'routes' => $routes,
             'filters' => $request->all('search', 'sorted', 'trashed'),
             'titles' => $titles,
+            'menu' => $menu,
             'items' => User::filter($request->all('search', 'sorted', 'trashed'))
                 ->sort($request->sorted ?? "name")
                 ->paginate(20)
@@ -196,7 +204,6 @@ class UsersController extends Controller
                             'content' => $states,
                             'name' => "state_birth",
                             'title' => "State",
-                            'multiple' => true,
                         ],
                     ],
                 ]

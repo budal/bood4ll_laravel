@@ -38,7 +38,6 @@
         v-slot="{ value }"
       >
         <span class="block truncate">
-          {{ console.log(value) }}
           {{  
             value ? (
               multiple == true ? (
@@ -90,6 +89,11 @@
               >
                 <CheckIcon class="h-5 w-5" aria-hidden="true" />
               </span>
+            </li>
+          </ListboxOption>
+          <ListboxOption v-if="content.length == 0" disabled>
+            <li class="relative cursor-default select-none py-2 pl-10 pr-4">
+              <span class="opacity-50 dark:opacity-25 italic">{{ $t('No items to show.') }}</span>
             </li>
           </ListboxOption>
         </ListboxOptions>
