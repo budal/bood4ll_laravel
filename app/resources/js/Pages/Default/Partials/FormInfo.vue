@@ -11,7 +11,6 @@ import { trans } from 'laravel-vue-i18n';
 import Select from '@/Components/Select.vue';
 
 const passwordInput = ref<HTMLInputElement | null>(null);
-const selected = ref({id:3, title: 'Therese Wunsch'});
 
 const props = defineProps<{
     method: any;
@@ -34,6 +33,8 @@ onBeforeMount(() => {
         form[key] = props.data[key] || ''
     }
 })
+
+console.log(props.body, props.data)
 
 const sendForm = () => {
     form.transform(() => ({ ...dynamicFields() }))
@@ -100,9 +101,9 @@ const content = [
                             :name="field.name"
                             :type="field.type"
                             :content="field.content"
-                            :multiple="field.multiple"
                             class="mt-1 block w-full"
                             v-model="form[field.name]"
+                            :multiple="field.multiple"
                         />
         
                         <InputError class="mt-2" :message="form.errors[field.name]" />

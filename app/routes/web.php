@@ -83,17 +83,17 @@ Route::middleware('auth')->group(function () {
                 Route::get('/permissions/roles', 'index')->name('roles')->middleware(['password.confirm', 'verified'])->breadcrumb('Roles');
                 Route::get('/permissions/roles/create', 'create')->name('roles.create')->middleware(['password.confirm'])->breadcrumb('Role creation', 'apps.roles');
                 Route::post('/permissions/roles/create', 'create')->name('roles.store')->middleware(['password.confirm']);
-                Route::get('/permissions/roles/edit/{user}', 'edit')->name('roles.edit')->middleware(['password.confirm'])->breadcrumb('Role edition', 'apps.roles');
-                Route::patch('/permissions/roles/edit/{user}', 'edit')->name('roles.update')->middleware(['password.confirm']);
+                Route::get('/permissions/roles/edit/{role}', 'edit')->name('roles.edit')->middleware(['password.confirm'])->breadcrumb('Role edition', 'apps.roles');
+                Route::patch('/permissions/roles/edit/{role}', 'edit')->name('roles.update')->middleware(['password.confirm']);
                 Route::delete('/permissions/roles/destroy', 'destroy')->name('roles.destroy')->middleware(['password.confirm']);
             });
 
             Route::controller(AbilitiesController::class)->group(function () {
-                Route::get('/permissions/abilities', 'index')->name('abilities')->middleware(['password.confirm', 'verified'])->breadcrumb('Abilities');
+                Route::get('/permissions/abilities', 'index')->name('abilities')->middleware(['password.confirm', 'verified'])->breadcrumb('Abilities', 'apps.roles');
                 Route::get('/permissions/abilities/create', 'create')->name('abilities.create')->middleware(['password.confirm'])->breadcrumb('Ability creation', 'apps.abilities');
                 Route::post('/permissions/abilities/create', 'create')->name('abilities.store')->middleware(['password.confirm']);
-                Route::get('/permissions/abilities/edit/{user}', 'edit')->name('abilities.edit')->middleware(['password.confirm'])->breadcrumb('Ability edition', 'apps.abilities');
-                Route::patch('/permissions/abilities/edit/{user}', 'edit')->name('abilities.update')->middleware(['password.confirm']);
+                Route::get('/permissions/abilities/edit/{ability}', 'edit')->name('abilities.edit')->middleware(['password.confirm'])->breadcrumb('Ability edition', 'apps.abilities');
+                Route::patch('/permissions/abilities/edit/{ability}', 'edit')->name('abilities.update')->middleware(['password.confirm']);
                 Route::delete('/permissions/abilities/destroy', 'destroy')->name('abilities.destroy')->middleware(['password.confirm']);
             });
 

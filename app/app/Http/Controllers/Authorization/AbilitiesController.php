@@ -30,10 +30,9 @@ class AbilitiesController extends Controller
     {
         $titles = [
             [
-                'type' => 'composite',
-                'title' => 'User',
+                'type' => 'simple',
+                'title' => 'Ability',
                 'field' => 'name',
-                'fields' => ['name', 'email']
             ],
         ];
 
@@ -60,12 +59,12 @@ class AbilitiesController extends Controller
         return Inertia::render('Default/Index', [
             'title' => "Abilities management",
             'subtitle' => "Set abilities to access specifics resources.",
-            'softDelete' => Role::hasGlobalScope('Illuminate\Database\Eloquent\SoftDeletingScope'),
+            'softDelete' => Ability::hasGlobalScope('Illuminate\Database\Eloquent\SoftDeletingScope'),
             'routes' => $routes,
             'filters' => $request->all('search', 'sorted', 'trashed'),
             'titles' => $titles,
             'menu' => $menu,
-            'items' => Role::filter($request->all('search', 'sorted', 'trashed'))
+            'items' => Ability::filter($request->all('search', 'sorted', 'trashed'))
                 ->sort($request->sorted ?? "name")
                 ->paginate(20)
                 ->onEachSide(2)
@@ -85,7 +84,6 @@ class AbilitiesController extends Controller
         $menu = $routes->map(function ($route) use ($prefix) {
             $actionSegments = explode('\\', $route->action['controller']);
             $id = $route->action['as'];
-            // $title = $id;
             $title = $id . " (" . end($actionSegments) . ")";
 
             return compact('id', 'title');
@@ -99,18 +97,12 @@ class AbilitiesController extends Controller
             [
                 'title' => "Abilities management",
                 'subtitle' => "Ability name and application",
-                'cols' => 2,
                 'fields' => [
                     [
                         [
-                            'type' => "input",
+                            'type' => "select",
                             'name' => "name",
                             'title' => "Name",
-                        ],
-                        [
-                            'type' => "select",
-                            'name' => "ability",
-                            'title' => "Ability",
                             'content' => $menu,
                         ],
                     ],
@@ -119,9 +111,9 @@ class AbilitiesController extends Controller
         ];
     }
 
-    public function create(User $user)
+    public function create(Ability $ability)
     {
-        $collection = collect(DB::getSchemaBuilder()->getColumnListing($user->getTable()));
+        $collection = collect(DB::getSchemaBuilder()->getColumnListing($ability->getTable()));
         $keyed = $collection->mapWithKeys(function ($value, $key) { return [$value => '']; });
          
         return Inertia::render('Default/Create', [
@@ -130,7 +122,7 @@ class AbilitiesController extends Controller
         ]);
     }
 
-    public function store(ProfileUpdateRequest $request): RedirectResponse
+    public function store($request): RedirectResponse
     {
         dd($request);
         // $request->user()->fill($request->validated());
@@ -141,19 +133,19 @@ class AbilitiesController extends Controller
 
         // $request->user()->save();
 
-        return Redirect::route('apps.roles')->with('status', 'User created.');
+        return Redirect::route('apps.abilities')->with('status', 'Ability created.');
     }
     
     /**
      * Display the user's profile form.
      */
-    public function edit(User $user): Response
+    public function edit(Ability $ability): Response
     {
-        // dd(DB::getSchemaBuilder()->getColumnListing('users'), $user->getTable(), $user->getFillable(), $user);
+        // dd(DB::getSchemaBuilder()->getColumnListing('users'), $ability->getTable(), $ability->getFillable(), $ability);
         
         return Inertia::render('Default/Edit', [
             'body' => $this->__form(),
-            'data' => collect($user)->all()
+            'data' => collect($ability)->all()
         ]);
     }
 
@@ -194,9 +186,9 @@ class AbilitiesController extends Controller
         return back()->with('status', 'Users removed succesfully!');
     }
 
-    public function restore(User $user)
+    public function restore(Ability $ability)
     {
-        $user->restore();
+        $ability->restore();
 
         return Redirect::back()->with('status', 'User restored.');
     }
