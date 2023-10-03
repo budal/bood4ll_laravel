@@ -34,7 +34,7 @@ onBeforeMount(() => {
     }
 })
 
-console.log(props.body, props.data)
+console.log(props.data)
 
 const sendForm = () => {
     form.transform(() => ({ ...dynamicFields() }))

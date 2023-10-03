@@ -143,7 +143,7 @@ class RolesController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        // dd($request);
+        dd($request);
         
         // $request->user()->fill($request->validated());
 

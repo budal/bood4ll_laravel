@@ -122,7 +122,7 @@ class AbilitiesController extends Controller
         ]);
     }
 
-    public function store($request): RedirectResponse
+    public function store(Request $request): RedirectResponse
     {
         dd($request);
         // $request->user()->fill($request->validated());
