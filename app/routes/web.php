@@ -90,11 +90,9 @@ Route::middleware('auth')->group(function () {
 
             Route::controller(AbilitiesController::class)->group(function () {
                 Route::get('/permissions/abilities', 'index')->name('abilities')->middleware(['password.confirm', 'verified'])->breadcrumb('Abilities', 'apps.roles');
-                Route::get('/permissions/abilities/create', 'create')->name('abilities.create')->middleware(['password.confirm'])->breadcrumb('Ability creation', 'apps.abilities');
-                Route::post('/permissions/abilities/create', 'create')->name('abilities.store')->middleware(['password.confirm']);
-                Route::get('/permissions/abilities/edit/{ability}', 'edit')->name('abilities.edit')->middleware(['password.confirm'])->breadcrumb('Ability edition', 'apps.abilities');
-                Route::patch('/permissions/abilities/edit/{ability}', 'edit')->name('abilities.update')->middleware(['password.confirm']);
-                Route::delete('/permissions/abilities/destroy', 'destroy')->name('abilities.destroy')->middleware(['password.confirm']);
+                Route::post('/permissions/abilities/update/{ability}', 'update')->name('abilities.update')->middleware(['password.confirm']);
+                Route::patch('/permissions/abilities/upsert/{ability}', 'upsert')->name('abilities.upsert')->middleware(['password.confirm']);
+                Route::delete('/permissions/abilities/destroy/{ability}', 'destroy')->name('abilities.destroy')->middleware(['password.confirm']);
             });
 
             Route::controller(UnitsController::class)->group(function () {
