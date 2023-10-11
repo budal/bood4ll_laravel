@@ -99,7 +99,7 @@ class AbilitiesController extends Controller
                 'field' => 'title',
             ],
             [
-                'type' => 'simple',
+                'type' => 'switch',
                 'title' => 'Active',
                 'field' => 'id',
             ],

@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import Button from './Button.vue';
+import Avatar from '@/Components/Avatar.vue';
+import Button from '@/Components/Button.vue';
 import Checkbox from '@/Components/Checkbox.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import Menu from '@/Components/Menu.vue';
-import Select from '@/Components/Select.vue';
 import Modal from '@/Components/Modal.vue';
-import Avatar from '@/Components/Avatar.vue';
+import Select from '@/Components/Select.vue';
+import Switch from '@/Components/Switch.vue';
 import SearchInput from '@/Components/SearchInput.vue';
 import { 
   ArrowUturnLeftIcon,
@@ -317,15 +318,18 @@ const classTD = "p-2"
                   <Button color="warning" padding="2" v-if="routes.restoreRoute && item.deleted_at" :class="`${classTD}`" @click="restore(item.id)"><ArrowUturnLeftIcon class="h-3 w-3" /></Button>
                 </td>
                 <template v-for="content in titles">
-                  <td v-if="content.type == 'avatar'" :class="`${classTD}`">
-                    <Avatar class="w-12 h-12 rounded-full" :name="`${item[content.fallback]}`" />
-                  </td>
-                  <td v-if="content.type == 'composite'" :class="`${classTD}`">
-                    <strong class="text-gray-900 text-sm font-medium dark:text-gray-200">{{ item[content.fields[0]] }}</strong>
-                    <p class="truncate text-xs leading-5 text-gray-600 dark:text-gray-400">{{ item[content.fields[1]] }}</p>
-                  </td>
-                  <td v-if="content.type == 'simple'" :class="`${classTD}`">
-                    <p class="truncate text-xs leading-5 text-gray-900 dark:text-gray-200">{{ item[content.field] }}</p>
+                  <td :class="`${classTD}`">
+                    <p v-if="content.type == 'simple'" class="truncate text-xs leading-5 text-gray-900 dark:text-gray-200">{{ item[content.field] }}</p>
+                    
+                    <template v-if="content.type == 'composite'">
+                      <strong class="text-gray-900 text-sm font-medium dark:text-gray-200">{{ item[content.fields[0]] }}</strong>
+                      <p class="truncate text-xs leading-5 text-gray-600 dark:text-gray-400">{{ item[content.fields[1]] }}</p>
+                    </template>
+                    
+                    <Avatar v-if="content.type == 'avatar'" class="w-12 h-12 rounded-full" :name="`${item[content.fallback]}`" />
+                    
+                    <Switch v-if="content.type == 'switch'" :name="`${item[content.fallback]}`" />
+
                   </td>
                 </template>
                 <td v-if="routes.editRoute" :class="`${classTD} text-right`">
