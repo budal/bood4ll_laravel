@@ -26,52 +26,95 @@ class AbilitiesController extends Controller
     /**
      * Display the users list.
      */
+    // public function index(Request $request): Response
+    // {
+    //     $titles = [
+    //         [
+    //             'type' => 'simple',
+    //             'title' => 'Ability',
+    //             'field' => 'name',
+    //         ],
+    //     ];
+
+    //     $routes = [
+    //         'createRoute' => "apps.abilities.create",
+    //         'editRoute' => "apps.abilities.edit",
+    //         'destroyRoute' => "apps.abilities.destroy",
+    //         'restoreRoute' => "apps.abilities.restore",
+    //     ];
+
+    //     $menu = [
+    //         [
+    //             'icon' => "PlusIcon",
+    //             'title' => "Add ability",
+    //             'route' => "apps.abilities.create"
+    //         ],            
+    //         [
+    //             'icon' => "ListBulletIcon",
+    //             'title' => "Show all roles",
+    //             'route' => "apps.roles"
+    //         ],            
+    //     ];
+
+    //     return Inertia::render('Default/Index', [
+    //         'title' => "Abilities management",
+    //         'subtitle' => "Set abilities to access specifics resources.",
+    //         'softDelete' => Ability::hasGlobalScope('Illuminate\Database\Eloquent\SoftDeletingScope'),
+    //         'routes' => $routes,
+    //         'filters' => $request->all('search', 'sorted', 'trashed'),
+    //         'titles' => $titles,
+    //         'menu' => $menu,
+    //         'items' => Ability::filter($request->all('search', 'sorted', 'trashed'))
+    //             ->sort($request->sorted ?? "name")
+    //             ->paginate(20)
+    //             ->onEachSide(2)
+    //             ->appends($request->all('search', 'sorted', 'trashed'))
+    //     ]);
+    // }
+
     public function index(Request $request): Response
     {
+        $prefix = "apps";
+        
+        $routes = collect(Route::getRoutes())->filter(function ($route) use ($prefix) {
+            return Str::startsWith($route->uri, $prefix);
+        });
+        
+        $items = $routes->map(function ($route) use ($prefix) {
+            $actionSegments = explode('\\', $route->action['controller']);
+            $id = $route->action['as'];
+            $title = $id . " (" . end($actionSegments) . ")";
+
+            return compact('id', 'title');
+        })->values()->toArray();
+
+        usort($items, function($a, $b) {
+            return $a['title'] <=> $b['title'];
+        });
+        
         $titles = [
             [
                 'type' => 'simple',
                 'title' => 'Ability',
-                'field' => 'name',
+                'field' => 'title',
             ],
-        ];
-
-        $routes = [
-            'createRoute' => "apps.abilities.create",
-            'editRoute' => "apps.abilities.edit",
-            'destroyRoute' => "apps.abilities.destroy",
-            'restoreRoute' => "apps.abilities.restore",
-        ];
-
-        $menu = [
             [
-                'icon' => "PlusIcon",
-                'title' => "Add ability",
-                'route' => "apps.abilities.create"
-            ],            
-            [
-                'icon' => "ListBulletIcon",
-                'title' => "Show all roles",
-                'route' => "apps.roles"
-            ],            
+                'type' => 'simple',
+                'title' => 'Active',
+                'field' => 'id',
+            ],
         ];
 
         return Inertia::render('Default/Index', [
             'title' => "Abilities management",
             'subtitle' => "Set abilities to access specifics resources.",
             'softDelete' => Ability::hasGlobalScope('Illuminate\Database\Eloquent\SoftDeletingScope'),
-            'routes' => $routes,
+            'routes' => [],
             'filters' => $request->all('search', 'sorted', 'trashed'),
             'titles' => $titles,
-            'menu' => $menu,
-            'items' => Ability::filter($request->all('search', 'sorted', 'trashed'))
-                ->sort($request->sorted ?? "name")
-                ->paginate(20)
-                ->onEachSide(2)
-                ->appends($request->all('search', 'sorted', 'trashed'))
+            'items' => ['data' => $items]
         ]);
     }
-
     
     public function __form()
     {
@@ -96,13 +139,14 @@ class AbilitiesController extends Controller
         return [
             [
                 'title' => "Abilities management",
-                'subtitle' => "Ability name and application",
+                'subtitle' => "Select active abilities in the system.",
                 'fields' => [
                     [
                         [
                             'type' => "select",
                             'name' => "name",
                             'title' => "Name",
+                            'multiple' => true,
                             'content' => $menu,
                         ],
                     ],
