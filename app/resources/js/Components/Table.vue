@@ -187,9 +187,14 @@ const sortBy = (column: any) => {
   }
 }
 
-// switch senfForm
+// switch sendForm
+const witchRefArr = ref([]);
+const switchRef = (el) => {
+  witchRefArr.value.push(el);
+};
+
 const updateSwichValue = (route: string, method: string, id: string | number) => {
-  console.log(route, method, id)
+  console.log(route, method, id, witchRefArr.value[0])
 }
 
 // td class
@@ -330,9 +335,9 @@ const classTD = "p-2"
                       <p class="truncate text-xs leading-5 text-gray-600 dark:text-gray-400">{{ item[content.fields[1]] }}</p>
                     </template>
                     
-                    <Avatar v-if="content.type == 'avatar'" class="w-12 h-12 rounded-full" :value="`${item[content.fallback]}`" />
+                    <Avatar v-if="content.type == 'avatar'" class="w-12 h-12 rounded-full" :fallback="`${item[content.fallback]}`" />
                     
-                    <Switch v-if="content.type == 'switch'" :name="`${item[content.fallback]}`" @click="updateSwichValue(content.route, content.method, item[content.field])" />
+                    <Switch v-if="content.type == 'switch'" :link="content.route" :ref="switchRef" :name="`${item[content.fallback]}`" @click="updateSwichValue(content.route, content.method, item[content.field])" />
 
                   </td>
                 </template>
