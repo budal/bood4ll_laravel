@@ -5,7 +5,7 @@ import { Switch } from '@headlessui/vue'
 <template>
   <Switch
     name="terms-of-service"
-    :defaultChecked="true"
+    :defaultChecked="false"
     as="template"
     v-slot="{ checked }"
   >
