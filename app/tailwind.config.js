@@ -14,8 +14,8 @@ export default {
     ],
     safelist: [
         {
-          pattern: /grid-cols-(1|2|3|4|5)/,
-          variants: ['sm', 'hover', 'focus'],
+            pattern: /grid-cols-(1|2|3|4|5)/,
+            variants: ['sm', 'hover', 'focus'],
         },
         {
             pattern: /(bg|border|ring|ring-offset|text)-(primary|secondary|danger|success|warning|info)/,

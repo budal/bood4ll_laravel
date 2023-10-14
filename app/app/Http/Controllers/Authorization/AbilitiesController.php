@@ -25,24 +25,30 @@ class AbilitiesController extends Controller
 {
     public function index(Request $request): Response
     {
-        $prefix = "apps";
+        $prefixes = ["apps", "reports"];
         
-        $routes = collect(Route::getRoutes())->filter(function ($route) use ($prefix) {
-            return Str::startsWith($route->uri, $prefix);
+        $routes = collect(Route::getRoutes())->filter(function ($route) use ($request, $prefixes) {
+                return Str::contains($route->uri, $request->search ? [$request->search] : $prefixes);
         });
-        
-        $items = $routes->map(function ($route) use ($prefix) {
+
+        $abilities = Ability::filter($request->all('search', 'sorted', 'trashed'))->get();
+
+        $activatedAbilities = collect($abilities->pluck('name')->toArray());
+
+        $items = $routes->map(function ($route) use ($activatedAbilities) {
             $actionSegments = explode('\\', $route->action['controller']);
             $id = $route->action['as'];
             $title = $id . " (" . end($actionSegments) . ")";
+            $checked = $activatedAbilities->contains($id);
 
-            return compact('id', 'title');
+            return compact('id', 'title', 'checked');
         })->values()->toArray();
+
 
         usort($items, function($a, $b) {
             return $a['title'] <=> $b['title'];
         });
-        
+
         $titles = [
             [
                 'type' => 'simple',

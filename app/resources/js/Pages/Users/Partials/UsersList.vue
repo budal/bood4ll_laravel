@@ -4,6 +4,7 @@ import Table from '@/Components/Table.vue';
 defineProps<{
     status: any;
     filters: any;
+    hideFilters?: any;
     items: any;
     titles: any;
     indexRoute: string;
@@ -29,6 +30,7 @@ defineProps<{
       <Table 
         :status="status" 
         :filters="filters" 
+        :hideFilters="hideFilters" 
         :items="items" 
         :titles="titles" 
         :indexRoute="indexRoute" 

@@ -1,5 +1,9 @@
 <script setup>
-import { Switch } from '@headlessui/vue'
+import { ref } from 'vue'
+import { Switch } from '@headlessui/vue';
+
+const enabled = ref(false)
+
 </script>
 
 <template>
@@ -8,6 +12,7 @@ import { Switch } from '@headlessui/vue'
     :defaultChecked="false"
     as="template"
     v-slot="{ checked }"
+    v-model="enabled"
   >
     <button
       :class="checked ? 'bg-primary-light dark:bg-primary-dark' : 'bg-primary-light dark:bg-primary-dark'"

@@ -337,7 +337,14 @@ const classTD = "p-2"
                     
                     <Avatar v-if="content.type == 'avatar'" class="w-12 h-12 rounded-full" :fallback="`${item[content.fallback]}`" />
                     
-                    <Switch v-if="content.type == 'switch'" :link="content.route" :ref="switchRef" :name="`${item[content.fallback]}`" @click="updateSwichValue(content.route, content.method, item[content.field])" />
+                    <Switch 
+                      v-if="content.type == 'switch'" 
+                      :link="content.route" 
+                      :ref="switchRef" 
+                      :name="`${item[content.fallback]}`" 
+                      :checked="content.checked" 
+                      @click="updateSwichValue(content.route, content.method, item[content.field])" 
+                    />
 
                   </td>
                 </template>
