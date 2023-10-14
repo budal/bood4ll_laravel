@@ -27,8 +27,8 @@ class AbilitiesController extends Controller
     {
         $prefixes = ["apps", "reports"];
         
-        $routes = collect(Route::getRoutes())->filter(function ($route) use ($request, $prefixes) {
-                return Str::contains($route->uri, $request->search ? [$request->search] : $prefixes);
+        $routes = collect(Route::getRoutes())->filter(function ($route) use ($prefixes) {
+            return Str::contains($route->uri, $prefixes);
         });
 
         $abilities = Ability::filter($request->all('search', 'sorted', 'trashed'))->get();

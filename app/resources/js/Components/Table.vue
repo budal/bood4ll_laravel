@@ -187,15 +187,6 @@ const sortBy = (column: any) => {
   }
 }
 
-// switch sendForm
-const witchRefArr = ref([]);
-const switchRef = (el) => {
-  witchRefArr.value.push(el);
-};
-
-const updateSwichValue = (route: string, method: string, id: string | number) => {
-  console.log(route, method, id, witchRefArr.value[0])
-}
 
 // td class
 const classTD = "p-2"
@@ -340,10 +331,8 @@ const classTD = "p-2"
                     <Switch 
                       v-if="content.type == 'switch'" 
                       :link="content.route" 
-                      :ref="switchRef" 
                       :name="`${item[content.fallback]}`" 
                       :checked="content.checked" 
-                      @click="updateSwichValue(content.route, content.method, item[content.field])" 
                     />
 
                   </td>
