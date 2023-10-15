@@ -9,7 +9,7 @@ const props = defineProps<{
 
 const emit = defineEmits(['update:checked']);
 
-const proxyChecked = ref(false);
+const proxyChecked = ref(props.checked);
 
 // const proxyChecked = computed({
 //   get() {
