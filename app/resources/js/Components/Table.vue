@@ -317,7 +317,7 @@ const classTD = "p-2"
                   <Checkbox v-if="routes.destroyRoute && !item.deleted_at" :class="`${classTD}`" class="w-8 h-8 rounded-full" :checked="selectedCheckBoxes.has(item)" :value="item.id" :id="`checkbox-${item.id}`" @click="toggle(item)" />
                   <Button color="warning" padding="2" v-if="routes.restoreRoute && item.deleted_at" :class="`${classTD}`" @click="restore(item.id)"><ArrowUturnLeftIcon class="h-3 w-3" /></Button>
                 </td>
-                <template v-for="content in titles">
+                <template v-for="(content, index) in titles">
                   <td :class="`${classTD}`">
                     <p v-if="content.type == 'simple'" class="truncate text-xs leading-5 text-gray-900 dark:text-gray-200">{{ item[content.field] }}</p>
                     
