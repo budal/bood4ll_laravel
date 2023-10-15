@@ -188,13 +188,6 @@ const sortBy = (column: any) => {
 }
 
 
-// switch
-const refArr = ref([]);
-const inputRef = (el) => {
-  refArr.value.push(el);
-};
-
-
 // td class
 const classTD = "p-2"
 </script>
@@ -327,7 +320,6 @@ const classTD = "p-2"
                     
                     <Switch 
                       v-if="content.type == 'switch'" 
-                      v-model="inputRef"
                       :name="item[content.fallback]" 
                       :checked="item.checked" 
                     />

@@ -23,7 +23,7 @@ const routeCurrent = window.location.href;
 const items = [
     {
         title: "Users",
-        route: "apps.users",
+        route: "apps.users.index",
         description: "Manage users informations and authorizations.",
         icon: `
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
@@ -32,7 +32,7 @@ const items = [
     },
     {
         title: "Roles",
-        route: "apps.roles",
+        route: "apps.roles.index",
         description: "Define roles, grouping abilities to define specific access.",
         icon: `
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
@@ -41,7 +41,7 @@ const items = [
     },
     {
         title: "Units",
-        route: "apps.units",
+        route: "apps.units.index",
         description: "Manage staff allocation units.",
         icon: `
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">

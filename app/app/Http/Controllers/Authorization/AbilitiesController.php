@@ -40,10 +40,12 @@ class AbilitiesController extends Controller
         $items = $routes->map(function ($route) use ($activatedAbilities) {
             $actionSegments = explode('\\', $route->action['controller']);
             $id = $route->action['as'];
-            $title = $id . " (" . end($actionSegments) . ")";
+            $route = $route->uri;
+            $command = end($actionSegments);
+            $title = $id;
             $checked = $activatedAbilities->contains($id);
 
-            return compact('id', 'title', 'checked');
+            return compact('id', 'route', 'command', 'title', 'checked');
         })->values()->toArray();
 
         usort($items, function($a, $b) {
@@ -52,9 +54,10 @@ class AbilitiesController extends Controller
         
         $titles = [
             [
-                'type' => 'simple',
+                'type' => 'composite',
                 'title' => 'Ability',
                 'field' => 'title',
+                'fields' => ['title', 'command']
             ],
             [
                 'type' => 'switch',
@@ -67,7 +70,7 @@ class AbilitiesController extends Controller
 
         return Inertia::render('Default/Index', [
             'title' => "Abilities management",
-            'subtitle' => "Set abilities to access specifics resources.",
+            'subtitle' => "Define which abilities will be showed in the roles management.",
             'softDelete' => Ability::hasGlobalScope('Illuminate\Database\Eloquent\SoftDeletingScope'),
             'routes' => [],
             'filters' => $request->all('search', 'sorted', 'trashed'),

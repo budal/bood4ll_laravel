@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\Model;
 
 use App\Models\User;
 use App\Models\Role;
+use App\Models\Ability;
 
 class RolesController extends Controller
 {
@@ -52,7 +53,7 @@ class RolesController extends Controller
             [
                 'icon' => "ListBulletIcon",
                 'title' => "Show all abilities",
-                'route' => "apps.abilities"
+                'route' => "apps.abilities.index"
             ],            
         ];
 
@@ -75,6 +76,13 @@ class RolesController extends Controller
     
     public function __form()
     {
+        $abilities = Ability::sort("name")->get()->map(function ($ability) {
+            $id = $ability['id'];
+            $title = $ability['name'];
+
+            return compact('id', 'title');
+        })->values()->toArray();
+
         return [
             [
                 'title' => "Roles management",
@@ -91,7 +99,7 @@ class RolesController extends Controller
                             'type' => "select",
                             'name' => "abilities",
                             'title' => "Ability",
-                            'content' => [],
+                            'content' => $abilities,
                             'multiple' => true,
                         ],
                     ],

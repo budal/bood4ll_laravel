@@ -1,23 +1,26 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { ref, computed } from 'vue'
 import { Switch } from '@headlessui/vue';
-
-const emit = defineEmits(['update:checked']);
 
 const props = defineProps<{
   checked: boolean;
   value?: any;
 }>();
 
-const proxyChecked = computed({
-  get() {
-    return props.checked;
-  },
+const emit = defineEmits(['update:checked']);
 
-  set(val) {
-    emit('update:checked', val);
-  },
-});
+const proxyChecked = ref(false);
+
+// const proxyChecked = computed({
+//   get() {
+//     return props.checked;
+//   },
+
+//   set(val) {
+//     emit('update:checked', val);
+//   },
+// });
+
 </script>
 
 <template>
