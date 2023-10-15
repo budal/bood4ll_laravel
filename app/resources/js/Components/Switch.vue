@@ -1,26 +1,15 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import { Switch } from '@headlessui/vue';
+  import { ref } from 'vue'
+  import { Switch } from '@headlessui/vue';
 
-const props = defineProps<{
-  checked: boolean;
-  value?: any;
-}>();
+  const props = defineProps<{
+    checked: boolean;
+    value?: any;
+  }>();
 
-const emit = defineEmits(['update:checked']);
+  const emit = defineEmits(['update:checked']);
 
-const proxyChecked = ref(props.checked);
-
-// const proxyChecked = computed({
-//   get() {
-//     return props.checked;
-//   },
-
-//   set(val) {
-//     emit('update:checked', val);
-//   },
-// });
-
+  const proxyChecked = ref(props.checked);
 </script>
 
 <template>
@@ -31,7 +20,7 @@ const proxyChecked = ref(props.checked);
       :class="proxyChecked ? 'bg-primary-light dark:bg-primary-dark' : 'bg-primary-light dark:bg-primary-dark'"
       class="inline-flex h-[38px] w-[58px] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-300 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75"
     >
-      <span class="sr-only">Use setting</span>
+      <span class="sr-only">{{ value }}</span>
       <span
         aria-hidden="true"
         :class="proxyChecked ? 'translate-x-5 bg-primary-dark dark:bg-primary-light' : 'translate-x-0 bg-primary-dark/80 dark:bg-primary-light/80'"

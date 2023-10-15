@@ -79,9 +79,9 @@ class AbilitiesController extends Controller
         ]);
     }
     
-    public function update(ProfileUpdateRequest $request): RedirectResponse
+    public function update($ability): RedirectResponse
     {
-        // dd($request);
+        // dd($ability);
         
         // $request->user()->fill($request->validated());
 
@@ -92,7 +92,7 @@ class AbilitiesController extends Controller
         // $request->user()->save();
 
         // return Redirect::route('profile.edit');
-        return Redirect::back()->with('status', 'User edited.');
+        return Redirect::back()->with('status', $ability);
     }
         
     public function upsert(ProfileUpdateRequest $request): RedirectResponse

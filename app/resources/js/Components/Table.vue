@@ -188,6 +188,26 @@ const sortBy = (column: any) => {
 }
 
 
+// switch
+const formSwitch = useForm({});
+
+const refArr = ref([]);
+const inputRef = (el: any) => {
+  refArr.value.push(el as never);
+};
+
+const updateSwitch = (routeUri: string, method: 'get' | 'post', id: string) => {
+  console.log(id)
+
+  formSwitch.submit(method, route(routeUri, id), {
+    preserveScroll: true,
+    // onSuccess: () => toast.success(trans(usePage().props.status as string)),
+    onError: () => toast.error(trans(usePage().props.status as string)),
+    onFinish: () => toast.success(trans(usePage().props.status as string)),
+  });
+}
+
+
 // td class
 const classTD = "p-2"
 </script>
@@ -204,8 +224,12 @@ const classTD = "p-2"
       </p>
 
       <div class="mt-6 flex justify-end">
-        <Button color="secondary" @click="closeDeletionModal">{{ $t('Cancel') }}</Button>
-        <Button color="danger" class="ml-3" :class="{ 'opacity-25': form.processing }" :disabled="form.processing" @click="deleteItems">{{ $t('Erase selected') }}</Button>
+        <Button color="secondary" @click="closeDeletionModal">
+          {{ $t('Cancel') }}
+        </Button>
+        <Button color="danger" class="ml-3" :class="{ 'opacity-25': form.processing }" :disabled="form.processing" @click="deleteItems">
+          {{ $t('Erase selected') }}
+        </Button>
       </div>
     </Modal>
 
@@ -219,8 +243,12 @@ const classTD = "p-2"
       </p>
 
       <div class="mt-6 flex justify-end">
-        <Button color="secondary" @click="closeRestoreModal">{{ $t('Cancel') }}</Button>
-        <Button color="success" class="ml-3" :class="{ 'opacity-25': form.processing }" :disabled="form.processing" @click="restoreItem">{{ $t('Restore') }}</Button>
+        <Button color="secondary" @click="closeRestoreModal">
+          {{ $t('Cancel') }}
+        </Button>
+        <Button color="success" class="ml-3" :class="{ 'opacity-25': form.processing }" :disabled="form.processing" @click="restoreItem">
+          {{ $t('Restore') }}
+        </Button>
       </div>
     </Modal>
 
@@ -239,8 +267,12 @@ const classTD = "p-2"
       </div>
 
       <div class="mt-6 flex justify-end">
-        <Button color="secondary" @click="closeFiltersModal">{{ $t('Cancel') }}</Button>
-        <Button color="primary" class="ml-3" :class="{ 'opacity-25': form.processing }" :disabled="form.processing" @click="refreshFilters">{{ $t('Apply') }}</Button>
+        <Button color="secondary" @click="closeFiltersModal">
+          {{ $t('Cancel') }}
+        </Button>
+        <Button color="primary" class="ml-3" :class="{ 'opacity-25': form.processing }" :disabled="form.processing" @click="refreshFilters">
+          {{ $t('Apply') }}
+        </Button>
       </div>
     </Modal>
 
@@ -254,7 +286,9 @@ const classTD = "p-2"
         <SearchInput :placeholder="$t('Search...')" class="w-full h-full" :value="filters.search" v-model="search" />
       </div>
       <div class="flex-none items-center">
-        <Button color="secondary" @click="openFiltersModal" class="ml-2 h-full"><AdjustmentsVerticalIcon class="h-5 w-5" /></Button>
+        <Button color="secondary" @click="openFiltersModal" class="ml-2 h-full">
+          <AdjustmentsVerticalIcon class="h-5 w-5" />
+        </Button>
       </div>
       <div class="flex-none items-center">
         <Menu :menu="menu" />
@@ -305,9 +339,7 @@ const classTD = "p-2"
                 </td>
                 <template v-for="(content, index) in titles">
                   <td :class="classTD">
-                    <p v-if="content.type == 'simple'" 
-                      class="truncate text-xs leading-5 text-gray-900 dark:text-gray-200"
-                    >
+                    <p v-if="content.type == 'simple'" class="truncate text-xs leading-5 text-gray-900 dark:text-gray-200">
                       {{ item[content.field] }}
                     </p>
                     
@@ -316,12 +348,18 @@ const classTD = "p-2"
                       <p class="truncate text-xs leading-5 text-gray-600 dark:text-gray-400">{{ item[content.fields[1]] }}</p>
                     </template>
                     
-                    <Avatar v-if="content.type == 'avatar'" class="w-12 h-12 rounded-full" :fallback="item[content.fallback]" />
+                    <Avatar 
+                      v-if="content.type == 'avatar'" 
+                      class="w-12 h-12 rounded-full" 
+                      :fallback="item[content.fallback]" 
+                    />
                     
                     <Switch 
                       v-if="content.type == 'switch'" 
-                      :name="item[content.fallback]" 
+                      :name="item.name" 
+                      :value="item.id" 
                       :checked="item.checked" 
+                      @click="updateSwitch(content.route, content.method, item.id)"
                     />
                   </td>
                 </template>
@@ -330,7 +368,7 @@ const classTD = "p-2"
                     <Button color="primary"><ChevronRightIcon class="h-5 w-5"/></Button>
                   </Link>
                 </td>
-              </tr>
+              </tr> 
               <tr v-if="items.data.length == 0">
                 <td :class="`${classTD} text-center`">
                   <p class="text-lg leading-5 text-gray-600 dark:text-gray-400">{{ $t('No items to show.') }}</p>
