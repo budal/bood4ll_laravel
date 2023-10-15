@@ -188,6 +188,13 @@ const sortBy = (column: any) => {
 }
 
 
+// switch
+const refArr = ref([]);
+const inputRef = (el) => {
+  refArr.value.push(el);
+};
+
+
 // td class
 const classTD = "p-2"
 </script>
@@ -205,16 +212,7 @@ const classTD = "p-2"
 
       <div class="mt-6 flex justify-end">
         <Button color="secondary" @click="closeDeletionModal">{{ $t('Cancel') }}</Button>
-
-        <Button 
-          color="danger"
-          class="ml-3"
-          :class="{ 'opacity-25': form.processing }"
-          :disabled="form.processing"
-          @click="deleteItems"
-        >
-          {{ $t('Erase selected') }}
-        </Button>
+        <Button color="danger" class="ml-3" :class="{ 'opacity-25': form.processing }" :disabled="form.processing" @click="deleteItems">{{ $t('Erase selected') }}</Button>
       </div>
     </Modal>
 
@@ -229,16 +227,7 @@ const classTD = "p-2"
 
       <div class="mt-6 flex justify-end">
         <Button color="secondary" @click="closeRestoreModal">{{ $t('Cancel') }}</Button>
-
-        <Button 
-          color="success"
-          class="ml-3"
-          :class="{ 'opacity-25': form.processing }"
-          :disabled="form.processing"
-          @click="restoreItem"
-        >
-          {{ $t('Restore') }}
-        </Button>
+        <Button color="success" class="ml-3" :class="{ 'opacity-25': form.processing }" :disabled="form.processing" @click="restoreItem">{{ $t('Restore') }}</Button>
       </div>
     </Modal>
 
@@ -258,15 +247,7 @@ const classTD = "p-2"
 
       <div class="mt-6 flex justify-end">
         <Button color="secondary" @click="closeFiltersModal">{{ $t('Cancel') }}</Button>
-
-        <Button color="primary"
-          class="ml-3"
-          :class="{ 'opacity-25': form.processing }"
-          :disabled="form.processing"
-          @click="refreshFilters"
-        >
-          {{ $t('Apply') }}
-        </Button>
+        <Button color="primary" class="ml-3" :class="{ 'opacity-25': form.processing }" :disabled="form.processing" @click="refreshFilters">{{ $t('Apply') }}</Button>
       </div>
     </Modal>
 
@@ -292,11 +273,11 @@ const classTD = "p-2"
           <table class="table-auto w-full text-sm shadow-lg">
             <thead v-if="items.data.length > 0">
               <tr class="bg-gray-200 dark:bg-gray-900 p-3 text-gray-1000 dark:text-white text-left">
-                <th :class="`${classTD}`">
+                <th :class="classTD">
                   <Checkbox v-if="routes.destroyRoute" name="remember" :checked="selectedcheckBox" @click="toggleSelection" class="w-8 h-8 rounded-full" />
                 </th>
                 <template v-for="(content, id) in titles">
-                  <th :class="`${classTD}`">
+                  <th :class="classTD">
                     <Link v-if="content.disableSort != true" :href="sortBy(content.field).url" class="flex gap-1">
                       {{ $t(content.title) }}
                       <ChevronUpIcon v-if="sortBy(content.field).sortMe == 'asc'" class="h-4 w-4" />
@@ -304,37 +285,52 @@ const classTD = "p-2"
                     </Link>
                   </th>
                 </template>
-                <th v-if="routes.editRoute" :class="`${classTD}`"></th>
+                <th v-if="routes.editRoute" :class="classTD"></th>
               </tr>
             </thead>
             <tbody>
               <tr 
                 v-for="item in items.data" 
                 :key="`tr-${item.id}`" 
-                class="`bg-white hover:bg-gray-100 dark:bg-gray-800 hover:dark:bg-gray-700 border-t border-gray-200 dark:border-gray-600 text-gray-500 dark:text-gray-400`"
+                class="bg-white hover:bg-gray-100 dark:bg-gray-800 hover:dark:bg-gray-700 border-t border-gray-200 dark:border-gray-600 text-gray-500 dark:text-gray-400"
               >
-                <td :class="`${classTD}`">
-                  <Checkbox v-if="routes.destroyRoute && !item.deleted_at" :class="`${classTD}`" class="w-8 h-8 rounded-full" :checked="selectedCheckBoxes.has(item)" :value="item.id" :id="`checkbox-${item.id}`" @click="toggle(item)" />
-                  <Button color="warning" padding="2" v-if="routes.restoreRoute && item.deleted_at" :class="`${classTD}`" @click="restore(item.id)"><ArrowUturnLeftIcon class="h-3 w-3" /></Button>
+                <td :class="classTD">
+                  <Checkbox v-if="routes.destroyRoute && !item.deleted_at" 
+                    :class="classTD" class="w-8 h-8 rounded-full" 
+                    :checked="selectedCheckBoxes.has(item)" 
+                    :value="item.id" 
+                    :id="`checkbox-${item.id}`" 
+                    @click="toggle(item)" 
+                  />
+                  <Button v-if="routes.restoreRoute && item.deleted_at" 
+                    color="warning" padding="2" 
+                    :class="classTD" 
+                    @click="restore(item.id)"
+                  >
+                    <ArrowUturnLeftIcon class="h-3 w-3" />
+                  </Button>
                 </td>
                 <template v-for="(content, index) in titles">
-                  <td :class="`${classTD}`">
-                    <p v-if="content.type == 'simple'" class="truncate text-xs leading-5 text-gray-900 dark:text-gray-200">{{ item[content.field] }}</p>
+                  <td :class="classTD">
+                    <p v-if="content.type == 'simple'" 
+                      class="truncate text-xs leading-5 text-gray-900 dark:text-gray-200"
+                    >
+                      {{ item[content.field] }}
+                    </p>
                     
                     <template v-if="content.type == 'composite'">
                       <strong class="text-gray-900 text-sm font-medium dark:text-gray-200">{{ item[content.fields[0]] }}</strong>
                       <p class="truncate text-xs leading-5 text-gray-600 dark:text-gray-400">{{ item[content.fields[1]] }}</p>
                     </template>
                     
-                    <Avatar v-if="content.type == 'avatar'" class="w-12 h-12 rounded-full" :fallback="`${item[content.fallback]}`" />
+                    <Avatar v-if="content.type == 'avatar'" class="w-12 h-12 rounded-full" :fallback="item[content.fallback]" />
                     
                     <Switch 
                       v-if="content.type == 'switch'" 
-                      :link="content.route" 
-                      :name="`${item[content.fallback]}`" 
-                      :checked="content.checked" 
+                      v-model="inputRef"
+                      :name="item[content.fallback]" 
+                      :checked="item.checked" 
                     />
-
                   </td>
                 </template>
                 <td v-if="routes.editRoute" :class="`${classTD} text-right`">

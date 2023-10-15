@@ -27,8 +27,10 @@ class AbilitiesController extends Controller
     {
         $prefixes = ["apps", "reports"];
         
-        $routes = collect(Route::getRoutes())->filter(function ($route) use ($prefixes) {
-            return Str::contains($route->uri, $prefixes);
+        $routes = collect(Route::getRoutes())->filter(function ($route) use ($request, $prefixes) {
+            return Str::contains($route->uri, $prefixes) && (
+                $request->search ? Str::contains($route->uri, $request->search) : true
+            );
         });
 
         $abilities = Ability::filter($request->all('search', 'sorted', 'trashed'))->get();
@@ -44,11 +46,10 @@ class AbilitiesController extends Controller
             return compact('id', 'title', 'checked');
         })->values()->toArray();
 
-
         usort($items, function($a, $b) {
             return $a['title'] <=> $b['title'];
         });
-
+        
         $titles = [
             [
                 'type' => 'simple',
