@@ -21,6 +21,8 @@ use App\Models\User;
 use App\Models\Role;
 use App\Models\Ability;
 
+use Throwable;
+
 class AbilitiesController extends Controller
 {
     public function index(Request $request): Response
@@ -81,51 +83,18 @@ class AbilitiesController extends Controller
     
     public function update($ability): RedirectResponse
     {
-        // dd($ability);
-        
-        // $request->user()->fill($request->validated());
-
-        // if ($request->user()->isDirty('email')) {
-        //     $request->user()->email_verified_at = null;
-        // }
-
-        // $request->user()->save();
-
-        // return Redirect::route('profile.edit');
-        return Redirect::back()->with('status', $ability);
-    }
-        
-    public function upsert(ProfileUpdateRequest $request): RedirectResponse
-    {
-        // dd($request);
-        
-        // $request->user()->fill($request->validated());
-
-        // if ($request->user()->isDirty('email')) {
-        //     $request->user()->email_verified_at = null;
-        // }
-
-        // $request->user()->save();
-
-        // return Redirect::route('profile.edit');
-        return Redirect::back()->with('status', 'User edited.');
-    }
-
-    /**
-     * Delete the user's account.
-     */
-    public function destroy(Request $request): RedirectResponse
-    {
-        $items = $request->all();
+        $getAbility = Ability::where('name', $ability)->first();
 
         try {
-            $usersToDelete = User::whereIn('id', $items['ids'])->delete();
+            if ($getAbility) {
+                $getAbility->delete();
+                return Redirect::back()->with('status', $ability);
+            } else {
+                Ability::updateOrCreate(['name' => $ability]);
+                return Redirect::back()->with('status', $ability);
+            }
         } catch (Throwable $e) {
-            report($e);
-     
-            return false;
+            return Redirect::back()->with('status', "Error on update the ability.");
         }
-        
-        return back()->with('status', 'Users removed succesfully!');
     }
 }

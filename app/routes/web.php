@@ -90,8 +90,6 @@ Route::middleware('auth')->group(function () {
             Route::controller(AbilitiesController::class)->group(function () {
                 Route::get('/permissions/abilities', 'index')->name('abilities.index')->middleware(['password.confirm', 'verified'])->breadcrumb('Abilities', 'apps.roles.index');
                 Route::post('/permissions/abilities/update/{ability}', 'update')->name('abilities.update')->middleware(['password.confirm']);
-                Route::patch('/permissions/abilities/upsert/{ability}', 'upsert')->name('abilities.upsert')->middleware(['password.confirm']);
-                Route::delete('/permissions/abilities/destroy/{ability}', 'destroy')->name('abilities.destroy')->middleware(['password.confirm']);
             });
 
             Route::controller(UnitsController::class)->group(function () {
