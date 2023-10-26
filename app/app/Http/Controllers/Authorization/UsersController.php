@@ -144,14 +144,10 @@ class UsersController extends Controller
         ];
     }
 
-    public function create(User $user)
+    public function create()
     {
-        $collection = collect(DB::getSchemaBuilder()->getColumnListing($user->getTable()));
-        $keyed = $collection->mapWithKeys(function ($value, $key) { return [$value => '']; });
-         
         return Inertia::render('Default/Create', [
             'body' => $this->__form(),
-            'data' => $keyed->all()
         ]);
     }
 
@@ -174,11 +170,9 @@ class UsersController extends Controller
      */
     public function edit(User $user): Response
     {
-        // dd(DB::getSchemaBuilder()->getColumnListing('users'), $user->getTable(), $user->getFillable(), $user);
-        
         return Inertia::render('Default/Edit', [
             'body' => $this->__form(),
-            'data' => collect($user)->all()
+            'data' => $user
         ]);
     }
 
@@ -187,7 +181,7 @@ class UsersController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        // dd($request);
+        dd($request);
         
         // $request->user()->fill($request->validated());
 

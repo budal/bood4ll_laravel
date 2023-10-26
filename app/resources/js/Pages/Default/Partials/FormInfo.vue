@@ -22,6 +22,20 @@ const url = window.location.href;
 
 const form = useForm({});
 
+
+
+
+
+for (let key in props.body) {
+    // console.log(key)
+}
+// console.log(props.body)
+// console.log(props.data)
+
+
+
+
+
 function dynamicFields() {
     const data = {}
     for (let key in props.data) { 
@@ -35,8 +49,6 @@ onBeforeMount(() => {
         form[key] = props.data[key] || ''
     }
 })
-
-console.log(props.data)
 
 const sendForm = () => {
     form.transform(() => ({ ...dynamicFields() }))

@@ -108,14 +108,10 @@ class RolesController extends Controller
         ];
     }
 
-    public function create(Role $role)
+    public function create()
     {
-        $collection = collect(DB::getSchemaBuilder()->getColumnListing($role->getTable()));
-        $keyed = $collection->mapWithKeys(function ($value, $key) { return [$value => '']; });
-         
         return Inertia::render('Default/Create', [
             'body' => $this->__form(),
-            'data' => $keyed->all()
         ]);
     }
 
@@ -139,10 +135,11 @@ class RolesController extends Controller
     public function edit(Role $role): Response
     {
         // dd(DB::getSchemaBuilder()->getColumnListing('users'), $role->getTable(), $role->getFillable(), $role);
+        // dd($role->abilities());
         
         return Inertia::render('Default/Edit', [
             'body' => $this->__form(),
-            'data' => collect($role)->all()
+            'data' => $role
         ]);
     }
 
