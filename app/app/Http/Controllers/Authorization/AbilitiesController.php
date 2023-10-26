@@ -80,10 +80,16 @@ class AbilitiesController extends Controller
         try {
             if ($getAbility) {
                 $getAbility->delete();
-                return Redirect::back()->with('status', "The ability '$ability' is deactivated.");
+                return Redirect::back()->with([
+                    'status' => "The ability ':ability' is deactivated.", 
+                    'statusComplements' => ['ability' => $ability]
+                ]);
             } else {
                 Ability::updateOrCreate(['name' => $ability]);
-                return Redirect::back()->with('status', "The ability '$ability' is activated.");
+                return Redirect::back()->with([
+                    'status' => "The ability ':ability' is activated.", 
+                    'statusComplements' => ['ability' => $ability]
+                ]);
             }
         } catch (Throwable $e) {
             return Redirect::back()->with('status', "Error on update the ability.");

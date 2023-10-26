@@ -197,13 +197,11 @@ const inputRef = (el: any) => {
 };
 
 const updateSwitch = (routeUri: string, method: 'get' | 'post', id: string) => {
-  console.log(id)
-
   formSwitch.submit(method, route(routeUri, id), {
     preserveScroll: true,
     // onSuccess: () => toast.success(trans(usePage().props.status as string)),
     onError: () => toast.error(trans(usePage().props.status as string)),
-    onFinish: () => toast.success(trans(usePage().props.status as string)),
+    onFinish: () => toast.success(trans(usePage().props.status as string, usePage().props.statusComplements)),
   });
 }
 

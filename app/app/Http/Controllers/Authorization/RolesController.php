@@ -31,7 +31,7 @@ class RolesController extends Controller
         $titles = [
             [
                 'type' => 'composite',
-                'title' => 'User',
+                'title' => 'Role',
                 'field' => 'name',
                 'fields' => ['name', 'email']
             ],
@@ -108,9 +108,9 @@ class RolesController extends Controller
         ];
     }
 
-    public function create(User $user)
+    public function create(Role $role)
     {
-        $collection = collect(DB::getSchemaBuilder()->getColumnListing($user->getTable()));
+        $collection = collect(DB::getSchemaBuilder()->getColumnListing($role->getTable()));
         $keyed = $collection->mapWithKeys(function ($value, $key) { return [$value => '']; });
          
         return Inertia::render('Default/Create', [
@@ -130,19 +130,19 @@ class RolesController extends Controller
 
         // $request->user()->save();
 
-        return Redirect::route('apps.roles')->with('status', 'User created.');
+        return Redirect::route('apps.roles')->with('status', 'Role created.');
     }
     
     /**
      * Display the user's profile form.
      */
-    public function edit(User $user): Response
+    public function edit(Role $role): Response
     {
-        // dd(DB::getSchemaBuilder()->getColumnListing('users'), $user->getTable(), $user->getFillable(), $user);
+        // dd(DB::getSchemaBuilder()->getColumnListing('users'), $role->getTable(), $role->getFillable(), $role);
         
         return Inertia::render('Default/Edit', [
             'body' => $this->__form(),
-            'data' => collect($user)->all()
+            'data' => collect($role)->all()
         ]);
     }
 
@@ -162,7 +162,7 @@ class RolesController extends Controller
         // $request->user()->save();
 
         // return Redirect::route('profile.edit');
-        return Redirect::back()->with('status', 'User edited.');
+        return Redirect::back()->with('status', 'Role edited.');
     }
 
     /**
@@ -173,7 +173,7 @@ class RolesController extends Controller
         $items = $request->all();
 
         try {
-            $usersToDelete = User::whereIn('id', $items['ids'])->delete();
+            $usersToDelete = Role::whereIn('id', $items['ids'])->delete();
         } catch (Throwable $e) {
             report($e);
      
@@ -183,10 +183,10 @@ class RolesController extends Controller
         return back()->with('status', 'Users removed succesfully!');
     }
 
-    public function restore(User $user)
+    public function restore(Role $role)
     {
-        $user->restore();
+        $role->restore();
 
-        return Redirect::back()->with('status', 'User restored.');
+        return Redirect::back()->with('status', 'Role restored.');
     }
 }

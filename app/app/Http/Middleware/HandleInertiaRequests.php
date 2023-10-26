@@ -39,6 +39,7 @@ class HandleInertiaRequests extends Middleware
             ],
             'breadcrumbs' => $request->route()->breadcrumbs()->jsonSerialize(),
             'status' => session('status'),
+            'statusComplements' => session('statusComplements'),
             'ziggy' => fn () => [
                 ...(new Ziggy)->toArray(),
                 'location' => $request->url(),
