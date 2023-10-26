@@ -24,7 +24,9 @@ const form = useForm({});
 
 function dynamicFields() {
     const data = {}
-    for (let key in props.data) { data[key] = form[key] }
+    for (let key in props.data) { 
+        data[key] = form[key] 
+    }
     return data
 }
 

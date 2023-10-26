@@ -226,9 +226,10 @@
   "Abilities": "Abilitações",
   "Abilities management": "Gerenciamento de abilitações",
   "Define which abilities will be showed in the roles management.": "Defina quais abilitações serão exibidas no gerenciamento de funções.",
-  
+  "Show all abilities": "Exibir todas as abilitações",
   "The ability ':ability' is activated.": "A abilitação ':ability' está ativada.",
   "The ability ':ability' is deactivated.": "A abilitação ':ability' está desativada.",
+  "Error on activate/inactivate the ability.": "Erro ao ativar/desativar a abilitação.",
 
   "Units": "Unidades",
   "Manage staff allocation units.": "Gerencie as unidades de alocação do pessoal efetivo.",

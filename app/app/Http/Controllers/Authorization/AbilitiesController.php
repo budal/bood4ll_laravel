@@ -92,7 +92,7 @@ class AbilitiesController extends Controller
                 ]);
             }
         } catch (Throwable $e) {
-            return Redirect::back()->with('status', "Error on update the ability.");
+            return Redirect::back()->with('status', "Error on activate/inactivate the ability.");
         }
     }
 }
