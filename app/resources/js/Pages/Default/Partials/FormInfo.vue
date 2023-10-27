@@ -103,8 +103,7 @@ const content = [
                             :type="field.type"
                             class="mt-1 block w-full"
                             v-model="form[field.name as never]"
-                            required
-                            autofocus
+                            :required="field.required"
                             :autocomplete="field.name"
                         />
 
@@ -115,6 +114,7 @@ const content = [
                             :content="field.content"
                             class="mt-1 block w-full"
                             v-model="form[field.name as never]"
+                            :required="field.required"
                             :multiple="field.multiple"
                         />
         

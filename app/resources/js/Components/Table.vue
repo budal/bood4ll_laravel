@@ -260,8 +260,8 @@ const classTD = "p-2"
       </p>
 
       <div class="pt-3">
-        <InputLabel for="name" :value="$t('Content')" />
-        <Select :content="content" v-model="trashed" />
+        <InputLabel for="filterContent" :value="$t('Content')" />
+        <Select id="filterContent" name="filterContent" :content="content" v-model="trashed" />
       </div>
 
       <div class="mt-6 flex justify-end">

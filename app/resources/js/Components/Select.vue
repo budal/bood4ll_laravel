@@ -10,6 +10,8 @@
 
   const props = withDefaults(
     defineProps<{
+      id?: string;
+      name?: string;
       modelValue: Object | string | number;
       content: any;
       multiple?: boolean;
@@ -34,6 +36,8 @@
   >
     <div class="relative mt-1">
       <ListboxButton
+        :id="id"
+        :name="name"
         class="w-full block cursor-default rounded-md bg-white py-2 pl-3 pr-10 text-left shadow-sm focus:outline-none dark:bg-gray-900 dark:text-gray-300 border border-gray-300 dark:border-gray-500 focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-gray-800 focus:ring-gray-300 dark:focus:ring-gray-500 disabled:opacity-25 transition ease-in-out duration-500"
         v-slot="{ value }"
       >
