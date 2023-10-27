@@ -115,7 +115,7 @@ class RolesController extends Controller
         ]);
     }
 
-    public function store(ProfileUpdateRequest $request): RedirectResponse
+    public function store($request): RedirectResponse
     {
         dd($request);
         // $request->user()->fill($request->validated());
