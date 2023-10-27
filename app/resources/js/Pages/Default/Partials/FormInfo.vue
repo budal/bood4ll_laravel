@@ -5,7 +5,7 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { useForm, usePage } from '@inertiajs/vue3';
 import { onBeforeMount, reactive } from 'vue';
-import { nextTick, ref } from 'vue';
+import { ref } from 'vue';
 import { toast } from 'vue3-toastify';
 import { trans } from 'laravel-vue-i18n';
 import Select from '@/Components/Select.vue';
@@ -36,7 +36,7 @@ function dynamicFields() {
     let data = reactive(new Set())
 
     items.forEach((field: any) => {
-        data.add({field: form[field as never]})
+        data[field as never] = form[field as never] 
     });
 
     return data
