@@ -22,32 +22,34 @@ const url = window.location.href;
 
 const form = useForm({});
 
+let items = reactive(new Set())
 
-
-
-
-for (let key in props.body) {
-    // console.log(key)
-}
-// console.log(props.body)
-// console.log(props.data)
-
-
-
-
+props.body.forEach((forms: any) => {
+    forms.fields.forEach((fields: any) => {
+        fields.forEach((field: any) => {
+            items.add(field.name)
+        });
+    });
+});
 
 function dynamicFields() {
-    const data = {}
-    for (let key in props.data) { 
-        data[key] = form[key] 
-    }
+    let data = reactive(new Set())
+
+    items.forEach((field: any) => {
+        data.add({field: form[field as never]})
+    });
+
     return data
 }
 
 onBeforeMount(() => {
-    for (let key in props.data) {
-        form[key] = props.data[key] || ''
-    }
+    items.forEach((field: any) => {
+        form[field] = props.data ? props.data[field] : ''
+    });
+
+    // for (let key in props.data) {
+    //     form[key] = props.data[key] || ''
+    // }
 })
 
 const sendForm = () => {
@@ -104,7 +106,7 @@ const content = [
                             :name="field.name"
                             :type="field.type"
                             class="mt-1 block w-full"
-                            v-model="form[field.name]"
+                            v-model="form[field.name as never]"
                             required
                             autofocus
                             :autocomplete="field.name"
@@ -116,11 +118,11 @@ const content = [
                             :type="field.type"
                             :content="field.content"
                             class="mt-1 block w-full"
-                            v-model="form[field.name]"
+                            v-model="form[field.name as never]"
                             :multiple="field.multiple"
                         />
         
-                        <InputError class="mt-2" :message="form.errors[field.name]" />
+                        <InputError class="mt-2" :message="form.errors[field.name as never]" />
                     </div>
                 </div>
             </div>
