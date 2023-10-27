@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Table from '@/Components/Table.vue';
-import Tabs from '@/Components/Tabs.vue';
-import { ref } from 'vue';
 
 defineProps<{
     title: string;

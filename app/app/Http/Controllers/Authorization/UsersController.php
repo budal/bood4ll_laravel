@@ -111,7 +111,7 @@ class UsersController extends Controller
         return [
             [
                 'title' => "User profile Information",
-                'subtitle' => "User account's profile information",
+                'subtitle' => "User account profile information",
                 'cols' => 2,
                 'fields' => [
                     [

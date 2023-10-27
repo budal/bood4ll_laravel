@@ -86,7 +86,7 @@ class RolesController extends Controller
         return [
             [
                 'title' => "Roles management",
-                'subtitle' => "Permission name and abilities",
+                'subtitle' => "Role name and abilities",
                 'cols' => 2,
                 'fields' => [
                     [

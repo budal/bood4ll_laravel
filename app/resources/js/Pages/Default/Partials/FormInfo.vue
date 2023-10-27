@@ -33,13 +33,13 @@ props.body.forEach((forms: any) => {
 });
 
 function dynamicFields() {
-    let data = reactive(new Set())
+    let content = reactive(new Set())
 
     items.forEach((field: any) => {
-        data[field as never] = form[field as never] ;
+        content[field as never] = form[field as never] ;
     });
 
-    return data;
+    return content;
 }
 
 onBeforeMount(() => {

@@ -4,7 +4,7 @@ import FormInfo from './Partials/FormInfo.vue';
 
 defineProps<{
     body: any;
-    data: any;
+    data?: any;
 }>();
 
 </script>

@@ -25,6 +25,7 @@
   "Previous": "Anterior",
   "Next": "Próximo",
   "Select an option": "Selecione uma opção",
+  "Select one or more options": "Selecione uma ou mais opções",
   "Active": "Ativo",
   "Inactive": "Inativo",
   
@@ -211,6 +212,9 @@
   "Schedule": "Agenda",
   
   "Select the application you want to use.": "Selecione o aplicativo que você deseja usar",
+  
+  "User profile Information": "Informações do perfil de usuário",
+  "User account profile information": "Informações do perfil da conta do usuário",
   
   "Roles": "Funções",
   "Roles management": "Gerenciamento de funções",

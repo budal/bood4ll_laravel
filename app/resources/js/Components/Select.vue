@@ -41,7 +41,7 @@
           {{  
             value ? (
               multiple == true ? (
-                value.length > 0 ? value.map((item: any) => $t(item.title)).join(', ') : $t('Select an option')
+                value.length > 0 ? value.map((item: any) => $t(item.title)).join(', ') : $t('Select one or more options')
               ) : $t(value.title)
             ) : $t('Select an option')
           }}
