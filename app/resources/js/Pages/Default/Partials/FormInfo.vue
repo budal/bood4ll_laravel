@@ -27,7 +27,7 @@ let items = reactive(new Set())
 props.body.forEach((forms: any) => {
     forms.fields.forEach((fields: any) => {
         fields.forEach((field: any) => {
-            items.add(field.name)
+            items.add(field.name);
         });
     });
 });
@@ -36,15 +36,15 @@ function dynamicFields() {
     let data = reactive(new Set())
 
     items.forEach((field: any) => {
-        data[field as never] = form[field as never] 
+        data[field as never] = form[field as never] ;
     });
 
-    return data
+    return data;
 }
 
 onBeforeMount(() => {
     items.forEach((field: any) => {
-        form[field] = props.data ? props.data[field] : ''
+        form[field] = props.data ? props.data[field] : '';
     });
 })
 
