@@ -134,9 +134,6 @@ class RolesController extends Controller
      */
     public function edit(Role $role): Response
     {
-        // dd(DB::getSchemaBuilder()->getColumnListing('users'), $role->getTable(), $role->getFillable(), $role);
-        // dd($role->abilities());
-        
         return Inertia::render('Default/Edit', [
             'body' => $this->__form(),
             'data' => $role
