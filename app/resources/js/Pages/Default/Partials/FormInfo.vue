@@ -46,10 +46,6 @@ onBeforeMount(() => {
     items.forEach((field: any) => {
         form[field] = props.data ? props.data[field] : ''
     });
-
-    // for (let key in props.data) {
-    //     form[key] = props.data[key] || ''
-    // }
 })
 
 const sendForm = () => {
