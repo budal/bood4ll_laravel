@@ -98,7 +98,7 @@ class RolesController extends Controller
                         [
                             'type' => "select",
                             'name' => "abilities",
-                            'title' => "Ability",
+                            'title' => "Abilities",
                             'content' => $abilities,
                             'multiple' => true,
                         ],
