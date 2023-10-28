@@ -16,7 +16,7 @@ const routeCurrent = window.location.href;
   <div>
     <Popover v-slot="{ open }">
       <PopoverButton 
-        class="border-b-2 focus:outline-none transition duration-300 ease-in-out"
+        class="group border-b-2 focus:outline-none transition duration-300 ease-in-out"
         :class='active ? 
           "border-info-light dark:border-info-dark focus:border-warning-light dark:focus:border-warning-dark" : 
           "border-transparent hover:border-primary-dark dark:hover:border-primary-light focus:border-primary-dark dark:focus:border-primary-light"'
@@ -25,7 +25,7 @@ const routeCurrent = window.location.href;
           class="inline-flex items-center px-1 pt-1 text-sm font-medium leading-5 transition duration-300 ease-in-out" 
           :class='active ? 
             "text-primary-dark dark:text-primary-light" : 
-            "text-primary-dark/60 dark:text-primary-light/60 hover:text-primary-dark dark:hover:text-primary-light focus:text-primary-dark dark:focus:text-primary-light"'
+            "text-primary-dark/60 dark:text-primary-light/60 hover:text-primary-dark dark:hover:text-primary-light group-focus:text-primary-dark dark:group-focus:text-primary-light"'
         >
           <span class="py-5">
             <slot />
