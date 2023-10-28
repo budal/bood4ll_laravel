@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { computed } from 'vue';
 import { Link } from '@inertiajs/vue3';
 import { Popover, PopoverButton, PopoverPanel } from '@headlessui/vue'
 import { ChevronDownIcon } from '@heroicons/vue/20/solid'
@@ -11,23 +10,28 @@ const props = defineProps<{
 
 const routeCurrent = window.location.href;
 
-const classes = computed(() =>
-    props.active
-        ? 'inline-flex items-center px-1 pt-1 border-b-2 border-info-light dark:border-info-dark text-sm font-medium leading-5 text-primary-dark dark:text-primary-light focus:outline-none focus:border-indigo-700 transition duration-150 ease-in-out'
-        : 'inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium leading-5 text-primary-dark dark:text-primary-light hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-700 focus:outline-none focus:text-gray-700 dark:focus:text-gray-300 focus:border-gray-300 dark:focus:border-gray-700 transition duration-150 ease-in-out'
-);
 </script>
 
 <template>
   <div>
     <Popover v-slot="{ open }">
-      <PopoverButton class="ring-0 ">
-        <div :class=classes>
-          <span class="ml-1 py-5">
+      <PopoverButton 
+        class="border-b-2 focus:outline-none transition duration-300 ease-in-out"
+        :class='active ? 
+          "border-info-light dark:border-info-dark focus:border-warning-light dark:focus:border-warning-dark" : 
+          "border-transparent hover:border-primary-dark dark:hover:border-primary-light focus:border-primary-dark dark:focus:border-primary-light"'
+      >
+        <div 
+          class="inline-flex items-center px-1 pt-1 text-sm font-medium leading-5 transition duration-300 ease-in-out" 
+          :class='active ? 
+            "text-primary-dark dark:text-primary-light" : 
+            "text-primary-dark/80 dark:text-primary-light/80 hover:text-primary-dark dark:hover:text-primary-light focus:text-primary-dark dark:focus:text-primary-light"'
+        >
+          <span class="py-5">
             <slot />
           </span>
           <ChevronDownIcon
-            class="ml-2 h-5 w-5 text-grey-300 transition duration-150 ease-in-out"
+            class="ml-1 h-5 w-5"
             aria-hidden="true"
           />
         </div>

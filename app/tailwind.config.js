@@ -19,7 +19,7 @@ export default {
         },
         {
             pattern: /(bg|border|ring|ring-offset|text)-(primary|secondary|danger|success|warning|info)/,
-            variants: ['dark'],
+            variants: ['dark', 'hover', 'focus', 'dark:hover', 'dark:focus'],
         },
     ],
     theme: {
@@ -90,7 +90,7 @@ export default {
             },
             borderColor: {
                 primary: {
-                    'light': colors.gray[900],
+                    'light': colors.gray[400],
                     'dark': colors.gray[500],
                 },
                 secondary: {

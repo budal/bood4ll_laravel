@@ -3,7 +3,6 @@
       fallback: string;
   }>();
 
-const layoff = "b"
 </script>
 
 <template>
