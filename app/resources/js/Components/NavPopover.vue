@@ -22,7 +22,7 @@ const routeCurrent = window.location.href;
           "border-transparent hover:border-primary-dark dark:hover:border-primary-light focus:border-primary-dark dark:focus:border-primary-light"'
       >
         <div 
-          class="inline-flex items-center px-1 pt-1 text-sm font-medium leading-5 transition duration-300 ease-in-out" 
+          class="inline-flex items-center pt-1 text-sm font-medium leading-5 transition duration-300 ease-in-out" 
           :class='active ? 
             "text-primary-dark dark:text-primary-light" : 
             "text-primary-dark/60 dark:text-primary-light/60 hover:text-primary-dark dark:hover:text-primary-light group-focus:text-primary-dark dark:group-focus:text-primary-light"'

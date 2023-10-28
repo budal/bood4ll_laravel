@@ -10,13 +10,9 @@ import Avatar from '@/Components/Avatar.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import TailwindIndicator from '@/Components/TailwindIndicator.vue';
 import NavPopover from '@/Components/NavPopover.vue';
-import { useDark, useToggle } from "@vueuse/core"
-import { MoonIcon, SunIcon } from '@heroicons/vue/20/solid';
+import ToggleTheme from '@/Components/ToggleTheme.vue';
 
 const showingNavigationDropdown = ref(false);
-
-const isDark = useDark();
-const toggleDark = useToggle(isDark);
 
 const routeCurrent = window.location.href;
 
@@ -49,7 +45,6 @@ const items = [
             </svg>`
     },
 ]
-
 </script>
 
 <template>
@@ -60,7 +55,7 @@ const items = [
                     <div class="flex justify-between h-16">
                         <div class="flex">
                             <div class="shrink-0 flex items-center">
-                                <Link :href="route('dashboard')">
+                                <Link :href="route('home')" class="p-1 rounded-full focus:outline-none focus:ring-2 focus:ring-primary-light dark:focus:ring-primary-dark focus:ring-offset-1 focus:ring-offset-primary-light dark:focus:ring-offset-primary-dark transition ease-in-out duration-500">
                                     <ApplicationLogo class="block h-9 w-auto fill-current text-gray-800 dark:text-gray-200" />
                                 </Link>
                             </div>
@@ -81,52 +76,43 @@ const items = [
                         </div>
 
                         <div class="hidden sm:flex sm:items-center sm:ml-6">
-                            <div class="relative">
-                                <button type="button" class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 transition ease-in-out duration-150" @click="toggleDark()">
-                                    <SunIcon v-if="isDark" class="w-5 h-5 text-white" />
-                                    <MoonIcon v-if="!isDark" class="w-5 h-5" />
-                                </button>
-                            </div>
-                            <div class="ml-1 relative">
-                                <Dropdown align="right" width="48">
-                                    <template #trigger>
-                                        <span class="inline-flex rounded-md">
-                                            <button type="button" class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 transition ease-in-out duration-150">
-                                                <Avatar :fallback="$page.props.auth.user.name" />
-                                            </button>
-                                        </span>
-                                    </template>
+                            <ToggleTheme />
+                            <Dropdown align="right" width="48">
+                                <template #trigger>
+                                    <span class="inline-flex rounded-md">
+                                        <button type="button" class="p-1 rounded-full focus:outline-none focus:ring-2 focus:ring-primary-light dark:focus:ring-primary-dark focus:ring-offset-1 focus:ring-offset-primary-light dark:focus:ring-offset-primary-dark transition ease-in-out duration-500">
+                                            <Avatar :fallback="$page.props.auth.user.name" />
+                                        </button>
+                                    </span>
+                                </template>
 
-                                    <template #content>
-                                        <div class="divide-y divide-gray-100 dark:divide-gray-600">
-                                            <div class="pl-2 py-1" role="none">
-                                                <div class="font-sm text-sm text-gray-800 dark:text-gray-200">{{ $page.props.auth.user.name }}</div>
-                                                <div class="font-xs text-xs justify-center text-gray-500">{{ $page.props.auth.user.email }}</div>
-                                            </div>
-                                            <div class="py-1" role="none">
-                                                <DropdownLink :href="route('profile.edit')"> {{ $t('Profile') }} </DropdownLink>
-                                                <DropdownLink :href="route('settings')"> {{ $t('Settings') }} </DropdownLink>
-                                            </div>
-                                            <div class="py-1" role="none">
-                                                <DropdownLink :href="route('messages')"> {{ $t('Messages') }} </DropdownLink>
-                                                <DropdownLink :href="route('schedule')"> {{ $t('Schedule') }} </DropdownLink>
-                                            </div>
-                                            <div class="py-1" role="none">
-                                                <DropdownLink :href="route('logout')" method="post" as="button">
-                                                    {{ $t('Log Out') }}
-                                                </DropdownLink>
-                                            </div>
+                                <template #content>
+                                    <div class="divide-y divide-gray-100 dark:divide-gray-600">
+                                        <div class="pl-2 py-1" role="none">
+                                            <div class="font-sm text-sm text-gray-800 dark:text-gray-200">{{ $page.props.auth.user.name }}</div>
+                                            <div class="font-xs text-xs justify-center text-gray-500">{{ $page.props.auth.user.email }}</div>
                                         </div>
-                                    </template>
-                                </Dropdown>
-                            </div>
+                                        <div class="py-1" role="none">
+                                            <DropdownLink :href="route('profile.edit')"> {{ $t('Profile') }} </DropdownLink>
+                                            <DropdownLink :href="route('settings')"> {{ $t('Settings') }} </DropdownLink>
+                                        </div>
+                                        <div class="py-1" role="none">
+                                            <DropdownLink :href="route('messages')"> {{ $t('Messages') }} </DropdownLink>
+                                            <DropdownLink :href="route('schedule')"> {{ $t('Schedule') }} </DropdownLink>
+                                        </div>
+                                        <div class="py-1" role="none">
+                                            <DropdownLink :href="route('logout')" method="post" as="button">
+                                                {{ $t('Log Out') }}
+                                            </DropdownLink>
+                                        </div>
+                                    </div>
+                                </template>
+                            </Dropdown>
                         </div>
 
                         <div class="-mr-2 flex items-center sm:hidden">
-                            <button @click="toggleDark()" class="mr-3">
-                                <SunIcon v-if="isDark" class="w-5 h-5 text-white" />
-                                <MoonIcon v-if="!isDark" class="w-5 h-5" />
-                            </button>
+                            <ToggleTheme />
+
                             <button @click="showingNavigationDropdown = !showingNavigationDropdown" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-900 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-900 focus:text-gray-500 dark:focus:text-gray-400 transition duration-150 ease-in-out">
                                 <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                                     <path
