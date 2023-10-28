@@ -25,7 +25,7 @@ const routeCurrent = window.location.href;
           class="inline-flex items-center px-1 pt-1 text-sm font-medium leading-5 transition duration-300 ease-in-out" 
           :class='active ? 
             "text-primary-dark dark:text-primary-light" : 
-            "text-primary-dark/80 dark:text-primary-light/80 hover:text-primary-dark dark:hover:text-primary-light focus:text-primary-dark dark:focus:text-primary-light"'
+            "text-primary-dark/60 dark:text-primary-light/60 hover:text-primary-dark dark:hover:text-primary-light focus:text-primary-dark dark:focus:text-primary-light"'
         >
           <span class="py-5">
             <slot />
