@@ -110,6 +110,7 @@ class UsersController extends Controller
 
         return [
             [
+                'id' => "profile",
                 'title' => "User profile Information",
                 'subtitle' => "User account profile information",
                 'cols' => 2,
@@ -147,7 +148,13 @@ class UsersController extends Controller
     public function create()
     {
         return Inertia::render('Default/Create', [
-            'body' => $this->__form(),
+            'form' => $this->__form(),
+            'routes' => [
+                'profile' => [
+                    'route' => route('apps.users.create'),
+                    'method' => 'post'
+                ],
+            ],
         ]);
     }
 
@@ -171,7 +178,13 @@ class UsersController extends Controller
     public function edit(User $user): Response
     {
         return Inertia::render('Default/Edit', [
-            'body' => $this->__form(),
+            'form' => $this->__form(),
+            'routes' => [
+                'profile' => [
+                    'route' => route('apps.users.edit', $user->id),
+                    'method' => 'patch'
+                ],
+            ],
             'data' => $user
         ]);
     }

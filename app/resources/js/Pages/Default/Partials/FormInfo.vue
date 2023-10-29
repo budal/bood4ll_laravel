@@ -13,18 +13,18 @@ import Select from '@/Components/Select.vue';
 const passwordInput = ref<HTMLInputElement | null>(null);
 
 const props = defineProps<{
-    method: any;
-    body: any;
+    form: any;
+    routes: any;
     data?: any;
 }>();    
 
 const url = window.location.href;
 
-const form = useForm({});
+const jsForm = useForm({});
 
 let items = reactive(new Set())
 
-props.body.forEach((forms: any) => {
+props.form.forEach((forms: any) => {
     forms.fields.forEach((fields: any) => {
         fields.forEach((field: any) => {
             items.add(field.name);
@@ -36,7 +36,7 @@ function dynamicFields() {
     let content = reactive(new Set())
 
     items.forEach((field: any) => {
-        content[field as never] = form[field as never] ;
+        content[field as never] = jsForm[field as never] ;
     });
 
     return content;
@@ -44,31 +44,31 @@ function dynamicFields() {
 
 onBeforeMount(() => {
     items.forEach((field: any) => {
-        form[field] = props.data ? props.data[field] : '';
+        jsForm[field] = props.data ? props.data[field] : '';
     });
 })
 
-const sendForm = () => {
-    form.transform(() => ({ ...dynamicFields() }))
+const sendForm = (formId: string) => {
+    jsForm.transform(() => ({ ...dynamicFields() }))
 
-    form.submit(props.method, url, {
+    jsForm.submit(props.routes[formId].method, props.routes[formId].route, {
         preserveScroll: true,
         onSuccess: () => {
             toast.success(trans(usePage().props.status as string));
-            form.reset();
+            jsForm.reset();
         },
         onError: () => {
-                // if (form.errors.password) {
-                //     form.reset('password', 'password_confirmation');
+                // if (jsForm.errors.password) {
+                //     jsForm.reset('password', 'password_confirmation');
                 //     passwordInput.value?.focus();
                 // }
-                // if (form.errors.current_password) {
-                //     form.reset('current_password');
+                // if (jsForm.errors.current_password) {
+                //     jsForm.reset('current_password');
                 //     currentPasswordInput.value?.focus();
                 // }
             },
         onFinish: () => {
-            // form.reset('password', 'password_confirmation');
+            // jsForm.reset('password', 'password_confirmation');
         },
     })
 }
@@ -82,18 +82,18 @@ const content = [
 </script>
 
 <template>
-    <section v-for="body in props.body">
+    <section v-for="mkForm in form">
         <header>
-            <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">{{ $t(body.title) }}</h2>
+            <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">{{ $t(mkForm.title) }}</h2>
 
             <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                {{ $t(body.subtitle) }}
+                {{ $t(mkForm.subtitle) }}
             </p>
         </header>
         
-        <form @submit.prevent="sendForm" class="space-y-6 mt-2">
+        <form @submit.prevent="sendForm(mkForm.id)" class="space-y-6 mt-2">
             <div class="flex flex-col">
-                <div v-for="group in body.fields" :class="`grid sm:grid-cols-${body.cols} sm:gap-4`">
+                <div v-for="group in mkForm.fields" :class="`grid sm:grid-cols-${mkForm.cols} sm:gap-4`">
                     <div v-for="field in group" :class="`${field.span ? `sm:col-span-${field.span}` : ''} mt-4`">
                         <InputLabel :for="field.name" :value="$t(field.title)" />
         
@@ -102,7 +102,7 @@ const content = [
                             :name="field.name"
                             :type="field.type"
                             class="mt-1 block w-full"
-                            v-model="form[field.name as never]"
+                            v-model="jsForm[field.name as never]"
                             :required="field.required"
                             :autocomplete="field.name"
                         />
@@ -113,20 +113,20 @@ const content = [
                             :type="field.type"
                             :content="field.content"
                             class="mt-1 block w-full"
-                            v-model="form[field.name as never]"
+                            v-model="jsForm[field.name as never]"
                             :required="field.required"
                             :multiple="field.multiple"
                         />
         
-                        <InputError class="mt-2" :message="form.errors[field.name as never]" />
+                        <InputError class="mt-2" :message="jsForm.errors[field.name as never]" />
                     </div>
                 </div>
             </div>
     
             <div class="flex items-center gap-4">
                 <PrimaryButton 
-                    :class="{ 'opacity-25': form.processing }"
-                    :disabled="form.processing">{{ $t('Save') }}
+                    :class="{ 'opacity-25': jsForm.processing }"
+                    :disabled="jsForm.processing">{{ $t('Save') }}
                 </PrimaryButton>
 
                 <Transition
@@ -135,7 +135,7 @@ const content = [
                     leave-active-class="transition ease-in-out"
                     leave-to-class="opacity-0"
                 >
-                    <p v-if="form.recentlySuccessful" class="text-sm text-gray-600 dark:text-gray-400">{{ $t('Saved.') }}</p>
+                    <p v-if="jsForm.recentlySuccessful" class="text-sm text-gray-600 dark:text-gray-400">{{ $t('Saved.') }}</p>
                 </Transition>
             </div>
         </form>

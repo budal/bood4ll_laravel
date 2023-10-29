@@ -87,6 +87,7 @@ class RolesController extends Controller
             [
                 'title' => "Roles management",
                 'subtitle' => "Role name and abilities",
+                'route' => "apps",
                 'cols' => 2,
                 'fields' => [
                     [
@@ -111,7 +112,7 @@ class RolesController extends Controller
     public function create()
     {
         return Inertia::render('Default/Create', [
-            'body' => $this->__form(),
+            'form' => $this->__form(),
         ]);
     }
 
@@ -135,7 +136,7 @@ class RolesController extends Controller
     public function edit(Role $role): Response
     {
         return Inertia::render('Default/Edit', [
-            'body' => $this->__form(),
+            'form' => $this->__form(),
             'data' => $role
         ]);
     }
