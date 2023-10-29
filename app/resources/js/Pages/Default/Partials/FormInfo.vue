@@ -54,10 +54,7 @@ const sendForm = (formId: string) => {
     jsForm.submit(props.routes[formId].method, props.routes[formId].route, {
         preserveScroll: true,
         onSuccess: () => {
-            console.log(usePage().props.status)
-            console.log(props.routes[formId].method, props.routes[formId].route)
-
-            // toast.success(trans(usePage().props.status as string));
+            toast.success(trans(usePage().props.status as string));
             jsForm.reset();
         },
         onError: () => {
