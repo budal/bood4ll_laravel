@@ -14,6 +14,7 @@
       name?: string;
       modelValue: Object | string | number;
       content: any;
+      required?: boolean;
       multiple?: boolean;
     }>(),
     {
@@ -32,6 +33,7 @@
   <Listbox 
     v-model="selectedOptionsRef"
     @update:modelValue="value => emit('update:modelValue', props.multiple == true ? value.map((i: any) => i.id) : value.id)"
+    :required="required"
     :multiple="multiple"
   >
     <div class="relative mt-1">

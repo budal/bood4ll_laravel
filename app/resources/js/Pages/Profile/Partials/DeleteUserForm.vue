@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import DangerButton from '@/Components/DangerButton.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import Modal from '@/Components/Modal.vue';
@@ -49,7 +48,7 @@ const closeModal = () => {
             </p>
         </header>
 
-        <DangerButton @click="confirmUserDeletion">{{ $t('Delete Account') }}</DangerButton>
+        <Button color="danger" @click="confirmUserDeletion">{{ $t('Delete Account') }}</Button>
 
         <Modal :show="confirmingUserDeletion" @close="closeModal">
             <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
@@ -79,14 +78,15 @@ const closeModal = () => {
             <div class="mt-6 flex justify-end">
                 <Button color="secondary" @click="closeModal">{{ $t('Cancel') }}</Button>
 
-                <DangerButton
+                <Button
+                    color="danger"
                     class="ml-3"
                     :class="{ 'opacity-25': form.processing }"
                     :disabled="form.processing"
                     @click="deleteUser"
                 >
                     {{ $t('Delete Account') }}
-                </DangerButton>
+                </Button>
             </div>
         </Modal>
     </section>

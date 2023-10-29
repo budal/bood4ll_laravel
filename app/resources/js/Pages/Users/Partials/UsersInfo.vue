@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
+import Button from '@/Components/Button.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { useForm } from '@inertiajs/vue3';
 import { nextTick, ref } from 'vue';
@@ -112,10 +112,11 @@ const update = (id : string) => {
             </div>
 
             <div class="flex items-center gap-4">
-                <PrimaryButton 
+                <Button 
+                    color="primary" 
                     :class="{ 'opacity-25': form.processing }"
                     :disabled="form.processing">{{ $t('Save') }}
-                </PrimaryButton>
+                </Button>
 
                 <Transition
                     enter-active-class="transition ease-in-out"

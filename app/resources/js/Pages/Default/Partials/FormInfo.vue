@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
+import Button from '@/Components/Button.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { useForm, usePage } from '@inertiajs/vue3';
 import { onBeforeMount, reactive } from 'vue';
@@ -95,7 +95,7 @@ const content = [
             <div class="flex flex-col">
                 <div v-for="group in mkForm.fields" :class="`grid sm:grid-cols-${mkForm.cols} sm:gap-4`">
                     <div v-for="field in group" :class="`${field.span ? `sm:col-span-${field.span}` : ''} mt-4`">
-                        <InputLabel :for="field.name" :value="$t(field.title)" />
+                        <InputLabel :for="field.name" :value="$t(field.title) + (field.required ? ' *' : '')" />
         
                         <TextInput v-if="field.type == 'input'"
                             :id="field.name"
@@ -124,10 +124,11 @@ const content = [
             </div>
     
             <div class="flex items-center gap-4">
-                <PrimaryButton 
+                <Button 
+                    color="primary" 
                     :class="{ 'opacity-25': jsForm.processing }"
                     :disabled="jsForm.processing">{{ $t('Save') }}
-                </PrimaryButton>
+                </Button>
 
                 <Transition
                     enter-active-class="transition ease-in-out"
