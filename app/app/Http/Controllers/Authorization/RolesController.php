@@ -13,10 +13,6 @@ use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Inertia\Response;
 
-
-
-use Illuminate\Database\Eloquent\Model;
-
 use App\Models\User;
 use App\Models\Role;
 use App\Models\Ability;
@@ -28,20 +24,18 @@ class RolesController extends Controller
      */
     public function index(Request $request): Response
     {
-        $titles = [
-            [
-                'type' => 'composite',
-                'title' => 'Role',
-                'field' => 'name',
-                'fields' => ['name', 'email']
-            ],
-        ];
-
         $routes = [
-            'createRoute' => "apps.roles.create",
             'editRoute' => "apps.roles.edit",
             'destroyRoute' => "apps.roles.destroy",
             'restoreRoute' => "apps.roles.restore",
+        ];
+        
+        $titles = [
+            [
+                'type' => 'simple',
+                'title' => 'Role',
+                'field' => 'name',
+            ],
         ];
 
         $menu = [
@@ -72,7 +66,6 @@ class RolesController extends Controller
                 ->appends($request->all('search', 'sorted', 'trashed'))
         ]);
     }
-
     
     public function __form()
     {
@@ -113,6 +106,12 @@ class RolesController extends Controller
     {
         return Inertia::render('Default/Create', [
             'form' => $this->__form(),
+            'routes' => [
+                'profile' => [
+                    'route' => route('apps.roles.create'),
+                    'method' => 'post'
+                ],
+            ],
         ]);
     }
 
@@ -137,6 +136,12 @@ class RolesController extends Controller
     {
         return Inertia::render('Default/Edit', [
             'form' => $this->__form(),
+            'routes' => [
+                'profile' => [
+                    'route' => route('apps.roles.edit', $role->id),
+                    'method' => 'patch'
+                ],
+            ],
             'data' => $role
         ]);
     }
@@ -144,7 +149,7 @@ class RolesController extends Controller
     /**
      * Update the user's profile information.
      */
-    public function update(ProfileUpdateRequest $request): RedirectResponse
+    public function update($request): RedirectResponse
     {
         dd($request);
         
