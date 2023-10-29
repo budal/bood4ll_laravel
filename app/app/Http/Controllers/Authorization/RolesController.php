@@ -114,7 +114,7 @@ class RolesController extends Controller
 
     public function store(RolesRequest $request): RedirectResponse
     {
-        // dd($request);
+        dd($request);
         // $request->user()->fill($request->validated());
 
         // if ($request->user()->isDirty('email')) {

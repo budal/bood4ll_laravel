@@ -31,7 +31,7 @@
 <template>
   <Listbox 
     v-model="selectedOptionsRef"
-    @update:modelValue="value => emit('update:modelValue', props.multiple == true ? [value.id] : value.id)"
+    @update:modelValue="value => emit('update:modelValue', props.multiple == true ? value.map((i: any) => i.id) : value.id)"
     :multiple="multiple"
   >
     <div class="relative mt-1">
