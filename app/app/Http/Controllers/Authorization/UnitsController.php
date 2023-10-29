@@ -16,9 +16,6 @@ use App\Models\User;
 
 class UnitsController extends Controller
 {
-    /**
-     * Display the users list.
-     */
     public function index(Request $request): Response
     {
         $items = (new User)->newQuery();
@@ -98,9 +95,6 @@ class UnitsController extends Controller
         return Inertia::render('Users/Create');
     }
 
-    /**
-     * Display the user's profile form.
-     */
     public function edit(User $user): Response
     {
         return Inertia::render('Users/Edit', [
@@ -108,9 +102,6 @@ class UnitsController extends Controller
         ]);
     }
 
-    /**
-     * Update the user's profile information.
-     */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
         $request->user()->fill($request->validated());
@@ -124,9 +115,6 @@ class UnitsController extends Controller
         return Redirect::route('profile.edit');
     }
 
-    /**
-     * Delete the user's account.
-     */
     public function destroy(Request $request): RedirectResponse
     {
         $items = $request->all();

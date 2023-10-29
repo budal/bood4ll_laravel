@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Authorization;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\ProfileUpdateRequest;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -13,15 +12,13 @@ use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Inertia\Response;
 
-use App\Models\User;
 use App\Models\Role;
 use App\Models\Ability;
 
+use App\Http\Requests\RolesRequest;
+
 class RolesController extends Controller
 {
-    /**
-     * Display the users list.
-     */
     public function index(Request $request): Response
     {
         $routes = [
@@ -78,9 +75,9 @@ class RolesController extends Controller
 
         return [
             [
+                'id' => "role",
                 'title' => "Roles management",
                 'subtitle' => "Role name and abilities",
-                'route' => "apps",
                 'cols' => 2,
                 'fields' => [
                     [
@@ -107,15 +104,15 @@ class RolesController extends Controller
         return Inertia::render('Default/Create', [
             'form' => $this->__form(),
             'routes' => [
-                'profile' => [
-                    'route' => route('apps.roles.create'),
+                'role' => [
+                    'route' => route('apps.roles.store'),
                     'method' => 'post'
                 ],
             ],
         ]);
     }
 
-    public function store($request): RedirectResponse
+    public function store(RolesRequest $request): RedirectResponse
     {
         dd($request);
         // $request->user()->fill($request->validated());
@@ -126,18 +123,15 @@ class RolesController extends Controller
 
         // $request->user()->save();
 
-        return Redirect::route('apps.roles')->with('status', 'Role created.');
+        return Redirect::route('apps.roles.index')->with('status', 'Role created.');
     }
     
-    /**
-     * Display the user's profile form.
-     */
     public function edit(Role $role): Response
     {
         return Inertia::render('Default/Edit', [
             'form' => $this->__form(),
             'routes' => [
-                'profile' => [
+                'role' => [
                     'route' => route('apps.roles.edit', $role->id),
                     'method' => 'patch'
                 ],
@@ -146,10 +140,7 @@ class RolesController extends Controller
         ]);
     }
 
-    /**
-     * Update the user's profile information.
-     */
-    public function update($request): RedirectResponse
+    public function update(Request $request): RedirectResponse
     {
         dd($request);
         
@@ -165,9 +156,6 @@ class RolesController extends Controller
         return Redirect::back()->with('status', 'Role edited.');
     }
 
-    /**
-     * Delete the user's account.
-     */
     public function destroy(Request $request): RedirectResponse
     {
         $items = $request->all();

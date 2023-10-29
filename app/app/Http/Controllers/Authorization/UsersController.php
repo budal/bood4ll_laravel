@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Authorization;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\ProfileUpdateRequest;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -15,11 +14,10 @@ use Inertia\Response;
 
 use App\Models\User;
 
+use App\Http\Requests\ProfileUpdateRequest;
+
 class UsersController extends Controller
 {
-    /**
-     * Display the users list.
-     */ 
     public function index(Request $request): Response
     {
         $routes = [
@@ -151,7 +149,7 @@ class UsersController extends Controller
             'form' => $this->__form(),
             'routes' => [
                 'profile' => [
-                    'route' => route('apps.users.create'),
+                    'route' => route('apps.users.store'),
                     'method' => 'post'
                 ],
             ],
@@ -172,9 +170,6 @@ class UsersController extends Controller
         return Redirect::route('apps.users')->with('status', 'User created.');
     }
     
-    /**
-     * Display the user's profile form.
-     */
     public function edit(User $user): Response
     {
         return Inertia::render('Default/Edit', [
@@ -189,9 +184,6 @@ class UsersController extends Controller
         ]);
     }
 
-    /**
-     * Update the user's profile information.
-     */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
         dd($request);
@@ -208,9 +200,6 @@ class UsersController extends Controller
         return Redirect::back()->with('status', 'User edited.');
     }
 
-    /**
-     * Delete the user's account.
-     */
     public function destroy(Request $request): RedirectResponse
     {
         $items = $request->all();
