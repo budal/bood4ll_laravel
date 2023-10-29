@@ -51,11 +51,13 @@ onBeforeMount(() => {
 const sendForm = (formId: string) => {
     jsForm.transform(() => ({ ...dynamicFields() }))
 
-    console.log(props.routes[formId].method, props.routes[formId].route)
     jsForm.submit(props.routes[formId].method, props.routes[formId].route, {
         preserveScroll: true,
         onSuccess: () => {
-            toast.success(trans(usePage().props.status as string));
+            console.log(usePage().props.status)
+            console.log(props.routes[formId].method, props.routes[formId].route)
+
+            // toast.success(trans(usePage().props.status as string));
             jsForm.reset();
         },
         onError: () => {

@@ -81,9 +81,9 @@ Route::middleware('auth')->group(function () {
             Route::controller(RolesController::class)->group(function () {
                 Route::get('/permissions/roles', 'index')->name('roles.index')->middleware(['password.confirm', 'verified'])->breadcrumb('Roles');
                 Route::get('/permissions/roles/create', 'create')->name('roles.create')->middleware(['password.confirm'])->breadcrumb('Role creation', 'apps.roles.index');
-                Route::post('/permissions/roles/create', 'create')->name('roles.store')->middleware(['password.confirm']);
+                Route::post('/permissions/roles/create', 'store')->name('roles.store')->middleware(['password.confirm']);
                 Route::get('/permissions/roles/edit/{role}', 'edit')->name('roles.edit')->middleware(['password.confirm'])->breadcrumb('Role edition', 'apps.roles.index');
-                Route::patch('/permissions/roles/edit/{role}', 'edit')->name('roles.update')->middleware(['password.confirm']);
+                Route::patch('/permissions/roles/edit/{role}', 'update')->name('roles.update')->middleware(['password.confirm']);
                 Route::delete('/permissions/roles/destroy', 'destroy')->name('roles.destroy')->middleware(['password.confirm']);
             });
 
