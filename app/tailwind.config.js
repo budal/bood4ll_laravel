@@ -25,6 +25,12 @@ export default {
     theme: {
         extend: {
             colors: {
+                system: {
+                    'light': colors.gray[200],
+                    'dark-hover': colors.gray[50],
+                    'dark': colors.gray[700],
+                    'dark-hover': colors.gray[800],
+                },
                 primary: {
                     'light': colors.gray[800],
                     'light-hover': colors.gray[700],

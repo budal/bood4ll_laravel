@@ -3,8 +3,7 @@ import { ref } from 'vue';
 import { Link } from '@inertiajs/vue3';
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import Breadcrumbs from '@/Components/Breadcrumbs.vue';
-import Dropdown from '@/Components/Dropdown.vue';
-import DropdownLink from '@/Components/DropdownLink.vue';
+import SystemMenu from '@/Components/SystemMenu.vue';
 import NavLink from '@/Components/NavLink.vue';
 import Avatar from '@/Components/Avatar.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
@@ -16,7 +15,7 @@ const showingNavigationDropdown = ref(false);
 
 const routeCurrent = window.location.href;
 
-const items = [
+const apps = [
     {
         title: "Users",
         route: "apps.users.index",
@@ -45,12 +44,42 @@ const items = [
             </svg>`
     },
 ]
+
+const menu = [
+    {
+        title: 'Profile',
+        route: route('profile.edit')
+    },
+    {
+        title: 'Settings',
+        route: route('settings')
+    },
+    {
+        title: 'Messages',
+        route: route('messages')
+    },
+    {
+        title: 'Schedule',
+        route: route('schedule')
+    },
+    {
+        title: '-'
+    },
+    {
+        title: 'Apps',
+        route: route('apps')
+    },
+    {
+        title: 'Reports',
+        route: route('reports')
+    },
+]
 </script>
 
 <template>
     <div>
         <div class="relative min-h-screen bg-gray-100 dark:bg-gray-900">
-            <nav class="bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700 sm:sticky sm:top-0 z-[100]">
+            <nav class="bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700 sm:sticky sm:top-0">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="flex justify-between h-16">
                         <div class="flex">
@@ -63,10 +92,10 @@ const items = [
                                 <NavLink :href="route('dashboard')" :active="routeCurrent.includes(route('dashboard'))">
                                     {{ $t('Dashboard') }}
                                 </NavLink>
-                                <NavPopover :items=items :active="routeCurrent.includes(route('apps'))">
+                                <NavPopover :items=apps :active="routeCurrent.includes(route('apps'))">
                                     {{ $t('Apps') }}
                                 </NavPopover>
-                                <NavPopover :items=items :active="routeCurrent.includes(route('reports'))">
+                                <NavPopover :items=apps :active="routeCurrent.includes(route('reports'))">
                                     {{ $t('Reports') }}
                                 </NavPopover>
                                 <NavLink :href="route('help')" :active="routeCurrent.includes(route('help'))">
@@ -77,41 +106,20 @@ const items = [
 
                         <div class="hidden sm:flex sm:items-center sm:ml-6">
                             <ToggleTheme />
-                            <Dropdown align="right" width="48">
+                            <SystemMenu :content="menu">
                                 <template #trigger>
-                                    <span class="inline-flex rounded-md">
-                                        <button type="button" class="p-1 rounded-full focus:outline-none focus:ring-2 focus:ring-primary-light dark:focus:ring-primary-dark focus:ring-offset-1 focus:ring-offset-primary-light dark:focus:ring-offset-primary-dark transition ease-in-out duration-500">
-                                            <Avatar :fallback="$page.props.auth.user.name" />
-                                        </button>
-                                    </span>
+                                    <Avatar :fallback="$page.props.auth.user.name" />
                                 </template>
-
-                                <template #content>
-                                    <div class="divide-y divide-gray-100 dark:divide-gray-600">
-                                        <div class="pl-2 py-1" role="none">
-                                            <div class="font-sm text-sm text-gray-800 dark:text-gray-200">{{ $page.props.auth.user.name }}</div>
-                                            <div class="font-xs text-xs justify-center text-gray-500">{{ $page.props.auth.user.email }}</div>
-                                        </div>
-                                        <div class="py-1" role="none">
-                                            <DropdownLink :href="route('profile.edit')"> {{ $t('Profile') }} </DropdownLink>
-                                            <DropdownLink :href="route('settings')"> {{ $t('Settings') }} </DropdownLink>
-                                        </div>
-                                        <div class="py-1" role="none">
-                                            <DropdownLink :href="route('messages')"> {{ $t('Messages') }} </DropdownLink>
-                                            <DropdownLink :href="route('schedule')"> {{ $t('Schedule') }} </DropdownLink>
-                                        </div>
-                                        <div class="py-1" role="none">
-                                            <DropdownLink :href="route('logout')" method="post" as="button">
-                                                {{ $t('Log Out') }}
-                                            </DropdownLink>
-                                        </div>
-                                    </div>
-                                </template>
-                            </Dropdown>
+                            </SystemMenu>
                         </div>
 
                         <div class="-mr-2 flex items-center sm:hidden">
                             <ToggleTheme />
+                            <SystemMenu :content="menu">
+                                <template #trigger>
+                                    <Avatar :fallback="$page.props.auth.user.name" />
+                                </template>
+                            </SystemMenu>
 
                             <button @click="showingNavigationDropdown = !showingNavigationDropdown" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-900 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-900 focus:text-gray-500 dark:focus:text-gray-400 transition duration-150 ease-in-out">
                                 <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
