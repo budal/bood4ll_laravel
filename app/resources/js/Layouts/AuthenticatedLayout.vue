@@ -6,7 +6,6 @@ import Breadcrumbs from '@/Components/Breadcrumbs.vue';
 import SystemMenu from '@/Components/SystemMenu.vue';
 import NavLink from '@/Components/NavLink.vue';
 import Avatar from '@/Components/Avatar.vue';
-import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import TailwindIndicator from '@/Components/TailwindIndicator.vue';
 import NavPopover from '@/Components/NavPopover.vue';
 import ToggleTheme from '@/Components/ToggleTheme.vue';
@@ -47,31 +46,46 @@ const apps = [
 
 const menu = [
     {
-        title: 'Profile',
-        route: route('profile.edit')
-    },
-    {
-        title: 'Settings',
-        route: route('settings')
-    },
-    {
-        title: 'Messages',
-        route: route('messages')
-    },
-    {
-        title: 'Schedule',
-        route: route('schedule')
-    },
-    {
-        title: '-'
+        title: 'Dashboard',
+        route: 'dashboard',
+        class: 'sm:hidden',
     },
     {
         title: 'Apps',
-        route: route('apps')
+        route: 'apps',
+        class: 'sm:hidden',
+        links: apps
     },
     {
         title: 'Reports',
-        route: route('reports')
+        route: 'reports',
+        class: 'sm:hidden',
+        links: apps
+    },
+    {
+        title: 'Help',
+        route: 'help',
+        class: 'sm:hidden',
+    },
+    {
+        title: '-',
+        class: 'sm:hidden',
+    },
+    {
+        title: 'Profile',
+        route: 'profile.edit'
+    },
+    {
+        title: 'Settings',
+        route: 'settings'
+    },
+    {
+        title: 'Messages',
+        route: 'messages'
+    },
+    {
+        title: 'Schedule',
+        route: 'schedule'
     },
 ]
 </script>
@@ -104,81 +118,13 @@ const menu = [
                             </div>
                         </div>
 
-                        <div class="hidden sm:flex sm:items-center sm:ml-6">
+                        <div class="xs:-mr-2 flex items-center sm:ml-6">
                             <ToggleTheme />
                             <SystemMenu :content="menu">
                                 <template #trigger>
                                     <Avatar :fallback="$page.props.auth.user.name" />
                                 </template>
                             </SystemMenu>
-                        </div>
-
-                        <div class="-mr-2 flex items-center sm:hidden">
-                            <ToggleTheme />
-                            <SystemMenu :content="menu">
-                                <template #trigger>
-                                    <Avatar :fallback="$page.props.auth.user.name" />
-                                </template>
-                            </SystemMenu>
-
-                            <button @click="showingNavigationDropdown = !showingNavigationDropdown" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-900 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-900 focus:text-gray-500 dark:focus:text-gray-400 transition duration-150 ease-in-out">
-                                <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                                    <path
-                                        :class="{
-                                            hidden: showingNavigationDropdown,
-                                            'inline-flex': !showingNavigationDropdown,
-                                        }"
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M4 6h16M4 12h16M4 18h16"
-                                    />
-                                    <path
-                                        :class="{
-                                            hidden: !showingNavigationDropdown,
-                                            'inline-flex': showingNavigationDropdown,
-                                        }"
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M6 18L18 6M6 6l12 12"
-                                    />
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <div :class="{ block: showingNavigationDropdown, hidden: !showingNavigationDropdown }" class="sm:hidden">
-                    <div class="pt-2 pb-3 space-y-1">
-                        <ResponsiveNavLink :href="route('dashboard')" :active="routeCurrent.includes(route('dashboard'))">
-                            {{ $t('Dashboard') }}
-                        </ResponsiveNavLink>
-                        <ResponsiveNavLink :href="route('apps')" :active="routeCurrent.includes(route('apps'))">
-                            {{ $t('Apps') }}
-                        </ResponsiveNavLink>
-                        <ResponsiveNavLink :href="route('reports')" :active="routeCurrent.includes(route('reports'))">
-                            {{ $t('Reports') }}
-                        </ResponsiveNavLink>
-                        <ResponsiveNavLink :href="route('help')" :active="routeCurrent.includes(route('help'))">
-                            {{ $t('Help') }}
-                        </ResponsiveNavLink>
-                    </div>
-
-                    <div class="pt-4 pb-1 border-t border-gray-200 dark:border-gray-600">
-                        <div class="px-4">
-                            <div class="font-medium text-base text-gray-800 dark:text-gray-200">
-                                {{ $page.props.auth.user.name }}
-                            </div>
-                            <div class="font-medium text-sm text-gray-500">{{ $page.props.auth.user.email }}</div>
-                        </div>
-
-                        <div class="mt-3 space-y-1">
-                            <ResponsiveNavLink :href="route('profile.edit')" :active="route().current('profile.edit')"> {{ $t('Profile') }} </ResponsiveNavLink>
-                            <ResponsiveNavLink :href="route('settings')" :active="route().current('settings')"> {{ $t('Settings') }} </ResponsiveNavLink>
-                            <ResponsiveNavLink :href="route('messages')" :active="route().current('messages')"> {{ $t('Messages') }} </ResponsiveNavLink>
-                            <ResponsiveNavLink :href="route('schedule')" :active="route().current('schedule')"> {{ $t('Schedule') }} </ResponsiveNavLink>
-                            <ResponsiveNavLink :href="route('logout')" method="post" as="button"> {{ $t('Log Out') }} </ResponsiveNavLink>
                         </div>
                     </div>
                 </div>
