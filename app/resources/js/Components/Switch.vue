@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import { ref } from 'vue'
-  import { Switch } from '@headlessui/vue';
+  import { SwitchRoot, SwitchThumb } from 'radix-vue'
 
   const props = defineProps<{
     checked: boolean;
@@ -14,18 +14,15 @@
 
 <template>
   <div>
-    <Switch
-      :value="value"
-      v-model="proxyChecked"
-      :class="proxyChecked ? 'bg-primary-light dark:bg-primary-dark' : 'bg-primary-light dark:bg-primary-dark'"
-      class="inline-flex h-[38px] w-[58px] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-300 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75"
+    <SwitchRoot
+      v-model:checked="proxyChecked"
+      class="w-[42px] h-[25px] flex bg-primary-light dark:bg-primary-dark shadow-sm rounded-full relative data-[state=checked]:bg-black cursor-pointer"
     >
-      <span class="sr-only">{{ value }}</span>
-      <span
-        aria-hidden="true"
-        :class="proxyChecked ? 'translate-x-5 bg-primary-dark dark:bg-primary-light' : 'translate-x-0 bg-primary-dark/80 dark:bg-primary-light/80'"
-        class="pointer-events-none inline-block h-[34px] w-[34px] transform rounded-full shadow-lg ring-0 transition duration-300 ease-in-out"
+    <span class="sr-only">{{ value }}</span>
+    <SwitchThumb
+        class="block w-[21px] h-[21px] my-auto shadow-sm rounded-full transition-transform duration-100 translate-x-0.5 will-change-transform data-[state=checked]:translate-x-[19px]"
+        :class="proxyChecked ? 'bg-primary-dark dark:bg-primary-light' : 'bg-primary-dark/80 dark:bg-primary-light/80'"
       />
-    </Switch>
+    </SwitchRoot>
   </div>
 </template>

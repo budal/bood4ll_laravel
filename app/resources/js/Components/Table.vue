@@ -1,213 +1,213 @@
 <script setup lang="ts">
-import Avatar from '@/Components/Avatar.vue';
-import Button from '@/Components/Button.vue';
-import Checkbox from '@/Components/Checkbox.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import Menu from '@/Components/Menu.vue';
-import Modal from '@/Components/Modal.vue';
-import Select from '@/Components/Select.vue';
-import Switch from '@/Components/Switch.vue';
-import SearchInput from '@/Components/SearchInput.vue';
-import { 
-  ArrowUturnLeftIcon,
-  ChevronUpIcon, 
-  ChevronDownIcon, 
-  ChevronLeftIcon, 
-  ChevronRightIcon, 
-  TrashIcon, 
-  AdjustmentsVerticalIcon 
-} from '@heroicons/vue/20/solid'
-import debounce from "lodash.debounce";
-import { trans } from 'laravel-vue-i18n';
-import { toast } from 'vue3-toastify';
-import { router, useForm, usePage, Link } from '@inertiajs/vue3';
-import { ref, computed, reactive, watch, onBeforeUnmount } from 'vue'
+  import { Icon } from '@iconify/vue'
+  import Avatar from '@/Components/Avatar.vue';
+  import Button from '@/Components/Button.vue';
+  import Checkbox from '@/Components/Checkbox.vue';
+  import InputLabel from '@/Components/InputLabel.vue';
+  import Modal from '@/Components/Modal.vue';
+  import Select from '@/Components/Select.vue';
+  import Switch from '@/Components/Switch.vue';
+  import SearchInput from '@/Components/SearchInput.vue';
+  import {
+    DropdownMenuArrow,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuPortal,
+    DropdownMenuRoot,
+    DropdownMenuTrigger,
+  } from 'radix-vue'
+  import debounce from "lodash.debounce";
+  import { trans } from 'laravel-vue-i18n';
+  import { toast } from 'vue3-toastify';
+  import { router, useForm, usePage, Link } from '@inertiajs/vue3';
+  import { ref, computed, reactive, watch, onBeforeUnmount } from 'vue'
 
-const props = defineProps<{
-  api?: string;
-  softDelete?: boolean | null;
-  routes?: any;
-  filters?: any;
-  menu?: any;
-  titles: any;
-  items: any;
-}>();
+  const props = defineProps<{
+    api?: string;
+    softDelete?: boolean | null;
+    routes?: any;
+    filters?: any;
+    menu?: any;
+    titles: any;
+    items: any;
+  }>();
 
-const searchRoute = new URL(window.location.href);
+  const searchRoute = new URL(window.location.href);
 
-// toggle checkboxes
-let selectedCheckBoxes = reactive(new Set())
+  // toggle checkboxes
+  let selectedCheckBoxes = reactive(new Set())
 
-let selectAll = (checkBoxes: any) => {
-  checkBoxes.forEach((checkBox: unknown) => {
-    selectedCheckBoxes.add(checkBox)
-  })
-}
-
-let clear = () => {
-  selectedCheckBoxes.clear()
-}
-
-let toggle = (checkBox: any) => {
-  if (selectedCheckBoxes.has(checkBox)) {
-    selectedCheckBoxes.delete(checkBox)
-  } else {
-    selectedCheckBoxes.add(checkBox)
+  let selectAll = (checkBoxes: any) => {
+    checkBoxes.forEach((checkBox: unknown) => {
+      selectedCheckBoxes.add(checkBox)
+    })
   }
-}
 
-let totalSelectedCheckBoxes = computed(() => selectedCheckBoxes.size)
-let selectedcheckBox = computed(() => totalSelectedCheckBoxes.value == props.items.data.length)
-
-const toggleSelection = () => {
-  if (selectedcheckBox.value) {
-    clear()
-  } else {
-    selectAll(props.items.data)
+  let clear = () => {
+    selectedCheckBoxes.clear()
   }
-}
 
-const confirmingDeletionModal = ref(false);
+  let toggle = (checkBox: any) => {
+    if (selectedCheckBoxes.has(checkBox)) {
+      selectedCheckBoxes.delete(checkBox)
+    } else {
+      selectedCheckBoxes.add(checkBox)
+    }
+  }
 
-const openDeletionModal = () => {
-  confirmingDeletionModal.value = true;
-}
+  let totalSelectedCheckBoxes = computed(() => selectedCheckBoxes.size)
+  let selectedcheckBox = computed(() => totalSelectedCheckBoxes.value == props.items.data.length)
 
-const form = useForm({
-  ids: [],
-});
+  const toggleSelection = () => {
+    if (selectedcheckBox.value) {
+      clear()
+    } else {
+      selectAll(props.items.data)
+    }
+  }
 
-const deleteItems = () => {
-  selectedCheckBoxes.forEach((checkBox: any) => form.ids.push((checkBox.id) as never))
+  const confirmingDeletionModal = ref(false);
 
-  form.delete((route(props.routes.destroyRoute) as unknown ) as string, {
-    preserveScroll: true,
-    onSuccess: () => closeDeletionModal(),
-    onError: () => toast.error(trans(usePage().props.status as string)),
-    onFinish: () => toast.success(trans(usePage().props.status as string)),
+  const openDeletionModal = () => {
+    confirmingDeletionModal.value = true;
+  }
+
+  const form = useForm({
+    ids: [],
   });
-};
 
-const closeDeletionModal = () => {
-  confirmingDeletionModal.value = false;
-};
+  const deleteItems = () => {
+    selectedCheckBoxes.forEach((checkBox: any) => form.ids.push((checkBox.id) as never))
 
+    form.delete((route(props.routes.destroyRoute) as unknown ) as string, {
+      preserveScroll: true,
+      onSuccess: () => closeDeletionModal(),
+      onError: () => toast.error(trans(usePage().props.status as string)),
+      onFinish: () => toast.success(trans(usePage().props.status as string)),
+    });
+  };
 
-// restore
-const confirmRestoreModal = ref(false);
-const restoreItemID = ref('');
-
-const restore = (id: string) => {
-  confirmRestoreModal.value = true;
-  restoreItemID.value = id;
-}
-
-const restoreItem = () => {
-  form.post((route(props.routes.restoreRoute, restoreItemID.value) as unknown ) as string, {
-    preserveScroll: true,
-    onSuccess: () => closeRestoreModal(),
-    onError: () => toast.error(trans(usePage().props.status as string)),
-    onFinish: () => toast.success(trans(usePage().props.status as string)),
-  });
-};
-
-const closeRestoreModal = () => {
-  confirmRestoreModal.value = false;
-};
+  const closeDeletionModal = () => {
+    confirmingDeletionModal.value = false;
+  };
 
 
-// search
-const search = ref("");
+  // restore
+  const confirmRestoreModal = ref(false);
+  const restoreItemID = ref('');
 
-const debouncedWatch = debounce(() => {
-  searchRoute.searchParams.set("search", search.value)
-  
-  router.visit(searchRoute, {
-    method: 'get',
-    preserveState: true,
-  })
-}, 500);
-
-watch(search, debouncedWatch);
-
-onBeforeUnmount(() => {
-  debouncedWatch.cancel();
-})
-
-
-// filters modal
-const content = [
-  { id: '', title: 'Only active' },
-  { id: 'only', title: 'Only trashed', disabled: props.softDelete === true ? false : true },
-  { id: 'with', title: 'Active and trashed', disabled: props.softDelete === true ? false : true },
-]
-
-const trashed = ref(searchRoute.searchParams.get("trashed") || '')
-
-const filtersModal = ref(false);
-
-const openFiltersModal = () => {
-  filtersModal.value = true;
-}
-
-const refreshFilters = () => {
-  searchRoute.searchParams.set("trashed", trashed.value)
-
-  router.visit(searchRoute, {
-    method: 'get',
-    preserveScroll: true,
-    onSuccess: () => closeFiltersModal(),
-  })
-};
-
-const closeFiltersModal = () => {
-  filtersModal.value = false;
-};
-
-
-// sorting column
-const sortBy = (column: any) => {
-  let url = new URL(window.location.href);
-  let sortOrder = null;
-  let sortValue = url.searchParams.get("sorted")
-
-  if (sortValue == column) {
-    url.searchParams.set("sorted", "-" + column)
-    sortOrder = "asc"
-  } else if (sortValue === "-" + column) {
-    url.searchParams.set("sorted", column)
-    sortOrder = "desc"
-  } else {
-    url.searchParams.set("sorted", column)
+  const restore = (id: string) => {
+    confirmRestoreModal.value = true;
+    restoreItemID.value = id;
   }
-  
-  return {
-    url: url.href,
-    sortMe: sortOrder,
+
+  const restoreItem = () => {
+    form.post((route(props.routes.restoreRoute, restoreItemID.value) as unknown ) as string, {
+      preserveScroll: true,
+      onSuccess: () => closeRestoreModal(),
+      onError: () => toast.error(trans(usePage().props.status as string)),
+      onFinish: () => toast.success(trans(usePage().props.status as string)),
+    });
+  };
+
+  const closeRestoreModal = () => {
+    confirmRestoreModal.value = false;
+  };
+
+
+  // search
+  const search = ref("");
+
+  const debouncedWatch = debounce(() => {
+    searchRoute.searchParams.set("search", search.value)
+    
+    router.visit(searchRoute, {
+      method: 'get',
+      preserveState: true,
+    })
+  }, 500);
+
+  watch(search, debouncedWatch);
+
+  onBeforeUnmount(() => {
+    debouncedWatch.cancel();
+  })
+
+
+  // filters modal
+  const content = [
+    { id: '', title: 'Only active' },
+    { id: 'only', title: 'Only trashed', disabled: props.softDelete === true ? false : true },
+    { id: 'with', title: 'Active and trashed', disabled: props.softDelete === true ? false : true },
+  ]
+
+  const trashed = ref(searchRoute.searchParams.get("trashed") || '')
+
+  const filtersModal = ref(false);
+
+  const openFiltersModal = () => {
+    filtersModal.value = true;
   }
-}
+
+  const refreshFilters = () => {
+    searchRoute.searchParams.set("trashed", trashed.value)
+
+    router.visit(searchRoute, {
+      method: 'get',
+      preserveScroll: true,
+      onSuccess: () => closeFiltersModal(),
+    })
+  };
+
+  const closeFiltersModal = () => {
+    filtersModal.value = false;
+  };
 
 
-// switch
-const formSwitch = useForm({});
-
-const refArr = ref([]);
-const inputRef = (el: any) => {
-  refArr.value.push(el as never);
-};
-
-const updateSwitch = (routeUri: string, method: 'get' | 'post', id: string) => {
-  formSwitch.submit(method, route(routeUri, id), {
-    preserveScroll: true,
-    // onSuccess: () => toast.success(trans(usePage().props.status as string)),
-    onError: () => toast.error(trans(usePage().props.status as string)),
-    onFinish: () => toast.success(trans(usePage().props.status as string, usePage().props.statusComplements as undefined)),
-  });
-}
+  // toggleMenu
+  const toggleState = ref(false)
 
 
-// td class
-const classTD = "p-2"
+  // sorting column
+  const sortBy = (column: any) => {
+    let url = new URL(window.location.href);
+    let sortOrder = null;
+    let sortValue = url.searchParams.get("sorted")
+
+    if (sortValue == column) {
+      url.searchParams.set("sorted", "-" + column)
+      sortOrder = "asc"
+    } else if (sortValue === "-" + column) {
+      url.searchParams.set("sorted", column)
+      sortOrder = "desc"
+    } else {
+      url.searchParams.set("sorted", column)
+    }
+    
+    return {
+      url: url.href,
+      sortMe: sortOrder,
+    }
+  }
+
+
+  // switch
+  const formSwitch = useForm({});
+
+  const refArr = ref([]);
+
+  const updateSwitch = (routeUri: string, method: 'get' | 'post', id: string) => {
+    formSwitch.submit(method, route(routeUri, id), {
+      preserveScroll: true,
+      onError: () => toast.error(trans(usePage().props.status as string)),
+      onFinish: () => toast.success(trans(usePage().props.status as string, usePage().props.statusComplements as undefined)),
+    });
+  }
+
+
+  // td class
+  const classTD = "p-2"
 </script>
 
 <template>
@@ -277,7 +277,7 @@ const classTD = "p-2"
     <div class="flex sticky top-0 sm:top-[65px] justify-between rounded-xl backdrop-blur-sm p-2 my-2 -mx-3 bg-white/30 dark:bg-gray-800/30">
       <div class="flex-none items-center">
         <Button color="danger" v-if="routes.destroyRoute" :disabled="totalSelectedCheckBoxes === 0" @click="openDeletionModal" class="mr-2 h-full">
-          <TrashIcon class="h-5 w-5" />
+          <Icon icon="mdi:trash-can" class="h-5 w-5" />
         </Button>
       </div>
       <div class="flex-1 items-center">
@@ -285,11 +285,55 @@ const classTD = "p-2"
       </div>
       <div class="flex-none items-center">
         <Button color="secondary" @click="openFiltersModal" class="ml-2 h-full">
-          <AdjustmentsVerticalIcon class="h-5 w-5" />
+          <Icon icon="mdi:filter-menu" class="h-5 w-5" />
         </Button>
       </div>
-      <div class="flex-none items-center">
-        <Menu :menu="menu" />
+      <div v-if="menu" class="flex-none items-center">
+        <template v-if="menu.length > 1">
+          <DropdownMenuRoot v-model:open="toggleState">
+            <DropdownMenuTrigger
+              class="h-full outline-none"
+              :aria-label="$t('Table menu')"
+            >
+              <Button color="primary" class="ml-2 h-full ">
+                <Icon icon="mdi:dots-horizontal" class="h-5 w-5" />
+              </Button>
+            </DropdownMenuTrigger>
+
+            <DropdownMenuPortal>
+              <DropdownMenuContent
+                class="min-w-[220px] overflow-hidden outline-none bg-secondary-light dark:bg-secondary-dark text-primary-dark dark:text-primary-light rounded-md shadow-[0px_10px_38px_-10px_rgba(22,_23,_24,_0.35),_0px_10px_20px_-15px_rgba(22,_23,_24,_0.2)] shadow-black dark:shadow-white will-change-[opacity,transform] data-[side=top]:animate-slideDownAndFade data-[side=right]:animate-slideLeftAndFade data-[side=bottom]:animate-slideUpAndFade data-[side=left]:animate-slideRightAndFade"
+                :side-offset="10"
+                :align="'end'"
+              >
+                <DropdownMenuLabel class="leading-[25px] text-center">
+                  <div class="pt-2 font-xs text-sm text-primary-light dark:text-primary-dark">{{ $t('Select an option') }}</div>
+                </DropdownMenuLabel>
+                <template v-for="item in menu">
+                  <Link :href="route(item.route)"> 
+                    <DropdownMenuItem
+                      :value="item.title"
+                      :class="item.class"
+                      class="px-[5px] flex pl-[10px] text-sm py-3 text-secondary-light dark:text-secondary-dark hover:bg-system-light dark:hover:bg-system-dark focus:outline-none focus:bg-system-light dark:focus:bg-system-dark transition duration-150 ease-in-out"
+                    >
+                      <Icon :icon="item.icon" class="h-5 w-5 mr-2" />
+
+                      {{ $t(item.title) }} 
+                    </DropdownMenuItem>
+                  </Link>
+                </template>
+                <DropdownMenuArrow class="fill-secondary-light dark:fill-secondary-dark" />
+              </DropdownMenuContent>
+            </DropdownMenuPortal>
+          </DropdownMenuRoot>
+        </template>
+        <template v-else>
+          <Link as="button" :href="route(menu[0].route)" class="text-sm ml-2 h-full">
+            <Button color="primary" class="h-full">
+              <Icon :icon="menu[0].icon" class="h-5 w-5" />
+            </Button>
+          </Link>
+        </template>
       </div>
     </div>
     <div>
@@ -305,8 +349,8 @@ const classTD = "p-2"
                   <th :class="classTD">
                     <Link v-if="content.disableSort != true" :href="sortBy(content.field).url" class="flex gap-1">
                       {{ $t(content.title) }}
-                      <ChevronUpIcon v-if="sortBy(content.field).sortMe == 'asc'" class="h-4 w-4" />
-                      <ChevronDownIcon v-if="sortBy(content.field).sortMe == 'desc'" class="h-4 w-4" />
+                      <Icon icon="mdi:chevron-up" v-if="sortBy(content.field).sortMe == 'asc'" class="h-4 w-4" />
+                      <Icon icon="mdi:chevron-down" v-if="sortBy(content.field).sortMe == 'desc'" class="h-4 w-4" />
                     </Link>
                   </th>
                 </template>
@@ -332,7 +376,7 @@ const classTD = "p-2"
                     :class="classTD" 
                     @click="restore(item.id)"
                   >
-                    <ArrowUturnLeftIcon class="h-3 w-3" />
+                    <Icon icon="mdi:restore" class="h-5 w-5" />
                   </Button>
                 </td>
                 <template v-for="(content, index) in titles">
@@ -363,7 +407,9 @@ const classTD = "p-2"
                 </template>
                 <td v-if="routes.editRoute" :class="`${classTD} text-right`">
                   <Link :href="((route(routes.editRoute, item.id) as unknown) as string)" as="span">
-                    <Button color="primary"><ChevronRightIcon class="h-5 w-5"/></Button>
+                    <Button color="primary">
+                      <Icon icon="mdi:chevron-right" class="h-5 w-5" />
+                    </Button>
                   </Link>
                 </td>
               </tr> 
@@ -406,7 +452,7 @@ const classTD = "p-2"
               <Link v-if="items.prev_page_url" :href="items.prev_page_url" as="button" class="text-sm">
                 <Button color="primary">
                   <span class="sr-only">{{ $t('Previous')}}</span>
-                  <ChevronLeftIcon class="h-4 w-4" aria-hidden="true" />
+                  <Icon icon="mdi:chevron-left" class="h-4 w-4" />
                 </Button>
               </Link>
 
@@ -422,7 +468,7 @@ const classTD = "p-2"
               <Link v-if="items.next_page_url" :href="items.next_page_url" as="button" class="text-sm">
                 <Button color="primary">
                   <span class="sr-only">{{ $t('Next')}}</span>
-                  <ChevronRightIcon class="h-4 w-4" aria-hidden="true" />
+                  <Icon icon="mdi:chevron-right" class="h-4 w-4" />
                 </Button>
               </Link>
             </nav>

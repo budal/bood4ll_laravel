@@ -37,13 +37,13 @@ class RolesController extends Controller
 
         $menu = [
             [
-                'icon' => "PlusIcon",
+                'icon' => "mdi:badge-account-horizontal-outline",
                 'title' => "Add permission",
                 'route' => "apps.roles.create"
             ],
             [
-                'icon' => "ListBulletIcon",
-                'title' => "Show all abilities",
+                'icon' => "mdi:list-status",
+                'title' => "Abilities management",
                 'route' => "apps.abilities.index"
             ],            
         ];

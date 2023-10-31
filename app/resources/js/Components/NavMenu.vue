@@ -80,9 +80,7 @@ import { Link } from '@inertiajs/vue3';
               </NavigationMenuLink>
             </NavigationMenuItem>
           </template>
-  
         </template>
-  
         <NavigationMenuIndicator
           class="data-[state=hidden]:opacity-0 duration-200 data-[state=visible]:animate-fadeIn data-[state=hidden]:animate-fadeOut top-full z-[1] flex h-[10px] items-end justify-center overflow-hidden transition-[all,transform_250ms_ease]"
         >

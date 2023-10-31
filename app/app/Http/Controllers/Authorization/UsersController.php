@@ -54,7 +54,7 @@ class UsersController extends Controller
 
         $menu = [
             [
-                'icon' => "PlusIcon",
+                'icon' => "mdi:plus",
                 'title' => "Add",
                 'route' => "apps.users.create"
             ]

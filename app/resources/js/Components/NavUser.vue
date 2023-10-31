@@ -21,22 +21,21 @@
         content: any;
     }>();
 
-const toggleState = ref(false)
-    const checkboxOne = ref(false)
+    const toggleState = ref(false)
 </script>
 
 <template>
     <DropdownMenuRoot v-model:open="toggleState">
         <DropdownMenuTrigger
             class="rounded-full focus:outline-none focus:ring-2 focus:ring-primary-light dark:focus:ring-primary-dark focus:ring-offset-1 focus:ring-offset-primary-light dark:focus:ring-offset-primary-dark shadow-[0_2px_10px] shadow-black dark:shadow-white focus:shadow-[0_0_0_2px] focus:shadow-black dark:focus:shadow-white transition ease-in-out duration-500"
-            aria-label="Customise options"
+            :aria-label="$t('User menu')"
         >
             <slot name="trigger" />
         </DropdownMenuTrigger>
 
         <DropdownMenuPortal>
             <DropdownMenuContent
-                class="min-w-[220px] outline-none bg-secondary-light dark:bg-secondary-dark text-primary-dark dark:text-primary-light rounded-md shadow-[0px_10px_38px_-10px_rgba(22,_23,_24,_0.35),_0px_10px_20px_-15px_rgba(22,_23,_24,_0.2)] shadow-black dark:shadow-white will-change-[opacity,transform] data-[side=top]:animate-slideDownAndFade data-[side=right]:animate-slideLeftAndFade data-[side=bottom]:animate-slideUpAndFade data-[side=left]:animate-slideRightAndFade"
+                class="min-w-[220px] overflow-hidden outline-none bg-secondary-light dark:bg-secondary-dark text-primary-dark dark:text-primary-light rounded-md shadow-[0px_10px_38px_-10px_rgba(22,_23,_24,_0.35),_0px_10px_20px_-15px_rgba(22,_23,_24,_0.2)] shadow-black dark:shadow-white will-change-[opacity,transform] data-[side=top]:animate-slideDownAndFade data-[side=right]:animate-slideLeftAndFade data-[side=bottom]:animate-slideUpAndFade data-[side=left]:animate-slideRightAndFade"
                 :side-offset="10"
                 :align="'end'"
             >
