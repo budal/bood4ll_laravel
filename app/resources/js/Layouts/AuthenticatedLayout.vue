@@ -4,10 +4,8 @@ import { Link } from '@inertiajs/vue3';
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import Breadcrumbs from '@/Components/Breadcrumbs.vue';
 import NavUser from '@/Components/NavUser.vue';
-import NavLink from '@/Components/NavLink.vue';
 import Avatar from '@/Components/Avatar.vue';
 import TailwindIndicator from '@/Components/TailwindIndicator.vue';
-import NavPopover from '@/Components/NavPopover.vue';
 import ToggleTheme from '@/Components/ToggleTheme.vue';
 import NavMenu from '@/Components/NavMenu.vue';
 
