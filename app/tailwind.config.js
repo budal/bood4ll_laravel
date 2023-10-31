@@ -19,18 +19,18 @@ export default {
             variants: ['sm', 'hover', 'focus'],
         },
         {
-            pattern: /(bg|border|ring|ring-offset|text)-(primary|secondary|danger|success|warning|info)-(light|dark)/,
+            pattern: /(bg|border|ring|ring-offset|text)-(zero|primary|secondary|danger|success|warning|info)-(light|dark)/,
             variants: ['dark', 'hover', 'focus', 'dark:hover', 'dark:focus'],
         },
     ],
     theme: {
         extend: {
             colors: {
-                system: {
-                    'light': colors.gray[200],
-                    'dark-hover': colors.gray[50],
-                    'dark': colors.gray[700],
-                    'dark-hover': colors.gray[800],
+                zero: {
+                    'light': colors.gray[50],
+                    'light-hover': colors.gray[200],
+                    'dark': colors.gray[900],
+                    'dark-hover': colors.gray[700],
                 },
                 primary: {
                     'light': colors.gray[800],
@@ -70,6 +70,10 @@ export default {
                 },
             },
             textColor: {
+                zero: {
+                    'light': colors.gray[700],
+                    'dark': colors.gray[400],
+                },
                 primary: {
                     'light': colors.gray[300],
                     'dark': colors.gray[700],
@@ -96,13 +100,17 @@ export default {
                 },
             },
             borderColor: {
+                zero: {
+                    'light': colors.gray[700],
+                    'dark': colors.gray[400],
+                },
                 primary: {
                     'light': colors.gray[400],
                     'dark': colors.gray[500],
                 },
                 secondary: {
                     'light': colors.gray[300],
-                    'dark': colors.gray[500],
+                    'dark': colors.gray[700],
                 },
                 danger: {
                     'light': colors.red[700],
@@ -122,6 +130,10 @@ export default {
                 },
             },
             ringColor: {
+                zero: {
+                    'light': colors.gray[400],
+                    'dark': colors.gray[500],
+                },
                 primary: {
                     'light': colors.gray[800],
                     'dark': colors.gray[200],
@@ -148,6 +160,10 @@ export default {
                 },
             },
             ringOffsetColor: {
+                zero: {
+                    'light': colors.gray[200],
+                    'dark': colors.gray[800],
+                },
                 primary: {
                     'light': colors.gray[300],
                     'dark': colors.gray[800],

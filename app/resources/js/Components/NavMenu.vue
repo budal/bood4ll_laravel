@@ -19,12 +19,10 @@ import { Link } from '@inertiajs/vue3';
 
   const currentTrigger = ref('')
   const routeCurrent = window.location.href;
-
 </script>
 
 <template>
   <div>
-
     <NavigationMenuRoot v-model="currentTrigger" class="z-[1] flex w-full justify-center">
       <NavigationMenuList class="center m-0 flex list-none rounded-[6px] p-1">
         <template v-for="item in content">
@@ -34,7 +32,7 @@ import { Link } from '@inertiajs/vue3';
                 class="group flex select-none items-center justify-between gap-[2px] mx-3 py-[23px] font-medium leading-none outline-none border-b-2 border-transparent  text-sm font-medium block select-none text-sm font-medium"
                 :class="routeCurrent.includes(item.route) ? 
                   'border-warning-light dark:border-warning-dark focus:border-info-light dark:focus:border-info-dark text-secondary-light dark:text-secondary-dark ' : 
-                  'hover:border-primary-dark dark:hover:border-primary-light focus:border-primary-dark dark:focus:border-primary-light text-secondary-light/60 dark:text-secondary-dark/60 hover:text-secondary-light dark:hover:text-secondary-dark focus:text-secondary-light dark:focus:text-secondary-dark'"
+                  'hover:border-secondary-light dark:hover:border-secondary-dark focus:border-primary-light dark:focus:border-primary-dark text-secondary-light/60 dark:text-secondary-dark/60 hover:text-secondary-light dark:hover:text-secondary-dark focus:text-secondary-light dark:focus:text-secondary-dark'"
               >
                 {{ $t(item.title) }}
                 <Icon
@@ -74,7 +72,7 @@ import { Link } from '@inertiajs/vue3';
                 class="text-sm font-medium block select-none mx-3 py-[23px] leading-none no-underline outline-none border-b-2 border-transparent"
                 :class="routeCurrent.includes(item.route) ? 
                   'border-warning-light dark:border-warning-dark focus:border-info-light dark:focus:border-info-dark text-secondary-light dark:text-secondary-dark ' : 
-                  'hover:border-primary-dark dark:hover:border-primary-light focus:border-primary-dark dark:focus:border-primary-light text-secondary-light/60 dark:text-secondary-dark/60 hover:text-secondary-light dark:hover:text-secondary-dark focus:text-secondary-light dark:focus:text-secondary-dark'"
+                  'hover:border-secondary-light dark:hover:border-secondary-dark focus:border-primary-light dark:focus:border-primary-dark text-secondary-light/60 dark:text-secondary-dark/60 hover:text-secondary-light dark:hover:text-secondary-dark focus:text-secondary-light dark:focus:text-secondary-dark'"
               >
                 {{ $t(item.title) }}
               </NavigationMenuLink>
@@ -84,13 +82,12 @@ import { Link } from '@inertiajs/vue3';
         <NavigationMenuIndicator
           class="data-[state=hidden]:opacity-0 duration-200 data-[state=visible]:animate-fadeIn data-[state=hidden]:animate-fadeOut top-full z-[1] flex h-[10px] items-end justify-center overflow-hidden transition-[all,transform_250ms_ease]"
         >
-          <div class="relative top-[10%] h-[10px] w-[10px] rotate-[45deg] rounded-tl-[2px] bg-system-light dark:bg-system-dark" />
+          <div class="relative top-[10%] h-[10px] w-[10px] rotate-[45deg] rounded-tl-[2px] bg-zero-light-hover dark:bg-zero-dark-hover" />
         </NavigationMenuIndicator>
       </NavigationMenuList>
-  
       <div class="perspective-[2000px] absolute top-full left-0 flex w-full justify-center">
         <NavigationMenuViewport
-          class="bg-system-light dark:bg-system-dark data-[state=open]:animate-scaleIn data-[state=closed]:animate-scaleOut relative mt-[10px] h-[var(--radix-navigation-menu-viewport-height)] w-full origin-[top_center] overflow-hidden rounded-[10px] transition-[width,_height] duration-300 sm:w-[var(--radix-navigation-menu-viewport-width)]"
+          class="bg-zero-light-hover dark:bg-zero-dark-hover data-[state=open]:animate-scaleIn data-[state=closed]:animate-scaleOut relative mt-[10px] h-[var(--radix-navigation-menu-viewport-height)] w-full origin-[top_center] overflow-hidden rounded-[10px] transition-[width,_height] duration-300 sm:w-[var(--radix-navigation-menu-viewport-width)]"
         />
       </div>
     </NavigationMenuRoot>

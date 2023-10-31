@@ -46,13 +46,13 @@
                     <div class="pt-2 font-sm text-sm text-secondary-light dark:text-secondary-dark">{{ $page.props.auth.user.name }}</div>
                     <div class="font-xs text-xs text-secondary-light/70 dark:text-secondary-dark/70">{{ $page.props.auth.user.email }}</div>
                 </DropdownMenuLabel>
-                <DropdownMenuSeparator class="h-[0.5px] my-[5px] bg-system-light dark:bg-system-dark" />
+                <DropdownMenuSeparator class="h-[0.5px] mt-2 bg-zero-light dark:bg-zero-dark" />
                 <template v-for="item in content">
                     <template v-if="item.links && item.title != '-'">
                         <DropdownMenuSub>
                             <DropdownMenuSubTrigger
                                 :value="item.title"
-                                class="flex items-center px-[5px] relative pl-[25px] text-sm py-3 text-secondary-light dark:text-secondary-dark hover:bg-system-light dark:hover:bg-system-dark focus:outline-none focus:bg-system-light dark:focus:bg-system-dark transition duration-150 ease-in-out"
+                                class="flex items-center px-[5px] relative pl-[25px] text-sm py-3 text-secondary-light dark:text-secondary-dark hover:bg-zero-light dark:hover:bg-zero-dark focus:outline-none focus:bg-zero-light dark:focus:bg-zero-dark transition duration-150 ease-in-out"
                                 :class="item.class"
                             >
                                 {{ $t(item.title) }}
@@ -73,13 +73,13 @@
                                         <Link v-if="subitem.title != '-'" :href="route(subitem.route)">
                                             <DropdownMenuItem
                                                 :value="item.title"
-                                                class="group items-center px-[5px] relative pl-[25px] text-sm py-3 text-secondary-light dark:text-secondary-dark hover:bg-system-light dark:hover:bg-system-dark focus:outline-none focus:bg-system-light dark:focus:bg-system-dark transition duration-150 ease-in-out"
+                                                class="group items-center px-[5px] relative pl-[25px] text-sm py-3 text-secondary-light dark:text-secondary-dark hover:bg-zero-light dark:hover:bg-zero-dark focus:outline-none focus:bg-zero-light dark:focus:bg-zero-dark transition duration-150 ease-in-out"
                                             >
                                                 {{ $t(subitem.title) }}
                                                 <div class="font-xs text-xs text-secondary-light/70 dark:text-secondary-dark/70">{{ $t(subitem.description) }}</div>
                                             </DropdownMenuItem>
                                         </Link>
-                                        <DropdownMenuSeparator v-else class="h-[0.5px] my-[5px] bg-system-light dark:bg-system-dark" :class="item.class" />
+                                        <DropdownMenuSeparator v-else class="h-[0.5px] bg-zero-light dark:bg-zero-dark" :class="item.class" />
                                     </template>
                                 </DropdownMenuSubContent>
                             </DropdownMenuPortal>
@@ -90,19 +90,19 @@
                             <DropdownMenuItem
                                 :value="item.title"
                                 :class="item.class"
-                                class="px-[5px] relative pl-[25px] text-sm py-3 text-secondary-light dark:text-secondary-dark hover:bg-system-light dark:hover:bg-system-dark focus:outline-none focus:bg-system-light dark:focus:bg-system-dark transition duration-150 ease-in-out"
+                                class="px-[5px] relative pl-[25px] text-sm py-3 text-secondary-light dark:text-secondary-dark hover:bg-zero-light dark:hover:bg-zero-dark focus:outline-none focus:bg-zero-light dark:focus:bg-zero-dark transition duration-150 ease-in-out"
                             >
                                 {{ $t(item.title) }} 
                             </DropdownMenuItem>
                         </Link>
-                        <DropdownMenuSeparator v-else class="h-[0.5px] my-[5px] bg-system-light dark:bg-system-dark" :class="item.class" />
+                        <DropdownMenuSeparator v-else class="h-[0.5px] bg-zero-light dark:bg-zero-dark" :class="item.class" />
                     </template>
                 </template>
-                <DropdownMenuSeparator class="h-[0.5px] my-[5px] bg-system-light dark:bg-system-dark" />
+                <DropdownMenuSeparator class="h-[0.5px] bg-zero-light dark:bg-zero-dark" />
                 <Link class="w-full text-left" :href="route('logout')" method="post" as="button">
                     <DropdownMenuItem
                         value="Logout"
-                        class="px-[5px] relative pl-[25px] text-sm py-3 text-secondary-light dark:text-secondary-dark hover:bg-system-light dark:hover:bg-system-dark focus:outline-none focus:bg-system-light dark:focus:bg-system-dark transition duration-150 ease-in-out"
+                        class="px-[5px] relative pl-[25px] text-sm py-3 text-secondary-light dark:text-secondary-dark hover:bg-zero-light dark:hover:bg-zero-dark focus:outline-none focus:bg-zero-light dark:focus:bg-zero-dark transition duration-150 ease-in-out"
                     >
                         {{ $t('Log Out') }}
                     </DropdownMenuItem>

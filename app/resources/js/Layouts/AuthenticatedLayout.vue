@@ -116,21 +116,20 @@ const menuUser = [
 
 <template>
     <div>
-        <div class="relative min-h-screen bg-gray-100 dark:bg-gray-900">
-            <nav class="bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700 sm:sticky sm:top-0">
+        <div class="relative min-h-screen bg-zero-light dark:bg-zero-dark">
+            <nav class="bg-secondary-light dark:bg-secondary-dark border-b border-secondary-light dark:border-secondary-dark sm:sticky sm:top-0">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="flex justify-between h-16">
                         <div class="flex">
                             <div class="shrink-0 flex items-center">
                                 <Link :href="route('home')" class="p-1 rounded-full focus:outline-none focus:ring-2 focus:ring-primary-light dark:focus:ring-primary-dark focus:ring-offset-1 focus:ring-offset-primary-light dark:focus:ring-offset-primary-dark transition ease-in-out duration-500">
-                                    <ApplicationLogo class="block h-9 w-auto fill-current text-gray-800 dark:text-gray-200" />
+                                    <ApplicationLogo class="block h-9 w-auto fill-current text-zero-light dark:text-zero-dark" />
                                 </Link>
                             </div>
                             <div class="hidden space-x-8 sm:-my-px sm:ml-6 sm:flex">
                                 <NavMenu :content=menuNav />
                             </div>
                         </div>
-
                         <div class="xs:-mr-2 flex items-center sm:ml-6">
                             <ToggleTheme />
                             <NavUser :content="menuUser">
@@ -142,13 +141,6 @@ const menuUser = [
                     </div>
                 </div>
             </nav>
-
-            <header class="bg-white dark:bg-gray-800 shadow" v-if="$slots.header">
-                <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                    <slot name="header" />
-                </div>
-            </header>
-
             <main>
                 <Breadcrumbs />
                 <slot />

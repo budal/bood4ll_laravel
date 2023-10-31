@@ -87,8 +87,8 @@ Route::middleware('auth')->group(function () {
             });
 
             Route::controller(AbilitiesController::class)->group(function () {
-                Route::get('/permissions/abilities', 'index')->name('abilities.index')->middleware(['password.confirm', 'verified'])->breadcrumb('Abilities', 'apps.roles.index');
-                Route::post('/permissions/abilities/update/{ability}', 'update')->name('abilities.update')->middleware(['password.confirm']);
+                Route::get('/permissions/roles/abilities', 'index')->name('abilities.index')->middleware(['password.confirm', 'verified'])->breadcrumb('Abilities', 'apps.roles.index');
+                Route::post('/permissions/roles/abilities/update/{ability}', 'update')->name('abilities.update')->middleware(['password.confirm']);
             });
 
             Route::controller(UnitsController::class)->group(function () {
