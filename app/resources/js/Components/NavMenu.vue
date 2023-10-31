@@ -31,8 +31,10 @@ import { Link } from '@inertiajs/vue3';
           <template v-if="item.links">
             <NavigationMenuItem>
               <NavigationMenuTrigger
-                class="group flex select-none items-center justify-between gap-[2px] mx-3 py-[23px] font-medium leading-none outline-none border-b-2 border-transparent hover:border-primary-dark dark:hover:border-primary-light focus:border-primary-dark dark:focus:border-primary-light text-sm font-medium block select-none text-sm font-medium text-secondary-light/60 dark:text-secondary-dark/60 hover:text-secondary-light dark:hover:text-secondary-dark focus:text-secondary-light dark:focus:text-secondary-dark"
-                :class="routeCurrent.includes(item.route) ? 'border-info-light dark:border-info-dark focus:border-warning-light dark:focus:border-warning-dark' : ''"
+                class="group flex select-none items-center justify-between gap-[2px] mx-3 py-[23px] font-medium leading-none outline-none border-b-2 border-transparent  text-sm font-medium block select-none text-sm font-medium"
+                :class="routeCurrent.includes(item.route) ? 
+                  'border-warning-light dark:border-warning-dark focus:border-info-light dark:focus:border-info-dark text-secondary-light dark:text-secondary-dark ' : 
+                  'hover:border-primary-dark dark:hover:border-primary-light focus:border-primary-dark dark:focus:border-primary-light text-secondary-light/60 dark:text-secondary-dark/60 hover:text-secondary-light dark:hover:text-secondary-dark focus:text-secondary-light dark:focus:text-secondary-dark'"
               >
                 {{ $t(item.title) }}
                 <Icon
@@ -42,12 +44,12 @@ import { Link } from '@inertiajs/vue3';
                 />
               </NavigationMenuTrigger>
               <NavigationMenuContent class="data-[motion=from-start]:animate-enterFromLeft data-[motion=from-end]:animate-enterFromRight data-[motion=to-start]:animate-exitToLeft data-[motion=to-end]:animate-exitToRight absolute top-0 left-0 w-full sm:w-auto">
-                <div class="container mx-auto grid gap-1 p-2 w-screen max-w-xl md:max-w-3xl lg:max-w-5xl sm:w-[600px] sm:grid-flow-row sm:grid-cols-3">
+                <div class="container mx-auto grid gap-2 p-2 w-screen max-w-xl md:max-w-3xl lg:max-w-5xl sm:grid-flow-row sm:grid-cols-2 lg:grid-cols-3">
                   <template v-for="subitem in item.links">
                       <NavigationMenuLink as-child>
                         <Link
                           :href="route(subitem.route)"
-                          class="border-transparent bg-secondary-light dark:bg-secondary-dark hover:bg-secondary-light-hover dark:hover:bg-secondary-dark-hover focus:bg-secondary-light-hover dark:focus:bg-secondary-dark-hover  block select-none rounded-[6px] p-3 text-[15px] leading-none no-underline outline-none transition-colors"
+                          class="border-transparent bg-secondary-light dark:bg-secondary-dark hover:bg-secondary-light-hover dark:hover:bg-secondary-dark/50 focus:bg-secondary-light-hover dark:focus:bg-secondary-dark/50 block select-none rounded-[6px] p-3 text-[15px] leading-none no-underline outline-none transition-colors"
                           :class="routeCurrent.includes((route(subitem.route) as unknown) as string) ? 'ring-1 focus-visible:ring ring-info-light dark:ring-info-dark' : ''"
                         >
                           <div class="text-secondary-light dark:text-secondary-dark mb-[5px] font-medium leading-[1.2]">
@@ -67,8 +69,10 @@ import { Link } from '@inertiajs/vue3';
             <NavigationMenuItem>
               <NavigationMenuLink
                 :href="route($t(item.route))"
-                class="text-sm font-medium block select-none mx-3 py-[23px] leading-none no-underline outline-none border-b-2 border-transparent hover:border-primary-dark dark:hover:border-primary-light focus:border-primary-dark dark:focus:border-primary-light text-secondary-light/60 dark:text-secondary-dark/60 hover:text-secondary-light dark:hover:text-secondary-dark focus:text-secondary-light dark:focus:text-secondary-dark"
-                :class="routeCurrent.includes(item.route) ? 'border-info-light dark:border-info-dark focus:border-warning-light dark:focus:border-warning-dark' : ''"
+                class="text-sm font-medium block select-none mx-3 py-[23px] leading-none no-underline outline-none border-b-2 border-transparent"
+                :class="routeCurrent.includes(item.route) ? 
+                  'border-warning-light dark:border-warning-dark focus:border-info-light dark:focus:border-info-dark text-secondary-light dark:text-secondary-dark ' : 
+                  'hover:border-primary-dark dark:hover:border-primary-light focus:border-primary-dark dark:focus:border-primary-light text-secondary-light/60 dark:text-secondary-dark/60 hover:text-secondary-light dark:hover:text-secondary-dark focus:text-secondary-light dark:focus:text-secondary-dark'"
               >
                 {{ $t(item.title) }}
               </NavigationMenuLink>
@@ -80,7 +84,7 @@ import { Link } from '@inertiajs/vue3';
         <NavigationMenuIndicator
           class="data-[state=hidden]:opacity-0 duration-200 data-[state=visible]:animate-fadeIn data-[state=hidden]:animate-fadeOut top-full z-[1] flex h-[10px] items-end justify-center overflow-hidden transition-[all,transform_250ms_ease]"
         >
-          <div class="relative top-[70%] h-[10px] w-[10px] rotate-[45deg] rounded-tl-[2px] bg-system-light dark:bg-system-dark" />
+          <div class="relative top-[10%] h-[10px] w-[10px] rotate-[45deg] rounded-tl-[2px] bg-system-light dark:bg-system-dark" />
         </NavigationMenuIndicator>
       </NavigationMenuList>
   

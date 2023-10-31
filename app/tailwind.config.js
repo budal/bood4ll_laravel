@@ -19,7 +19,7 @@ export default {
             variants: ['sm', 'hover', 'focus'],
         },
         {
-            pattern: /(bg|border|ring|ring-offset|text)-(primary|secondary|danger|success|warning|info)/,
+            pattern: /(bg|border|ring|ring-offset|text)-(primary|secondary|danger|success|warning|info)-(light|dark)/,
             variants: ['dark', 'hover', 'focus', 'dark:hover', 'dark:focus'],
         },
     ],

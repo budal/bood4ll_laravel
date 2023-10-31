@@ -130,18 +130,6 @@ const menuUser = [
                             </div>
                             <div class="hidden space-x-8 sm:-my-px sm:ml-6 sm:flex">
                                 <NavMenu :content=menuNav />
-                                <NavLink :href="route('dashboard')" :active="routeCurrent.includes('dashboard')">
-                                    {{ $t('Dashboard') }}
-                                </NavLink>
-                                <NavPopover :items=apps :active="routeCurrent.includes('apps')">
-                                    {{ $t('Apps') }}
-                                </NavPopover>
-                                <NavPopover :items=apps :active="routeCurrent.includes('reports')">
-                                    {{ $t('Reports') }}
-                                </NavPopover>
-                                <NavLink :href="route('help')" :active="routeCurrent.includes('help')">
-                                    {{ $t('Help') }}
-                                </NavLink>
                             </div>
                         </div>
 
