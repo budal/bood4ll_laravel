@@ -53,11 +53,13 @@ const menuNav = [
     },
     {
         title: 'Apps',
+        route: 'apps',
         class: 'sm:hidden',
         links: apps
     },
     {
         title: 'Reports',
+        route: 'reports',
         class: 'sm:hidden',
         links: apps
     },

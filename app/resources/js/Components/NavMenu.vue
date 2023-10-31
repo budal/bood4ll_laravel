@@ -30,6 +30,7 @@ import { Link } from '@inertiajs/vue3';
           <NavigationMenuItem>
             <NavigationMenuTrigger
               class="group flex select-none items-center justify-between gap-[2px] mx-3 py-2 font-medium leading-none outline-none border-b-2 border-transparent hover:border-primary-dark dark:hover:border-primary-light focus:border-primary-dark dark:focus:border-primary-light text-sm font-medium block select-none text-sm font-medium text-secondary-light/60 dark:text-secondary-dark/60 hover:text-secondary-light dark:hover:text-secondary-dark focus:text-secondary-light dark:focus:text-secondary-dark"
+              :class="routeCurrent.includes(item.route) ? 'border-info-light dark:border-info-dark focus:border-warning-light dark:focus:border-warning-dark' : ''"
             >
               {{ $t(item.title) }}
               <Icon
@@ -63,8 +64,9 @@ import { Link } from '@inertiajs/vue3';
         <template v-else>
           <NavigationMenuItem>
             <NavigationMenuLink
-              class="text-sm font-medium block select-none mx-3 py-2 leading-none no-underline outline-none border-b-2 border-transparent hover:border-primary-dark dark:hover:border-primary-light focus:border-primary-dark dark:focus:border-primary-light text-secondary-light/60 dark:text-secondary-dark/60 hover:text-secondary-light dark:hover:text-secondary-dark focus:text-secondary-light dark:focus:text-secondary-dark"
               :href="route($t(item.route))"
+              class="text-sm font-medium block select-none mx-3 py-2 leading-none no-underline outline-none border-b-2 border-transparent hover:border-primary-dark dark:hover:border-primary-light focus:border-primary-dark dark:focus:border-primary-light text-secondary-light/60 dark:text-secondary-dark/60 hover:text-secondary-light dark:hover:text-secondary-dark focus:text-secondary-light dark:focus:text-secondary-dark"
+              :class="routeCurrent.includes(item.route) ? 'border-info-light dark:border-info-dark focus:border-warning-light dark:focus:border-warning-dark' : ''"
             >
               {{ $t(item.title) }}
             </NavigationMenuLink>
