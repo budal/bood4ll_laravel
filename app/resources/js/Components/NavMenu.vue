@@ -50,7 +50,9 @@ import { Link } from '@inertiajs/vue3';
                         <Link
                           :href="route(subitem.route)"
                           class="border-transparent bg-secondary-light dark:bg-secondary-dark hover:bg-secondary-light-hover dark:hover:bg-secondary-dark/50 focus:bg-secondary-light-hover dark:focus:bg-secondary-dark/50 block select-none rounded-[6px] p-3 text-[15px] leading-none no-underline outline-none transition-colors"
-                          :class="routeCurrent.includes((route(subitem.route) as unknown) as string) ? 'ring-1 focus-visible:ring ring-info-light dark:ring-info-dark' : ''"
+                          :class="routeCurrent.includes((route(subitem.route) as unknown) as string) ? 
+                            'ring-1 focus-visible:ring ring-info-light dark:ring-info-dark' : 
+                            ''"
                         >
                           <div class="text-secondary-light dark:text-secondary-dark mb-[5px] font-medium leading-[1.2]">
                             {{ $t(subitem.title) }}
