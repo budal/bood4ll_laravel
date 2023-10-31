@@ -64,7 +64,6 @@ Route::middleware('auth')->group(function () {
     
     Route::get('/settings', [ProfileController::class, 'edit'])->name('settings')->breadcrumb('Settings');
     
-    Route::get('/apps', [AppsController::class, 'index'])->name('apps')->breadcrumb('Apps');
     
     Route::prefix('apps')->name('apps.')->group(function () {
         Route::middleware('verified')->group(function () {

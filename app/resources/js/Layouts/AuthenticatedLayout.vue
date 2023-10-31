@@ -3,12 +3,13 @@ import { ref } from 'vue';
 import { Link } from '@inertiajs/vue3';
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import Breadcrumbs from '@/Components/Breadcrumbs.vue';
-import SystemMenu from '@/Components/SystemMenu.vue';
+import NavUser from '@/Components/NavUser.vue';
 import NavLink from '@/Components/NavLink.vue';
 import Avatar from '@/Components/Avatar.vue';
 import TailwindIndicator from '@/Components/TailwindIndicator.vue';
 import NavPopover from '@/Components/NavPopover.vue';
 import ToggleTheme from '@/Components/ToggleTheme.vue';
+import NavMenu from '@/Components/NavMenu.vue';
 
 const showingNavigationDropdown = ref(false);
 
@@ -42,9 +43,32 @@ const apps = [
                 <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008z" />
             </svg>`
     },
+    ]
+
+const menuNav = [
+    {
+        title: 'Dashboard',
+        route: 'dashboard',
+        class: 'sm:hidden',
+    },
+    {
+        title: 'Apps',
+        class: 'sm:hidden',
+        links: apps
+    },
+    {
+        title: 'Reports',
+        class: 'sm:hidden',
+        links: apps
+    },
+    {
+        title: 'Help',
+        route: 'help',
+        class: 'sm:hidden',
+    },
 ]
 
-const menu = [
+const menuUser = [
     {
         title: 'Dashboard',
         route: 'dashboard',
@@ -95,6 +119,7 @@ const menu = [
         <div class="relative min-h-screen bg-gray-100 dark:bg-gray-900">
             <nav class="bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700 sm:sticky sm:top-0">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <NavMenu :content=menuNav />
                     <div class="flex justify-between h-16">
                         <div class="flex">
                             <div class="shrink-0 flex items-center">
@@ -103,16 +128,16 @@ const menu = [
                                 </Link>
                             </div>
                             <div class="hidden space-x-8 sm:-my-px sm:ml-6 sm:flex">
-                                <NavLink :href="route('dashboard')" :active="routeCurrent.includes(route('dashboard'))">
+                                <NavLink :href="route('dashboard')" :active="routeCurrent.includes('dashboard')">
                                     {{ $t('Dashboard') }}
                                 </NavLink>
-                                <NavPopover :items=apps :active="routeCurrent.includes(route('apps'))">
+                                <NavPopover :items=apps :active="routeCurrent.includes('apps')">
                                     {{ $t('Apps') }}
                                 </NavPopover>
-                                <NavPopover :items=apps :active="routeCurrent.includes(route('reports'))">
+                                <NavPopover :items=apps :active="routeCurrent.includes('reports')">
                                     {{ $t('Reports') }}
                                 </NavPopover>
-                                <NavLink :href="route('help')" :active="routeCurrent.includes(route('help'))">
+                                <NavLink :href="route('help')" :active="routeCurrent.includes('help')">
                                     {{ $t('Help') }}
                                 </NavLink>
                             </div>
@@ -120,11 +145,11 @@ const menu = [
 
                         <div class="xs:-mr-2 flex items-center sm:ml-6">
                             <ToggleTheme />
-                            <SystemMenu :content="menu">
+                            <NavUser :content="menuUser">
                                 <template #trigger>
                                     <Avatar :fallback="$page.props.auth.user.name" />
                                 </template>
-                            </SystemMenu>
+                            </NavUser>
                         </div>
                     </div>
                 </div>

@@ -55,13 +55,12 @@ const routeCurrent = window.location.href;
                 class="flex items-center rounded-lg p-2 bg-primary-dark-hover hover:bg-primary-dark dark:bg-primary-light dark:hover:bg-primary-light-hover focus:outline-none ring-1 ring-gray-100 dark:ring-gray-700 focus-visible:ring focus-visible:ring-gray-100 focus-visible:ring-opacity-50 transition ease-in-out duration-500"
                 :class="routeCurrent.includes((route(item.route) as unknown) as string) ? 'ring-info-light dark:ring-info-dark' : ''"
               >
-                {{  }}
                 <div class="flex h-20 w-20 shrink-0 items-center justify-center text-white sm:h-12 sm:w-12" >
                   <div v-html="item.icon" class="h-8 w-8 flex-none text-gray-400" aria-hidden="true"></div>
                 </div>
                 <div class="ml-4">
                   <p class="text-sm font-medium text-gray-900 dark:text-gray-100">
-                    {{ $t(item.title) }}
+                    {{ $t(item.title) }}-=-
                   </p>
                   <p class="text-sm text-gray-600 dark:text-gray-400">
                     {{ $t(item.description) }}
