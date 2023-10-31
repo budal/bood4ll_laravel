@@ -328,7 +328,7 @@
           </DropdownMenuRoot>
         </template>
         <template v-else>
-          <Link as="button" :href="route(menu[0].route)" class="text-sm ml-2 h-full">
+          <Link :href="route(menu[0].route)" class="text-sm ml-2 h-full">
             <Button color="primary" class="h-full">
               <Icon :icon="menu[0].icon" class="h-5 w-5" />
             </Button>
@@ -406,7 +406,7 @@
                   </td>
                 </template>
                 <td v-if="routes.editRoute" :class="`${classTD} text-right`">
-                  <Link :href="((route(routes.editRoute, item.id) as unknown) as string)" as="span">
+                  <Link :href="((route(routes.editRoute, item.id) as unknown) as string)">
                     <Button color="primary">
                       <Icon icon="mdi:chevron-right" class="h-5 w-5" />
                     </Button>
@@ -415,7 +415,7 @@
               </tr> 
               <tr v-if="items.data.length == 0">
                 <td :class="`${classTD} text-center`">
-                  <p class="text-lg leading-5 text-gray-600 dark:text-gray-400">{{ $t('No items to show.') }}</p>
+                  <p class="text-md leading-5 text-gray-600 dark:text-gray-400">{{ $t('No items to show.') }}</p>
                 </td>
               </tr>
             </tbody>
@@ -425,7 +425,7 @@
       <div v-if="items.total > 0" class="flex sticky bottom-0 justify-between rounded-xl backdrop-blur-sm p-2 my-2 -mx-3 bg-white/30 dark:bg-gray-800/30">
         <div class="w-full flex flex-row sm:hidden">
           <div class="basis-1/3 text-left">
-            <Link v-if="items.prev_page_url" as="button" :href="items.prev_page_url" class="text-sm">
+            <Link v-if="items.prev_page_url" :href="items.prev_page_url" class="text-sm">
               <Button color="primary">{{ $t('Previous')}}</Button>
             </Link>
           </div>
@@ -436,7 +436,7 @@
             </span>
           </div>
           <div class="basis-1/3 text-right">
-            <Link v-if="items.next_page_url" as="button" :href="items.next_page_url" class="text-sm">
+            <Link v-if="items.next_page_url" :href="items.next_page_url" class="text-sm">
               <Button color="primary">{{ $t('Next')}}</Button>
             </Link>
           </div>
@@ -449,7 +449,7 @@
           </div>
           <div>
             <nav class="inline-flex shadow-sm gap-[2px]" aria-label="Pagination">
-              <Link v-if="items.prev_page_url" :href="items.prev_page_url" as="button" class="text-sm">
+              <Link v-if="items.prev_page_url" :href="items.prev_page_url" class="text-sm">
                 <Button color="primary">
                   <span class="sr-only">{{ $t('Previous')}}</span>
                   <Icon icon="mdi:chevron-left" class="h-4 w-4" />
@@ -459,13 +459,13 @@
               <template v-if="items.from !== null" v-for="item in items.links">
                 <Link
                   v-if="item.label > 0 && item.label != items.current_page || item.label == items.current_page"
-                  :key="item.key" :href="item.url" as="button" class="text-sm"
+                  :key="item.key" :href="item.url" class="text-sm"
                 >
                   <Button color="primary" :disabled="item.label == items.current_page">{{ item.label }}</Button>
                 </Link>
               </template>
 
-              <Link v-if="items.next_page_url" :href="items.next_page_url" as="button" class="text-sm">
+              <Link v-if="items.next_page_url" :href="items.next_page_url" class="text-sm">
                 <Button color="primary">
                   <span class="sr-only">{{ $t('Next')}}</span>
                   <Icon icon="mdi:chevron-right" class="h-4 w-4" />
