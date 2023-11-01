@@ -1,50 +1,48 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import { TransitionRoot, TransitionChild, Dialog, DialogPanel, DialogTitle as DialogTitle2 } from '@headlessui/vue'
+    import { computed } from 'vue';
+    import {
+        DialogClose,
+        DialogContent,
+        DialogDescription,
+        DialogOverlay,
+        DialogPortal,
+        DialogRoot,
+        DialogTitle,
+    } from 'radix-vue'
+    import { Icon } from '@iconify/vue'
 
-import {
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogOverlay,
-  DialogPortal,
-  DialogRoot,
-  DialogTitle,
-} from 'radix-vue'
-import { Icon } from '@iconify/vue'
+    const props = withDefaults(
+        defineProps<{
+            title?: string;
+            open?: boolean;
+            maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+            closeable?: boolean;
+        }>(),
+        {
+            title: '',
+            open: false,
+            maxWidth: '2xl',
+            closeable: true,
+        }
+    );
 
-const props = withDefaults(
-    defineProps<{
-        title?: string;
-        open?: boolean;
-        maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl';
-        closeable?: boolean;
-    }>(),
-    {
-        title: '',
-        open: false,
-        maxWidth: '2xl',
-        closeable: true,
-    }
-);
+    const emit = defineEmits(['close']);
 
-const emit = defineEmits(['close']);
+    const close = () => {
+        if (props.closeable) {
+            emit('close');
+        }
+    };
 
-const close = () => {
-    if (props.closeable) {
-        emit('close');
-    }
-};
-
-const maxWidthClass = computed(() => {
-    return {
-        sm: 'sm:max-w-sm',
-        md: 'sm:max-w-md',
-        lg: 'sm:max-w-lg',
-        xl: 'sm:max-w-xl',
-        '2xl': 'sm:max-w-2xl',
-    }[props.maxWidth];
-});
+    const maxWidthClass = computed(() => {
+        return {
+            sm: 'sm:max-w-sm',
+            md: 'sm:max-w-md',
+            lg: 'sm:max-w-lg',
+            xl: 'sm:max-w-xl',
+            '2xl': 'sm:max-w-2xl',
+        }[props.maxWidth];
+    });
 </script>
 
 <template>
