@@ -1,17 +1,28 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { TransitionRoot, TransitionChild, Dialog, DialogPanel, DialogTitle } from '@headlessui/vue'
+import { TransitionRoot, TransitionChild, Dialog, DialogPanel, DialogTitle as DialogTitle2 } from '@headlessui/vue'
+
+import {
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogOverlay,
+  DialogPortal,
+  DialogRoot,
+  DialogTitle,
+} from 'radix-vue'
+import { Icon } from '@iconify/vue'
 
 const props = withDefaults(
     defineProps<{
         title?: string;
-        show?: boolean;
+        open?: boolean;
         maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl';
         closeable?: boolean;
     }>(),
     {
         title: '',
-        show: false,
+        open: false,
         maxWidth: '2xl',
         closeable: true,
     }
@@ -37,40 +48,33 @@ const maxWidthClass = computed(() => {
 </script>
 
 <template>
-    <TransitionRoot appear :show="show" as="template">
-        <Dialog as="div" @close="close" class="relative z-[100]">
-            <TransitionChild
-                as="template"
-                enter="duration-300 ease-out"
-                enter-from="opacity-0"
-                enter-to="opacity-100"
-                leave="duration-200 ease-in"
-                leave-from="opacity-100"
-                leave-to="opacity-0"
+    <DialogRoot :open="open">
+        <DialogPortal>
+            <DialogOverlay class="backdrop-blur-sm bg-black/20 data-[state=open]:animate-overlayShow fixed inset-0 z-30" />
+            <DialogContent
+                class="data-[state=open]:animate-contentShow fixed top-[50%] left-[50%] max-h-[85vh] w-full max-w-md translate-x-[-50%] translate-y-[-50%] rounded-[6px] bg-primary-light bg-primary-dark p-[20px] shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px] focus:outline-none z-[100]"
+                :class="maxWidthClass"
             >
-                <div :show="show" class="fixed inset-0 backdrop-blur-sm bg-black/20" />
-            </TransitionChild>
+                <DialogTitle class="text-zero-light dark:text-zero-dark m-0 text-[20px] font-semibold">
+                    {{ title }}
+                </DialogTitle>
+                <DialogDescription class="mt-[10px] mb-5 text-[15px] leading-normal">
+                    <slot />
+                </DialogDescription>
 
-            <div class="fixed inset-0 overflow-y-auto no-scrollbar w-screen">
-                <div class="flex min-h-full items-center justify-center p-4 text-center">
-                    <TransitionChild
-                        as="template"
-                        enter="duration-300 ease-out"
-                        enter-from="opacity-0 scale-95"
-                        enter-to="opacity-100 scale-100"
-                        leave="duration-200 ease-in"
-                        leave-from="opacity-100 scale-100"
-                        leave-to="opacity-0 scale-95"
-                    >
-                        <DialogPanel :class="`${maxWidthClass} overflow-visible w-full max-w-md transform overflow-hidden rounded-2xl bg-white dark:bg-gray-800 p-6 text-left align-middle shadow-xl sm:w-full sm:mx-auto transition-all`">
-                            <DialogTitle v-if="title" as="h3" class="text-lg font-medium text-gray-900 dark:text-gray-100 leading-6">
-                                {{ title }}
-                            </DialogTitle>
-                            <slot />
-                        </DialogPanel>
-                    </TransitionChild>
+                <div class="mt-[25px] flex justify-end">
+                    <DialogClose as-child>
+                        <slot name="buttons" />
+                    </DialogClose>
                 </div>
-            </div>
-        </Dialog>
-    </TransitionRoot>
+                <DialogClose
+                    class="text-secondary-light dark:text-secondary-dark hover:bg-secondary-light-hover dark:hover:bg-secondary-dark-hover absolute top-[10px] right-[10px] inline-flex h-[25px] w-[25px] appearance-none items-center justify-center rounded-full focus:shadow-[0_0_0_2px] focus:outline-none"
+                    aria-label="Close"
+                    @click="close"
+                >
+                    <Icon icon="mdi:window-close" />
+                </DialogClose>
+            </DialogContent>
+        </DialogPortal>
+    </DialogRoot>
 </template>

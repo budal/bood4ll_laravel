@@ -127,7 +127,7 @@ const menuUser = [
                                 </Link>
                             </div>
                             <div class="hidden space-x-8 sm:-my-px sm:ml-6 sm:flex">
-                                <NavMenu :content=menuNav />
+                                <NavMenu :content="menuNav" />
                             </div>
                         </div>
                         <div class="xs:-mr-2 flex items-center sm:ml-6">

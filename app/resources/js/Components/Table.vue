@@ -212,66 +212,68 @@
 
 <template>
   <div>
-    <Modal :show="confirmingDeletionModal" @close="closeDeletionModal">
-      <h2 class="text-lg font-medium text-secondary-light dark:text-secondary-dark">
-        {{ $t('Are you sure you want to delete the selected items?') }}
-      </h2>
-
+    <Modal 
+      :open="confirmingDeletionModal"
+      :title="$t('Are you sure you want to delete the selected items?')" 
+      @close="closeDeletionModal"
+    >
       <p class="mt-1 text-sm text-secondary-light dark:text-secondary-dark">
         {{ $t('The selected items will be removed from the active items. Do you want to continue?') }}
       </p>
-
-      <div class="mt-6 flex justify-end">
-        <Button color="secondary" @click="closeDeletionModal">
-          {{ $t('Cancel') }}
-        </Button>
-        <Button color="danger" class="ml-3" :class="{ 'opacity-25': form.processing }" :disabled="form.processing" @click="deleteItems">
-          {{ $t('Erase selected') }}
-        </Button>
-      </div>
+      <template #buttons>
+        <div class="mt-6 flex justify-end">
+          <Button color="secondary" @click="closeDeletionModal">
+            {{ $t('Cancel') }}
+          </Button>
+          <Button color="danger" class="ml-3" :class="{ 'opacity-25': form.processing }" :disabled="form.processing" @click="deleteItems">
+            {{ $t('Erase selected') }}
+          </Button>
+        </div>
+      </template>
     </Modal>
 
-    <Modal :show="confirmRestoreModal" @close="closeRestoreModal">
-      <h2 class="text-lg font-medium text-secondary-light dark:text-secondary-dark">
-        {{ $t('Are you sure you want to restore this item?') }}
-      </h2>
-
+    <Modal 
+      :open="confirmRestoreModal" 
+      :title="$t('Are you sure you want to restore this item?')" 
+      @close="closeRestoreModal"
+    >
       <p class="mt-1 text-sm text-secondary-light dark:text-secondary-dark">
         {{ $t('The selected item will be restored to the active items. Do you want to continue?') }}
       </p>
-
-      <div class="mt-6 flex justify-end">
-        <Button color="secondary" @click="closeRestoreModal">
-          {{ $t('Cancel') }}
-        </Button>
-        <Button color="success" class="ml-3" :class="{ 'opacity-25': form.processing }" :disabled="form.processing" @click="restoreItem">
-          {{ $t('Restore') }}
-        </Button>
-      </div>
+      <template #buttons>
+        <div class="mt-6 flex justify-end">
+          <Button color="secondary" @click="closeRestoreModal">
+            {{ $t('Cancel') }}
+          </Button>
+          <Button color="success" class="ml-3" :class="{ 'opacity-25': form.processing }" :disabled="form.processing" @click="restoreItem">
+            {{ $t('Restore') }}
+          </Button>
+        </div>
+      </template>
     </Modal>
 
-    <Modal :show="filtersModal" @close="closeFiltersModal">
-      <h2 class="text-lg font-medium text-secondary-light dark:text-secondary-dark">
-        {{ $t('Manage which filters to apply to the list') }}
-      </h2>
-
+    <Modal 
+      :open="filtersModal" 
+      :title="$t('Manage which filters to apply to the list')" 
+      @close="closeFiltersModal"
+    >
       <p class="mt-1 text-sm text-secondary-light dark:text-secondary-dark">
         {{ $t('Selected filters refine searches according to your choices') }}
       </p>
-
       <div class="pt-3">
         <InputLabel for="filterContent" :value="$t('Content')" />
         <Select id="filterContent" name="filterContent" :content="content" v-model="trashed" />
       </div>
-
-      <div class="mt-6 flex justify-end">
-        <Button color="secondary" @click="closeFiltersModal">
-          {{ $t('Cancel') }}
-        </Button>
-        <Button color="primary" class="ml-3" :class="{ 'opacity-25': form.processing }" :disabled="form.processing" @click="refreshFilters">
-          {{ $t('Apply') }}
-        </Button>
-      </div>
+      <template #buttons>
+        <div class="mt-6 flex justify-end">
+          <Button color="secondary" @click="closeFiltersModal">
+            {{ $t('Cancel') }}
+          </Button>
+          <Button color="primary" class="ml-3" :class="{ 'opacity-25': form.processing }" :disabled="form.processing" @click="refreshFilters">
+            {{ $t('Apply') }}
+          </Button>
+        </div>
+      </template>
     </Modal>
 
     <div class="flex sticky top-0 sm:top-[65px] justify-between rounded-xl backdrop-blur-sm p-2 my-2 -mx-3 bg-secondary-light/30 dark:bg-secondary-dark/30">
