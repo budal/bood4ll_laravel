@@ -16,7 +16,7 @@
   <div>
     <SwitchRoot
       v-model:checked="proxyChecked"
-      class="w-[42px] h-[25px] flex bg-primary-light dark:bg-primary-dark shadow-sm rounded-full relative data-[state=checked]:bg-black cursor-pointer"
+      class="w-[42px] h-[25px] flex bg-primary-light dark:bg-primary-dark shadow-sm rounded-full data-[state=checked]:bg-black cursor-pointer"
     >
     <span class="sr-only">{{ value }}</span>
     <SwitchThumb
