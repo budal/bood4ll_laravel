@@ -283,7 +283,7 @@
         </Button>
       </div>
       <div class="flex-1 items-center">
-        <SearchInput :placeholder="$t('Search...')" class="w-full h-full" :value="filters.search" v-model="search" />
+        <SearchInput :placeholder="$t('Search...')" id="search" name="search" class="w-full h-full" :value="filters.search" v-model="search" />
       </div>
       <div class="flex-none items-center">
         <Button color="secondary" @click="openFiltersModal" class="ml-2 h-full">

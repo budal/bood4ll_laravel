@@ -39,7 +39,7 @@
                 :side-offset="10"
                 :align="'end'"
             >
-                <DropdownMenuLabel class="leading-[25px] text-center">
+                <DropdownMenuLabel as="span" class="leading-[25px] text-center">
                     <div class="pt-2 hidden sm:block">
                         <Avatar class="place-items-center h-20 w-20" :fallback="$page.props.auth.user.name" />
                     </div>

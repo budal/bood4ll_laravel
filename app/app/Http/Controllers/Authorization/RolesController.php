@@ -71,7 +71,7 @@ class RolesController extends Controller
             $title = $ability['name'];
 
             return compact('id', 'title');
-        })->values()->toArray();
+        })->toArray();
 
         return [
             [
@@ -130,6 +130,8 @@ class RolesController extends Controller
     
     public function edit(Role $role): Response
     {
+        $role['abilities'] = $role->listAbilities()->get()->map->only('ability_id')->pluck('ability_id');
+        
         return Inertia::render('Default/Edit', [
             'form' => $this->__form(),
             'routes' => [

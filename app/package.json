@@ -26,11 +26,9 @@
     },
     "dependencies": {
         "@headlessui/vue": "^1.7.16",
-        "@heroicons/vue": "^2.0.18",
         "@vueuse/core": "^10.4.1",
         "laravel-vue-i18n": "^2.7.1",
         "lodash.debounce": "^4.0.8",
-        "oh-vue-icons": "^1.0.0-rc3",
         "radix-vue": "^1.0.2",
         "remove": "^0.1.5",
         "vue3-toastify": "^0.1.12"
