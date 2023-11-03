@@ -262,7 +262,7 @@
       </p>
       <div class="pt-3">
         <InputLabel for="filterContent" :value="$t('Content')" />
-        <Select id="filterContent" name="filterContent" :content="content" v-model="trashed" />
+        <Select id="filterContent" name="filterContent" class="mt-1" :content="content" v-model="trashed" />
       </div>
       <template #buttons>
         <div class="mt-6 flex justify-end">
