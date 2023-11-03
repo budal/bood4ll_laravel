@@ -111,25 +111,25 @@
     <div class="flex">
         <div class="relative" v-bind="attrs">
           <div class="absolute inset-y-0 left-0 flex items-center pl-2 pointer-events-none">
-              <Icon icon="mdi:search" class="w-6 h-6 text-primary-light dark:text-primary-dark" />
-            </div>
-            <input
-                class="w-full block p-2 pl-9 placeholder:text-sm placeholder-primary-dark/20 dark:placeholder-primary-dark/20 bg-zero-light dark:bg-zero-dark text-zero-light dark:text-zero-dark rounded-md border border-zero-light dark:border-zero-dark rounded-full focus:outline-none focus:ring-2 focus:ring-primary-light dark:focus:ring-primary-dark focus:ring-offset-1 focus:ring-offset-primary-light dark:focus:ring-offset-primary-dark transition ease-in-out duration-500 disabled:opacity-25" 
-                :placeholder=placeholder
-                ref="inputRef"
-                type="search"
-                data-search-input="true"
-                :data-shortcut-enabled="shortcutListenerEnabled"
-                :id="name"
-                :name="name"
-                :value="modelValue"
-                @focus="hasFocus = true"
-                @blur="hasFocus = false"
-                @keyup="onKeypress"
-                @keydown="onKeydown"
-            />
-            <button v-if="showClearIcon" @mousedown="clear" @keydown.space.enter="clear" aria-label="Clear" class="text-primary-light dark:text-primary-dark absolute inset-y-2 right-2 px-2 rounded-lg text-xs p-1 bg-primary-light dark:bg-primary-dark ring-0">Esc</button>
-            <span v-if="showShortcutIcon" class="text-primary-light dark:text-primary-dark absolute inset-y-2 right-2 px-2 rounded-lg text-sm p-1 bg-primary-light dark:bg-primary-dark ring-0">{{ shortcutKey }}</span>
+            <Icon icon="mdi:search" class="w-6 h-6 text-primary-light dark:text-primary-dark" />
+          </div>
+          <input
+              class="w-full block p-2 pl-9 placeholder:text-sm placeholder-primary-dark/20 dark:placeholder-primary-dark/20 bg-zero-light dark:bg-zero-dark text-zero-light dark:text-zero-dark rounded-md border border-zero-light dark:border-zero-dark rounded-full focus:outline-none focus:ring-2 focus:ring-primary-light dark:focus:ring-primary-dark focus:ring-offset-1 focus:ring-offset-primary-light dark:focus:ring-offset-primary-dark transition ease-in-out duration-500 disabled:opacity-25" 
+              :placeholder=placeholder
+              ref="inputRef"
+              type="search"
+              data-search-input="true"
+              :data-shortcut-enabled="shortcutListenerEnabled"
+              :id="name"
+              :name="name"
+              :value="modelValue"
+              @focus="hasFocus = true"
+              @blur="hasFocus = false"
+              @keyup="onKeypress"
+              @keydown="onKeydown"
+          />
+          <button v-if="showClearIcon" @mousedown="clear" @keydown.space.enter="clear" aria-label="Clear" class="text-primary-light dark:text-primary-dark absolute inset-y-2 right-2 px-2 rounded-lg text-xs p-1 bg-primary-light dark:bg-primary-dark ring-0">Esc</button>
+          <span v-if="showShortcutIcon" class="text-primary-light dark:text-primary-dark absolute inset-y-2 right-2 px-2 rounded-lg text-sm p-1 bg-primary-light dark:bg-primary-dark ring-0">{{ shortcutKey }}</span>
         </div>
     </div>
 </template>

@@ -23,7 +23,7 @@ import { computed } from 'vue';
     );
 
     const className = computed(() => {
-        return `hover:scale-105 group/edit inline-flex items-center px-${props.padding} py-2 bg-${props.color}-light dark:bg-${props.color}-dark hover:bg-${props.color}-light-hover dark:hover:bg-${props.color}-dark-hover border border-${props.color}-light dark:border-${props.color}-dark ${props.rounded} font-semibold ${props.textSize} text-${props.color}-light dark:text-${props.color}-dark ${props.transform} tracking-widest ${props.shadowSize} focus:outline-none focus:ring-2 focus:ring-${props.color}-light dark:focus:ring-${props.color}-dark focus:ring-offset-2 focus:ring-offset-${props.color}-light dark:focus:ring-offset-${props.color}-dark disabled:opacity-25 transition ease-in-out duration-500`;
+        return `group/edit hover:scale-105 inline-flex items-center px-${props.padding} py-2 bg-${props.color}-light dark:bg-${props.color}-dark hover:bg-${props.color}-light-hover dark:hover:bg-${props.color}-dark-hover border border-${props.color}-light dark:border-${props.color}-dark ${props.rounded} font-semibold ${props.textSize} text-${props.color}-light dark:text-${props.color}-dark ${props.transform} tracking-widest ${props.shadowSize} focus:outline-none focus:ring-2 focus:ring-${props.color}-light dark:focus:ring-${props.color}-dark focus:ring-offset-2 focus:ring-offset-${props.color}-light dark:focus:ring-offset-${props.color}-dark disabled:opacity-25 transition ease-in-out duration-500`;
     })
 </script>
 
