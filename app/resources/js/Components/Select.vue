@@ -2,7 +2,7 @@
   import { ref } from 'vue'
   import { ComboboxAnchor, ComboboxContent, ComboboxEmpty, ComboboxGroup, ComboboxInput, ComboboxItem, ComboboxItemIndicator, ComboboxLabel, ComboboxRoot, ComboboxSeparator, ComboboxTrigger, ComboboxViewport } from 'radix-vue'
   import { Icon } from '@iconify/vue'
-import { computed } from 'vue';
+  import { computed } from 'vue';
 
   const props = withDefaults(
     defineProps<{
@@ -46,10 +46,12 @@ import { computed } from 'vue';
           :placeholder="multiple ? $t('Select one or more options') : $t('Select an option')" 
           class="w-full block p-2 placeholder:text-sm placeholder-primary-dark/20 dark:placeholder-primary-dark/20 bg-zero-light dark:bg-zero-dark text-zero-light dark:text-zero-dark rounded-md border border-zero-light dark:border-zero-dark rounded-full focus:outline-none focus:ring-2 focus:ring-primary-light dark:focus:ring-primary-dark focus:ring-offset-1 focus:ring-offset-primary-light dark:focus:ring-offset-primary-dark cursor-pointer transition ease-in-out duration-500 disabled:opacity-25 " 
         />
-        <!-- <span class="flex items-center text-primary-light dark:text-primary-dark absolute inset-y-2 px-2 rounded-md text-sm p-1 bg-primary-light dark:bg-primary-dark ring-0">
-          <p class="">123</p>
-          <Icon icon="mdi:window-close" class="w-4 h-4 ml-1 text-primary-light dark:text-primary-dark" />
-        </span> -->
+        <div class="flex absolute inset-y-2 ">
+          <div v-for="item in selectedContent" class="flex ml-2 items-center text-primary-light dark:text-primary-dark px-2 rounded-md text-sm p-1 bg-primary-light dark:bg-primary-dark ring-0">
+            {{ item }}
+            <Icon @click="" icon="mdi:window-close" class="w-4 h-4 ml-1 text-primary-light dark:text-primary-dark" />
+          </div>
+        </div>
         <div class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
           <Icon icon="mdi:chevron-down" class="w-6 h-6 text-primary-light dark:text-primary-dark" />
         </div>
