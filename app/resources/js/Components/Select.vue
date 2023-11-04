@@ -7,7 +7,7 @@
     defineProps<{
       id?: string;
       name?: string;
-      modelValue: Object | string | number;
+      modelValue: Object | Object[] | string | string[];
       content: any;
       required?: boolean;
       multiple?: boolean;
@@ -38,8 +38,8 @@
         <ComboboxInput
           :id="id" 
           :name="name"
-          class="w-full block p-2 placeholder:text-sm placeholder-primary-dark/20 dark:placeholder-primary-dark/20 bg-zero-light dark:bg-zero-dark text-zero-light dark:text-zero-dark rounded-md border border-zero-light dark:border-zero-dark rounded-full focus:outline-none focus:ring-2 focus:ring-primary-light dark:focus:ring-primary-dark focus:ring-offset-1 focus:ring-offset-primary-light dark:focus:ring-offset-primary-dark cursor-pointer transition ease-in-out duration-500 disabled:opacity-25 " 
           :placeholder="multiple ? $t('Select one or more options') : $t('Select an option')" 
+          class="w-full block p-2 placeholder:text-sm placeholder-primary-dark/20 dark:placeholder-primary-dark/20 bg-zero-light dark:bg-zero-dark text-zero-light dark:text-zero-dark rounded-md border border-zero-light dark:border-zero-dark rounded-full focus:outline-none focus:ring-2 focus:ring-primary-light dark:focus:ring-primary-dark focus:ring-offset-1 focus:ring-offset-primary-light dark:focus:ring-offset-primary-dark cursor-pointer transition ease-in-out duration-500 disabled:opacity-25 " 
         />
         <div class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
           <Icon icon="mdi:chevron-down" class="w-6 h-6 text-primary-light dark:text-primary-dark" />
