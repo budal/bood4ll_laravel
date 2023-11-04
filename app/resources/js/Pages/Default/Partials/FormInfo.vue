@@ -95,7 +95,7 @@ const content = [
             <div class="flex flex-col">
                 <div v-for="group in mkForm.fields" :class="`grid sm:grid-cols-${mkForm.cols} sm:gap-4`">
                     <div v-for="field in group" :class="`${field.span ? `sm:col-span-${field.span}` : ''} mt-4`">
-                        <InputLabel :for="field.name" :value="$t(field.title) + (field.required ? ' *' : '')" />
+                        <InputLabel as="span" :for="field.name" :value="$t(field.title) + (field.required ? ' *' : '')" />
         
                         <TextInput v-if="field.type == 'input'"
                             :id="field.name"
