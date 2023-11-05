@@ -1,97 +1,70 @@
 <script setup lang="ts">
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import Button from '@/Components/Button.vue';
-import TextInput from '@/Components/TextInput.vue';
-import { useForm, usePage } from '@inertiajs/vue3';
-import { onBeforeMount, reactive } from 'vue';
-import { ref } from 'vue';
-import { toast } from 'vue3-toastify';
-import { trans } from 'laravel-vue-i18n';
-import Select from '@/Components/Select.vue';
+    import InputError from '@/Components/InputError.vue';
+    import InputLabel from '@/Components/InputLabel.vue';
+    import Button from '@/Components/Button.vue';
+    import TextInput from '@/Components/TextInput.vue';
+    import { useForm, usePage } from '@inertiajs/vue3';
+    import { onBeforeMount, reactive } from 'vue';
+    import { ref } from 'vue';
+    import { toast } from 'vue3-toastify';
+    import { trans } from 'laravel-vue-i18n';
+    import Select from '@/Components/Select.vue';
 
-const passwordInput = ref<HTMLInputElement | null>(null);
+    const passwordInput = ref<HTMLInputElement | null>(null);
 
-const props = defineProps<{
-    form: any;
-    routes: any;
-    data?: any;
-}>();    
+    const props = defineProps<{
+        form: any;
+        routes: any;
+        data?: any;
+    }>();    
 
-const url = window.location.href;
+    interface FormItems {
+        [key: string]: string;
+    }
 
-const jsForm = useForm({});
+    let formItems: FormItems = {};
 
-let items = reactive(new Set())
-
-props.form.forEach((forms: any) => {
-    forms.fields.forEach((fields: any) => {
-        fields.forEach((field: any) => {
-            items.add(field.name);
+    props.form.forEach((forms: any) => {
+        forms.fields.forEach((fields: any) => {
+            fields.forEach((field: any) => {
+                formItems[field.name] = props.data ? props.data[field.name] : '';
+            });
         });
     });
-});
 
-function dynamicFields() {
-    let content = reactive(new Set())
 
-    items.forEach((field: any) => {
-        content[field as never] = jsForm[field as never] ;
-    });
+    const jsForm = useForm(formItems);
+    
+    const status = usePage().props.status as string;
 
-    return content;
-}
-
-onBeforeMount(() => {
-    items.forEach((field: any) => {
-        jsForm[field] = props.data ? props.data[field] : '';
-    });
-})
-
-// onBeforeMount(() => {
-//     if (Array.isArray(props.form)) {
-//         props.form.forEach((forms: any) => {
-//             if (Array.isArray(forms.fields)) {
-//                 forms.fields.forEach((fields: any) => {
-//                     fields.forEach((field: any) => {
-//                         items.add(field.name);
-//                     });
-//                 });
-//             }
-//         });
-//     }
-// });
-
-const sendForm = (formId: string) => {
-    jsForm.transform(() => ({ ...dynamicFields() }))
-
-    jsForm.submit(props.routes[formId].method, props.routes[formId].route, {
-        preserveScroll: true,
-        onSuccess: () => {
-            toast.success(trans(usePage().props.status as string));
-            jsForm.reset();
-        },
-        onError: () => {
-                // if (jsForm.errors.password) {
-                //     jsForm.reset('password', 'password_confirmation');
-                //     passwordInput.value?.focus();
-                // }
-                // if (jsForm.errors.current_password) {
-                //     jsForm.reset('current_password');
-                //     currentPasswordInput.value?.focus();
-                // }
+    const sendForm = (formId: string) => {
+        jsForm.submit(props.routes[formId].method, props.routes[formId].route, {
+            preserveScroll: true,
+            onSuccess: () => {
+                toast.success(trans(status));
+                jsForm.reset();
             },
-        onFinish: () => {
-            // jsForm.reset('password', 'password_confirmation');
-        },
-    })
-}
+            onError: () => {
+                    // if (jsForm.errors.password) {
+                    //     jsForm.reset('password', 'password_confirmation');
+                    //     passwordInput.value?.focus();
+                    // }
+                    // if (jsForm.errors.current_password) {
+                    //     jsForm.reset('current_password');
+                    //     currentPasswordInput.value?.focus();
+                    // }
+                },
+            onFinish: () => {
+                // jsForm.reset('password', 'password_confirmation');
+            },
+        })
+    }
 
-const content = [
-  { id: '', title: 'Only active' },
-  { id: 'only', title: 'Only trashed' },
-  { id: 'with', title: 'Active and trashed' },
-];
+    const content = [
+        { id: '', title: 'Only active' },
+        { id: 'only', title: 'Only trashed' },
+        { id: 'with', title: 'Active and trashed' },
+    ];
 
 </script>
 
@@ -116,7 +89,7 @@ const content = [
                             :name="field.name"
                             :type="field.type"
                             class="mt-1 block w-full"
-                            v-model="jsForm[field.name as never]"
+                            v-model="jsForm[field.name]"
                             :required="field.required"
                             :autocomplete="field.name"
                         />
@@ -127,12 +100,12 @@ const content = [
                             :type="field.type"
                             :content="field.content"
                             class="mt-1 block w-full"
-                            v-model="jsForm[field.name as never]"
+                            v-model="jsForm[field.name]"
                             :required="field.required"
                             :multiple="field.multiple"
                         />
         
-                        <InputError class="mt-2" :message="jsForm.errors[field.name as never]" />
+                        <InputError class="mt-2" :message="jsForm.errors[field.name]" />
                     </div>
                 </div>
             </div>

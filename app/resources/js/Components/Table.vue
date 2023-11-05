@@ -35,6 +35,9 @@
 
   const searchRoute = new URL(window.location.href);
 
+  const status = usePage().props.status as string;
+  const statusComplements = usePage().props.statusComplements as undefined;
+  
   // toggle checkboxes
   let selectedCheckBoxes = reactive(new Set())
 
@@ -80,11 +83,11 @@
   const deleteItems = () => {
     selectedCheckBoxes.forEach((checkBox: any) => form.ids.push((checkBox.id) as never))
 
-    form.delete((route(props.routes.destroyRoute) as unknown ) as string, {
+    form.delete((route(props.routes.destroyRoute)), {
       preserveScroll: true,
       onSuccess: () => closeDeletionModal(),
-      onError: () => toast.error(trans(usePage().props.status as string)),
-      onFinish: () => toast.success(trans(usePage().props.status as string)),
+      onError: () => toast.error(trans(status)),
+      onFinish: () => toast.success(trans(status)),
     });
   };
 
@@ -103,11 +106,11 @@
   }
 
   const restoreItem = () => {
-    form.post((route(props.routes.restoreRoute, restoreItemID.value) as unknown ) as string, {
+    form.post((route(props.routes.restoreRoute, restoreItemID.value)), {
       preserveScroll: true,
       onSuccess: () => closeRestoreModal(),
-      onError: () => toast.error(trans(usePage().props.status as string)),
-      onFinish: () => toast.success(trans(usePage().props.status as string)),
+      onError: () => toast.error(trans(status)),
+      onFinish: () => toast.success(trans(status)),
     });
   };
 
@@ -200,8 +203,8 @@
   const updateSwitch = (routeUri: string, method: 'get' | 'post', id: string) => {
     formSwitch.submit(method, route(routeUri, id), {
       preserveScroll: true,
-      onError: () => toast.error(trans(usePage().props.status as string)),
-      onFinish: () => toast.success(trans(usePage().props.status as string, usePage().props.statusComplements as undefined)),
+      onError: () => toast.error(trans(status)),
+      onFinish: () => toast.success(trans(status, statusComplements)),
     });
   }
 
@@ -408,7 +411,7 @@
                   </td>
                 </template>
                 <td v-if="routes.editRoute" :class="`${classTD} text-right`">
-                  <Link :href="((route(routes.editRoute, item.id) as unknown) as string)">
+                  <Link :href="((route(routes.editRoute, item.id))">
                     <Button color="primary">
                       <Icon icon="mdi:chevron-right" class="h-5 w-5" />
                     </Button>
