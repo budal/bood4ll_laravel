@@ -48,7 +48,7 @@ import { Link } from '@inertiajs/vue3';
                         <Link
                           :href="route(subitem.route)"
                           class="border-transparent bg-secondary-light dark:bg-secondary-dark hover:bg-secondary-light-hover dark:hover:bg-secondary-dark/50 focus:bg-secondary-light-hover dark:focus:bg-secondary-dark/50 block select-none rounded-[6px] p-3 text-[15px] leading-none no-underline outline-none transition-colors"
-                          :class="routeCurrent.includes((route(subitem.route))) ? 
+                          :class="routeCurrent.includes(route(subitem.route)) ? 
                             'ring-1 focus-visible:ring ring-warning-light dark:ring-warning-dark' : 
                             ''"
                         >

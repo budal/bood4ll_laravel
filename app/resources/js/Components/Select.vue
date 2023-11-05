@@ -49,7 +49,7 @@
         <div class="flex absolute inset-y-2 ">
           <div v-for="item in selectedContent" class="flex ml-2 items-center text-primary-light dark:text-primary-dark px-2 rounded-md text-sm p-1 bg-primary-light dark:bg-primary-dark ring-0">
             {{ item }}
-            <Icon @click="" icon="mdi:window-close" class="w-4 h-4 ml-1 text-primary-light dark:text-primary-dark" />
+            <Icon @click="" icon="mdi:close-circle-outline" class="w-4 h-4 ml-1 text-primary-light dark:text-primary-dark" />
           </div>
         </div>
         <div class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">

@@ -83,7 +83,7 @@
   const deleteItems = () => {
     selectedCheckBoxes.forEach((checkBox: any) => form.ids.push((checkBox.id) as never))
 
-    form.delete((route(props.routes.destroyRoute)), {
+    form.delete(route(props.routes.destroyRoute), {
       preserveScroll: true,
       onSuccess: () => closeDeletionModal(),
       onError: () => toast.error(trans(status)),
@@ -106,7 +106,7 @@
   }
 
   const restoreItem = () => {
-    form.post((route(props.routes.restoreRoute, restoreItemID.value)), {
+    form.post(route(props.routes.restoreRoute, restoreItemID.value), {
       preserveScroll: true,
       onSuccess: () => closeRestoreModal(),
       onError: () => toast.error(trans(status)),
@@ -411,7 +411,7 @@
                   </td>
                 </template>
                 <td v-if="routes.editRoute" :class="`${classTD} text-right`">
-                  <Link :href="((route(routes.editRoute, item.id))">
+                  <Link :href="route(routes.editRoute, item.id)">
                     <Button color="primary">
                       <Icon icon="mdi:chevron-right" class="h-5 w-5" />
                     </Button>
