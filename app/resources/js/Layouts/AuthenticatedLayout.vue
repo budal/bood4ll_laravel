@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ref } from 'vue';
 import { Link } from '@inertiajs/vue3';
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import Breadcrumbs from '@/Components/Breadcrumbs.vue';
@@ -8,10 +7,6 @@ import Avatar from '@/Components/Avatar.vue';
 import TailwindIndicator from '@/Components/TailwindIndicator.vue';
 import ToggleTheme from '@/Components/ToggleTheme.vue';
 import NavMenu from '@/Components/NavMenu.vue';
-
-const showingNavigationDropdown = ref(false);
-
-const routeCurrent = window.location.href;
 
 const apps = [
     {

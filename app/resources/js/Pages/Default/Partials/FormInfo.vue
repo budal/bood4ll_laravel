@@ -48,6 +48,20 @@ onBeforeMount(() => {
     });
 })
 
+// onBeforeMount(() => {
+//     if (Array.isArray(props.form)) {
+//         props.form.forEach((forms: any) => {
+//             if (Array.isArray(forms.fields)) {
+//                 forms.fields.forEach((fields: any) => {
+//                     fields.forEach((field: any) => {
+//                         items.add(field.name);
+//                     });
+//                 });
+//             }
+//         });
+//     }
+// });
+
 const sendForm = (formId: string) => {
     jsForm.transform(() => ({ ...dynamicFields() }))
 
