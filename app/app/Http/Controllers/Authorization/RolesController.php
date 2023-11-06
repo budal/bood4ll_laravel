@@ -88,9 +88,16 @@ class RolesController extends Controller
                             'required' => true,
                         ],
                         [
+                            'type' => "input",
+                            'name' => "description",
+                            'title' => "Description",
+                            'required' => true,
+                        ],
+                        [
                             'type' => "select",
                             'name' => "abilities",
                             'title' => "Abilities",
+                            'span' => 2,
                             'content' => $abilities,
                             'required' => true,
                             'multiple' => true,

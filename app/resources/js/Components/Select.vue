@@ -54,7 +54,7 @@
             <ComboboxInput
               :id="id" 
               :name="name"
-              class="ml-1 p-0 grow w-0 bg-transparent text-ellipsis border-0 outline-0 focus:ring-0 placeholder:text-sm placeholder-primary-dark/20 dark:placeholder-primary-dark/20 text-zero-light dark:text-zero-dark" 
+              class="p-0 grow w-0 bg-transparent text-ellipsis border-0 outline-0 focus:ring-0 placeholder:text-sm placeholder-primary-dark/20 dark:placeholder-primary-dark/20 text-zero-light dark:text-zero-dark" 
             />
           </div>
         </div>
