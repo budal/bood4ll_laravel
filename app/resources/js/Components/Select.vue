@@ -1,14 +1,13 @@
 <script setup lang="ts">
-  import { ref } from 'vue'
   import { ComboboxAnchor, ComboboxContent, ComboboxEmpty, ComboboxGroup, ComboboxInput, ComboboxItem, ComboboxItemIndicator, ComboboxLabel, ComboboxRoot, ComboboxSeparator, ComboboxTrigger, ComboboxViewport } from 'radix-vue'
   import { Icon } from '@iconify/vue'
-  import { computed } from 'vue';
+  import { computed, ref } from 'vue'
 
   const props = withDefaults(
     defineProps<{
       id?: string;
       name?: string;
-      modelValue: Object | Object[] | string | string[];
+      modelValue?: any;
       content: any;
       required?: boolean;
       multiple?: boolean;
@@ -18,7 +17,7 @@
     }
   );
 
-  const selectedContent = ref(props.modelValue)
+  const selectedContent = ref(props.modelValue ? props.modelValue : [])
 
   const searchTerm = ref('')
 
@@ -30,8 +29,9 @@
       })
   )
 
-  const deleteItem = () => alert('aaa')
+  const showContent = computed(() => props.content.filter((e: any) => { return selectedContent.value.includes(e.id); }))
 
+  const deleteItem = () => alert('aaa')
 </script>
 
 <template>
@@ -42,23 +42,20 @@
     :multiple="multiple"
   >
     <ComboboxAnchor>
-      <div class="relative w-full flex bg-zero-light dark:bg-zero-dark border border-zero-light dark:border-zero-dark rounded-md focus-within:outline-none focus-within:ring-2 focus-within:ring-primary-light dark:focus-within:ring-primary-dark focus-within:ring-offset-1 focus-within:ring-offset-primary-light dark:focus-within:ring-offset-primary-dark transition ease-in-out duration-500 disabled:opacity-25">
+      <div class="relative w-full min-h-[41px] flex bg-zero-light dark:bg-zero-dark border border-zero-light dark:border-zero-dark rounded-md focus-within:outline-none focus-within:ring-2 focus-within:ring-primary-light dark:focus-within:ring-primary-dark focus-within:ring-offset-1 focus-within:ring-offset-primary-light dark:focus-within:ring-offset-primary-dark transition ease-in-out duration-500 disabled:opacity-25">
         <div class="w-full">
           <div class="flex flex-wrap gap-1 items-center my-[6px] ml-2">
-            <ComboboxTrigger v-if="!selectedContent.toString()" class="pb-1 pr-2 text-zero-light dark:text-zero-dark">
-              <span >{{ multiple ? $t('Select one or more options') : $t('Select an option') }}</span>
-            </ComboboxTrigger>
-            <div v-for="item in selectedContent" class="p-1 flex items-center text-primary-light dark:text-primary-dark rounded-md text-sm bg-primary-light dark:bg-primary-dark ring-0">
-              {{ item }}
+            <div v-for="item in showContent" class="p-1 flex items-center text-primary-light dark:text-primary-dark rounded-md text-sm bg-primary-light dark:bg-primary-dark ring-0">
+              {{ item.title }}
               <button type="button" class="ml-1 rounded-full focus:outline-none focus:ring-2 focus:ring-primary-light dark:focus:ring-primary-dark focus:ring-offset-1 focus:ring-offset-primary-light dark:focus:ring-offset-primary-dark">
                 <Icon @click="deleteItem" icon="mdi:close-circle-outline" class="w-4 h-4 text-primary-light dark:text-primary-dark cursor-pointer " />
               </button>
             </div>
-              <ComboboxInput
-                :id="id" 
-                :name="name"
-                class="ml-1 p-0 grow w-0 bg-transparent text-ellipsis border-transparent placeholder:text-sm placeholder-primary-dark/20 dark:placeholder-primary-dark/20 text-zero-light dark:text-zero-dark rounded-md focus:outline-none focus:ring-2 focus:ring-primary-light dark:focus:ring-primary-dark focus:ring-offset-1 focus:ring-offset-primary-light dark:focus:ring-offset-primary-dark" 
-              />
+            <ComboboxInput
+              :id="id" 
+              :name="name"
+              class="ml-1 p-0 grow w-0 text-truncate bg-transparent text-ellipsis border-transparent placeholder:text-sm placeholder-primary-dark/20 dark:placeholder-primary-dark/20 text-zero-light dark:text-zero-dark rounded-md focus:outline-none focus:ring-2 focus:ring-primary-light dark:focus:ring-primary-dark focus:ring-offset-1 focus:ring-offset-primary-light dark:focus:ring-offset-primary-dark" 
+            />
           </div>
         </div>
         <ComboboxTrigger>
