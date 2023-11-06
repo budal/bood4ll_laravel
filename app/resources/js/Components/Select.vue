@@ -29,6 +29,9 @@
         return items.title.toLowerCase().includes(searchTerm.value.toLowerCase())
       })
   )
+
+  const selectedItems = computed(() => selectedContent)
+
 </script>
 
 <template>
@@ -38,32 +41,31 @@
     v-model:searchTerm="searchTerm"
     :multiple="multiple"
   >
-    <ComboboxAnchor class="w-full inline-flex">
-      <ComboboxTrigger class="w-full">
-        <ComboboxInput
-          :id="id" 
-          :name="name"
-          :placeholder="multiple ? $t('Select one or more options') : $t('Select an option')" 
-          class="w-full block p-2 placeholder:text-sm placeholder-primary-dark/20 dark:placeholder-primary-dark/20 bg-zero-light dark:bg-zero-dark text-zero-light dark:text-zero-dark rounded-md border border-zero-light dark:border-zero-dark rounded-full focus:outline-none focus:ring-2 focus:ring-primary-light dark:focus:ring-primary-dark focus:ring-offset-1 focus:ring-offset-primary-light dark:focus:ring-offset-primary-dark cursor-pointer transition ease-in-out duration-500 disabled:opacity-25 " 
-        />
-        <div class="flex flex-wrap gap-2 absolute inset-y-2">
-          <div v-for="item in selectedContent" class="flex items-center text-primary-light dark:text-primary-dark px-2 rounded-md text-sm p-1 bg-primary-light dark:bg-primary-dark ring-0">
+    <div class="group/item relative w-full flex bg-zero-light dark:bg-zero-dark border border-zero-light dark:border-zero-dark rounded-md focus-within:outline-none focus-within:ring-2 focus-within:ring-primary-light dark:focus-within:ring-primary-dark focus-within:ring-offset-1 focus-within:ring-offset-primary-light dark:focus-within:ring-offset-primary-dark transition ease-in-out duration-500 disabled:opacity-25">
+      <div class="w-full">
+        <div class="flex flex-wrap gap-1 items-center ml-2 my-[6px]">
+          <span v-if="!selectedContent.toString()" class="pt-2 text-zero-light dark:text-zero-dark">{{ multiple ? $t('Select one or more options') : $t('Select an option') }}</span>
+          <div v-for="item in selectedContent" class="p-1 flex items-center text-primary-light dark:text-primary-dark rounded-md text-sm bg-primary-light dark:bg-primary-dark ring-0">
             {{ item }}
-            <Icon @click="" icon="mdi:close-circle-outline" class="w-4 h-4 ml-1 text-primary-light dark:text-primary-dark" />
+            <Icon @click="" icon="mdi:close-circle-outline" class="w-4 h-4 ml-1 text-primary-light dark:text-primary-dark cursor-pointer " />
           </div>
+          <ComboboxInput
+            :id="id" 
+            :name="name"
+            class="group/edit p-0 appearance-none overflow-visible bg-transparent placeholder:text-sm placeholder-primary-dark/20 dark:placeholder-primary-dark/20 text-zero-light dark:text-zero-dark" 
+          />
         </div>
-        <div class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+      </div>
+      <ComboboxTrigger>
+        <div class="inset-y-0 right-0 mr-2 flex items-center pl-2 pointer-events-none">
           <Icon icon="mdi:chevron-down" class="w-6 h-6 text-primary-light dark:text-primary-dark" />
         </div>
       </ComboboxTrigger>
-    </ComboboxAnchor>
+    </div>  
     <ComboboxContent class="absolute w-full mt-1 min-w-[160px] bg-white overflow-hidden bg-zero-light dark:bg-zero-dark text-zero-light dark:text-zero-dark rounded-md border border-zero-light dark:border-zero-dark rounded-full focus:outline-none focus:ring-2 focus:ring-primary-light dark:focus:ring-primary-dark focus:ring-offset-1 focus:ring-offset-primary-light dark:focus:ring-offset-primary-dark">
       <ComboboxViewport class="p-[5px] max-h-60">
-        <ComboboxEmpty class="text-xs font-medium text-center py-2" />
+        <ComboboxEmpty class="text-xs font-medium text-center" />
         <ComboboxGroup>
-          <ComboboxLabel as="span" class="px-[25px] text-xs leading-[25px] text-mauve11">
-            Fruits
-          </ComboboxLabel>
           <ComboboxItem
             v-for="item in filteredContent" 
             :key="item.id"
