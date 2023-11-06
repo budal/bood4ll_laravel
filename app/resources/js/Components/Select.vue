@@ -42,8 +42,9 @@
     :multiple="multiple"
   >
     <div class="group/item relative w-full flex bg-zero-light dark:bg-zero-dark border border-zero-light dark:border-zero-dark rounded-md focus-within:outline-none focus-within:ring-2 focus-within:ring-primary-light dark:focus-within:ring-primary-dark focus-within:ring-offset-1 focus-within:ring-offset-primary-light dark:focus-within:ring-offset-primary-dark transition ease-in-out duration-500 disabled:opacity-25">
+      <ComboboxTrigger>
       <div class="w-full">
-        <div class="flex flex-wrap gap-1 items-center ml-2 my-[6px]">
+        <div class="flex flex-wrap gap-1 items-center my-[6px] ml-2 mr-[30px]">
           <span v-if="!selectedContent.toString()" class="pt-2 text-zero-light dark:text-zero-dark">{{ multiple ? $t('Select one or more options') : $t('Select an option') }}</span>
           <div v-for="item in selectedContent" class="p-1 flex items-center text-primary-light dark:text-primary-dark rounded-md text-sm bg-primary-light dark:bg-primary-dark ring-0">
             {{ item }}
@@ -55,10 +56,9 @@
             class="group/edit p-0 appearance-none overflow-visible bg-transparent placeholder:text-sm placeholder-primary-dark/20 dark:placeholder-primary-dark/20 text-zero-light dark:text-zero-dark" 
           />
         </div>
-      </div>
-      <ComboboxTrigger>
-        <div class="inset-y-0 right-0 mr-2 flex items-center pl-2 pointer-events-none">
+        <div class="inset-y-0 absolute right-0 mr-1 flex items-center pl-2 pointer-events-none">
           <Icon icon="mdi:chevron-down" class="w-6 h-6 text-primary-light dark:text-primary-dark" />
+          </div>
         </div>
       </ComboboxTrigger>
     </div>  
