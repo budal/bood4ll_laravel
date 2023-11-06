@@ -41,10 +41,10 @@
     v-model:searchTerm="searchTerm"
     :multiple="multiple"
   >
-    <div class="group/item relative w-full flex bg-zero-light dark:bg-zero-dark border border-zero-light dark:border-zero-dark rounded-md focus-within:outline-none focus-within:ring-2 focus-within:ring-primary-light dark:focus-within:ring-primary-dark focus-within:ring-offset-1 focus-within:ring-offset-primary-light dark:focus-within:ring-offset-primary-dark transition ease-in-out duration-500 disabled:opacity-25">
+    <div class="relative w-full flex bg-zero-light dark:bg-zero-dark border border-zero-light dark:border-zero-dark rounded-md focus-within:outline-none focus-within:ring-2 focus-within:ring-primary-light dark:focus-within:ring-primary-dark focus-within:ring-offset-1 focus-within:ring-offset-primary-light dark:focus-within:ring-offset-primary-dark transition ease-in-out duration-500 disabled:opacity-25">
       <div class="w-full">
         <div class="flex flex-wrap gap-1 items-center my-[6px] ml-2 mr-[30px]">
-          <span v-if="!selectedContent.toString()" class="pt-2 text-zero-light dark:text-zero-dark">{{ multiple ? $t('Select one or more options') : $t('Select an option') }}</span>
+          <span v-if="!selectedContent.toString()" class="pb-1 pr-2 text-zero-light dark:text-zero-dark">{{ multiple ? $t('Select one or more options') : $t('Select an option') }}</span>
           <div v-for="item in selectedContent" class="p-1 flex items-center text-primary-light dark:text-primary-dark rounded-md text-sm bg-primary-light dark:bg-primary-dark ring-0">
             {{ item }}
             <Icon @click="" icon="mdi:close-circle-outline" class="w-4 h-4 ml-1 text-primary-light dark:text-primary-dark cursor-pointer " />
@@ -52,7 +52,7 @@
           <ComboboxInput
             :id="id" 
             :name="name"
-            class="group/edit p-0 appearance-none overflow-visible bg-transparent placeholder:text-sm placeholder-primary-dark/20 dark:placeholder-primary-dark/20 text-zero-light dark:text-zero-dark" 
+            class="p-0 appearance-none overflow-visible bg-transparent placeholder:text-sm placeholder-primary-dark/20 dark:placeholder-primary-dark/20 text-zero-light dark:text-zero-dark" 
           />
         </div>
       </div>
