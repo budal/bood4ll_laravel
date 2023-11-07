@@ -23,14 +23,15 @@ return new class extends Migration
             $table->boolean('confirmed')->default(false);
             $table->binary('photo')->nullable();
             $table->date('birthday')->nullable();
-            $table->string('city_birth')->nullable();
-            $table->string('state_birth')->nullable();
+            $table->string('naturalness')->nullable();
             $table->string('nationality')->nullable();
             $table->string('cellphone')->unique()->nullable();
             $table->string('landline')->nullable();
-            $table->string('street_address')->nullable();
-            $table->string('building_number')->nullable();
+            $table->string('address')->nullable();
+            $table->string('country')->nullable();
             $table->string('postcode')->nullable();
+            $table->string('geo')->nullable();
+            $table->boolean('geo_verified')->default(false);
             $table->string('gerenal_record')->unique()->nullable();
             $table->string('individual_registration')->unique()->nullable();
             $table->string('driver_licence')->unique()->nullable();
@@ -39,6 +40,7 @@ return new class extends Migration
             $table->string('passaport_number')->unique()->nullable();
             $table->json('measurements')->nullable();
             $table->json('dependents')->nullable();
+            $table->json('contacts')->nullable();
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();

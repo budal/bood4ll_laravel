@@ -17,6 +17,7 @@ return new class extends Migration {
             $table->foreign('role_id')->references('id')->on('roles')->onDelete('CASCADE');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('CASCADE');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
