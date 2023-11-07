@@ -2,6 +2,7 @@
   import { ComboboxAnchor, ComboboxContent, ComboboxEmpty, ComboboxGroup, ComboboxInput, ComboboxItem, ComboboxItemIndicator, ComboboxLabel, ComboboxRoot, ComboboxSeparator, ComboboxTrigger, ComboboxViewport } from 'radix-vue'
   import { Icon } from '@iconify/vue'
   import { computed, ref } from 'vue'
+import { watch } from 'vue';
 
   const props = withDefaults(
     defineProps<{
@@ -44,8 +45,10 @@
     })
     emit('update:modelValue', actualItems2)
     selectedContent = ref(actualItems)
-    console.log(props.modelValue, ref(actualItems), actualItems2, selectedContent)
+    // console.log(props.modelValue, ref(actualItems), actualItems2, selectedContent)
   }
+
+  watch(selectedContent, () => console.log(selectedContent))
 </script>
 
 <template>
