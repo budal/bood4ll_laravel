@@ -19,7 +19,7 @@ class UnitFactory extends Factory
         return [
             'name' => fake()->company(),
             'founded' => fake()->date(),
-            'parent_id' => fake()->randomNumber(2, false),
+            'parent_id' => fake()->randomNumber(1, false),
             'cellphone' => fake()->cellphoneNumber(),
             'landline' => fake()->landlineNumber(),
             'address' => fake()->address(),

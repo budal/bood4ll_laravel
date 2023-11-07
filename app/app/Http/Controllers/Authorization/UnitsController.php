@@ -3,116 +3,234 @@
 namespace App\Http\Controllers\Authorization;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\ProfileUpdateRequest;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Inertia\Response;
 
-use App\Models\User;
+use App\Models\Unit;
+use App\Models\UserUnit;
+
+use App\Http\Requests\RolesRequest;
 
 class UnitsController extends Controller
 {
     public function index(Request $request): Response
     {
-        $items = (new User)->newQuery();
+        $routes = [
+            'editRoute' => "apps.units.edit",
+            'destroyRoute' => "apps.units.destroy",
+            'restoreRoute' => "apps.units.restore",
+        ];
         
-        if (request()->has('search')) {
-            $items->where('name', 'ilike', '%'.request()->input('search').'%')
-                ->orWhere('username', 'ilike', '%'.$search.'%')
-                ->orWhere('email', 'ilike', '%'.$search.'%');
-        }
-        
-        if (request()->query('sort')) {
-            $attribute = request()->query('sort');
-            $sort_order = 'ASC';
-
-            if (strncmp($attribute, '-', 1) === 0) {
-                $sort_order = 'DESC';
-                $attribute = substr($attribute, 1);
-            }
-
-            $items->orderBy($attribute, $sort_order);
-        } else {
-            $items->orderBy('name');
-        }
-
-        $items = $items->paginate(20)
-            ->onEachSide(2)
-            ->appends(request()->query());
-
-            // ->withQueryString()
-
-        // dd($items);
-
-        // return Inertia::render('Admin/Permission/Index', [
-        //     'items' => $items,
-        //     'filters' => request()->all('search'),
-        // ]);
-
-
-        // 'items' => User::orderBy('name')
-        // ->filter($request->all('search'))
-        // ->paginate(20)
-        // ->appends($request->all('search', 'active'))
-
-         
-        return Inertia::render('Users/Index', [
-            'status' => session('status'),
-            'filters' => $request->all('search'),
-            'titles' => [
-                [
-                    'type' => 'avatar',
-                    'title' => 'Avatar',
-                    'field' => 'id',
-                    'fallback' => 'name'
-                ],
-                [
-                    'type' => 'composite',
-                    'title' => 'User',
-                    'fields' => ['name', 'email']
-                ],
-                [
-                    'type' => 'simple',
-                    'title' => 'Username',
-                    'field' => 'username'
-                ],
-                [
-                    'type' => 'simple',
-                    'title' => 'Active',
-                    'field' => 'active'
-                ],
+        $titles = [
+            [
+                'type' => 'simple',
+                'title' => 'Name',
+                'field' => 'name',
             ],
-            'items' => $items
+            [
+                'type' => 'simple',
+                'title' => 'Subunits',
+                'field' => 'subunits',
+            ],
+        ];
+
+        $menu = [
+            [
+                'icon' => "mdi:plus",
+                'title' => "Unit creation",
+                'route' => "apps.units.create"
+            ],
+        ];
+
+        return Inertia::render('Default/Index', [
+            'title' => "Units management",
+            'subtitle' => "Manage the units users are classified in.",
+            'softDelete' => Unit::hasGlobalScope('Illuminate\Database\Eloquent\SoftDeletingScope'),
+            'routes' => $routes,
+            'filters' => $request->all('search', 'sorted', 'trashed'),
+            'titles' => $titles,
+            'menu' => $menu,
+            'items' => Unit::filter($request->all('search', 'sorted', 'trashed'))
+                ->addSelect([
+                    'subunits' => Unit::selectRaw('COUNT(*)')
+                        ->whereColumn('parent_id', 'units.id')
+                        ->take(1),
+                ])
+                ->where("parent_id", "0")
+                ->sort($request->sorted ?? "name")
+                ->paginate(20)
+                ->onEachSide(2)
+                ->appends($request->all('search', 'sorted', 'trashed'))
         ]);
+    }
+    
+    public function __form()
+    {
+        $abilities = Ability::sort("name")->get()->map(function ($ability) {
+            $id = $ability['id'];
+            $title = $ability['name'];
+
+            return compact('id', 'title');
+        })->toArray();
+
+        return [
+            [
+                'id' => "role",
+                'title' => "Roles management",
+                'subtitle' => "Role name and abilities",
+                'cols' => 2,
+                'fields' => [
+                    [
+                        [
+                            'type' => "input",
+                            'name' => "name",
+                            'title' => "Name",
+                            'required' => true,
+                        ],
+                        [
+                            'type' => "input",
+                            'name' => "description",
+                            'title' => "Description",
+                            'required' => true,
+                        ],
+                        [
+                            'type' => "select",
+                            'name' => "abilities",
+                            'title' => "Abilities",
+                            'span' => 2,
+                            'content' => $abilities,
+                            'required' => true,
+                            'multiple' => true,
+                        ],
+                    ],
+                ]
+            ]
+        ];
     }
 
     public function create()
     {
-        return Inertia::render('Users/Create');
-    }
-
-    public function edit(User $user): Response
-    {
-        return Inertia::render('Users/Edit', [
-            'data' => $user
+        return Inertia::render('Default/Create', [
+            'form' => $this->__form(),
+            'routes' => [
+                'role' => [
+                    'route' => route('apps.roles.store'),
+                    'method' => 'post'
+                ],
+            ],
         ]);
     }
 
-    public function update(ProfileUpdateRequest $request): RedirectResponse
+    public function store(RolesRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        DB::beginTransaction();
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+        try {
+            $role = Role::firstOrCreate([
+                'name' => $request->name,
+                'description' => $request->description,
+            ]);
+        } catch(\Exception $e) {
+            DB::rollback();
+            return Redirect::back()->with('status', "Error when inserting a new role.");
+        }
+        
+        try {
+            foreach($request->abilities as $ability_id) {
+                $abilities_role = AbilityRole::create([
+                    'role_id' => $role->id,
+                    'ability_id' => $ability_id,
+                ]);
+            }
+        } catch(\Exception $e) {
+            DB::rollback();
+            return Redirect::back()->with('status', "Error when linking abilities to the role.");
         }
 
-        $request->user()->save();
+        DB::commit();
 
-        return Redirect::route('profile.edit');
+        return Redirect::route('apps.roles.index')->with('status', 'Role created.');
+    }
+    
+    public function edit(Role $role): Response
+    {
+        $role['abilities'] = $role->listAbilities()
+            ->get()
+            ->map
+            ->only('ability_id')
+            ->pluck('ability_id');
+        
+        return Inertia::render('Default/Edit', [
+            'form' => $this->__form(),
+            'routes' => [
+                'role' => [
+                    'route' => route('apps.roles.edit', $role->id),
+                    'method' => 'patch'
+                ],
+            ],
+            'data' => $role
+        ]);
+    }
+
+    public function update(Role $role, Request $request): RedirectResponse
+    {
+        DB::beginTransaction();
+
+        try {
+            Role::where('id', $role->id)
+                ->update([
+                    'name' => $request->name,
+                    'description' => $request->description,
+                ]);
+        } catch(\Exception $e) {
+            DB::rollback();
+            return Redirect::back()->with('status', "Error when editing the role.");
+        }
+        
+        try {
+            $abilities_role_saved = AbilityRole::where('role_id', $role->id)
+                ->get()
+                ->map
+                ->only('id', 'ability_id')
+                ->pluck('ability_id', 'id');
+
+            $abilities_role_to_delete = AbilityRole::where('role_id', $role->id)
+                ->whereNotIn('ability_id', $request->abilities)
+                ->get()
+                ->map
+                ->only('id', 'ability_id')
+                ->pluck('ability_id', 'id')
+                ->toArray();
+
+            $abilities_role_mainteined = $abilities_role_saved->diff($abilities_role_to_delete);
+
+            $abilities_role_deleted = AbilityRole::where('role_id', $role->id)
+                ->whereIn('ability_id', $abilities_role_to_delete)
+                ->delete();
+                
+            $abilities_role_to_insert = collect($request->abilities)->diff($abilities_role_mainteined);
+
+            foreach($abilities_role_to_insert as $ability_id) {
+                $ability_role = AbilityRole::create([
+                    'role_id' => $role->id,
+                    'ability_id' => $ability_id,
+                ]);
+            }
+        } catch(\Exception $e) {
+            DB::rollback();
+            dd($e);
+            return Redirect::back()->with('status', "Error when linking abilities to the role.");
+        }
+
+        DB::commit();
+
+        return Redirect::route('apps.roles.index')->with('status', 'Role edited.');
     }
 
     public function destroy(Request $request): RedirectResponse
@@ -120,28 +238,20 @@ class UnitsController extends Controller
         $items = $request->all();
 
         try {
-            $usersToDelete = User::whereIn('id', $items['ids'])->delete();
+            $usersToDelete = Role::whereIn('id', $items['ids'])->delete();
         } catch (Throwable $e) {
             report($e);
      
             return false;
         }
         
-        // dd($usersToDelete);
-        // $request->validate([
-        //     'password' => ['required', 'current_password'],
-        // ]);
+        return back()->with('status', 'Users removed succesfully!');
+    }
 
-        // $user = $request->user();
+    public function restore(Role $role)
+    {
+        $role->restore();
 
-        // Auth::logout();
-
-        // $user->delete();
-
-        // $request->session()->invalidate();
-        // $request->session()->regenerateToken();
-
-        // return Redirect::to('/');
-        return back()->withInput()->with('status', 'Users removed succesfully!');
+        return Redirect::back()->with('status', 'Role restored.');
     }
 }
