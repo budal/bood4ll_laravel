@@ -84,7 +84,7 @@
     form.delete(route(props.routes.destroyRoute), {
       preserveScroll: true,
       onSuccess: () => closeDeletionModal(),
-      onError: () => toast.error(trans(usePage().props.usePage().props.status as string as string)),
+      onError: () => toast.error(trans(usePage().props.status as string)),
       onFinish: () => toast.success(trans(usePage().props.status as string)),
     });
   };
