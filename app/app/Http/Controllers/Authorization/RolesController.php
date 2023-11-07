@@ -17,6 +17,10 @@ use App\Models\Ability;
 use App\Models\AbilityRole;
 use App\Models\RoleUser;
 
+
+use App\Models\Unit;
+
+
 use App\Http\Requests\RolesRequest;
 
 class RolesController extends Controller
@@ -85,7 +89,7 @@ class RolesController extends Controller
         ]);
     }
     
-    public function __form()
+    public function __form($request)
     {
         $abilities = Ability::sort("name")->get()->map(function ($ability) {
             $id = $ability['id'];
@@ -123,16 +127,62 @@ class RolesController extends Controller
                             'required' => true,
                             'multiple' => true,
                         ],
+                        [
+                            'type' => "table",
+                            'name' => "users",
+                            'title' => "Authorized users",
+                            'span' => 2,
+                            'content' => [
+                                'softDelete' => Unit::hasGlobalScope('Illuminate\Database\Eloquent\SoftDeletingScope'),
+                                'routes' => [
+                                    'editRoute' => "apps.units.edit",
+                                    'destroyRoute' => "apps.units.destroy",
+                                    'restoreRoute' => "apps.units.restore",
+                                ],
+                                'filters' => $request->all('search', 'sorted', 'trashed'),
+                                'titles' => [
+                                    [
+                                        'type' => 'simple',
+                                        'title' => 'Name',
+                                        'field' => 'name',
+                                    ],
+                                    [
+                                        'type' => 'simple',
+                                        'title' => 'Subunits',
+                                        'field' => 'subunits',
+                                    ],
+                                ],
+                                'menu' => [
+                                    [
+                                        'icon' => "mdi:plus",
+                                        'title' => "Unit creation",
+                                        'route' => "apps.units.create"
+                                    ],
+                                ],
+                                'items' => Unit::filter($request->all('search', 'sorted', 'trashed'))
+                                    ->addSelect([
+                                        'subunits' => Unit::selectRaw('COUNT(*)')
+                                            ->whereColumn('parent_id', 'units.id')
+                                            ->take(1),
+                                    ])
+                                    ->where("parent_id", "0")
+                                    ->sort($request->sorted ?? "name")
+                                    ->paginate(20)
+                                    ->onEachSide(2)
+                                    ->appends($request->all('search', 'sorted', 'trashed'))
+                    
+                            ],
+                        ],
                     ],
                 ]
             ]
         ];
     }
 
-    public function create()
+    public function create(Request $request)
     {
         return Inertia::render('Default/Create', [
-            'form' => $this->__form(),
+            'form' => $this->__form($request),
             'routes' => [
                 'role' => [
                     'route' => route('apps.roles.store'),
@@ -173,7 +223,7 @@ class RolesController extends Controller
         return Redirect::route('apps.roles.index')->with('status', 'Role created.');
     }
     
-    public function edit(Role $role): Response
+    public function edit(Role $role, Request $request): Response
     {
         $role['abilities'] = $role->listAbilities()
             ->get()
@@ -182,7 +232,7 @@ class RolesController extends Controller
             ->pluck('ability_id');
         
         return Inertia::render('Default/Edit', [
-            'form' => $this->__form(),
+            'form' => $this->__form($request),
             'routes' => [
                 'role' => [
                     'route' => route('apps.roles.edit', $role->id),

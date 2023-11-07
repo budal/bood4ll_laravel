@@ -8,6 +8,7 @@
     import { toast } from 'vue3-toastify';
     import { trans } from 'laravel-vue-i18n';
     import Select from '@/Components/Select.vue';
+    import Table from '@/Components/Table.vue';
 
     const passwordInput = ref<HTMLInputElement | null>(null);
 
@@ -99,6 +100,15 @@
                             v-model="jsForm[field.name]"
                             :required="field.required"
                             :multiple="field.multiple"
+                        />
+
+                        <Table v-if="field.type == 'table'"
+                            :menu="field.content.menu" 
+                            :softDelete="field.content.softDelete" 
+                            :routes="field.content.routes" 
+                            :filters="field.content.filters" 
+                            :items="field.content.items" 
+                            :titles="field.content.titles" 
                         />
         
                         <InputError class="mt-2" :message="jsForm.errors[field.name]" />
