@@ -31,7 +31,7 @@ export default {
         extend: {
             colors: {
                 zero: {
-                    'light': colors.gray[50],
+                    'light': colors.gray[100],
                     'light-hover': colors.gray[200],
                     'dark': colors.gray[900],
                     'dark-hover': colors.gray[700],
@@ -76,7 +76,7 @@ export default {
             textColor: {
                 zero: {
                     'light': colors.gray[700],
-                    'dark': colors.gray[400],
+                    'dark': colors.gray[300],
                 },
                 primary: {
                     'light': colors.gray[300],
@@ -229,6 +229,22 @@ export default {
                     from: { opacity: 1 },
                     to: { opacity: 0 },
                 },
+                slideDownAndFade: {
+                  from: { opacity: 0, transform: 'translateY(-20px)' },
+                  to: { opacity: 1, transform: 'translateY(0)' },
+                },
+                slideLeftAndFade: {
+                  from: { opacity: 0, transform: 'translateX(20px)' },
+                  to: { opacity: 1, transform: 'translateX(0)' },
+                },
+                slideUpAndFade: {
+                  from: { opacity: 0, transform: 'translateY(20px)' },
+                  to: { opacity: 1, transform: 'translateY(0)' },
+                },
+                slideRightAndFade: {
+                  from: { opacity: 0, transform: 'translateX(-20px)' },
+                  to: { opacity: 1, transform: 'translateX(0)' },
+                },
             },
             animation: {
                 scaleIn: 'scaleIn 200ms ease',
@@ -239,6 +255,10 @@ export default {
                 enterFromRight: 'enterFromRight 250ms ease',
                 exitToLeft: 'exitToLeft 250ms ease',
                 exitToRight: 'exitToRight 250ms ease',
+                slideDownAndFade: 'slideDownAndFade 400ms cubic-bezier(0.16, 1, 0.3, 1)',
+                slideLeftAndFade: 'slideLeftAndFade 400ms cubic-bezier(0.16, 1, 0.3, 1)',
+                slideUpAndFade: 'slideUpAndFade 400ms cubic-bezier(0.16, 1, 0.3, 1)',
+                slideRightAndFade: 'slideRightAndFade 400ms cubic-bezier(0.16, 1, 0.3, 1)',
             },
         },
     },

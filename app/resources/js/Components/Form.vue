@@ -4,7 +4,6 @@
     import Button from '@/Components/Button.vue';
     import TextInput from '@/Components/TextInput.vue';
     import { useForm, usePage } from '@inertiajs/vue3';
-    import { onBeforeMount, reactive } from 'vue';
     import { ref } from 'vue';
     import { toast } from 'vue3-toastify';
     import { trans } from 'laravel-vue-i18n';
@@ -35,13 +34,11 @@
 
     const jsForm = useForm(formItems);
     
-    const status = usePage().props.status as string;
-
     const sendForm = (formId: string) => {
         jsForm.submit(props.routes[formId].method, props.routes[formId].route, {
             preserveScroll: true,
             onSuccess: () => {
-                toast.success(trans(status));
+                toast.success(trans(usePage().props.status as string));
                 jsForm.reset();
             },
             onError: () => {

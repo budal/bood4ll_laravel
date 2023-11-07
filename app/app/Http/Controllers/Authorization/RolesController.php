@@ -164,7 +164,7 @@ class RolesController extends Controller
         // $request->user()->save();
 
         // return Redirect::route('profile.edit');
-        return Redirect::back()->with('status', 'Role edited.');
+        return Redirect::route('apps.roles.index')->with('status', 'Role edited.');
     }
 
     public function destroy(Request $request): RedirectResponse

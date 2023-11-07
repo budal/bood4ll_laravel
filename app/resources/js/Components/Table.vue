@@ -15,6 +15,7 @@
     DropdownMenuLabel,
     DropdownMenuPortal,
     DropdownMenuRoot,
+    DropdownMenuSeparator,
     DropdownMenuTrigger,
   } from 'radix-vue'
   import debounce from "lodash.debounce";
@@ -308,18 +309,18 @@
             <DropdownMenuPortal>
               <DropdownMenuContent
                 class="min-w-[220px] overflow-hidden outline-none bg-secondary-light dark:bg-secondary-dark text-primary-dark dark:text-primary-light rounded-md shadow-[0px_10px_38px_-10px_rgba(22,_23,_24,_0.35),_0px_10px_20px_-15px_rgba(22,_23,_24,_0.2)] shadow-primary-light dark:shadow-primary-dark will-change-[opacity,transform] data-[side=top]:animate-slideDownAndFade data-[side=right]:animate-slideLeftAndFade data-[side=bottom]:animate-slideUpAndFade data-[side=left]:animate-slideRightAndFade"
-                :side-offset="10"
                 :align="'end'"
               >
                 <DropdownMenuLabel class="leading-[25px] text-center">
                   <div class="pt-2 font-xs text-sm text-primary-light dark:text-primary-dark">{{ $t('Select an option') }}</div>
                 </DropdownMenuLabel>
+                <DropdownMenuSeparator class="h-[0.5px] bg-zero-dark/10 dark:bg-zero-light/5" />
                 <template v-for="item in menu">
                   <Link :href="route(item.route)"> 
                     <DropdownMenuItem
                       :value="item.title"
                       :class="item.class"
-                      class="px-[5px] flex pl-[10px] text-sm py-3 text-secondary-light dark:text-secondary-dark hover:bg-system-light dark:hover:bg-system-dark focus:outline-none focus:bg-system-light dark:focus:bg-system-dark transition duration-150 ease-in-out"
+                      class="px-[5px] flex pl-[10px] text-sm py-3 text-zero-light dark:text-zero-dark hover:bg-zero-light dark:hover:bg-zero-dark focus:outline-none focus:bg-zero-light dark:focus:bg-zero-dark transition duration-150 ease-in-out"
                     >
                       <Icon :icon="item.icon" class="h-5 w-5 mr-2" />
 

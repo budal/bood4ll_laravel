@@ -17,7 +17,7 @@
     }
   );
 
-  const selectedContent = ref(props.modelValue ? props.modelValue : (props.multiple ? [] : ''))
+  let selectedContent = ref(props.modelValue ? props.modelValue : (props.multiple ? [] : ''))
 
   const searchTerm = ref('')
 
@@ -33,7 +33,19 @@
 
   const emit = defineEmits(['update:modelValue']);
 
-  const deleteItem = () => alert('aaa')
+  const clear = () => {
+    emit('update:modelValue', '')
+  }
+
+  const deleteItem = (id: string) => {
+    const actualItems = selectedContent.value.filter((e: any) => { return e != id; })
+    const actualItems2 = props.content.filter((e: any) => { 
+      return selectedContent.value.includes(e.id) && e.id != id; 
+    })
+    emit('update:modelValue', actualItems2)
+    selectedContent = ref(actualItems)
+    console.log(props.modelValue, ref(actualItems), actualItems2, selectedContent)
+  }
 </script>
 
 <template>
@@ -48,10 +60,15 @@
       <div class="relative w-full min-h-[41px] flex bg-zero-light dark:bg-zero-dark border border-zero-light dark:border-zero-dark rounded-md focus-within:outline-none focus-within:ring-2 focus-within:ring-primary-light dark:focus-within:ring-primary-dark focus-within:ring-offset-1 focus-within:ring-offset-primary-light dark:focus-within:ring-offset-primary-dark transition ease-in-out duration-500 disabled:opacity-25">
         <div class="w-full">
           <div class="flex flex-wrap gap-1 items-center my-[6px] ml-2">
-            <div v-for="item in showContent" class="p-1 flex items-center text-primary-light dark:text-primary-dark rounded-md text-sm bg-primary-light dark:bg-primary-dark ring-0">
+            <div v-for="item in showContent" :key="item.id" class="p-1 flex items-center text-primary-light dark:text-primary-dark rounded-md text-sm bg-primary-light dark:bg-primary-dark ring-0">
               {{ item.title }}
               <button type="button" class="ml-1 rounded-full focus:outline-none focus:ring-2 focus:ring-primary-light dark:focus:ring-primary-dark focus:ring-offset-1 focus:ring-offset-primary-light dark:focus:ring-offset-primary-dark">
-                <Icon @click="deleteItem" icon="mdi:close-circle-outline" class="w-4 h-4 text-primary-light dark:text-primary-dark cursor-pointer " />
+                <Icon 
+                  icon="mdi:close-circle-outline" 
+                  class="w-4 h-4 text-primary-light dark:text-primary-dark cursor-pointer" 
+                  :key="item.id"
+                  @click="deleteItem(item.id)" 
+                />
               </button>
             </div>
             <ComboboxInput
