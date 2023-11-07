@@ -35,6 +35,16 @@ class RolesController extends Controller
                 'field' => 'name',
                 'fields' => ['name', 'description'],
             ],
+            [
+                'type' => 'simple',
+                'title' => 'Abilities',
+                'field' => 'abilities',
+            ],
+            [
+                'type' => 'simple',
+                'title' => 'Users',
+                'field' => 'users',
+            ],
         ];
 
         $menu = [
