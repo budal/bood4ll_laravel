@@ -14,6 +14,7 @@ use Inertia\Response;
 
 use App\Models\Role;
 use App\Models\Ability;
+use App\Models\AbilityRole;
 
 use App\Http\Requests\RolesRequest;
 
@@ -29,16 +30,17 @@ class RolesController extends Controller
         
         $titles = [
             [
-                'type' => 'simple',
+                'type' => 'composite',
                 'title' => 'Role',
                 'field' => 'name',
+                'fields' => ['name', 'description'],
             ],
         ];
 
         $menu = [
             [
                 'icon' => "mdi:badge-account-horizontal-outline",
-                'title' => "Add permission",
+                'title' => "Criação de função",
                 'route' => "apps.roles.create"
             ],
             [
@@ -123,21 +125,42 @@ class RolesController extends Controller
 
     public function store(RolesRequest $request): RedirectResponse
     {
-        dd($request);
-        // $request->user()->fill($request->validated());
+        DB::beginTransaction();
 
-        // if ($request->user()->isDirty('email')) {
-        //     $request->user()->email_verified_at = null;
-        // }
+        try {
+            $role = Role::firstOrCreate([
+                'name' => $request->name,
+                'description' => $request->description,
+            ]);
+        } catch(\Exception $e) {
+            DB::rollback();
+            return Redirect::back()->with('status', "Error when inserting a new role.");
+        }
+        
+        try {
+            foreach($request->abilities as $ability_id) {
+                $abilities_role = AbilityRole::create([
+                    'role_id' => $role->id,
+                    'ability_id' => $ability_id,
+                ]);
+            }
+        } catch(\Exception $e) {
+            DB::rollback();
+            return Redirect::back()->with('status', "Error when linking abilities to the role.");
+        }
 
-        // $request->user()->save();
+        DB::commit();
 
         return Redirect::route('apps.roles.index')->with('status', 'Role created.');
     }
     
     public function edit(Role $role): Response
     {
-        $role['abilities'] = $role->listAbilities()->get()->map->only('ability_id')->pluck('ability_id');
+        $role['abilities'] = $role->listAbilities()
+            ->get()
+            ->map
+            ->only('ability_id')
+            ->pluck('ability_id');
         
         return Inertia::render('Default/Edit', [
             'form' => $this->__form(),
@@ -151,19 +174,58 @@ class RolesController extends Controller
         ]);
     }
 
-    public function update(Request $request): RedirectResponse
+    public function update(Role $role, Request $request): RedirectResponse
     {
-        dd($request);
+        DB::beginTransaction();
+
+        try {
+            Role::where('id', $role->id)
+                ->update([
+                    'name' => $request->name,
+                    'description' => $request->description,
+                ]);
+        } catch(\Exception $e) {
+            DB::rollback();
+            return Redirect::back()->with('status', "Error when editing the role.");
+        }
         
-        // $request->user()->fill($request->validated());
+        try {
+            $abilities_role_saved = AbilityRole::where('role_id', $role->id)
+                ->get()
+                ->map
+                ->only('id', 'ability_id')
+                ->pluck('ability_id', 'id');
 
-        // if ($request->user()->isDirty('email')) {
-        //     $request->user()->email_verified_at = null;
-        // }
+            $abilities_role_to_delete = AbilityRole::where('role_id', $role->id)
+                ->whereNotIn('ability_id', $request->abilities)
+                ->get()
+                ->map
+                ->only('id', 'ability_id')
+                ->pluck('ability_id', 'id')
+                ->toArray();
 
-        // $request->user()->save();
+            $abilities_role_mainteined = $abilities_role_saved->diff($abilities_role_to_delete);
 
-        // return Redirect::route('profile.edit');
+            $abilities_role_deleted = AbilityRole::where('role_id', $role->id)
+                ->whereIn('ability_id', $abilities_role_to_delete)
+                ->delete();
+                
+            $abilities_role_to_insert = collect($request->abilities)->diff($abilities_role_mainteined);
+
+            foreach($abilities_role_to_insert as $ability_id) {
+                $ability_role = AbilityRole::create([
+                    'role_id' => $role->id,
+                    'ability_id' => $ability_id,
+                ]);
+            }
+        } catch(\Exception $e) {
+            DB::rollback();
+            dd($e);
+            return Redirect::back()->with('status', "Error when linking abilities to the role.");
+        }
+
+        DB::commit();
+
         return Redirect::route('apps.roles.index')->with('status', 'Role edited.');
     }
 

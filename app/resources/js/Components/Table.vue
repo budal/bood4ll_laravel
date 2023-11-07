@@ -36,9 +36,6 @@
 
   const searchRoute = new URL(window.location.href);
 
-  const status = usePage().props.status as string;
-  const statusComplements = usePage().props.statusComplements as undefined;
-  
   // toggle checkboxes
   let selectedCheckBoxes = reactive(new Set())
 
@@ -87,8 +84,8 @@
     form.delete(route(props.routes.destroyRoute), {
       preserveScroll: true,
       onSuccess: () => closeDeletionModal(),
-      onError: () => toast.error(trans(status)),
-      onFinish: () => toast.success(trans(status)),
+      onError: () => toast.error(trans(usePage().props.usePage().props.status as string as string)),
+      onFinish: () => toast.success(trans(usePage().props.status as string)),
     });
   };
 
@@ -110,8 +107,8 @@
     form.post(route(props.routes.restoreRoute, restoreItemID.value), {
       preserveScroll: true,
       onSuccess: () => closeRestoreModal(),
-      onError: () => toast.error(trans(status)),
-      onFinish: () => toast.success(trans(status)),
+      onError: () => toast.error(trans(usePage().props.status as string)),
+      onFinish: () => toast.success(trans(usePage().props.status as string)),
     });
   };
 
@@ -204,8 +201,8 @@
   const updateSwitch = (routeUri: string, method: 'get' | 'post', id: string) => {
     formSwitch.submit(method, route(routeUri, id), {
       preserveScroll: true,
-      onError: () => toast.error(trans(status)),
-      onFinish: () => toast.success(trans(status, statusComplements)),
+      onError: () => toast.error(trans(usePage().props.status as string)),
+      onFinish: () => toast.success(trans(usePage().props.status as string, usePage().props.statusComplements as undefined)),
     });
   }
 
