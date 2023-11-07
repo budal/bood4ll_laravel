@@ -143,7 +143,7 @@
     { id: 'both', title: 'Active and trashed', disabled: props.softDelete === true ? false : true },
   ])
 
-  const trashed = ref(searchRoute.searchParams.get("trashed") || '')
+  const filterContentValue = ref(searchRoute.searchParams.get("trashed") || 'active')
 
   const filtersModal = ref(false);
 
@@ -152,7 +152,7 @@
   }
 
   const refreshFilters = () => {
-    searchRoute.searchParams.set("trashed", trashed.value)
+    searchRoute.searchParams.set("trashed", filterContentValue.value)
 
     router.visit(searchRoute, {
       method: 'get',
@@ -268,7 +268,7 @@
           name="filterContent" 
           :content="filterContent" 
           class="mt-1" 
-          v-model="trashed" 
+          v-model="filterContentValue" 
           :disableSearch="true"
         />
       </div>

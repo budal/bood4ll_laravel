@@ -72,7 +72,7 @@ import { watch } from 'vue';
               :class= "(disableSearch || !multiple) ? 'text-zero-light dark:text-zero-dark rounded-md text-sm bg-zero-light dark:bg-zero-dark' : ''" 
             >
               {{ $t(item.title) }}
-              <button v-if="!disableSearch" type="button" class="ml-1 rounded-full focus:outline-none focus:ring-2 focus:ring-primary-light dark:focus:ring-primary-dark focus:ring-offset-1 focus:ring-offset-primary-light dark:focus:ring-offset-primary-dark">
+              <button v-if="!disableSearch && multiple" type="button" class="ml-1 rounded-full focus:outline-none focus:ring-2 focus:ring-primary-light dark:focus:ring-primary-dark focus:ring-offset-1 focus:ring-offset-primary-light dark:focus:ring-offset-primary-dark">
                 <Icon 
                   icon="mdi:close-circle-outline" 
                   class="w-4 h-4 text-primary-light dark:text-primary-dark cursor-pointer" 
@@ -83,15 +83,13 @@ import { watch } from 'vue';
             </div>
             <ComboboxInput
               v-if="!disableSearch"
-              :id="id" 
-              :name="name"
               class="p-0 grow w-0 bg-transparent text-ellipsis border-0 outline-0 focus:ring-0 placeholder:text-sm placeholder-primary-dark/20 dark:placeholder-primary-dark/20 text-zero-light dark:text-zero-dark" 
             />
           </div>
         </div>
         <ComboboxTrigger>
           <div class="inset-y-0 right-0 mr-2 flex items-center pl-2 pointer-events-none">
-            <button type="button" class="ml-1 rounded-full focus:outline-none focus:ring-2 focus:ring-primary-light dark:focus:ring-primary-dark focus:ring-offset-1 focus:ring-offset-primary-light dark:focus:ring-offset-primary-dark">
+            <button :id="id" :name="name" type="button" class="ml-1 rounded-full focus:outline-none focus:ring-2 focus:ring-primary-light dark:focus:ring-primary-dark focus:ring-offset-1 focus:ring-offset-primary-light dark:focus:ring-offset-primary-dark">
               <Icon icon="mdi:chevron-down" class="w-6 h-6 text-primary-light dark:text-primary-dark" />
             </button>
           </div>
