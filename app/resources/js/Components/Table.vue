@@ -385,12 +385,12 @@
                 <template v-for="(content, index) in titles">
                   <td :class="classTD">
                     <p v-if="content.type == 'simple'" class="truncate text-xs leading-5 text-secondary-light dark:text-secondary-dark">
-                      {{ item[content.field] }}
+                      {{ item[content.field] ?? '-' }}
                     </p>
                     
                     <template v-if="content.type == 'composite'">
-                      <strong class="text-sm font-medium text-secondary-light dark:text-secondary-dark">{{ item[content.fields[0]] }}</strong>
-                      <p class="truncate text-xs leading-5 text-secondary-light dark:text-secondary-dark">{{ item[content.fields[1]] }}</p>
+                      <strong class="text-sm font-medium text-secondary-light dark:text-secondary-dark">{{ item[content.fields[0]] ?? '-' }}</strong>
+                      <p class="truncate text-xs leading-5 text-secondary-light dark:text-secondary-dark">{{ item[content.fields[1]] ?? '-' }}</p>
                     </template>
                     
                     <Avatar 
