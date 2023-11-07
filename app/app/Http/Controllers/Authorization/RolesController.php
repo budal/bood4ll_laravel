@@ -15,6 +15,7 @@ use Inertia\Response;
 use App\Models\Role;
 use App\Models\Ability;
 use App\Models\AbilityRole;
+use App\Models\RoleUser;
 
 use App\Http\Requests\RolesRequest;
 
@@ -50,7 +51,7 @@ class RolesController extends Controller
         $menu = [
             [
                 'icon' => "mdi:badge-account-horizontal-outline",
-                'title' => "Criação de função",
+                'title' => "Role creation",
                 'route' => "apps.roles.create"
             ],
             [
@@ -69,6 +70,14 @@ class RolesController extends Controller
             'titles' => $titles,
             'menu' => $menu,
             'items' => Role::filter($request->all('search', 'sorted', 'trashed'))
+                ->addSelect([
+                    'abilities' => AbilityRole::selectRaw('COUNT(*)')
+                        ->whereColumn('role_id', 'roles.id')
+                        ->take(1),
+                    'users' => RoleUser::selectRaw('COUNT(*)')
+                        ->whereColumn('role_id', 'roles.id')
+                        ->take(1),
+                ])
                 ->sort($request->sorted ?? "name")
                 ->paginate(20)
                 ->onEachSide(2)
