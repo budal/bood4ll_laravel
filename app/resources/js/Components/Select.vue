@@ -10,10 +10,12 @@ import { watch } from 'vue';
       name?: string;
       modelValue?: any;
       content: any;
+      disableSearch?: boolean;
       required?: boolean;
       multiple?: boolean;
     }>(),
     {
+      disableSearch: false,
       multiple: false,
     }
   );
@@ -23,7 +25,7 @@ import { watch } from 'vue';
   const searchTerm = ref('')
 
   const filteredContent = computed(() =>
-    searchTerm.value === ''
+    props.disableSearch === true || searchTerm.value === '' && props.disableSearch === false
       ? props.content
       : props.content.filter((items: {id: string, title: string}) => {
         return items.title.toLowerCase().includes(searchTerm.value.toLowerCase())
@@ -48,7 +50,7 @@ import { watch } from 'vue';
     // console.log(props.modelValue, ref(actualItems), actualItems2, selectedContent)
   }
 
-  watch(selectedContent, () => console.log(selectedContent))
+  // watch(selectedContent, () => console.log(selectedContent))
 </script>
 
 <template>
@@ -63,9 +65,14 @@ import { watch } from 'vue';
       <div class="relative w-full min-h-[41px] flex bg-zero-light dark:bg-zero-dark border border-zero-light dark:border-zero-dark rounded-md focus-within:outline-none focus-within:ring-2 focus-within:ring-primary-light dark:focus-within:ring-primary-dark focus-within:ring-offset-1 focus-within:ring-offset-primary-light dark:focus-within:ring-offset-primary-dark transition ease-in-out duration-500 disabled:opacity-25">
         <div class="w-full">
           <div class="flex flex-wrap gap-1 items-center my-[6px] ml-2">
-            <div v-for="item in showContent" :key="item.id" class="p-1 flex items-center text-primary-light dark:text-primary-dark rounded-md text-sm bg-primary-light dark:bg-primary-dark ring-0">
-              {{ item.title }}
-              <button type="button" class="ml-1 rounded-full focus:outline-none focus:ring-2 focus:ring-primary-light dark:focus:ring-primary-dark focus:ring-offset-1 focus:ring-offset-primary-light dark:focus:ring-offset-primary-dark">
+            <div 
+              v-for="item in showContent" 
+              :key="item.id" 
+              class="p-1 flex items-center text-primary-light dark:text-primary-dark rounded-md text-sm bg-primary-light dark:bg-primary-dark ring-0"
+              :class= "(disableSearch || !multiple) ? 'text-zero-light dark:text-zero-dark rounded-md text-sm bg-zero-light dark:bg-zero-dark' : ''" 
+            >
+              {{ $t(item.title) }}
+              <button v-if="!disableSearch" type="button" class="ml-1 rounded-full focus:outline-none focus:ring-2 focus:ring-primary-light dark:focus:ring-primary-dark focus:ring-offset-1 focus:ring-offset-primary-light dark:focus:ring-offset-primary-dark">
                 <Icon 
                   icon="mdi:close-circle-outline" 
                   class="w-4 h-4 text-primary-light dark:text-primary-dark cursor-pointer" 
@@ -75,6 +82,7 @@ import { watch } from 'vue';
               </button>
             </div>
             <ComboboxInput
+              v-if="!disableSearch"
               :id="id" 
               :name="name"
               class="p-0 grow w-0 bg-transparent text-ellipsis border-0 outline-0 focus:ring-0 placeholder:text-sm placeholder-primary-dark/20 dark:placeholder-primary-dark/20 text-zero-light dark:text-zero-dark" 

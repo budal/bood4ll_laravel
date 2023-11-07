@@ -94,7 +94,6 @@
                         <Select v-if="field.type == 'select'" 
                             :id="field.name"
                             :name="field.name"
-                            :type="field.type"
                             :content="field.content"
                             class="mt-1 block w-full"
                             v-model="jsForm[field.name]"

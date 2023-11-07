@@ -57,9 +57,9 @@ class User extends Authenticatable
                     ->orWhere('email', 'ilike', '%'.$search.'%');
             });
         })->when($filters['trashed'] ?? null, function ($query, $trashed) {
-            if ($trashed === 'with') {
+            if ($trashed === 'both') {
                 $query->withTrashed();
-            } elseif ($trashed === 'only') {
+            } elseif ($trashed === 'trashed') {
                 $query->onlyTrashed();
             }
         });

@@ -137,11 +137,11 @@
 
 
   // filters modal
-  const content = [
-    { id: '', title: 'Only active' },
-    { id: 'only', title: 'Only trashed', disabled: props.softDelete === true ? false : true },
-    { id: 'with', title: 'Active and trashed', disabled: props.softDelete === true ? false : true },
-  ]
+  const filterContent = ref([
+    { id: 'active', title: 'Only active' },
+    { id: 'trashed', title: 'Only trashed', disabled: props.softDelete === true ? false : true },
+    { id: 'both', title: 'Active and trashed', disabled: props.softDelete === true ? false : true },
+  ])
 
   const trashed = ref(searchRoute.searchParams.get("trashed") || '')
 
@@ -263,7 +263,14 @@
       </p>
       <div class="pt-3">
         <InputLabel for="filterContent" :value="$t('Content')" />
-        <Select id="filterContent" name="filterContent" class="mt-1" :content="content" v-model="trashed" />
+        <Select 
+          id="filterContent" 
+          name="filterContent" 
+          :content="filterContent" 
+          class="mt-1" 
+          v-model="trashed" 
+          :disableSearch="true"
+        />
       </div>
       <template #buttons>
         <div class="mt-6 flex justify-end">
