@@ -17,7 +17,7 @@
     }
   );
 
-  const selectedContent = ref(props.modelValue ? props.modelValue : [])
+  const selectedContent = ref(props.modelValue ? props.modelValue : (props.multiple ? [] : ''))
 
   const searchTerm = ref('')
 
@@ -31,6 +31,8 @@
 
   const showContent = computed(() => props.content.filter((e: any) => { return selectedContent.value.includes(e.id); }))
 
+  const emit = defineEmits(['update:modelValue']);
+
   const deleteItem = () => alert('aaa')
 </script>
 
@@ -40,6 +42,7 @@
     v-model="selectedContent" 
     v-model:searchTerm="searchTerm"
     :multiple="multiple"
+    @update:open="() => emit('update:modelValue', selectedContent)"
   >
     <ComboboxAnchor>
       <div class="relative w-full min-h-[41px] flex bg-zero-light dark:bg-zero-dark border border-zero-light dark:border-zero-dark rounded-md focus-within:outline-none focus-within:ring-2 focus-within:ring-primary-light dark:focus-within:ring-primary-dark focus-within:ring-offset-1 focus-within:ring-offset-primary-light dark:focus-within:ring-offset-primary-dark transition ease-in-out duration-500 disabled:opacity-25">
