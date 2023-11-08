@@ -41,7 +41,7 @@ import { Link } from '@inertiajs/vue3';
                   aria-hidden
                 />
               </NavigationMenuTrigger>
-              <NavigationMenuContent class="z-[100] data-[motion=from-start]:animate-enterFromLeft data-[motion=from-end]:animate-enterFromRight data-[motion=to-start]:animate-exitToLeft data-[motion=to-end]:animate-exitToRight absolute top-0 left-0 w-full sm:w-auto">
+              <NavigationMenuContent class="z-[30] top-0 data-[motion=from-start]:animate-enterFromLeft data-[motion=from-end]:animate-enterFromRight data-[motion=to-start]:animate-exitToLeft data-[motion=to-end]:animate-exitToRight absolute top-0 left-0 w-full sm:w-auto">
                 <div class="container mx-auto grid gap-2 p-2 w-screen max-w-xl md:max-w-3xl lg:max-w-5xl sm:grid-flow-row sm:grid-cols-2 lg:grid-cols-3">
                   <template v-for="subitem in item.links">
                       <NavigationMenuLink as-child>

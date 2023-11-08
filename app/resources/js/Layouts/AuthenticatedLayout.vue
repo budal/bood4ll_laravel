@@ -112,8 +112,8 @@ const menuUser = [
 <template>
     <div>
         <div class="relative min-h-screen bg-zero-light dark:bg-zero-dark">
-            <nav class="bg-secondary-light dark:bg-secondary-dark border-b border-secondary-light dark:border-secondary-dark sm:sticky sm:top-0">
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <nav class="bg-secondary-light dark:bg-secondary-dark sm:sticky sm:top-0 z-[10]">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-b border-secondary-light dark:border-secondary-dark ">
                     <div class="flex justify-between h-16">
                         <div class="flex">
                             <div class="shrink-0 flex items-center">
@@ -136,10 +136,11 @@ const menuUser = [
                     </div>
                 </div>
             </nav>
-            <main>
+            <div class="sm:sticky sm:top-[65px] z-[5]">
                 <Breadcrumbs />
-                <slot />
-            </main>
+            </div>
+
+            <slot />
         </div>
     </div>
     <TailwindIndicator />

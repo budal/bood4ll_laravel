@@ -35,7 +35,7 @@
 
         <DropdownMenuPortal>
             <DropdownMenuContent
-                class="min-w-[220px] overflow-hidden outline-none bg-secondary-light dark:bg-secondary-dark secondary-light dark:text-secondary-dark rounded-md shadow-[0px_10px_38px_-10px_rgba(22,_23,_24,_0.35),_0px_10px_20px_-15px_rgba(22,_23,_24,_0.2)] shadow-black dark:shadow-white will-change-[opacity,transform] data-[side=top]:animate-slideDownAndFade data-[side=right]:animate-slideLeftAndFade data-[side=bottom]:animate-slideUpAndFade data-[side=left]:animate-slideRightAndFade"
+                class="z-[20] min-w-[220px] overflow-hidden outline-none bg-secondary-light dark:bg-secondary-dark secondary-light dark:text-secondary-dark rounded-md shadow-[0px_10px_38px_-10px_rgba(22,_23,_24,_0.35),_0px_10px_20px_-15px_rgba(22,_23,_24,_0.2)] shadow-black dark:shadow-white will-change-[opacity,transform] data-[side=top]:animate-slideDownAndFade data-[side=right]:animate-slideLeftAndFade data-[side=bottom]:animate-slideUpAndFade data-[side=left]:animate-slideRightAndFade"
                 :align="'end'"
             >
                 <DropdownMenuLabel as="span" class="leading-[25px] text-center">
