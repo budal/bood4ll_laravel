@@ -90,7 +90,24 @@ class RolesController extends Controller
         ]);
     }
     
-    public function __form($request): Array
+    public function __users(Request $request): LengthAwarePaginator
+    {
+        return Role::filter($request->all('search', 'sorted', 'trashed'))
+            ->addSelect([
+                'abilities' => AbilityRole::selectRaw('COUNT(*)')
+                    ->whereColumn('role_id', 'roles.id')
+                    ->take(1),
+                'users' => RoleUser::selectRaw('COUNT(*)')
+                    ->whereColumn('role_id', 'roles.id')
+                    ->take(1),
+            ])
+            ->sort($request->sorted ?? "name")
+            ->paginate(20)
+            ->onEachSide(2)
+            ->appends($request->all('search', 'sorted', 'trashed'));
+    }
+    
+    public function __form(Request $request, Role $role): Array
     {
         $abilities = Ability::sort("name")->get()->map(function ($ability) {
             $id = $ability['id'];
@@ -136,33 +153,44 @@ class RolesController extends Controller
                             'title' => "Authorized users",
                             'span' => 2,
                             'content' => [
-                                'softDelete' => Unit::hasGlobalScope('Illuminate\Database\Eloquent\SoftDeletingScope'),
+                                'softDelete' => Role::hasGlobalScope('Illuminate\Database\Eloquent\SoftDeletingScope'),
                                 'routes' => [
-                                    'editRoute' => "apps.units.edit",
-                                    'destroyRoute' => "apps.units.destroy",
-                                    'restoreRoute' => "apps.units.restore",
+                                    'editRoute' => "apps.roles.edit",
+                                    'destroyRoute' => "apps.roles.destroy",
+                                    'restoreRoute' => "apps.roles.restore",
                                 ],
                                 'filters' => $request->all('search', 'sorted', 'trashed'),
                                 'titles' => [
                                     [
-                                        'type' => 'simple',
-                                        'title' => 'Name',
+                                        'type' => 'composite',
+                                        'title' => 'Role',
                                         'field' => 'name',
+                                        'fields' => ['name', 'description'],
+                                    ],
+                                    [
+                                        'type' => 'simple',
+                                        'title' => 'Abilities',
+                                        'field' => 'abilities',
+                                    ],
+                                    [
+                                        'type' => 'simple',
+                                        'title' => 'Users',
+                                        'field' => 'users',
                                     ],
                                 ],
                                 'menu' => [
                                     [
-                                        'icon' => "mdi:plus",
-                                        'title' => "Unit creation",
-                                        'route' => "apps.units.create"
+                                        'icon' => "mdi:badge-account-horizontal-outline",
+                                        'title' => "Role creation",
+                                        'route' => "apps.roles.create"
                                     ],
+                                    [
+                                        'icon' => "mdi:list-status",
+                                        'title' => "Abilities management",
+                                        'route' => "apps.abilities.index"
+                                    ],            
                                 ],
-                                'items' => Unit::filter($request->all('search', 'sorted', 'trashed'))
-                                    ->where("parent_id", "0")
-                                    ->sort($request->sorted ?? "name")
-                                    ->paginate(20)
-                                    ->onEachSide(2)
-                                    ->appends($request->all('search', 'sorted', 'trashed'))
+                                'items' => $this->__users($request, $role)
                             ],
                         ],
                     ],
@@ -171,10 +199,10 @@ class RolesController extends Controller
         ];
     }
 
-    public function create(Request $request): Response
+    public function create(Request $request, Role $role): Response
     {
         return Inertia::render('Default/Create', [
-            'form' => $this->__form($request),
+            'form' => $this->__form($request, $role),
             'routes' => [
                 'role' => [
                     'route' => route('apps.roles.store'),
@@ -215,17 +243,7 @@ class RolesController extends Controller
         return Redirect::route('apps.roles.index')->with('status', 'Role created.');
     }
     
-    public function __users(Request $request): LengthAwarePaginator
-    {
-        return Unit::filter($request->all('search', 'sorted', 'trashed'))
-            ->where("parent_id", "0")
-            ->sort($request->sorted ?? "name")
-            ->paginate(20)
-            ->onEachSide(2)
-            ->appends($request->all('search', 'sorted', 'trashed'));
-    }
-    
-    public function edit(Role $role, Request $request): Response
+    public function edit(Request $request, Role $role): Response
     {
         $role['abilities'] = $role->listAbilities()
             ->get()
@@ -234,18 +252,21 @@ class RolesController extends Controller
             ->pluck('ability_id');
         
         return Inertia::render('Default/Edit', [
-            'form' => $this->__form($request),
+            'form' => $this->__form($request, $role),
             'routes' => [
                 'role' => [
                     'route' => route('apps.roles.edit', $role->id),
                     'method' => 'patch'
                 ],
             ],
+            'tablesRoute' => [
+                'role' => route('apps.roles.edit.users', $role->id),
+            ],
             'data' => $role
         ]);
     }
 
-    public function update(Role $role, Request $request): RedirectResponse
+    public function update(Request $request, Role $role): RedirectResponse
     {
         DB::beginTransaction();
 

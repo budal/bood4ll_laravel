@@ -274,10 +274,10 @@
       </div>
       <template #buttons>
         <div class="mt-6 flex justify-end">
-          <Button color="secondary" @click="closeFiltersModal">
+          <Button color="secondary" type="button" @click="closeFiltersModal">
             {{ $t('Cancel') }}
           </Button>
-          <Button color="primary" class="ml-3" :class="{ 'opacity-25': form.processing }" :disabled="form.processing" @click="refreshFilters">
+          <Button color="primary" type="button" class="ml-3" :class="{ 'opacity-25': form.processing }" :disabled="form.processing" @click="refreshFilters">
             {{ $t('Apply') }}
           </Button>
         </div>
@@ -286,7 +286,7 @@
 
     <div class="flex sticky top-0 sm:top-[95px] justify-between rounded-xl backdrop-blur-sm pt-1 px-2 mb-2 -mx-3 bg-secondary-light/30 dark:bg-secondary-dark/30">
       <div class="flex-none items-center">
-        <Button color="danger" v-if="routes.destroyRoute" :disabled="totalSelectedCheckBoxes === 0" @click="openDeletionModal" class="mr-2 h-full">
+        <Button color="danger" type="button" v-if="routes.destroyRoute" :disabled="totalSelectedCheckBoxes === 0" @click="openDeletionModal" class="mr-2 h-full">
           <Icon icon="mdi:trash-can" class="h-5 w-5" />
         </Button>
       </div>
@@ -294,7 +294,7 @@
         <SearchInput :placeholder="$t('Search...')" id="search" name="search" class="w-full h-full" :value="filters.search" v-model="search" />
       </div>
       <div class="flex-none items-center">
-        <Button color="secondary" @click="openFiltersModal" class="ml-2 h-full">
+        <Button color="secondary" type="button" @click="openFiltersModal" class="ml-2 h-full">
           <Icon icon="mdi:filter-menu" class="h-5 w-5" />
         </Button>
       </div>
@@ -305,7 +305,7 @@
               class="h-full outline-none"
               :aria-label="$t('Table menu')"
             >
-              <Button color="primary" class="ml-2 h-full ">
+              <Button color="primary" type="button" class="ml-2 h-full ">
                 <Icon icon="mdi:dots-horizontal" class="h-5 w-5" />
               </Button>
             </DropdownMenuTrigger>
@@ -339,7 +339,7 @@
         </template>
         <template v-else>
           <Link :href="route(menu[0].route)" class="text-sm ml-2 h-full">
-            <Button color="primary" class="h-full">
+            <Button color="primary" type="button" class="h-full">
               <Icon :icon="menu[0].icon" class="h-5 w-5" />
             </Button>
           </Link>
@@ -382,6 +382,7 @@
                     @click="toggle(item)" 
                   />
                   <Button v-if="routes.restoreRoute && item.deleted_at" 
+                    type="button"
                     color="warning" padding="2" 
                     :class="classTD" 
                     @click="restore(item.id)"
@@ -417,7 +418,7 @@
                 </template>
                 <td v-if="routes.editRoute" :class="`${classTD} text-right`">
                   <Link :href="route(routes.editRoute, item.id)">
-                    <Button color="primary">
+                    <Button color="primary" type="button">
                       <Icon icon="mdi:chevron-right" class="h-5 w-5" />
                     </Button>
                   </Link>
@@ -436,7 +437,7 @@
         <div class="w-full flex flex-row sm:hidden">
           <div class="basis-1/3 text-left">
             <Link v-if="items.prev_page_url" :href="items.prev_page_url" class="text-sm">
-              <Button color="primary">{{ $t('Previous')}}</Button>
+              <Button color="primary" type="button">{{ $t('Previous')}}</Button>
             </Link>
           </div>
           <div v-if="items.from !== null" class="basis-1/3 text-center">
@@ -447,7 +448,7 @@
           </div>
           <div class="basis-1/3 text-right">
             <Link v-if="items.next_page_url" :href="items.next_page_url" class="text-sm">
-              <Button color="primary">{{ $t('Next')}}</Button>
+              <Button color="primary" type="button">{{ $t('Next')}}</Button>
             </Link>
           </div>
         </div>
@@ -460,7 +461,7 @@
           <div>
             <nav class="inline-flex shadow-sm gap-[2px]" aria-label="Pagination">
               <Link v-if="items.prev_page_url" :href="items.prev_page_url" class="text-sm">
-                <Button color="primary">
+                <Button color="primary" type="button">
                   <span class="sr-only">{{ $t('Previous')}}</span>
                   <Icon icon="mdi:chevron-left" class="h-4 w-4" />
                 </Button>
@@ -471,12 +472,12 @@
                   v-if="item.label > 0 && item.label != items.current_page || item.label == items.current_page"
                   :key="item.key" :href="item.url" class="text-sm"
                 >
-                  <Button color="primary" :disabled="item.label == items.current_page">{{ item.label }}</Button>
+                  <Button color="primary" type="button" :disabled="item.label == items.current_page">{{ item.label }}</Button>
                 </Link>
               </template>
 
               <Link v-if="items.next_page_url" :href="items.next_page_url" class="text-sm">
-                <Button color="primary">
+                <Button color="primary" type="button">
                   <span class="sr-only">{{ $t('Next')}}</span>
                   <Icon icon="mdi:chevron-right" class="h-4 w-4" />
                 </Button>
