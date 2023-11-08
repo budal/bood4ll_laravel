@@ -154,11 +154,14 @@ class RolesController extends Controller
                                         'type' => 'composite',
                                         'title' => 'Role',
                                         'field' => 'name',
-                                        'fields' => ['name', 'description'],
+                                        'fields' => ['name', 'email'],
                                     ],
                                 ],
-                                'items' => Role::filter($request->all('search', 'sorted', 'trashed'))
+                                'items' => RoleUser::filter($request->all('search', 'sorted', 'trashed'))
                                     ->sort($request->sorted ?? "name")
+                                    ->where('role_id', $role->id)
+                                    ->select('role_user.id', 'users.name', 'users.email')
+                                    ->join('users', 'users.id', '=', 'role_user.user_id')
                                     ->paginate(20)
                                     ->onEachSide(2)
                                     ->appends($request->all('search', 'sorted', 'trashed'))

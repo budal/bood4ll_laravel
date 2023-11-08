@@ -47,5 +47,4 @@ class Unit extends Model
 
         $query->orderBy($attribute, $sort_order);
     }
-
 }
