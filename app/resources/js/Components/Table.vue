@@ -25,7 +25,7 @@
   import { ref, computed, reactive, watch, onBeforeUnmount } from 'vue'
 
   const props = defineProps<{
-    api?: string;
+    apiRoute?: string;
     softDelete?: boolean | null;
     routes?: any;
     filters?: any;

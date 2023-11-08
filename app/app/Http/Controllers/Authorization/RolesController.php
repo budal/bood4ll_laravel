@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
@@ -89,7 +90,7 @@ class RolesController extends Controller
         ]);
     }
     
-    public function __form($request)
+    public function __form($request): Array
     {
         $abilities = Ability::sort("name")->get()->map(function ($ability) {
             $id = $ability['id'];
@@ -127,6 +128,8 @@ class RolesController extends Controller
                             'required' => true,
                             'multiple' => true,
                         ],
+                    ],
+                    [
                         [
                             'type' => "table",
                             'name' => "users",
@@ -146,11 +149,6 @@ class RolesController extends Controller
                                         'title' => 'Name',
                                         'field' => 'name',
                                     ],
-                                    [
-                                        'type' => 'simple',
-                                        'title' => 'Subunits',
-                                        'field' => 'subunits',
-                                    ],
                                 ],
                                 'menu' => [
                                     [
@@ -160,17 +158,11 @@ class RolesController extends Controller
                                     ],
                                 ],
                                 'items' => Unit::filter($request->all('search', 'sorted', 'trashed'))
-                                    ->addSelect([
-                                        'subunits' => Unit::selectRaw('COUNT(*)')
-                                            ->whereColumn('parent_id', 'units.id')
-                                            ->take(1),
-                                    ])
                                     ->where("parent_id", "0")
                                     ->sort($request->sorted ?? "name")
                                     ->paginate(20)
                                     ->onEachSide(2)
                                     ->appends($request->all('search', 'sorted', 'trashed'))
-                    
                             ],
                         ],
                     ],
@@ -179,7 +171,7 @@ class RolesController extends Controller
         ];
     }
 
-    public function create(Request $request)
+    public function create(Request $request): Response
     {
         return Inertia::render('Default/Create', [
             'form' => $this->__form($request),
@@ -221,6 +213,16 @@ class RolesController extends Controller
         DB::commit();
 
         return Redirect::route('apps.roles.index')->with('status', 'Role created.');
+    }
+    
+    public function __users(Request $request): LengthAwarePaginator
+    {
+        return Unit::filter($request->all('search', 'sorted', 'trashed'))
+            ->where("parent_id", "0")
+            ->sort($request->sorted ?? "name")
+            ->paginate(20)
+            ->onEachSide(2)
+            ->appends($request->all('search', 'sorted', 'trashed'));
     }
     
     public function edit(Role $role, Request $request): Response
@@ -313,7 +315,7 @@ class RolesController extends Controller
         return back()->with('status', 'Users removed succesfully!');
     }
 
-    public function restore(Role $role)
+    public function restore(Role $role): RedirectResponse
     {
         $role->restore();
 

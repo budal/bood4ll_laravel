@@ -12,7 +12,7 @@ import { computed } from 'vue';
             shadowSize?: 'shadow-sm' | 'shadow' | 'shadow-md' | 'shadow-lg' | 'shadow-xl' | 'shadow-2xl' | 'shadow-inner' | 'shadow-none';
         }>(),
         {
-            type: 'button',
+            type: 'submit',
             color: 'primary',
             padding: 4,
             rounded: 'rounded-md',
