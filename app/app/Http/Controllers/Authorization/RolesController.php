@@ -28,52 +28,46 @@ class RolesController extends Controller
 {
     public function index(Request $request): Response
     {
-        $routes = [
-            'editRoute' => "apps.roles.edit",
-            'destroyRoute' => "apps.roles.destroy",
-            'restoreRoute' => "apps.roles.restore",
-        ];
-        
-        $titles = [
-            [
-                'type' => 'composite',
-                'title' => 'Role',
-                'field' => 'name',
-                'fields' => ['name', 'description'],
-            ],
-            [
-                'type' => 'simple',
-                'title' => 'Abilities',
-                'field' => 'abilities',
-            ],
-            [
-                'type' => 'simple',
-                'title' => 'Users',
-                'field' => 'users',
-            ],
-        ];
-
-        $menu = [
-            [
-                'icon' => "mdi:badge-account-horizontal-outline",
-                'title' => "Role creation",
-                'route' => "apps.roles.create"
-            ],
-            [
-                'icon' => "mdi:list-status",
-                'title' => "Abilities management",
-                'route' => "apps.abilities.index"
-            ],            
-        ];
-
         return Inertia::render('Default/Index', [
             'title' => "Roles management",
             'subtitle' => "Define roles, grouping abilities to define specific access.",
             'softDelete' => Role::hasGlobalScope('Illuminate\Database\Eloquent\SoftDeletingScope'),
-            'routes' => $routes,
+            'routes' => [
+                'editRoute' => "apps.roles.edit",
+                'destroyRoute' => "apps.roles.destroy",
+                'restoreRoute' => "apps.roles.restore",
+            ],
+            'menu' => [
+                [
+                    'icon' => "mdi:badge-account-horizontal-outline",
+                    'title' => "Role creation",
+                    'route' => "apps.roles.create"
+                ],
+                [
+                    'icon' => "mdi:list-status",
+                    'title' => "Abilities management",
+                    'route' => "apps.abilities.index"
+                ],            
+            ],
             'filters' => $request->all('search', 'sorted', 'trashed'),
-            'titles' => $titles,
-            'menu' => $menu,
+            'titles' => [
+                [
+                    'type' => 'composite',
+                    'title' => 'Role',
+                    'field' => 'name',
+                    'fields' => ['name', 'description'],
+                ],
+                [
+                    'type' => 'simple',
+                    'title' => 'Abilities',
+                    'field' => 'abilities',
+                ],
+                [
+                    'type' => 'simple',
+                    'title' => 'Users',
+                    'field' => 'users',
+                ],
+            ],
             'items' => Role::filter($request->all('search', 'sorted', 'trashed'))
                 ->addSelect([
                     'abilities' => AbilityRole::selectRaw('COUNT(*)')
@@ -88,23 +82,6 @@ class RolesController extends Controller
                 ->onEachSide(2)
                 ->appends($request->all('search', 'sorted', 'trashed'))
         ]);
-    }
-    
-    public function __users(Request $request): LengthAwarePaginator
-    {
-        return Role::filter($request->all('search', 'sorted', 'trashed'))
-            ->addSelect([
-                'abilities' => AbilityRole::selectRaw('COUNT(*)')
-                    ->whereColumn('role_id', 'roles.id')
-                    ->take(1),
-                'users' => RoleUser::selectRaw('COUNT(*)')
-                    ->whereColumn('role_id', 'roles.id')
-                    ->take(1),
-            ])
-            ->sort($request->sorted ?? "name")
-            ->paginate(20)
-            ->onEachSide(2)
-            ->appends($request->all('search', 'sorted', 'trashed'));
     }
     
     public function __form(Request $request, Role $role): Array
@@ -159,25 +136,6 @@ class RolesController extends Controller
                                     'destroyRoute' => "apps.roles.destroy",
                                     'restoreRoute' => "apps.roles.restore",
                                 ],
-                                'filters' => $request->all('search', 'sorted', 'trashed'),
-                                'titles' => [
-                                    [
-                                        'type' => 'composite',
-                                        'title' => 'Role',
-                                        'field' => 'name',
-                                        'fields' => ['name', 'description'],
-                                    ],
-                                    [
-                                        'type' => 'simple',
-                                        'title' => 'Abilities',
-                                        'field' => 'abilities',
-                                    ],
-                                    [
-                                        'type' => 'simple',
-                                        'title' => 'Users',
-                                        'field' => 'users',
-                                    ],
-                                ],
                                 'menu' => [
                                     [
                                         'icon' => "mdi:badge-account-horizontal-outline",
@@ -190,7 +148,20 @@ class RolesController extends Controller
                                         'route' => "apps.abilities.index"
                                     ],            
                                 ],
-                                'items' => $this->__users($request, $role)
+                                'filters' => $request->all('search', 'sorted', 'trashed'),
+                                'titles' => [
+                                    [
+                                        'type' => 'composite',
+                                        'title' => 'Role',
+                                        'field' => 'name',
+                                        'fields' => ['name', 'description'],
+                                    ],
+                                ],
+                                'items' => Role::filter($request->all('search', 'sorted', 'trashed'))
+                                    ->sort($request->sorted ?? "name")
+                                    ->paginate(20)
+                                    ->onEachSide(2)
+                                    ->appends($request->all('search', 'sorted', 'trashed'))
                             ],
                         ],
                     ],
