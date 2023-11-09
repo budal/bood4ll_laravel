@@ -146,15 +146,10 @@ class RolesController extends Controller
                                 ],
                                 'menu' => [
                                     [
-                                        'icon' => "mdi:badge-account-horizontal-outline",
+                                        'icon' => "mdi:plus",
                                         'title' => "Role creation",
                                         'route' => "apps.roles.create"
                                     ],
-                                    [
-                                        'icon' => "mdi:list-status",
-                                        'title' => "Abilities management",
-                                        'route' => "apps.abilities.index"
-                                    ],            
                                 ],
                                 'filters' => $request->all('search', 'sorted', 'trashed'),
                                 'titles' => [
@@ -240,9 +235,6 @@ class RolesController extends Controller
                     'route' => route('apps.roles.edit', $role->id),
                     'method' => 'patch'
                 ],
-            ],
-            'tablesRoute' => [
-                'role' => route('apps.roles.edit.users', $role->id),
             ],
             'data' => $role
         ]);
