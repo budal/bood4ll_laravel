@@ -302,10 +302,11 @@
         <template v-if="menu.length > 1">
           <DropdownMenuRoot v-model:open="toggleState">
             <DropdownMenuTrigger
-              class="h-full outline-none"
+              as="span"
+              class="ml-2 h-full outline-none"
               :aria-label="$t('Table menu')"
             >
-              <Button color="primary" type="button" class="ml-2 h-full ">
+              <Button color="primary" type="button" class="h-full ">
                 <Icon icon="mdi:dots-horizontal" class="h-5 w-5" />
               </Button>
             </DropdownMenuTrigger>
@@ -320,16 +321,19 @@
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator class="h-[0.5px] bg-zero-dark/10 dark:bg-zero-light/5" />
                 <template v-for="item in menu">
-                  <Link :href="route(item.route)"> 
                     <DropdownMenuItem
                       :value="item.title"
                       :class="item.class"
+                      @select="console.log('111')"
                       class="px-[5px] flex pl-[10px] text-sm py-3 text-zero-light dark:text-zero-dark hover:bg-zero-light dark:hover:bg-zero-dark focus:outline-none focus:bg-zero-light dark:focus:bg-zero-dark transition duration-150 ease-in-out"
                     >
                       <Icon :icon="item.icon" class="h-5 w-5 mr-2" />
                       {{ $t(item.title) }} 
                     </DropdownMenuItem>
-                  </Link>
+
+                    <Link :href="route(item.route)"> 
+                    </Link>
+
                 </template>
                 <DropdownMenuArrow class="fill-secondary-light dark:fill-secondary-dark" />
               </DropdownMenuContent>
