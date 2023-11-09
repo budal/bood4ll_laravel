@@ -118,7 +118,7 @@
 
 
   // search
-  const search = ref("");
+  const search = ref('');
 
   const debouncedWatch = debounce(() => {
     searchRoute.searchParams.set("search", search.value)
@@ -196,8 +196,6 @@
   // switch
   const formSwitch = useForm({});
 
-  const refArr = ref([]);
-
   const updateSwitch = (routeUri: string, method: 'get' | 'post', id: string) => {
     formSwitch.submit(method, route(routeUri, id), {
       preserveScroll: true,
@@ -205,10 +203,6 @@
       onFinish: () => toast.success(trans(usePage().props.status as string, usePage().props.statusComplements as undefined)),
     });
   }
-
-
-  // td class
-  const classTD = "p-2"
 </script>
 
 <template>
@@ -223,10 +217,10 @@
       </p>
       <template #buttons>
         <div class="mt-6 flex justify-end">
-          <Button color="secondary" @click="closeDeletionModal">
+          <Button color="secondary" @click="closeDeletionModal" start-icon="mdi:cancel-outline">
             {{ $t('Cancel') }}
           </Button>
-          <Button color="danger" class="ml-3" :class="{ 'opacity-25': form.processing }" :disabled="form.processing" @click="deleteItems">
+          <Button color="danger" @click="deleteItems" start-icon="mdi:delete-sweep-outline" class="ml-3" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
             {{ $t('Erase selected') }}
           </Button>
         </div>
@@ -243,10 +237,10 @@
       </p>
       <template #buttons>
         <div class="mt-6 flex justify-end">
-          <Button color="secondary" @click="closeRestoreModal">
+          <Button color="secondary" @click="closeRestoreModal" start-icon="mdi:cancel-outline">
             {{ $t('Cancel') }}
           </Button>
-          <Button color="success" class="ml-3" :class="{ 'opacity-25': form.processing }" :disabled="form.processing" @click="restoreItem">
+          <Button color="success" @click="restoreItem" start-icon="mdi:backup-restore" class="ml-3" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
             {{ $t('Restore') }}
           </Button>
         </div>
@@ -274,10 +268,10 @@
       </div>
       <template #buttons>
         <div class="mt-6 flex justify-end">
-          <Button color="secondary" type="button" @click="closeFiltersModal">
+          <Button color="secondary" type="button" @click="closeFiltersModal" start-icon="mdi:cancel-outline">
             {{ $t('Cancel') }}
           </Button>
-          <Button color="primary" type="button" class="ml-3" :class="{ 'opacity-25': form.processing }" :disabled="form.processing" @click="refreshFilters">
+          <Button color="primary" type="button" @click="refreshFilters" start-icon="mdi:check-outline" class="ml-3" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
             {{ $t('Apply') }}
           </Button>
         </div>
@@ -286,17 +280,13 @@
 
     <div class="flex sticky top-0 sm:top-[95px] justify-between rounded-xl backdrop-blur-sm pt-1 px-2 mb-2 bg-secondary-light/30 dark:bg-secondary-dark/30">
       <div class="flex-none items-center">
-        <Button color="danger" type="button" v-if="routes.destroyRoute" :disabled="totalSelectedCheckBoxes === 0" @click="openDeletionModal" class="mr-2 h-full">
-          <Icon icon="mdi:trash-can" class="h-5 w-5" />
-        </Button>
+        <Button v-if="routes.destroyRoute" color="danger" type="button" @click="openDeletionModal" start-icon="mdi:delete-outline" class="mr-2 h-full" :disabled="totalSelectedCheckBoxes === 0" />
       </div>
       <div class="flex-1 items-center">
         <SearchInput :placeholder="$t('Search...')" id="search" name="search" class="w-full h-full" :value="filters.search" v-model="search" />
       </div>
       <div class="flex-none items-center">
-        <Button color="secondary" type="button" @click="openFiltersModal" class="ml-2 h-full">
-          <Icon icon="mdi:filter-menu" class="h-5 w-5" />
-        </Button>
+        <Button color="secondary" type="button" @click="openFiltersModal" class="ml-2 h-full" start-icon="mdi:filter-settings-outline" />
       </div>
       <div v-if="menu" class="flex-none items-center">
         <template v-if="menu.length > 1">
@@ -306,9 +296,7 @@
               class="ml-2 h-full outline-none"
               :aria-label="$t('Table menu')"
             >
-              <Button color="primary" type="button" class="h-full ">
-                <Icon icon="mdi:dots-horizontal" class="h-5 w-5" />
-              </Button>
+              <Button color="primary" type="button" start-icon="mdi:dots-horizontal" class="h-full" />
             </DropdownMenuTrigger>
 
             <DropdownMenuPortal>
@@ -317,23 +305,21 @@
                 :align="'end'"
               >
                 <DropdownMenuLabel class="leading-[25px] text-center">
-                  <div class="pt-2 font-xs text-sm text-primary-light dark:text-primary-dark">{{ $t('Select an option') }}</div>
+                  <div class="pt-2 font-xs text-sm text-zero-light/40 dark:text-zero-dark/40">{{ $t('Select an option') }}</div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator class="h-[0.5px] bg-zero-dark/10 dark:bg-zero-light/5" />
                 <template v-for="item in menu">
+                  <Link :href="route(item.route)"> 
                     <DropdownMenuItem
+                      as="span"
                       :value="item.title"
                       :class="item.class"
-                      @select="console.log('111')"
-                      class="px-[5px] flex pl-[10px] text-sm py-3 text-zero-light dark:text-zero-dark hover:bg-zero-light dark:hover:bg-zero-dark focus:outline-none focus:bg-zero-light dark:focus:bg-zero-dark transition duration-150 ease-in-out"
+                      class="px-[5px] flex pl-[10px] text-sm py-3 text-zero-light dark:text-zero-dark hover:bg-zero-light dark:hover:bg-zero-dark focus:outline-none focus:bg-zero-light dark:focus:bg-zero-dark"
                     >
                       <Icon :icon="item.icon" class="h-5 w-5 mr-2" />
                       {{ $t(item.title) }} 
                     </DropdownMenuItem>
-
-                    <Link :href="route(item.route)"> 
-                    </Link>
-
+                  </Link>
                 </template>
                 <DropdownMenuArrow class="fill-secondary-light dark:fill-secondary-dark" />
               </DropdownMenuContent>
@@ -341,10 +327,8 @@
           </DropdownMenuRoot>
         </template>
         <template v-else>
-          <Link :href="route(menu[0].route)" class="text-sm ml-2 h-full">
-            <Button color="primary" type="button" class="h-full">
-              <Icon :icon="menu[0].icon" class="h-5 w-5" />
-            </Button>
+          <Link as="span" :href="route(menu[0].route)" class="text-sm ml-2 h-full">
+            <Button color="primary" type="button" class="h-full" :start-icon="menu[0].icon" />
           </Link>
         </template>
       </div>
@@ -355,11 +339,11 @@
           <table class="table-auto w-full text-sm shadow-lg">
             <thead v-if="items.data.length > 0">
               <tr class="bg-zero-light dark:bg-zero-dark p-3 text-secondary-light dark:text-secondary-dark text-left">
-                <th :class="classTD">
+                <th class="p-2">
                   <Checkbox v-if="routes.destroyRoute" name="remember" :checked="selectedcheckBox" @click="toggleSelection" class="w-8 h-8 rounded-full" />
                 </th>
                 <template v-for="(content, id) in titles">
-                  <th :class="classTD">
+                  <th class="p-2">
                     <Link v-if="content.disableSort != true" :href="sortBy(content.field).url" class="flex gap-1">
                       {{ $t(content.title) }}
                       <Icon icon="mdi:chevron-up" v-if="sortBy(content.field).sortMe == 'asc'" class="h-4 w-4" />
@@ -367,7 +351,7 @@
                     </Link>
                   </th>
                 </template>
-                <th v-if="routes.editRoute" :class="classTD"></th>
+                <th v-if="routes.editRoute" class="p-2"></th>
               </tr>
             </thead>
             <tbody>
@@ -376,9 +360,9 @@
                 :key="`tr-${item.id}`" 
                 class="bg-secondary-light dark:bg-secondary-dark hover:bg-secondary-light-hover hover:dark:bg-secondary-dark-hover border-t border-secondary-light dark:border-secondary-dark text-secondary-light dark:text-secondary-dark"
               >
-                <td :class="classTD">
+                <td class="p-2">
                   <Checkbox v-if="routes.destroyRoute && !item.deleted_at" 
-                    :class="classTD" class="w-8 h-8 rounded-full" 
+                    class="w-8 h-8 rounded-full" 
                     :checked="selectedCheckBoxes.has(item)" 
                     :value="item.id" 
                     :id="`checkbox-${item.id}`" 
@@ -387,14 +371,13 @@
                   <Button v-if="routes.restoreRoute && item.deleted_at" 
                     type="button"
                     color="warning" padding="2" 
-                    :class="classTD" 
                     @click="restore(item.id)"
                   >
                     <Icon icon="mdi:restore" class="h-5 w-5" />
                   </Button>
                 </td>
                 <template v-for="(content, index) in titles">
-                  <td :class="classTD">
+                  <td class="p-1">
                     <p v-if="content.type == 'simple'" class="truncate text-xs leading-5 text-secondary-light dark:text-secondary-dark">
                       {{ item[content.field] ?? '-' }}
                     </p>
@@ -419,8 +402,8 @@
                     />
                   </td>
                 </template>
-                <td v-if="routes.editRoute" :class="`${classTD} text-right`">
-                  <Link :href="route(routes.editRoute, item.id)">
+                <td v-if="routes.editRoute" class="p-2 text-right">
+                  <Link as="span" :href="route(routes.editRoute, item.id)">
                     <Button color="primary" type="button">
                       <Icon icon="mdi:chevron-right" class="h-5 w-5" />
                     </Button>
@@ -428,7 +411,7 @@
                 </td>
               </tr> 
               <tr v-if="items.data.length == 0">
-                <td :class="`${classTD} text-center`">
+                <td class="p-4 text-center">
                   <p class="text-md leading-5 text-secondary-light dark:text-secondary-dark">{{ $t('No items to show.') }}</p>
                 </td>
               </tr>

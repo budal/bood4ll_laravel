@@ -1,5 +1,6 @@
 <script setup lang="ts">
   import { Icon } from '@iconify/vue'
+import { onBeforeMount } from 'vue';
   import { useAttrs } from 'vue'
   import { computed, onBeforeUnmount, ref, watch } from 'vue'
 
@@ -7,6 +8,7 @@
     defineProps<{
       id?: string;
       name?: string;
+      value?: string;
       modelValue: Object | string | number;
       placeholder?: string | undefined;
       shortcutIcon?: boolean;
@@ -29,21 +31,34 @@
       shortcutKey: '/',
     }
   );
+
+  const emit = defineEmits(['update:modelValue']);
   
   const attrs = useAttrs()
+  
+  const startValue = ref(props.value)
+  
   const hasFocus = ref(false)
+  
   const inputRef = ref<null | HTMLInputElement>(null)
+  
   const showClearIcon = computed(() => {
-    if (props.clearIcon && hasFocus.value && inputRef.value?.value != null) return true
+    if (props.clearIcon && hasFocus.value && startValue.value != null) return true
+  
+    return false
   })
+
   const showShortcutIcon = computed(() => {
-    if (props.shortcutIcon && !hasFocus.value && !props.hideShortcutIconOnBlur) return true
-    if (props.shortcutIcon && !hasFocus.value && props.modelValue.valueOf.length > 0) return true
+    if (props.shortcutIcon && showClearIcon && !hasFocus.value && !props.hideShortcutIconOnBlur) return true
+    if (props.shortcutIcon && showClearIcon && !hasFocus.value && props.modelValue.valueOf.length > 0) return true
 
     return false
   })
 
-  const emit = defineEmits(['update:modelValue']);
+  // watch(props.value?.length, () => {});
+
+  console.log(props.modelValue, showClearIcon.value, showShortcutIcon.value)
+
 
   const clear = () => {
     emit('update:modelValue', '')
@@ -101,6 +116,10 @@
     }
   )
 
+  onBeforeMount(() => {
+    emit('update:modelValue', props.value ?? '')
+  })
+
   onBeforeUnmount(() => {
     removeDocumentKeydown()
   })
@@ -128,8 +147,8 @@
               @keyup="onKeypress"
               @keydown="onKeydown"
           />
-          <button v-if="showClearIcon" @mousedown="clear" @keydown.space.enter="clear" aria-label="Clear" class="text-primary-light dark:text-primary-dark absolute inset-y-2 right-2 px-2 rounded-lg text-xs p-1 bg-primary-light dark:bg-primary-dark ring-0">Esc</button>
-          <span v-if="showShortcutIcon" class="text-primary-light dark:text-primary-dark absolute inset-y-2 right-2 px-2 rounded-lg text-sm p-1 bg-primary-light dark:bg-primary-dark ring-0">{{ shortcutKey }}</span>
+          <button :class="{'hidden': !showClearIcon}" @mousedown="clear" @keydown.space.enter="clear" aria-label="Clear" class="text-primary-light dark:text-primary-dark absolute inset-y-2 right-2 px-2 rounded-lg text-xs p-1 bg-primary-light dark:bg-primary-dark ring-0">Esc</button>
+          <span :class="{'hidden': !showShortcutIcon}" class="text-primary-light dark:text-primary-dark absolute inset-y-2 right-2 px-2 rounded-lg text-sm p-1 bg-primary-light dark:bg-primary-dark ring-0">{{ shortcutKey }}</span>
         </div>
     </div>
 </template>

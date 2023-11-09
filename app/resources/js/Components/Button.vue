@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
+import { useAttrs } from 'vue'
+import { Icon } from '@iconify/vue'
 
     const props = withDefaults(
         defineProps<{
@@ -10,6 +12,8 @@ import { computed } from 'vue';
             textSize?:  'text-xs' | 'text-sm' | 'text-base' | 'text-lg' | 'text-xl' | 'text-2xl' | 'text-3xl' | 'text-4xl' | 'text-5xl' | 'text-6xl' | 'text-7xl' | 'text-8xl' | 'text-9xl';
             transform?: 'uppercase' | 'lowercase' | 'lowercase' | 'capitalize' | 'capitalize' | 'normal-case';
             shadowSize?: 'shadow-sm' | 'shadow' | 'shadow-md' | 'shadow-lg' | 'shadow-xl' | 'shadow-2xl' | 'shadow-inner' | 'shadow-none';
+            startIcon?: string;
+            endIcon?: string;
         }>(),
         {
             type: 'submit',
@@ -25,12 +29,16 @@ import { computed } from 'vue';
     const className = computed(() => {
         return `group/edit hover:scale-105 inline-flex items-center px-${props.padding} py-2 bg-${props.color}-light dark:bg-${props.color}-dark hover:bg-${props.color}-light-hover dark:hover:bg-${props.color}-dark-hover border border-${props.color}-light dark:border-${props.color}-dark ${props.rounded} font-semibold ${props.textSize} text-${props.color}-light dark:text-${props.color}-dark ${props.transform} tracking-widest ${props.shadowSize} focus:outline-none focus:ring-2 focus:ring-${props.color}-light dark:focus:ring-${props.color}-dark focus:ring-offset-2 focus:ring-offset-${props.color}-light dark:focus:ring-offset-${props.color}-dark disabled:opacity-25 transition ease-in-out duration-500`;
     })
+
+    const attrs = useAttrs()
 </script>
 
 <template>
     <button :type="type" :class="className">
-        <div class="group-hover/edit:scale-110 transition ease-in-out duration-300">
+        <div class="group-hover/edit:scale-110 flex gap-1 items-center transition ease-in-out duration-300">
+            <Icon v-if="startIcon" :icon="startIcon" class="h-5 w-5" />
             <slot />
+            <Icon v-if="endIcon" :icon="endIcon" class="h-5 w-5" />
         </div>
     </button>
 </template>
