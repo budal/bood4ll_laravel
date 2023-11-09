@@ -123,6 +123,13 @@ class RolesController extends Controller
                             'multiple' => true,
                         ],
                     ],
+                ],
+            ],
+            [
+                'title' => "Authorization management",
+                'subtitle' => "Define which users will have access to this permission",
+                'cols' => 2,
+                'fields' => [
                     [
                         [
                             'type' => "table",
@@ -130,7 +137,7 @@ class RolesController extends Controller
                             'title' => "Authorized users",
                             'span' => 2,
                             'content' => [
-                                'softDelete' => Role::hasGlobalScope('Illuminate\Database\Eloquent\SoftDeletingScope'),
+                                'softDelete' => RoleUser::hasGlobalScope('Illuminate\Database\Eloquent\SoftDeletingScope'),
                                 'routes' => [
                                     'editRoute' => "apps.roles.edit",
                                     'destroyRoute' => "apps.roles.destroy",
@@ -214,7 +221,7 @@ class RolesController extends Controller
 
         DB::commit();
 
-        return Redirect::route('apps.roles.index')->with('status', 'Role created.');
+        return Redirect::route('apps.roles.edit', $role->id)->with('status', 'Role created.');
     }
     
     public function edit(Request $request, Role $role): Response

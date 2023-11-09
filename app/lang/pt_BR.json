@@ -233,6 +233,8 @@
   "Role edited.": "Função editada.",
   "Error when editing the role.": "Erro ao editar a função.",
   "Role restored.": "Função restaurada.",
+  "Authorization management": "Gerenciamento de autorização",
+  "Define which users will have access to this permission": "Defina quais usuários terão acesso a essa permissão",
   "Ability": "Abilitação",
   "Abilities": "Abilitações",
   "Abilities management": "Gerenciar abilitações",

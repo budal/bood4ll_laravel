@@ -59,7 +59,7 @@
 </script>
 
 <template>
-    <section v-for="mkForm in form">
+    <section v-for="mkForm in form" class="mb-10 p-3 rounded-xl border-2 border-secondary-light dark:border-secondary-dark">
         <header>
             <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">{{ $t(mkForm.title) }}</h2>
 
@@ -108,7 +108,7 @@
                 </div>
             </div>
     
-            <div class="flex items-center gap-4">
+            <div v-if="mkForm.id" class="flex items-center gap-4">
                 <Button 
                     color="primary" 
                     :class="{ 'opacity-25': jsForm.processing }"
