@@ -128,6 +128,7 @@ class RolesController extends Controller
             [
                 'title' => "Authorization management",
                 'subtitle' => "Define which users will have access to this permission",
+                'condition' => $role->id <> null,
                 'cols' => 2,
                 'fields' => [
                     [

@@ -284,7 +284,7 @@
       </template>
     </Modal>
 
-    <div class="flex sticky top-0 sm:top-[95px] justify-between rounded-xl backdrop-blur-sm pt-1 px-2 mb-2 -mx-3 bg-secondary-light/30 dark:bg-secondary-dark/30">
+    <div class="flex sticky top-0 sm:top-[95px] justify-between rounded-xl backdrop-blur-sm pt-1 px-2 mb-2 bg-secondary-light/30 dark:bg-secondary-dark/30">
       <div class="flex-none items-center">
         <Button color="danger" type="button" v-if="routes.destroyRoute" :disabled="totalSelectedCheckBoxes === 0" @click="openDeletionModal" class="mr-2 h-full">
           <Icon icon="mdi:trash-can" class="h-5 w-5" />
@@ -433,7 +433,7 @@
           </table>
         </div>
       </div>
-      <div v-if="items.total > 0" class="flex sticky bottom-0 justify-between rounded-xl backdrop-blur-sm p-2 my-2 -mx-3 bg-secondary-light/30 dark:bg-secondary-dark/30">
+      <div v-if="items.total > 0" class="flex sticky bottom-0 justify-between rounded-xl backdrop-blur-sm p-2 my-2 bg-secondary-light/30 dark:bg-secondary-dark/30">
         <div class="w-full flex flex-row sm:hidden">
           <div class="basis-1/3 text-left">
             <Link v-if="items.prev_page_url" :href="items.prev_page_url" class="text-sm">
