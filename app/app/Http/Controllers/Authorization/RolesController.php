@@ -140,15 +140,14 @@ class RolesController extends Controller
                             'content' => [
                                 'softDelete' => RoleUser::hasGlobalScope('Illuminate\Database\Eloquent\SoftDeletingScope'),
                                 'routes' => [
-                                    'editRoute' => "apps.roles.edit",
                                     'destroyRoute' => "apps.roles.destroy",
-                                    'restoreRoute' => "apps.roles.restore",
                                 ],
                                 'menu' => [
                                     [
                                         'icon' => "mdi:plus",
                                         'title' => "Role creation",
-                                        'route' => "apps.roles.create"
+                                        'route' => "apps.roles.create",
+                                        'modal' => true,
                                     ],
                                 ],
                                 'filters' => $request->all('search', 'sorted', 'trashed'),

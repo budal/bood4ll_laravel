@@ -327,7 +327,6 @@
                       class="px-[5px] flex pl-[10px] text-sm py-3 text-zero-light dark:text-zero-dark hover:bg-zero-light dark:hover:bg-zero-dark focus:outline-none focus:bg-zero-light dark:focus:bg-zero-dark transition duration-150 ease-in-out"
                     >
                       <Icon :icon="item.icon" class="h-5 w-5 mr-2" />
-
                       {{ $t(item.title) }} 
                     </DropdownMenuItem>
                   </Link>
