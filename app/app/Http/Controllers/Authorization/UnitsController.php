@@ -21,45 +21,42 @@ class UnitsController extends Controller
 {
     public function index(Request $request): Response
     {
-        $routes = [
-            'editRoute' => "apps.units.edit",
-            'destroyRoute' => "apps.units.destroy",
-            'restoreRoute' => "apps.units.restore",
-        ];
-        
-        $titles = [
-            [
-                'type' => 'simple',
-                'title' => 'Name',
-                'field' => 'name',
-            ],
-            [
-                'type' => 'simple',
-                'title' => 'Subunits',
-                'field' => 'subunits',
-            ],
-        ];
-
-        $menu = [
-            [
-                'icon' => "mdi:plus",
-                'title' => "Unit creation",
-                'route' => "apps.units.create"
-            ],
-        ];
-
+        $categoriesWithChildren = Unit::where('parent_id', 0)->with('childrenRecursive')->get();
+        echo "<pre>" . print_r($categoriesWithChildren) . "</pre>";
+ 
         return Inertia::render('Default/Index', [
             'title' => "Units management",
             'subtitle' => "Manage the units users are classified in.",
             'softDelete' => Unit::hasGlobalScope('Illuminate\Database\Eloquent\SoftDeletingScope'),
-            'routes' => $routes,
+            'routes' => [
+                'editRoute' => "apps.units.edit",
+                'destroyRoute' => "apps.units.destroy",
+                'restoreRoute' => "apps.units.restore",
+            ],
+            'menu' => [
+                [
+                    'icon' => "mdi:plus",
+                    'title' => "Unit creation",
+                    'route' => "apps.units.create"
+                ],
+            ],
             'filters' => $request->all('search', 'sorted', 'trashed'),
-            'titles' => $titles,
-            'menu' => $menu,
+            'titles' => [
+                [
+                    'type' => 'simple',
+                    'title' => 'Name',
+                    'field' => 'name',
+                ],
+                [
+                    'type' => 'simple',
+                    'title' => 'Subunits',
+                    'field' => 'subunits',
+                ],
+            ],
             'items' => Unit::filter($request->all('search', 'sorted', 'trashed'))
                 ->addSelect([
                     'subunits' => Unit::selectRaw('COUNT(*)')
-                        ->whereColumn('parent_id', 'units.id')
+                        ->whereColumn('id', 'units.parent_id')
                         ->take(1),
                 ])
                 ->where("parent_id", "0")

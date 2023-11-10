@@ -17,7 +17,14 @@ class UnitSeeder extends Seeder
             ->sequence(fn (Sequence $sequence) => [
                 'name' => ($sequence->index + 1) . " BPM",
                 'parent_id' => 0
-            ])
+            ])->afterCreating(function (\App\Models\Unit $unit) {
+                \App\Models\Unit::factory(rand(3, 6))
+                ->sequence(fn (Sequence $sequence) => [
+                    'name' => ($sequence->index + 1) . " Cia",
+                    'parent_id' => $unit->id
+                ])
+                ->create();
+            })
             ->create();
 
         // for($i=1; $i<=30; $i++) {

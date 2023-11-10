@@ -6,19 +6,16 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Database\Eloquent\Factories\Sequence;
 
-class RoleSeeder extends Seeder
+class SuperadminUserSeeder extends Seeder
 {
     /**
      * Seed the application's database.
      */
     public function run(): void
     {
-        \App\Models\Role::factory()->create([
-            'name' => ':: SUPERADMIN ::',
-            'description' => 'Superadmin role',
-            'full_control' => true,
-            'locked' => true,
-            'all_units' => true,
+        \App\Models\RoleUser::factory()->create([
+            'role_id' => \App\Models\Role::first()->id,
+            'user_id' => \App\Models\User::first()->id,
         ]);
     }
 }

@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+ 
 
 class Unit extends Model
 {
@@ -12,6 +14,24 @@ class Unit extends Model
     public function users()
     {
         return $this->belongsToMany(User::class);
+    }
+    
+    public function parent()
+    {
+        return $this->belongsTo(Unit::class, 'parent_id');
+    }
+
+    public function children()
+    {
+        return $this->hasMany(Unit::class, 'parent_id');
+    }
+
+    public function childrenRecursive() {
+        return $this->children()->with('childrenRecursive');
+    }
+     
+    public function parentRecursive() {
+        return $this->parent()->with('parentRecursive');
     }
     
     public function resolveRouteBinding($value, $field = null)
