@@ -89,7 +89,7 @@ class RolesController extends Controller
             $title = $ability['name'];
 
             return compact('id', 'title');
-        })->toArray();
+        });
 
         return [
             [

@@ -34,17 +34,6 @@ class Unit extends Model
         return $this->children()->with('childrenRecursive');
     }
      
-    public function totalChildren() {
-        $this->totalChildrens = $this->transactions->sum('debit');
-        dd($this);
-
-        $this->groups->each(fn ($group) => $group->totalChildrens());
-
-        // We use 'children' as the relationship name instead of `groups`.  
-        $this->setRelation('children', $this->groups);
-        $this->unsetRelation('groups');
-    }
-
     public function resolveRouteBinding($value, $field = null)
     {
         return $this->where($field ?? 'id', $value)->withTrashed()->firstOrFail();
