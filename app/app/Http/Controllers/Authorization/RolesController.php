@@ -18,16 +18,26 @@ use App\Models\Ability;
 use App\Models\AbilityRole;
 use App\Models\RoleUser;
 
-
-use App\Models\Unit;
-
-
 use App\Http\Requests\RolesRequest;
 
 class RolesController extends Controller
 {
     public function index(Request $request): Response
     {
+        $items = Role::filter($request->all('search', 'sorted', 'trashed'))
+            ->addSelect([
+                'abilities' => AbilityRole::selectRaw('COUNT(*)')
+                    ->whereColumn('role_id', 'roles.id')
+                    ->take(1),
+                'users' => RoleUser::selectRaw('COUNT(*)')
+                    ->whereColumn('role_id', 'roles.id')
+                    ->take(1),
+            ])
+            ->sort($request->sorted ?? "name")
+            ->paginate(20)
+            ->onEachSide(2)
+            ->appends($request->all('search', 'sorted', 'trashed'));
+        
         return Inertia::render('Default/Index', [
             'title' => "Roles management",
             'subtitle' => "Define roles, grouping abilities to define specific access.",
@@ -68,19 +78,7 @@ class RolesController extends Controller
                     'field' => 'users',
                 ],
             ],
-            'items' => Role::filter($request->all('search', 'sorted', 'trashed'))
-                ->addSelect([
-                    'abilities' => AbilityRole::selectRaw('COUNT(*)')
-                        ->whereColumn('role_id', 'roles.id')
-                        ->take(1),
-                    'users' => RoleUser::selectRaw('COUNT(*)')
-                        ->whereColumn('role_id', 'roles.id')
-                        ->take(1),
-                ])
-                ->sort($request->sorted ?? "name")
-                ->paginate(20)
-                ->onEachSide(2)
-                ->appends($request->all('search', 'sorted', 'trashed'))
+            'items' => $items
         ]);
     }
     

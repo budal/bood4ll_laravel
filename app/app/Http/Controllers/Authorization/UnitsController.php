@@ -21,9 +21,27 @@ class UnitsController extends Controller
 {
     public function index(Request $request): Response
     {
-        $categoriesWithChildren = Unit::where('parent_id', 0)->with('childrenRecursive')->get();
-        echo "<pre>" . print_r($categoriesWithChildren) . "</pre>";
- 
+        $items = Unit::filter($request->all('search', 'sorted', 'trashed'))
+        ->addSelect([
+            'subunits' => Unit::selectRaw('COUNT(*)')
+                ->whereColumn('id', 'units.parent_id')
+                ->take(1),
+        ])
+        ->when(!$request->search, function ($query) {
+            $query->where("parent_id", "0");
+        })
+        ->with('parentRecursive')
+        ->with('childrenRecursive')
+        ->with('totalChildren')
+        ->sort($request->sorted ?? "name")
+        ->paginate(20)
+        ->onEachSide(2)
+        ->appends($request->all('search', 'sorted', 'trashed'));
+
+        // $items = Unit::with('totalChildren')->with('totalChildren')->get()->each->totalChildren();
+
+        dd($items);
+
         return Inertia::render('Default/Index', [
             'title' => "Units management",
             'subtitle' => "Manage the units users are classified in.",
@@ -43,9 +61,10 @@ class UnitsController extends Controller
             'filters' => $request->all('search', 'sorted', 'trashed'),
             'titles' => [
                 [
-                    'type' => 'simple',
+                    'type' => 'composite',
                     'title' => 'Name',
                     'field' => 'name',
+                    'fields' => ['name', 'childrenRecursive'],
                 ],
                 [
                     'type' => 'simple',
@@ -53,17 +72,7 @@ class UnitsController extends Controller
                     'field' => 'subunits',
                 ],
             ],
-            'items' => Unit::filter($request->all('search', 'sorted', 'trashed'))
-                ->addSelect([
-                    'subunits' => Unit::selectRaw('COUNT(*)')
-                        ->whereColumn('id', 'units.parent_id')
-                        ->take(1),
-                ])
-                ->where("parent_id", "0")
-                ->sort($request->sorted ?? "name")
-                ->paginate(20)
-                ->onEachSide(2)
-                ->appends($request->all('search', 'sorted', 'trashed'))
+            'items' => $items
         ]);
     }
     

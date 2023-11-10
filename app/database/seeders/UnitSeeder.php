@@ -13,76 +13,38 @@ class UnitSeeder extends Seeder
      */
     public function run(): void
     {
+        \App\Models\Unit::factory(6)
+            ->sequence(fn (Sequence $sequence) => [
+                'name' => ($sequence->index + 1) . " CRPM",
+                'parent_id' => 0
+            ])->create();
+        
         \App\Models\Unit::factory(30)
             ->sequence(fn (Sequence $sequence) => [
                 'name' => ($sequence->index + 1) . " BPM",
-                'parent_id' => 0
+                'parent_id' => \App\Models\Unit::where('parent_id', 0)
+                    ->inRandomOrder()
+                    ->first()
+                    ->id
             ])->afterCreating(function (\App\Models\Unit $unit) {
+                \App\Models\Unit::factory(8)
+                ->state(new Sequence(
+                    ['name' => 'Comando', 'parent_id' => $unit->id],
+                    ['name' => 'Subomando', 'parent_id' => $unit->id],
+                    ['name' => 'P/1', 'parent_id' => $unit->id],
+                    ['name' => 'P/2', 'parent_id' => $unit->id],
+                    ['name' => 'P/3', 'parent_id' => $unit->id],
+                    ['name' => 'P/4', 'parent_id' => $unit->id],
+                    ['name' => 'P/5', 'parent_id' => $unit->id],
+                    ['name' => 'P/6', 'parent_id' => $unit->id],
+                ))->create();
+
                 \App\Models\Unit::factory(rand(3, 6))
                 ->sequence(fn (Sequence $sequence) => [
                     'name' => ($sequence->index + 1) . " Cia",
                     'parent_id' => $unit->id
-                ])
-                ->create();
-            })
-            ->create();
+                ])->create();
+            })->create();
 
-        // for($i=1; $i<=30; $i++) {
-        //     \App\Models\Unit::factory()->create([
-        //         'name' => $i ." BPM",
-        //         'founded' => fake()->date(),
-        //         'parent_id' => 0,
-        //         'cellphone' => fake()->cellphoneNumber(),
-        //         'landline' => fake()->landlineNumber(),
-        //         'address' => fake()->address(),
-        //         'country' => fake()->countryCode(),
-        //         'postcode' => fake()->postcode(),
-        //         'geo' => fake()->latitude() . "," . fake()->longitude(),
-        //         'active' => true,
-        //     ]);
-
-        //     $unit_id = \App\Models\Unit::where('name', $i ." BPM")->first()->id;
-
-        //     $collection = collect([
-        //         "Comando",
-        //         "Subomando",
-        //         "P/1",
-        //         "P/2",
-        //         "P/3",
-        //         "P/4",
-        //         "P/5",
-        //         "P/6",
-        //     ]);
-
-        //     $collection->map(function (string $item, int $key) use ($unit_id) {
-        //         \App\Models\Unit::factory()->create([
-        //             'name' => $item,
-        //             'founded' => fake()->date(),
-        //             'parent_id' => $unit_id,
-        //             'cellphone' => fake()->cellphoneNumber(),
-        //             'landline' => fake()->landlineNumber(),
-        //             'address' => fake()->address(),
-        //             'country' => fake()->countryCode(),
-        //             'postcode' => fake()->postcode(),
-        //             'geo' => fake()->latitude() . "," . fake()->longitude(),
-        //             'active' => true,
-        //         ]);
-        //     });
-
-        //     for($ii=1; $ii<=rand(3, 6); $ii++) {
-        //         \App\Models\Unit::factory()->create([
-        //             'name' => $ii ."a Cia",
-        //             'founded' => fake()->date(),
-        //             'parent_id' => $unit_id,
-        //             'cellphone' => fake()->cellphoneNumber(),
-        //             'landline' => fake()->landlineNumber(),
-        //             'address' => fake()->address(),
-        //             'country' => fake()->countryCode(),
-        //             'postcode' => fake()->postcode(),
-        //             'geo' => fake()->latitude() . "," . fake()->longitude(),
-        //             'active' => true,
-        //         ]);
-        //     }
-        // }
     }
 }

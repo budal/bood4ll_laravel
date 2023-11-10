@@ -21,6 +21,10 @@ class Unit extends Model
         return $this->belongsTo(Unit::class, 'parent_id');
     }
 
+    public function parentRecursive() {
+        return $this->parent()->with('parentRecursive');
+    }
+    
     public function children()
     {
         return $this->hasMany(Unit::class, 'parent_id');
@@ -30,10 +34,17 @@ class Unit extends Model
         return $this->children()->with('childrenRecursive');
     }
      
-    public function parentRecursive() {
-        return $this->parent()->with('parentRecursive');
+    public function totalChildren() {
+        $this->totalChildrens = $this->transactions->sum('debit');
+        dd($this);
+
+        $this->groups->each(fn ($group) => $group->totalChildrens());
+
+        // We use 'children' as the relationship name instead of `groups`.  
+        $this->setRelation('children', $this->groups);
+        $this->unsetRelation('groups');
     }
-    
+
     public function resolveRouteBinding($value, $field = null)
     {
         return $this->where($field ?? 'id', $value)->withTrashed()->firstOrFail();
@@ -43,9 +54,7 @@ class Unit extends Model
     {
         $query->when($filters['search'] ?? null, function ($query, $search) {
             $query->where(function ($query) use ($search) {
-                $query->where('name', 'ilike', '%'.$search.'%')
-                    ->orWhere('username', 'ilike', '%'.$search.'%')
-                    ->orWhere('email', 'ilike', '%'.$search.'%');
+                $query->where('name', 'ilike', '%'.$search.'%');
             });
         })->when($filters['trashed'] ?? null, function ($query, $trashed) {
             if ($trashed === 'both') {
