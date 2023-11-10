@@ -12,7 +12,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        \App\Models\Unit::factory(rand(200, 300))->create();
+        \App\Models\Unit::factory(rand(50, 60))->create();
 
         \App\Models\Role::factory()->create([
             'name' => ':: SUPERADMIN ::',
@@ -37,6 +37,6 @@ class DatabaseSeeder extends Seeder
             'user_id' => $user->id,
         ]);
         
-        \App\Models\User::factory(rand(400, 500))->create();
+        \App\Models\User::factory(rand(18000, 20000))->create();
     }
 }

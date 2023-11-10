@@ -344,12 +344,12 @@
                 </th>
                 <template v-for="(content, id) in titles">
                   <th class="p-2">
-                    <Link v-if="content.disableSort != true" :href="sortBy(content.field).url" class="group flex gap-1 focus:outline-none ">
-                      <div class="border-b-2 border-transparent group-hover:border-zero-light dark:group-hover:border-zero-dark focus:border-zero-light dark:focus:border-zero-dark">
+                    <Link v-if="content.disableSort != true" :href="sortBy(content.field).url" class="group focus:outline-none flex gap-1 items-center">
+                      <span class="border-b-2 border-transparent group-hover:border-zero-light dark:group-hover:border-zero-dark group-focus:border-zero-light dark:group-focus:border-zero-dark transition ease-in-out duration-500">
                         {{ $t(content.title) }}
-                        <Icon icon="mdi:chevron-up" v-if="sortBy(content.field).sortMe == 'asc'" class="h-4 w-4" />
-                        <Icon icon="mdi:chevron-down" v-if="sortBy(content.field).sortMe == 'desc'" class="h-4 w-4" />
-                      </div>
+                      </span>
+                      <Icon icon="mdi:chevron-up-circle-outline" v-if="sortBy(content.field).sortMe == 'asc'" class="h-4 w-4" />
+                      <Icon icon="mdi:chevron-down-circle-outline" v-if="sortBy(content.field).sortMe == 'desc'" class="h-4 w-4" />
                     </Link>
                   </th>
                 </template>

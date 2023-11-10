@@ -25,7 +25,7 @@ const breadcrumbs = computed(() => insertBetween(usePage().props.breadcrumbs || 
                     <Link v-if="page.current !== true"
                         :href="page.url"
                         :disabled="page.current"
-                        class="border-b-2 focus:outline-none border-transparent hover:border-zero-light dark:hover:border-zero-dark focus:border-zero-light dark:focus:border-zero-dark"
+                        class="border-b-2 focus:outline-none border-transparent hover:border-zero-light dark:hover:border-zero-dark focus:border-zero-light dark:focus:border-zero-dark transition ease-in-out duration-500"
                         as="button"
                     >
                         {{ $t(page.title) }}
