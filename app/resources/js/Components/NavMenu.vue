@@ -29,9 +29,9 @@ import { Link } from '@inertiajs/vue3';
           <template v-if="item.links">
             <NavigationMenuItem>
               <NavigationMenuTrigger
-                class="group flex select-none items-center justify-between gap-[2px] mx-3 py-[23px] font-medium leading-none outline-none border-b-2 border-transparent  text-sm font-medium block select-none text-sm font-medium"
+                class="group flex select-none items-center justify-between gap-[2px] mx-3 py-[23px] font-medium leading-none outline-none border-b-2 border-transparent text-sm font-medium block select-none text-sm font-medium transition ease-in-out duration-500"
                 :class="routeCurrent.includes(item.route) ? 
-                  'border-warning-light dark:border-warning-dark focus:border-info-light dark:focus:border-info-dark text-secondary-light dark:text-secondary-dark ' : 
+                  'border-warning-light dark:border-warning-dark focus:border-info-light dark:focus:border-info-dark text-secondary-light dark:text-secondary-dark' : 
                   'hover:border-secondary-light dark:hover:border-secondary-dark focus:border-primary-light dark:focus:border-primary-dark text-secondary-light/60 dark:text-secondary-dark/60 hover:text-secondary-light dark:hover:text-secondary-dark focus:text-secondary-light dark:focus:text-secondary-dark'"
               >
                 {{ $t(item.title) }}
@@ -69,7 +69,7 @@ import { Link } from '@inertiajs/vue3';
             <NavigationMenuItem>
               <NavigationMenuLink
                 :href="route($t(item.route))"
-                class="text-sm font-medium block select-none mx-3 py-[23px] leading-none no-underline outline-none border-b-2 border-transparent"
+                class="text-sm font-medium block select-none mx-3 py-[23px] leading-none no-underline outline-none border-b-2 border-transparent transition ease-in-out duration-500"
                 :class="routeCurrent.includes(item.route) ? 
                   'border-warning-light dark:border-warning-dark focus:border-info-light dark:focus:border-info-dark text-secondary-light dark:text-secondary-dark ' : 
                   'hover:border-secondary-light dark:hover:border-secondary-dark focus:border-primary-light dark:focus:border-primary-dark text-secondary-light/60 dark:text-secondary-dark/60 hover:text-secondary-light dark:hover:text-secondary-dark focus:text-secondary-light dark:focus:text-secondary-dark'"
