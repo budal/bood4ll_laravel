@@ -36,29 +36,21 @@ import { onBeforeMount } from 'vue';
   
   const attrs = useAttrs()
   
-  const startValue = ref(props.value)
-  
   const hasFocus = ref(false)
   
   const inputRef = ref<null | HTMLInputElement>(null)
   
   const showClearIcon = computed(() => {
-    if (props.clearIcon && hasFocus.value && startValue.value != null) return true
+    if (props.clearIcon && hasFocus.value) return true
   
     return false
   })
 
   const showShortcutIcon = computed(() => {
-    if (props.shortcutIcon && showClearIcon && !hasFocus.value && !props.hideShortcutIconOnBlur) return true
-    if (props.shortcutIcon && showClearIcon && !hasFocus.value && props.modelValue.valueOf.length > 0) return true
+    if (props.shortcutIcon && !hasFocus.value && !props.hideShortcutIconOnBlur) return true
 
     return false
   })
-
-  // watch(props.value?.length, () => {});
-
-  console.log(props.modelValue, showClearIcon.value, showShortcutIcon.value)
-
 
   const clear = () => {
     emit('update:modelValue', '')
@@ -147,8 +139,8 @@ import { onBeforeMount } from 'vue';
               @keyup="onKeypress"
               @keydown="onKeydown"
           />
-          <button :class="{'hidden': !showClearIcon}" @mousedown="clear" @keydown.space.enter="clear" aria-label="Clear" class="text-primary-light dark:text-primary-dark absolute inset-y-2 right-2 px-2 rounded-lg text-xs p-1 bg-primary-light dark:bg-primary-dark ring-0">Esc</button>
-          <span :class="{'hidden': !showShortcutIcon}" class="text-primary-light dark:text-primary-dark absolute inset-y-2 right-2 px-2 rounded-lg text-sm p-1 bg-primary-light dark:bg-primary-dark ring-0">{{ shortcutKey }}</span>
+          <span v-if="showClearIcon" @click="clear" class="text-primary-light dark:text-primary-dark absolute inset-y-2 right-2 px-2 rounded-lg text-xs p-1 bg-primary-light dark:bg-primary-dark ring-0">{{ $t("'Esc' to clear") }}</span>
+          <span v-if="showShortcutIcon" class="text-primary-light dark:text-primary-dark absolute inset-y-2 right-2 px-2 rounded-lg text-sm p-1 bg-primary-light dark:bg-primary-dark ring-0">{{ shortcutKey }}</span>
         </div>
     </div>
 </template>

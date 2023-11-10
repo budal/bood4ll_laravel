@@ -2,7 +2,6 @@
   import { ComboboxAnchor, ComboboxContent, ComboboxEmpty, ComboboxGroup, ComboboxInput, ComboboxItem, ComboboxItemIndicator, ComboboxLabel, ComboboxRoot, ComboboxSeparator, ComboboxTrigger, ComboboxViewport } from 'radix-vue'
   import { Icon } from '@iconify/vue'
   import { computed, ref } from 'vue'
-import { watch } from 'vue';
 
   const props = withDefaults(
     defineProps<{

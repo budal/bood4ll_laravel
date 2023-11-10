@@ -376,7 +376,7 @@
                     <Icon icon="mdi:restore" class="h-5 w-5" />
                   </Button>
                 </td>
-                <template v-for="(content, index) in titles">
+                <template v-for="content in titles">
                   <td class="p-1">
                     <p v-if="content.type == 'simple'" class="truncate text-xs leading-5 text-secondary-light dark:text-secondary-dark">
                       {{ item[content.field] ?? '-' }}
