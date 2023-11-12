@@ -19,15 +19,20 @@ class UnitFactory extends Factory
         return [
             'name' => fake()->company(),
             'shortname' => fake()->company(),
-            'founded' => fake()->date(),
             'parent_id' => fake()->randomNumber(1, false),
+            'founded' => fake()->date(),
+            'expires' => fake()->dateTimeBetween('-1 year', '+3 month'),
+            'active' => fake()->boolean(),
             'cellphone' => fake()->cellphoneNumber(),
             'landline' => fake()->landlineNumber(),
-            'address' => fake()->address(),
+            'email' => fake()->unique()->safeEmail(),
             'country' => fake()->countryCode(),
+            'state' => fake()->stateAbbr(),
+            'city' => fake()->city(),
+            'address' => fake()->streetAddress(),
+            'complement' => fake()->secondaryAddress(),
             'postcode' => fake()->postcode(),
             'geo' => fake()->latitude() . "," . fake()->longitude(),
-            'active' => fake()->boolean(),
         ];
     }
 }

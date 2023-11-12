@@ -29,11 +29,11 @@ class UnitsController extends Controller
             ->withCount('children')
             ->sort($request->sorted ?? "name")
             ->paginate(20)
+            ->onEachSide(2)
             ->through(function($product){
                 $product->parents = $product->getParentsNames();
                 return $product;
             })
-            ->onEachSide(2)
             ->appends($request->all('search', 'sorted', 'trashed'));
 
         $parents = Unit::where("id", 90)
@@ -76,6 +76,14 @@ class UnitsController extends Controller
     
     public function __form(Request $request, Unit $unit)
     {
+        $units = Unit::sort("name")->get()->map(function ($unit) {
+            $id = $unit['id'];
+            $title = $unit['name'];
+
+            return compact('id', 'title');
+        });
+        // dd($units);
+
         $items = Unit::filter($request->all('search', 'sorted', 'trashed'))
             ->sort($request->sorted ?? "name")
             ->where('parent_id', $unit->id)
@@ -89,7 +97,7 @@ class UnitsController extends Controller
                     'id' => "role",
                     'title' => "Unit management",
                     'subtitle' => "Manage unit's info.",
-                    'cols' => 3,
+                    'cols' => 4,
                     'fields' => [
                         [
                             [
@@ -106,60 +114,81 @@ class UnitsController extends Controller
                                 'required' => true,
                             ],
                             [
-                                'type' => "input",
-                                'name' => "parent_id",
-                                'title' => "Unidade pai",
-                                'span' => 3,
-                                'required' => true,
-                            ],
-                            [
-                                'type' => "input",
+                                'type' => "date",
                                 'name' => "founded",
                                 'title' => "Founded",
                                 'required' => true,
                             ],
                             [
+                                'type' => "select",
+                                'name' => "parent_id",
+                                'title' => "Unidade pai",
+                                'span' => 2,
+                                'content' => $units,
+                                'required' => true,
+                            ],
+                            [
+                                'type' => "switch",
+                                'name' => "temporary",
+                                'title' => "Temporary",
+                            ],
+                            [
+                                'type' => "date",
+                                'name' => "expires",
+                                'title' => "Expires",
+                            ],
+                            [
                                 'type' => "input",
                                 'name' => "cellphone",
                                 'title' => "Cell Phone",
-                                'required' => true,
                             ],
                             [
                                 'type' => "input",
                                 'name' => "landline",
                                 'title' => "Land Line",
-                                'required' => true,
                             ],
                             [
                                 'type' => "input",
-                                'name' => "address",
-                                'title' => "Address",
+                                'name' => "email",
+                                'title' => "E-mail",
                                 'span' => 2,
-                                'required' => true,
                             ],
                             [
                                 'type' => "input",
                                 'name' => "country",
                                 'title' => "Country",
-                                'required' => true,
+                            ],
+                            [
+                                'type' => "input",
+                                'name' => "state",
+                                'title' => "State",
+                            ],
+                            [
+                                'type' => "input",
+                                'name' => "city",
+                                'title' => "City",
                             ],
                             [
                                 'type' => "input",
                                 'name' => "postcode",
                                 'title' => "Post Code",
-                                'required' => true,
+                            ],
+                            [
+                                'type' => "input",
+                                'name' => "address",
+                                'title' => "Address",
+                                'span' => 3,
+                            ],
+                            [
+                                'type' => "input",
+                                'name' => "complement",
+                                'title' => "Complement",
                             ],
                             [
                                 'type' => "input",
                                 'name' => "geo",
                                 'title' => "Coordenadas",
-                                'required' => true,
-                            ],
-                            [
-                                'type' => "input",
-                                'name' => "active",
-                                'title' => "Active",
-                                'required' => true,
+                                'span' => 4,
                             ],
                          ],
                     ],

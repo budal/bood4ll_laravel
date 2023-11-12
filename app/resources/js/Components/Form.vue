@@ -74,7 +74,7 @@
                                 {{ field.condition }}
                                     <InputLabel as="span" :for="field.name" :value="$t(field.title) + (field.required ? ' *' : '')" />
                     
-                                    <TextInput v-if="field.type == 'input'"
+                                    <TextInput v-if="field.type == 'input' || field.type == 'date'"
                                         :id="field.name"
                                         :name="field.name"
                                         :type="field.type"

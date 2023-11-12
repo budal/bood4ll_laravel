@@ -26,8 +26,8 @@
   const filteredContent = computed(() =>
     props.disableSearch === true || searchTerm.value === '' && props.disableSearch === false
       ? props.content
-      : props.content.filter((items: {id: string, title: string}) => {
-        return items.title.toLowerCase().includes(searchTerm.value.toLowerCase())
+      : props.content.filter((items: {id: string, name: string}) => {
+        return items.name.toLowerCase().includes(searchTerm.value.toLowerCase())
       })
   )
 
@@ -72,7 +72,7 @@
               class="p-1 flex items-center text-primary-light dark:text-primary-dark rounded-md text-sm bg-primary-light dark:bg-primary-dark ring-0"
               :class= "(disableSearch || !multiple) ? 'text-zero-light dark:text-zero-dark rounded-md text-sm bg-zero-light dark:bg-zero-dark' : ''" 
             >
-              {{ $t(item.title) }}
+              {{ $t(item.name) }}
               <button v-if="!disableSearch && multiple" type="button" class="ml-1 rounded-full focus:outline-none focus:ring-2 focus:ring-primary-light dark:focus:ring-primary-dark focus:ring-offset-1 focus:ring-offset-primary-light dark:focus:ring-offset-primary-dark">
                 <Icon 
                   icon="mdi:close-circle-outline" 
@@ -112,7 +112,7 @@
               <Icon icon="radix-icons:check" />
             </ComboboxItemIndicator>
             <span>
-              {{ $t(item.title) }}
+              {{ $t(item.name) }}
             </span>
           </ComboboxItem>
           <div class="text-xs w-full font-medium text-center">

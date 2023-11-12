@@ -25,15 +25,8 @@ class RolesController extends Controller
     public function index(Request $request): Response
     {
         $items = Role::filter($request->all('search', 'sorted', 'trashed'))
-            ->addSelect([
-                'abilities' => AbilityRole::selectRaw('COUNT(*)')
-                    ->whereColumn('role_id', 'roles.id')
-                    ->take(1),
-                'users' => RoleUser::selectRaw('COUNT(*)')
-                    ->whereColumn('role_id', 'roles.id')
-                    ->take(1),
-            ])
             ->sort($request->sorted ?? "name")
+            ->withCount(['abilities', 'users'])
             ->paginate(20)
             ->onEachSide(2)
             ->appends($request->all('search', 'sorted', 'trashed'));
@@ -70,12 +63,12 @@ class RolesController extends Controller
                 [
                     'type' => 'simple',
                     'title' => 'Abilities',
-                    'field' => 'abilities',
+                    'field' => 'abilities_count',
                 ],
                 [
                     'type' => 'simple',
                     'title' => 'Users',
-                    'field' => 'users',
+                    'field' => 'users_count',
                 ],
             ],
             'items' => $items
@@ -84,21 +77,17 @@ class RolesController extends Controller
     
     public function __form(Request $request, Role $role): Array
     {
-        $abilities = Ability::sort("name")->get()->map(function ($ability) {
-            $id = $ability['id'];
-            $title = $ability['name'];
+        $abilities = Ability::sort("name")->get()->map->only(['id', 'name']);
 
-            return compact('id', 'title');
-        });
-
-        $items = RoleUser::filter($request->all('search', 'sorted', 'trashed'))
-            ->sort($request->sorted ?? "name")
-            ->where('role_id', $role->id)
-            ->select('role_user.id', 'users.name', 'users.email')
-            ->join('users', 'users.id', '=', 'role_user.user_id')
+        $items = $role->users()
+            ->filter($request->all('search', 'sorted', 'trashed'))
             ->paginate(20)
             ->onEachSide(2)
-            ->appends($request->all('search', 'sorted', 'trashed'));
+            ->appends($request->all('search', 'sorted', 'trashed'))
+            ->through(function($item){
+                $item->id = $item->pivot->role_id;
+                return $item;
+            });
 
         return [
             [
