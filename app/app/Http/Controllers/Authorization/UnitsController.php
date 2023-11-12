@@ -84,10 +84,10 @@ class UnitsController extends Controller
 
         $units = Unit::sort("name")
             ->where('parent_id', 0)
-            ->with('parentRecursive')
-            ->get()
-            ->map
-            ->only(['id', 'name']);
+            ->with('childrenRecursive')
+            ->get();
+
+            dd($units);
 
         $items = Unit::filter($request->all('search', 'sorted', 'trashed'))
             ->sort($request->sorted ?? "name")
@@ -261,8 +261,10 @@ class UnitsController extends Controller
         ]);
     }
 
-    public function store(RolesRequest $request): RedirectResponse
+    public function store($request): RedirectResponse
     {
+        dd($request);
+
         DB::beginTransaction();
 
         try {
@@ -298,7 +300,7 @@ class UnitsController extends Controller
             'form' => $this->__form($request, $unit),
             'routes' => [
                 'role' => [
-                    'route' => route('apps.units.edit', $unit->id),
+                    'route' => route('apps.units.update', $unit->id),
                     'method' => 'patch'
                 ],
             ],
@@ -308,6 +310,8 @@ class UnitsController extends Controller
 
     public function update(Role $unit, Request $request): RedirectResponse
     {
+        dd($request);
+        
         DB::beginTransaction();
 
         try {

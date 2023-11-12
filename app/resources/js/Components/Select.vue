@@ -19,7 +19,9 @@
     }
   );
 
-  const selectedItems = ref(props.modelValue)
+  const emit = defineEmits(['update:modelValue']);
+
+  const selectedItems = ref(props.modelValue ? props.modelValue : (props.multiple ? [] : null))
   const searchTerm = ref('')
   const showContent = computed(() => props.content.filter(
     (e: any) => { 
@@ -42,6 +44,7 @@
     v-model:searchTerm="searchTerm"
     class="relative" 
     :multiple="multiple"
+    @update:open="() => emit('update:modelValue', selectedItems)"
   >
     <ComboboxAnchor class="relative w-full min-h-[41px] flex bg-zero-light dark:bg-zero-dark border border-zero-light dark:border-zero-dark rounded-md focus-within:outline-none focus-within:ring-2 focus-within:ring-primary-light dark:focus-within:ring-primary-dark focus-within:ring-offset-1 focus-within:ring-offset-primary-light dark:focus-within:ring-offset-primary-dark transition ease-in-out duration-500 disabled:opacity-25">
       <div class="w-full">
@@ -81,6 +84,9 @@
     <ComboboxContent class="absolute z-[4] w-full mt-1 min-w-[160px] bg-white overflow-hidden bg-zero-light dark:bg-zero-dark text-zero-light dark:text-zero-dark rounded-md border border-zero-light dark:border-zero-dark rounded-full focus:outline-none focus:ring-2 focus:ring-primary-light dark:focus:ring-primary-dark focus:ring-offset-1 focus:ring-offset-primary-light dark:focus:ring-offset-primary-dark">
       <ComboboxViewport class="p-[5px] max-h-60">
         <ComboboxEmpty class="text-xs font-medium text-center">{{ $t('No items to show.') }}</ComboboxEmpty>
+        <template v-for="item in filteredItems">
+          
+        </template>
         <ComboboxGroup>
           <ComboboxLabel class="px-[25px] text-xs leading-[25px] text-mauve11">
             Fruits
@@ -103,7 +109,7 @@
               {{ item.name }}
             </span>
           </ComboboxItem>
-          <ComboboxSeparator class="h-[1px] bg-grass6 m-[5px]" />
+          <ComboboxSeparator class="h-[1px] bg-primary-light dark:bg-primary-light m-[5px]" />
         </ComboboxGroup>
       </ComboboxViewport>
     </ComboboxContent>
