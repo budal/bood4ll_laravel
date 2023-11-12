@@ -2,7 +2,8 @@
   import { ComboboxAnchor, ComboboxContent, ComboboxEmpty, ComboboxGroup, ComboboxInput, ComboboxItem, ComboboxItemIndicator, ComboboxLabel, ComboboxRoot, ComboboxSeparator, ComboboxTrigger, ComboboxViewport } from 'radix-vue'
   import { Icon } from '@iconify/vue'
   import { ref, computed } from 'vue';
-
+  import SelectItems from '@/Components/SelectItems.vue'
+  
   const props = withDefaults(
     defineProps<{
       id?: string;
@@ -84,41 +85,7 @@
     <ComboboxContent class="absolute z-[4] w-full mt-1 min-w-[160px] bg-white overflow-hidden bg-zero-light dark:bg-zero-dark text-zero-light dark:text-zero-dark rounded-md border border-zero-light dark:border-zero-dark rounded-full focus:outline-none focus:ring-2 focus:ring-primary-light dark:focus:ring-primary-dark focus:ring-offset-1 focus:ring-offset-primary-light dark:focus:ring-offset-primary-dark">
       <ComboboxViewport class="p-[5px] max-h-60">
         <ComboboxEmpty class="text-xs font-medium text-center">{{ $t('No items to show.') }}</ComboboxEmpty>
-        <template v-for="item in filteredItems">
-          
-        </template>
-
-        <template #buttons>
-          xxxxx
-        </template>
-        
-        <slot name="buttons" />
-
-
-        <ComboboxGroup>
-          <ComboboxLabel class="px-[25px] text-xs leading-[25px] text-mauve11">
-            Fruits
-          </ComboboxLabel>
-
-          <ComboboxItem
-            v-for="item in filteredItems"
-            class="text-sm p-3 leading-none pr-[35px] pl-[25px] relative select-none data-[disabled]:opacity-25 data-[disabled]:pointer-events-none data-[highlighted]:outline-none data-[highlighted]:bg-zero-light-hover dark:data-[highlighted]:bg-zero-dark-hover cursor-pointer"
-            :key="item"
-            :value="item.id"
-            :disabled="item.disabled"
-
-          >
-            <ComboboxItemIndicator
-              class="absolute left-0 w-[25px] inline-flex items-center justify-center"
-            >
-              <Icon icon="radix-icons:check" />
-            </ComboboxItemIndicator>
-            <span>
-              {{ item.name }}
-            </span>
-          </ComboboxItem>
-          <ComboboxSeparator class="h-[1px] bg-primary-light dark:bg-primary-light m-[5px]" />
-        </ComboboxGroup>
+          <SelectItems :items="filteredItems" />
       </ComboboxViewport>
     </ComboboxContent>
   </ComboboxRoot>
