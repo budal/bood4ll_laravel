@@ -40,9 +40,6 @@ class UnitsController extends Controller
             ->first()
             ->getParentsNames();
 
-
-        // dd($items[0], $parents);
-
         return Inertia::render('Default/Index', [
             'title' => "Units management",
             'subtitle' => "Manage the units users are classified in.",
@@ -90,8 +87,8 @@ class UnitsController extends Controller
             return [
                 [
                     'id' => "role",
-                    'title' => "Roles management",
-                    'subtitle' => "Role name and abilities",
+                    'title' => "Unit management",
+                    'subtitle' => "Manage unit's info.",
                     'cols' => 2,
                     'fields' => [
                         [
@@ -101,18 +98,18 @@ class UnitsController extends Controller
                                 'title' => "Name",
                                 'required' => true,
                             ],
-                            // [
-                            //     'type' => "input",
-                            //     'name' => "description",
-                            //     'title' => "Description",
-                            //     'required' => true,
-                            // ],
+                            [
+                                'type' => "input",
+                                'name' => "founded",
+                                'title' => "Founded",
+                                'required' => true,
+                            ],
                         ],
                     ],
                 ],
                 [
-                    'title' => "Authorization management",
-                    'subtitle' => "Define which users will have access to this permission",
+                    'title' => "Subunit management",
+                    'subtitle' => "Manage unit's subunits",
                     'condition' => $unit->id <> null,
                     'cols' => 2,
                     'fields' => [
@@ -120,7 +117,7 @@ class UnitsController extends Controller
                             [
                                 'type' => "table",
                                 'name' => "users",
-                                'title' => "Authorized users",
+                                'title' => "Subunits",
                                 'span' => 2,
                                 'content' => [
                                     'softDelete' => Unit::hasGlobalScope('Illuminate\Database\Eloquent\SoftDeletingScope'),
@@ -160,10 +157,10 @@ class UnitsController extends Controller
             ];
     }
 
-    public function create()
+    public function create(Request $request, Unit $unit)
     {
         return Inertia::render('Default/Create', [
-            'form' => $this->__form($request, $role),
+            'form' => $this->__form($request, $unit),
             'routes' => [
                 'role' => [
                     'route' => route('apps.units.store'),
