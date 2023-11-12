@@ -1,7 +1,6 @@
 <script setup lang="ts">
-  import { ComboboxAnchor, ComboboxContent, ComboboxEmpty, ComboboxGroup, ComboboxInput, ComboboxItem, ComboboxItemIndicator, ComboboxLabel, ComboboxRoot, ComboboxSeparator, ComboboxTrigger, ComboboxViewport } from 'radix-vue'
+  import { ComboboxGroup, ComboboxItem, ComboboxItemIndicator } from 'radix-vue'
   import { Icon } from '@iconify/vue'
-  import { ref, computed } from 'vue';
 
   const props = withDefaults(
     defineProps<{
