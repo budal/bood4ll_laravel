@@ -29,7 +29,9 @@
   "Active": "Ativo",
   "Inactive": "Inativo",
   "'Esc' to clear": "'Esc' para limpar",
-  
+  "Items removed succesfully!": "Itens removidos com sucesso!",
+  "Item restored.": "Item restaurado.",
+
   "No items to show.": "Sem itens para exibir.",
   "Showing :from to :to of :total results": "Exibindo :from a :to de :total resultados",
   "Are you sure you want to delete the selected items?": "Você tem certeza que deseja apagar os itens selecionados?",
@@ -204,8 +206,6 @@
   "Users management": "Gerenciamento de usuários",
   "User creation": "Criação de usuário",
   "User edition": "Edição de usuário",
-  "Users removed succesfully!": "Usuários removidos com sucesso!",
-  "User restored.": "Usuário restaurado.",
   
   "Profile": "Perfil",
   "Settings": "Configurações",
@@ -227,8 +227,6 @@
   "Authorized users": "Usuários autorizados",
   "Role creation": "Criação de função",
   "Role edition": "Edição de função",
-  "Roles removed succesfully!": "Funções removidas com sucesso!",
-  "Role created.": "Função criada.",
   "Error when inserting a new role.": "Erro ao inserir uma nova função.",
   "Error when linking abilities to the role.": "Erro ao vincular as abilitações à função.",
   "Role edited.": "Função editada.",

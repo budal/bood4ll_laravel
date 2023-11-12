@@ -230,20 +230,36 @@ export default {
                     to: { opacity: 0 },
                 },
                 slideDownAndFade: {
-                  from: { opacity: 0, transform: 'translateY(-20px)' },
-                  to: { opacity: 1, transform: 'translateY(0)' },
+                    from: { opacity: 0, transform: 'translateY(-20px)' },
+                    to: { opacity: 1, transform: 'translateY(0)' },
                 },
                 slideLeftAndFade: {
-                  from: { opacity: 0, transform: 'translateX(20px)' },
-                  to: { opacity: 1, transform: 'translateX(0)' },
+                    from: { opacity: 0, transform: 'translateX(20px)' },
+                    to: { opacity: 1, transform: 'translateX(0)' },
                 },
                 slideUpAndFade: {
-                  from: { opacity: 0, transform: 'translateY(20px)' },
-                  to: { opacity: 1, transform: 'translateY(0)' },
+                    from: { opacity: 0, transform: 'translateY(20px)' },
+                    to: { opacity: 1, transform: 'translateY(0)' },
                 },
                 slideRightAndFade: {
-                  from: { opacity: 0, transform: 'translateX(-20px)' },
-                  to: { opacity: 1, transform: 'translateX(0)' },
+                    from: { opacity: 0, transform: 'translateX(-20px)' },
+                    to: { opacity: 1, transform: 'translateX(0)' },
+                },
+                overlayShow: {
+                    from: { opacity: 0 },
+                    to: { opacity: 1 },
+                },
+                contentShow: {
+                    from: { opacity: 0, transform: 'translate(-50%, -48%) scale(0.96)' },
+                    to: { opacity: 1, transform: 'translate(-50%, -50%) scale(1)' },
+                },
+                overlayHide: {
+                    from: { opacity: 1 },
+                    to: { opacity: 0 },
+                },
+                contentHide: {
+                    from: { opacity: 1, transform: 'translate(-50%, -48%) scale(0.96)' },
+                    to: { opacity: 0, transform: 'translate(-50%, -50%) scale(1)' },
                 },
             },
             animation: {
@@ -259,6 +275,10 @@ export default {
                 slideLeftAndFade: 'slideLeftAndFade 400ms cubic-bezier(0.16, 1, 0.3, 1)',
                 slideUpAndFade: 'slideUpAndFade 400ms cubic-bezier(0.16, 1, 0.3, 1)',
                 slideRightAndFade: 'slideRightAndFade 400ms cubic-bezier(0.16, 1, 0.3, 1)',
+                overlayShow: 'overlayShow 300ms cubic-bezier(0.16, 1, 0.3, 1)',
+                contentShow: 'contentShow 300ms cubic-bezier(0.16, 1, 0.3, 1)',
+                overlayHide: 'overlayHide 300ms cubic-bezier(0.16, 1, 0.3, 1)',
+                contentHide: 'contentHide 300ms cubic-bezier(0.16, 1, 0.3, 1)',
             },
         },
     },

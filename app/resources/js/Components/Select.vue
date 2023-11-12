@@ -50,6 +50,8 @@
   }
 
   // watch(selectedContent, () => console.log(selectedContent))
+
+  console.log(selectedContent.value)
 </script>
 
 <template>

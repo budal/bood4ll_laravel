@@ -22,20 +22,26 @@ class UnitsController extends Controller
     public function index(Request $request): Response
     {
         $items = Unit::filter($request->all('search', 'sorted', 'trashed'))
-            ->addSelect([
-                'subunits' => Unit::selectRaw('COUNT(*)')
-                    ->whereColumn('id', 'units.parent_id')
-                    ->take(1),
-            ])
             ->when(!$request->search, function ($query) {
                 $query->where("parent_id", "0");
             })
             ->with('parentRecursive')
-            ->with('childrenRecursive')
+            ->withCount('children')
             ->sort($request->sorted ?? "name")
             ->paginate(20)
+            ->through(function($product){
+                $product->parents = $product->getParentsNames();
+                return $product;
+            })
             ->onEachSide(2)
             ->appends($request->all('search', 'sorted', 'trashed'));
+
+        $parents = Unit::where("id", 90)
+            ->first()
+            ->getParentsNames();
+
+
+        // dd($items[0], $parents);
 
         return Inertia::render('Default/Index', [
             'title' => "Units management",
@@ -56,72 +62,111 @@ class UnitsController extends Controller
             'filters' => $request->all('search', 'sorted', 'trashed'),
             'titles' => [
                 [
-                    'type' => 'composite',
+                    'type' => $request->search ? 'composite' : 'simple',
                     'title' => 'Name',
                     'field' => 'name',
-                    'fields' => ['name', 'childrenRecursive'],
+                    'fields' => ['name', 'parents'],
                 ],
                 [
                     'type' => 'simple',
                     'title' => 'Subunits',
-                    'field' => 'subunits',
+                    'field' => 'children_count',
                 ],
             ],
             'items' => $items
         ]);
     }
     
-    public function __form()
+    public function __form(Request $request, Unit $unit)
     {
-        $abilities = Ability::sort("name")->get()->map(function ($ability) {
-            $id = $ability['id'];
-            $title = $ability['name'];
+        $items = Unit::filter($request->all('search', 'sorted', 'trashed'))
+            ->sort($request->sorted ?? "name")
+            ->where('parent_id', $unit->id)
+            ->withCount('children')
+            ->paginate(20)
+            ->onEachSide(2)
+            ->appends($request->all('search', 'sorted', 'trashed'));
 
-            return compact('id', 'title');
-        })->toArray();
-
-        return [
-            [
-                'id' => "role",
-                'title' => "Roles management",
-                'subtitle' => "Role name and abilities",
-                'cols' => 2,
-                'fields' => [
-                    [
+            return [
+                [
+                    'id' => "role",
+                    'title' => "Roles management",
+                    'subtitle' => "Role name and abilities",
+                    'cols' => 2,
+                    'fields' => [
                         [
-                            'type' => "input",
-                            'name' => "name",
-                            'title' => "Name",
-                            'required' => true,
-                        ],
-                        [
-                            'type' => "input",
-                            'name' => "description",
-                            'title' => "Description",
-                            'required' => true,
-                        ],
-                        [
-                            'type' => "select",
-                            'name' => "abilities",
-                            'title' => "Abilities",
-                            'span' => 2,
-                            'content' => $abilities,
-                            'required' => true,
-                            'multiple' => true,
+                            [
+                                'type' => "input",
+                                'name' => "name",
+                                'title' => "Name",
+                                'required' => true,
+                            ],
+                            // [
+                            //     'type' => "input",
+                            //     'name' => "description",
+                            //     'title' => "Description",
+                            //     'required' => true,
+                            // ],
                         ],
                     ],
+                ],
+                [
+                    'title' => "Authorization management",
+                    'subtitle' => "Define which users will have access to this permission",
+                    'condition' => $unit->id <> null,
+                    'cols' => 2,
+                    'fields' => [
+                        [
+                            [
+                                'type' => "table",
+                                'name' => "users",
+                                'title' => "Authorized users",
+                                'span' => 2,
+                                'content' => [
+                                    'softDelete' => Unit::hasGlobalScope('Illuminate\Database\Eloquent\SoftDeletingScope'),
+                                    'routes' => [
+                                        'editRoute' => "apps.units.edit",
+                                        'destroyRoute' => "apps.units.destroy",
+                                        'restoreRoute' => "apps.units.restore",
+                                    ],
+                                    'menu' => [
+                                        [
+                                            'icon' => "mdi:plus",
+                                            'title' => "Role creation",
+                                            'route' => "apps.roles.create",
+                                            'modal' => true,
+                                        ],
+                                    ],
+                                    'filters' => $request->all('search', 'sorted', 'trashed'),
+                                    'titles' => [
+                                        [
+                                            'type' => 'simple',
+                                            'title' => 'Role',
+                                            'field' => 'name',
+                                        ],
+                                        [
+                                            'type' => 'simple',
+                                            'title' => 'Subunits',
+                                            'field' => 'children_count',
+                                        ],
+                        
+                                    ],
+                                    'items' => $items
+                                ],
+                            ],
+                        ],
+                    ]
                 ]
-            ]
-        ];
+            ];
     }
 
     public function create()
     {
         return Inertia::render('Default/Create', [
-            'form' => $this->__form(),
+            'form' => $this->__form($request, $role),
             'routes' => [
                 'role' => [
-                    'route' => route('apps.roles.store'),
+                    'route' => route('apps.units.store'),
                     'method' => 'post'
                 ],
             ],
@@ -133,7 +178,7 @@ class UnitsController extends Controller
         DB::beginTransaction();
 
         try {
-            $role = Role::firstOrCreate([
+            $unit = Role::firstOrCreate([
                 'name' => $request->name,
                 'description' => $request->description,
             ]);
@@ -145,7 +190,7 @@ class UnitsController extends Controller
         try {
             foreach($request->abilities as $ability_id) {
                 $abilities_role = AbilityRole::create([
-                    'role_id' => $role->id,
+                    'role_id' => $unit->id,
                     'ability_id' => $ability_id,
                 ]);
             }
@@ -156,35 +201,29 @@ class UnitsController extends Controller
 
         DB::commit();
 
-        return Redirect::route('apps.roles.index')->with('status', 'Role created.');
+        return Redirect::route('apps.units.index')->with('status', 'Role created.');
     }
     
-    public function edit(Role $role): Response
+    public function edit(Request $request, Unit $unit): Response
     {
-        $role['abilities'] = $role->listAbilities()
-            ->get()
-            ->map
-            ->only('ability_id')
-            ->pluck('ability_id');
-        
         return Inertia::render('Default/Edit', [
-            'form' => $this->__form(),
+            'form' => $this->__form($request, $unit),
             'routes' => [
                 'role' => [
-                    'route' => route('apps.roles.edit', $role->id),
+                    'route' => route('apps.units.edit', $unit->id),
                     'method' => 'patch'
                 ],
             ],
-            'data' => $role
+            'data' => $unit
         ]);
     }
 
-    public function update(Role $role, Request $request): RedirectResponse
+    public function update(Role $unit, Request $request): RedirectResponse
     {
         DB::beginTransaction();
 
         try {
-            Role::where('id', $role->id)
+            Role::where('id', $unit->id)
                 ->update([
                     'name' => $request->name,
                     'description' => $request->description,
@@ -195,13 +234,13 @@ class UnitsController extends Controller
         }
         
         try {
-            $abilities_role_saved = AbilityRole::where('role_id', $role->id)
+            $abilities_role_saved = AbilityRole::where('role_id', $unit->id)
                 ->get()
                 ->map
                 ->only('id', 'ability_id')
                 ->pluck('ability_id', 'id');
 
-            $abilities_role_to_delete = AbilityRole::where('role_id', $role->id)
+            $abilities_role_to_delete = AbilityRole::where('role_id', $unit->id)
                 ->whereNotIn('ability_id', $request->abilities)
                 ->get()
                 ->map
@@ -211,7 +250,7 @@ class UnitsController extends Controller
 
             $abilities_role_mainteined = $abilities_role_saved->diff($abilities_role_to_delete);
 
-            $abilities_role_deleted = AbilityRole::where('role_id', $role->id)
+            $abilities_role_deleted = AbilityRole::where('role_id', $unit->id)
                 ->whereIn('ability_id', $abilities_role_to_delete)
                 ->delete();
                 
@@ -219,7 +258,7 @@ class UnitsController extends Controller
 
             foreach($abilities_role_to_insert as $ability_id) {
                 $ability_role = AbilityRole::create([
-                    'role_id' => $role->id,
+                    'role_id' => $unit->id,
                     'ability_id' => $ability_id,
                 ]);
             }
@@ -231,7 +270,7 @@ class UnitsController extends Controller
 
         DB::commit();
 
-        return Redirect::route('apps.roles.index')->with('status', 'Role edited.');
+        return Redirect::route('apps.units.index')->with('status', 'Role edited.');
     }
 
     public function destroy(Request $request): RedirectResponse
@@ -239,20 +278,20 @@ class UnitsController extends Controller
         $items = $request->all();
 
         try {
-            $usersToDelete = Role::whereIn('id', $items['ids'])->delete();
+            $usersToDelete = Unit::whereIn('id', $items['ids'])->delete();
         } catch (Throwable $e) {
             report($e);
      
             return false;
         }
         
-        return back()->with('status', 'Users removed succesfully!');
+        return back()->with('status', 'Items removed succesfully!');
     }
 
-    public function restore(Role $role)
+    public function restore(Unit $unit)
     {
-        $role->restore();
+        $unit->restore();
 
-        return Redirect::back()->with('status', 'Role restored.');
+        return Redirect::back()->with('status', 'Item restored.');
     }
 }

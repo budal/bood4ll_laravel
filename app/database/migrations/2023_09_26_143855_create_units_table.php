@@ -15,7 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('name', 100);
             $table->date('founded')->nullable();
-            $table->integer('parent_id')->nullable();
+            $table->unsignedBigInteger('parent_id')->nullable();
+            $table->foreignId('parent_id')->constrained('units')->onDelete('CASCADE');
             $table->string('cellphone')->unique()->nullable();
             $table->string('landline')->nullable();
             $table->json('landline_extensions')->nullable();

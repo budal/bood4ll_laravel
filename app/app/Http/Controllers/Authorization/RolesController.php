@@ -91,6 +91,15 @@ class RolesController extends Controller
             return compact('id', 'title');
         });
 
+        $items = RoleUser::filter($request->all('search', 'sorted', 'trashed'))
+            ->sort($request->sorted ?? "name")
+            ->where('role_id', $role->id)
+            ->select('role_user.id', 'users.name', 'users.email')
+            ->join('users', 'users.id', '=', 'role_user.user_id')
+            ->paginate(20)
+            ->onEachSide(2)
+            ->appends($request->all('search', 'sorted', 'trashed'));
+
         return [
             [
                 'id' => "role",
@@ -157,14 +166,7 @@ class RolesController extends Controller
                                         'fields' => ['name', 'email'],
                                     ],
                                 ],
-                                'items' => RoleUser::filter($request->all('search', 'sorted', 'trashed'))
-                                    ->sort($request->sorted ?? "name")
-                                    ->where('role_id', $role->id)
-                                    ->select('role_user.id', 'users.name', 'users.email')
-                                    ->join('users', 'users.id', '=', 'role_user.user_id')
-                                    ->paginate(20)
-                                    ->onEachSide(2)
-                                    ->appends($request->all('search', 'sorted', 'trashed'))
+                                'items' => $items
                             ],
                         ],
                     ],
@@ -219,12 +221,11 @@ class RolesController extends Controller
     
     public function edit(Request $request, Role $role): Response
     {
-        $role['abilities'] = $role->listAbilities()
-            ->get()
-            ->map
-            ->only('ability_id')
-            ->pluck('ability_id');
-        
+        $role['abilities'] = $role->listAbilities()->get()->map->only('ability_id')->pluck('ability_id');
+        // $role['abilities'] = $role->abilities;
+
+        // dd($role['abilities'], $role['abilitiess']);
+
         return Inertia::render('Default/Edit', [
             'form' => $this->__form($request, $role),
             'routes' => [

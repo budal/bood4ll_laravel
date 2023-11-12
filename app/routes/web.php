@@ -97,9 +97,10 @@ Route::middleware('auth')->group(function () {
                 Route::get('/units', 'index')->name('units.index')->middleware(['password.confirm', 'verified'])->breadcrumb('Units');
                 Route::get('/units/create', 'create')->name('units.create')->middleware(['password.confirm'])->breadcrumb('Unit creation', 'apps.units.index');
                 Route::post('/units/create', 'create')->name('units.store')->middleware(['password.confirm']);
-                Route::get('/units/edit/{user}', 'edit')->name('units.edit')->middleware(['password.confirm'])->breadcrumb('Unit edition', 'apps.units.index');
-                Route::patch('/units/edit/{user}', 'edit')->name('units.update')->middleware(['password.confirm']);
+                Route::get('/units/edit/{unit}', 'edit')->name('units.edit')->middleware(['password.confirm'])->breadcrumb('Unit edition', 'apps.units.index');
+                Route::patch('/units/edit/{unit}', 'edit')->name('units.update')->middleware(['password.confirm']);
                 Route::delete('/units/destroy', 'destroy')->name('units.destroy')->middleware(['password.confirm']);
+                Route::post('/units/restore/{unit}', 'restore')->name('units.restore')->middleware(['password.confirm']);
             });
         });
     });
