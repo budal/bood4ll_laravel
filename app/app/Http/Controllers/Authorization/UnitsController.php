@@ -87,7 +87,7 @@ class UnitsController extends Controller
             ->with('childrenRecursive')
             ->get();
 
-            dd($units);
+            // dd($units);
 
         $items = Unit::filter($request->all('search', 'sorted', 'trashed'))
             ->sort($request->sorted ?? "name")

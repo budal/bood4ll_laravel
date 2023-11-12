@@ -87,6 +87,14 @@
         <template v-for="item in filteredItems">
           
         </template>
+
+        <template #buttons>
+          xxxxx
+        </template>
+        
+        <slot name="buttons" />
+
+
         <ComboboxGroup>
           <ComboboxLabel class="px-[25px] text-xs leading-[25px] text-mauve11">
             Fruits
