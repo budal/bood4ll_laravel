@@ -75,16 +75,19 @@ class UnitsController extends Controller
     
     public function __form(Request $request, Unit $unit)
     {
-        $units = Unit::sort("name")->get()->map(function ($unit) {
+        $units2 = Unit::sort("name")->get()->map(function ($unit) {
             $id = $unit['id'];
             $title = $unit['name'];
 
             return compact('id', 'title');
         });
 
-        $unitss = Unit::sort("name")->get()->map->only(['id', 'name']);
-
-        // dd($units);
+        $units = Unit::sort("name")
+            ->where('parent_id', 0)
+            ->with('parentRecursive')
+            ->get()
+            ->map
+            ->only(['id', 'name']);
 
         $items = Unit::filter($request->all('search', 'sorted', 'trashed'))
             ->sort($request->sorted ?? "name")
