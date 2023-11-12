@@ -24,11 +24,6 @@ class Role extends Model
         return $this->belongsToMany(User::class);
     }
 
-    public function listAbilities()
-    {
-        return $this->hasMany(AbilityRole::class);
-    }
-
     public function scopeFilter($query, array $filters)
     {
         $query->when($filters['search'] ?? null, function ($query, $search) {

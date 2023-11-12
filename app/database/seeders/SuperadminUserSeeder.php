@@ -13,9 +13,8 @@ class SuperadminUserSeeder extends Seeder
      */
     public function run(): void
     {
-        \App\Models\RoleUser::factory()->create([
-            'role_id' => \App\Models\Role::first()->id,
-            'user_id' => \App\Models\User::first()->id,
-        ]);
+        $superAdmin = \App\Models\User::first();
+        
+        $superAdmin->role()->attach(\App\Models\Role::first()->id);
     }
 }

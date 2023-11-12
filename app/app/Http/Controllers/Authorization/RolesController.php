@@ -15,8 +15,6 @@ use Inertia\Response;
 
 use App\Models\Role;
 use App\Models\Ability;
-use App\Models\AbilityRole;
-use App\Models\RoleUser;
 
 use App\Http\Requests\RolesRequest;
 
@@ -164,7 +162,7 @@ class RolesController extends Controller
                             'title' => "Authorized users",
                             'span' => 2,
                             'content' => [
-                                'softDelete' => RoleUser::hasGlobalScope('Illuminate\Database\Eloquent\SoftDeletingScope'),
+                                'softDelete' => Role::hasGlobalScope('Illuminate\Database\Eloquent\SoftDeletingScope'),
                                 'routes' => [
                                     'destroyRoute' => "apps.roles.destroy",
                                 ],

@@ -13,7 +13,6 @@ use Inertia\Inertia;
 use Inertia\Response;
 
 use App\Models\Unit;
-use App\Models\UserUnit;
 
 use App\Http\Requests\RolesRequest;
 
@@ -82,6 +81,9 @@ class UnitsController extends Controller
 
             return compact('id', 'title');
         });
+
+        $unitss = Unit::sort("name")->get()->map->only(['id', 'name']);
+
         // dd($units);
 
         $items = Unit::filter($request->all('search', 'sorted', 'trashed'))

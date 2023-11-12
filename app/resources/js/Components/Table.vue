@@ -78,13 +78,8 @@
     ids: [],
   });
 
-  const myModal = () => `<button />`
-
-
   const deleteItems = () => {
     selectedCheckBoxes.forEach((checkBox: any) => form.ids.push((checkBox.id) as never))
-
-    closeDeletionModal()
 
     form.delete(route(props.routes.destroyRoute), {
       preserveScroll: true,
