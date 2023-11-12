@@ -228,7 +228,7 @@
   "Role creation": "Criação de função",
   "Role edition": "Edição de função",
   "Error when inserting a new role.": "Erro ao inserir uma nova função.",
-  "Error when linking abilities to the role.": "Erro ao vincular as abilitações à função.",
+  "Error when syncing abilities to the role.": "Erro ao sincronizar as abilitações à função.",
   "Role edited.": "Função editada.",
   "Error when editing the role.": "Erro ao editar a função.",
   "Role restored.": "Função restaurada.",

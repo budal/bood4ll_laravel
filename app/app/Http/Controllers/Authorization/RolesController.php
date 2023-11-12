@@ -222,15 +222,10 @@ class RolesController extends Controller
         }
         
         try {
-            foreach($request->abilities as $ability_id) {
-                $abilities_role = AbilityRole::create([
-                    'role_id' => $role->id,
-                    'ability_id' => $ability_id,
-                ]);
-            }
+            $role->abilities()->sync($request->abilities);
         } catch(\Exception $e) {
             DB::rollback();
-            return Redirect::back()->with('status', "Error when linking abilities to the role.");
+            return Redirect::back()->with('status', "Error when syncing abilities to the role.");
         }
 
         DB::commit();
@@ -270,38 +265,11 @@ class RolesController extends Controller
         }
         
         try {
-            $abilities_role_saved = AbilityRole::where('role_id', $role->id)
-                ->get()
-                ->map
-                ->only('id', 'ability_id')
-                ->pluck('ability_id', 'id');
-
-            $abilities_role_to_delete = AbilityRole::where('role_id', $role->id)
-                ->whereNotIn('ability_id', $request->abilities)
-                ->get()
-                ->map
-                ->only('id', 'ability_id')
-                ->pluck('ability_id', 'id')
-                ->toArray();
-
-            $abilities_role_mainteined = $abilities_role_saved->diff($abilities_role_to_delete);
-
-            $abilities_role_deleted = AbilityRole::where('role_id', $role->id)
-                ->whereIn('ability_id', $abilities_role_to_delete)
-                ->delete();
-                
-            $abilities_role_to_insert = collect($request->abilities)->diff($abilities_role_mainteined);
-
-            foreach($abilities_role_to_insert as $ability_id) {
-                $ability_role = AbilityRole::create([
-                    'role_id' => $role->id,
-                    'ability_id' => $ability_id,
-                ]);
-            }
+            $role->abilities()->sync($request->abilities);
         } catch(\Exception $e) {
             DB::rollback();
-            dd($e);
-            return Redirect::back()->with('status', "Error when linking abilities to the role.");
+
+            return Redirect::back()->with('status', "Error when syncing abilities to the role.");
         }
 
         DB::commit();
