@@ -15,11 +15,11 @@ export default {
     ],
     safelist: [
         {
-            pattern: /grid-cols-(1|2|3|4|5)/,
+            pattern: /grid-cols-(1|2|3|4|5|6|7|8|9)/,
             variants: ['sm'],
         },
         {
-            pattern: /col-span-(1|2|3|4|5)/,
+            pattern: /col-span-(1|2|3|4|5|6|7|8|9)/,
             variants: ['sm'],
         },
         {

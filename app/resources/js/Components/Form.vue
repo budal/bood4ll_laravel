@@ -84,6 +84,16 @@
                                         :autocomplete="field.name"
                                     />
             
+                                    <TextInput v-if="field.type == 'switch'"
+                                        :id="field.name"
+                                        :name="field.name"
+                                        :type="field.type"
+                                        class="mt-1 block w-full"
+                                        v-model="jsForm[field.name]"
+                                        :required="field.required"
+                                        :autocomplete="field.name"
+                                    />
+            
                                     <Select v-if="field.type == 'select'" 
                                         :id="field.name"
                                         :name="field.name"

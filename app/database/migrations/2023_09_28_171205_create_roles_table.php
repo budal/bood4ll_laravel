@@ -14,12 +14,12 @@ return new class extends Migration {
             $table->id();
             $table->string('name', 100);
             $table->string('description', 255);
-            $table->boolean('full_control')->default(false);
-            $table->boolean('locked')->nullable();
-            $table->boolean('all_units')->default(false);
-            $table->boolean('allow_manage_subordinated_units')->default(false);
-            $table->json('units_list')->nullable();
-            $table->json('editabled_by')->nullable();
+            $table->boolean('active')->default(true);
+            $table->boolean('full_access')->default(false);
+            $table->boolean('manage_nested')->default(false);
+            $table->boolean('remove_on_change_unit')->default(true);
+            $table->boolean('temporary')->default(false);
+            $table->date('expires')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

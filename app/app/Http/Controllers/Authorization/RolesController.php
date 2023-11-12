@@ -93,8 +93,8 @@ class RolesController extends Controller
             [
                 'id' => "role",
                 'title' => "Roles management",
-                'subtitle' => "Role name and abilities",
-                'cols' => 2,
+                'subtitle' => "Role name, abilities and settings",
+                'cols' => 3,
                 'fields' => [
                     [
                         [
@@ -107,23 +107,53 @@ class RolesController extends Controller
                             'type' => "input",
                             'name' => "description",
                             'title' => "Description",
-                            'required' => true,
+                            'span' => 2,
                         ],
                         [
                             'type' => "select",
                             'name' => "abilities",
                             'title' => "Abilities",
-                            'span' => 2,
+                            'span' => 3,
                             'content' => $abilities,
                             'required' => true,
                             'multiple' => true,
+                        ],
+                        [
+                            'type' => "switch",
+                            'name' => "active",
+                            'title' => "Active",
+                        ],
+                        [
+                            'type' => "switch",
+                            'name' => "full_access",
+                            'title' => "Full Access",
+                        ],
+                        [
+                            'type' => "switch",
+                            'name' => "manage_nested",
+                            'title' => "Manage nested",
+                        ],
+                        [
+                            'type' => "switch",
+                            'name' => "remove_on_change_unit",
+                            'title' => "Remove on transfer",
+                        ],
+                        [
+                            'type' => "switch",
+                            'name' => "temporary",
+                            'title' => "Temporary",
+                        ],
+                        [
+                            'type' => "date",
+                            'name' => "expires",
+                            'title' => "Expires",
                         ],
                     ],
                 ],
             ],
             [
-                'title' => "Authorization management",
-                'subtitle' => "Define which users will have access to this permission",
+                'title' => "Authorizations management",
+                'subtitle' => "Define which users will have access to this authorization",
                 'condition' => $role->id <> null,
                 'cols' => 2,
                 'fields' => [
@@ -210,10 +240,7 @@ class RolesController extends Controller
     
     public function edit(Request $request, Role $role): Response
     {
-        $role['abilities'] = $role->listAbilities()->get()->map->only('ability_id')->pluck('ability_id');
-        // $role['abilities'] = $role->abilities;
-
-        // dd($role['abilities'], $role['abilitiess']);
+        $role['abilities'] = $role->abilities()->get()->map->only('id')->pluck('id');
 
         return Inertia::render('Default/Edit', [
             'form' => $this->__form($request, $role),

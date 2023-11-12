@@ -29,7 +29,7 @@ class UnitFactory extends Factory
             'country' => fake()->countryCode(),
             'state' => fake()->stateAbbr(),
             'city' => fake()->city(),
-            'address' => fake()->streetAddress(),
+            'address' => fake()->streetName().', '.fake()->buildingNumber(),
             'complement' => fake()->secondaryAddress(),
             'postcode' => fake()->postcode(),
             'geo' => fake()->latitude() . "," . fake()->longitude(),
