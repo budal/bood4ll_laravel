@@ -128,7 +128,7 @@
     router.visit(searchRoute, {
       method: 'get',
       preserveState: true,
-            preserveScroll: true,
+      preserveScroll: true,
     })
   }, 500);
 

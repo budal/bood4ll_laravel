@@ -49,19 +49,6 @@
       : filterArray(props.content, searchTerm.value)
   )
 
-  // const filteredItems = computed(() => filterArray(props.content, searchTerm.value.toLowerCase()));
-// console.log(filter.value);
-
-
-
-
-  
-  // filteredArray = _.filter(array, (parent) => {
-  //   return _.includes(_.toLower(parent.name), _.toLower(filterText));
-  // });
-
-
-
   const removeItem = (id: number) => {
     let index = selectedItems.value.indexOf(id);
     selectedItems.value.splice(index, 1);
@@ -99,6 +86,7 @@
           <ComboboxTrigger class="grow w-0 ">
             <ComboboxInput
               v-if="!disableSearch"
+              v-model="searchTerm"
               :id="id"
               :name="name"
               class="p-0 w-full bg-transparent text-ellipsis border-0 outline-0 focus:ring-0 placeholder:text-sm placeholder-primary-dark/20 dark:placeholder-primary-dark/20 text-zero-light dark:text-zero-dark" 

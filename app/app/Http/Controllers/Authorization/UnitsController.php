@@ -115,8 +115,8 @@ class UnitsController extends Controller
                             ],
                             [
                                 'type' => "input",
-                                'name' => "shortname",
-                                'title' => "Short name",
+                                'name' => "nickname",
+                                'title' => "Nickname",
                                 'required' => true,
                             ],
                             [
@@ -133,69 +133,69 @@ class UnitsController extends Controller
                                 'content' => $units,
                                 'required' => true,
                             ],
-                            // [
-                            //     'type' => "switch",
-                            //     'name' => "temporary",
-                            //     'title' => "Temporary",
-                            // ],
-                            // [
-                            //     'type' => "date",
-                            //     'name' => "expires",
-                            //     'title' => "Expires",
-                            // ],
-                            // [
-                            //     'type' => "input",
-                            //     'name' => "cellphone",
-                            //     'title' => "Cell Phone",
-                            // ],
-                            // [
-                            //     'type' => "input",
-                            //     'name' => "landline",
-                            //     'title' => "Land Line",
-                            // ],
-                            // [
-                            //     'type' => "input",
-                            //     'name' => "email",
-                            //     'title' => "E-mail",
-                            //     'span' => 2,
-                            // ],
-                            // [
-                            //     'type' => "input",
-                            //     'name' => "country",
-                            //     'title' => "Country",
-                            // ],
-                            // [
-                            //     'type' => "input",
-                            //     'name' => "state",
-                            //     'title' => "State",
-                            // ],
-                            // [
-                            //     'type' => "input",
-                            //     'name' => "city",
-                            //     'title' => "City",
-                            // ],
-                            // [
-                            //     'type' => "input",
-                            //     'name' => "postcode",
-                            //     'title' => "Post Code",
-                            // ],
-                            // [
-                            //     'type' => "input",
-                            //     'name' => "address",
-                            //     'title' => "Address",
-                            //     'span' => 3,
-                            // ],
-                            // [
-                            //     'type' => "input",
-                            //     'name' => "complement",
-                            //     'title' => "Complement",
-                            // ],
-                            // [
-                            //     'type' => "input",
-                            //     'name' => "geo",
-                            //     'title' => "Coordenadas",
-                            //     'span' => 4,
-                            // ],
+                            [
+                                'type' => "toggle",
+                                'name' => "temporary",
+                                'title' => "Temporary",
+                            ],
+                            [
+                                'type' => "date",
+                                'name' => "expires",
+                                'title' => "Expires",
+                            ],
+                            [
+                                'type' => "input",
+                                'name' => "cellphone",
+                                'title' => "Cell Phone",
+                            ],
+                            [
+                                'type' => "input",
+                                'name' => "landline",
+                                'title' => "Land Line",
+                            ],
+                            [
+                                'type' => "input",
+                                'name' => "email",
+                                'title' => "Email",
+                                'span' => 2,
+                            ],
+                            [
+                                'type' => "input",
+                                'name' => "country",
+                                'title' => "Country",
+                            ],
+                            [
+                                'type' => "input",
+                                'name' => "state",
+                                'title' => "State",
+                            ],
+                            [
+                                'type' => "input",
+                                'name' => "city",
+                                'title' => "City",
+                            ],
+                            [
+                                'type' => "input",
+                                'name' => "postcode",
+                                'title' => "Post Code",
+                            ],
+                            [
+                                'type' => "input",
+                                'name' => "address",
+                                'title' => "Address",
+                                'span' => 3,
+                            ],
+                            [
+                                'type' => "input",
+                                'name' => "complement",
+                                'title' => "Complement",
+                            ],
+                            [
+                                'type' => "input",
+                                'name' => "geo",
+                                'title' => "Coordenadas",
+                                'span' => 4,
+                            ],
                          ],
                     ],
                 ],
@@ -221,7 +221,7 @@ class UnitsController extends Controller
                                     'menu' => [
                                         [
                                             'icon' => "mdi:plus",
-                                            'title' => "Role creation",
+                                            'title' => "Unit creation",
                                             'route' => "apps.roles.create",
                                             'modal' => true,
                                         ],
@@ -230,7 +230,7 @@ class UnitsController extends Controller
                                     'titles' => [
                                         [
                                             'type' => 'simple',
-                                            'title' => 'Role',
+                                            'title' => 'Unit',
                                             'field' => 'name',
                                         ],
                                         [
@@ -269,7 +269,7 @@ class UnitsController extends Controller
         DB::beginTransaction();
 
         try {
-            $unit = Role::firstOrCreate([
+            $unit = Unit::firstOrCreate([
                 'name' => $request->name,
                 'description' => $request->description,
             ]);
@@ -292,7 +292,7 @@ class UnitsController extends Controller
 
         DB::commit();
 
-        return Redirect::route('apps.units.index')->with('status', 'Role created.');
+        return Redirect::route('apps.units.index')->with('status', 'Unit created.');
     }
     
     public function edit(Request $request, Unit $unit): Response
@@ -309,14 +309,14 @@ class UnitsController extends Controller
         ]);
     }
 
-    public function update(Role $unit, Request $request): RedirectResponse
+    public function update(Unit $unit, Request $request): RedirectResponse
     {
         dd($request);
         
         DB::beginTransaction();
 
         try {
-            Role::where('id', $unit->id)
+            Unit::where('id', $unit->id)
                 ->update([
                     'name' => $request->name,
                     'description' => $request->description,
@@ -363,7 +363,7 @@ class UnitsController extends Controller
 
         DB::commit();
 
-        return Redirect::route('apps.units.index')->with('status', 'Role edited.');
+        return Redirect::route('apps.units.index')->with('status', 'Unit edited.');
     }
 
     public function destroy(Request $request): RedirectResponse

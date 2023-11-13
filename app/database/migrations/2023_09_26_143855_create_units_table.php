@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('units', function (Blueprint $table) {
             $table->id();
             $table->string('name', 255);
-            $table->string('shortname', 100);
+            $table->string('nickname', 100);
             $table->unsignedBigInteger('parent_id')->nullable();
             $table->boolean('temporary')->default(false);
             $table->date('expires')->nullable();
