@@ -24,7 +24,7 @@ export default {
         },
         {
             pattern: /(bg|border|ring|ring-offset|text)-(zero|primary|secondary|danger|success|warning|info)-(light|dark)/,
-            variants: ['dark', 'hover', 'focus', 'dark:hover', 'dark:focus'],
+            variants: ['dark', 'hover', 'focus', 'dark:hover', 'dark:focus', 'data-[state=on]', 'data-[state=on]:dark'],
         },
     ],
     theme: {
