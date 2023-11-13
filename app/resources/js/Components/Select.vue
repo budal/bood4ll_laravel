@@ -30,22 +30,38 @@
     }
   ))
 
+  function filterArray(arrayList, search) {
+    return arrayList.filter((item) => {
+      let childrens = item.children_recursive;
+      if(childrens && childrens.length){
+        item.children_recursive = filterArray(childrens, search);
+        if(item.children_recursive && item.children_recursive.length){
+            return true;
+        }
+      }
+      return item.name.toLowerCase().indexOf(search) > -1;
+    });
+  }
+
   const filteredItems = computed(() =>
     searchTerm.value === ''
       ? props.content
-      : props.content.filter((item: {id: string, name: string}) => {
-        const result = item.name.toLowerCase().includes(searchTerm.value.toLowerCase())
-        
-        return result
-      })
+      : filterArray(props.content, searchTerm.value)
   )
 
-  // let resultado = props.content.filter(pai => {
-  //   pai.filhos = props.content.filter(filho => filho.parent_id === pai.id);
-  //     return pai.parent_id === null
+  // const filteredItems = computed(() => filterArray(props.content, searchTerm.value.toLowerCase()));
+// console.log(filter.value);
+
+
+
+
+  
+  // filteredArray = _.filter(array, (parent) => {
+  //   return _.includes(_.toLower(parent.name), _.toLower(filterText));
   // });
 
-  // console.log(resultado)
+
+
   const removeItem = (id: number) => {
     let index = selectedItems.value.indexOf(id);
     selectedItems.value.splice(index, 1);
