@@ -34,9 +34,18 @@
     searchTerm.value === ''
       ? props.content
       : props.content.filter((item: {id: string, name: string}) => {
-        return item.name.toLowerCase().includes(searchTerm.value.toLowerCase())
+        const result = item.name.toLowerCase().includes(searchTerm.value.toLowerCase())
+        
+        return result
       })
   )
+
+  // let resultado = props.content.filter(pai => {
+  //   pai.filhos = props.content.filter(filho => filho.parent_id === pai.id);
+  //     return pai.parent_id === null
+  // });
+
+  // console.log(resultado)
 </script>
 
 <template>

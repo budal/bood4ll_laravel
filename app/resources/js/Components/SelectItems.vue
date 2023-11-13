@@ -29,9 +29,7 @@
         >
           <Icon icon="radix-icons:check" />
         </ComboboxItemIndicator>
-        <span>
-          {{ item.name }} ({{ margin }} - {{ key }})
-        </span>
+        <span>{{ item.name }} - {{ item.path }}</span>
       </ComboboxItem>
       <SelectItems :items="item.children_recursive" />
     </template>

@@ -24,7 +24,7 @@ class UnitsController extends Controller
             ->when(!$request->search, function ($query) {
                 $query->where("parent_id", "0");
             })
-            ->with('parentRecursive')
+            // ->with('parentRecursive')
             ->withCount('children')
             ->sort($request->sorted ?? "name")
             ->paginate(20)
@@ -34,10 +34,6 @@ class UnitsController extends Controller
                 return $product;
             })
             ->appends($request->all('search', 'sorted', 'trashed'));
-
-        $parents = Unit::where("id", 90)
-            ->first()
-            ->getParentsNames();
 
         return Inertia::render('Default/Index', [
             'title' => "Units management",
@@ -82,10 +78,15 @@ class UnitsController extends Controller
             return compact('id', 'title');
         });
 
-        $units = Unit::sort("name")
-            ->where('parent_id', 0)
-            ->with('childrenRecursive')
-            ->get();
+        $units = Unit::orderBy("parent_id")
+            ->orderBy("name")
+            // ->where('parent_id', 0)
+            // ->with('childrenRecursive')
+            ->get()
+            ->map(function ($item) use ($unit) {
+                $item->path = $item->getParentsNames();
+                return $item;
+            });
 
             // dd($units);
 

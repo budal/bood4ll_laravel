@@ -23,6 +23,14 @@ class Unit extends Model
     {
         return $this->belongsTo(Unit::class, 'parent_id');
     }
+        
+    public function parentsNames()
+    {
+        // dd($this->parent()->with('parentRecursive')->get());
+        // return $this->belongsTo(Unit::class, 'parent_id');
+        
+        // return $this;
+    }
 
     public function getParentsNames() {
         if($this->parent) {
