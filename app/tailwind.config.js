@@ -44,7 +44,7 @@ export default {
                 },
                 secondary: {
                     'light': colors.white,
-                    'light-hover': colors.gray[50],
+                    'light-hover': colors.gray[200],
                     'dark': colors.gray[800],
                     'dark-hover': colors.gray[700],
                 },

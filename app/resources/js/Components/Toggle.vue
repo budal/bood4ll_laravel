@@ -7,10 +7,10 @@
 
     const props = withDefaults(
         defineProps<{
-            color?: 'primary' | 'secondary' | 'danger' | 'success' | 'warning' | 'info';
+            color?: 'zero' | 'primary' | 'secondary' | 'danger' | 'success' | 'warning' | 'info';
         }>(),
         {
-            color: 'primary',
+            color: 'secondary',
         }
     );
 </script>
