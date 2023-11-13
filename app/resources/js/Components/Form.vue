@@ -89,6 +89,7 @@
                                         :id="field.name"
                                         :name="field.name"
                                         :type="field.type"
+                                        :color="field.color"
                                         class="mt-1 block w-full"
                                         v-model="jsForm[field.name]"
                                         :required="field.required"

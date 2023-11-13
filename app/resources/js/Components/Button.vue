@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import { useAttrs } from 'vue'
 import { Icon } from '@iconify/vue'
 
     const props = withDefaults(
@@ -25,17 +23,11 @@ import { Icon } from '@iconify/vue'
             shadowSize: 'shadow-sm',
         }
     );
-
-    const className = computed(() => {
-        return `group/edit hover:scale-105 inline-flex items-center px-${props.padding} py-2 bg-${props.color}-light dark:bg-${props.color}-dark hover:bg-${props.color}-light-hover dark:hover:bg-${props.color}-dark-hover border border-${props.color}-light dark:border-${props.color}-dark ${props.rounded} font-semibold ${props.textSize} text-${props.color}-light dark:text-${props.color}-dark ${props.transform} tracking-widest ${props.shadowSize} focus:outline-none focus:ring-2 focus:ring-${props.color}-light dark:focus:ring-${props.color}-dark focus:ring-offset-2 focus:ring-offset-${props.color}-light dark:focus:ring-offset-${props.color}-dark disabled:opacity-25 transition ease-in-out duration-500`;
-    })
-
-    const attrs = useAttrs()
 </script>
 
 <template>
-    <button :type="type" :class="className">
-        <div class="group-hover/edit:scale-110 flex gap-1 items-center shadow-primary-light/20 dark:shadow-primary-dark/20 shadow-[0_2px_10px] focus-within:shadow-[0_0_0_2px] focus-within:shadow-primary-light dark:focus-within:shadow-primary-dark transition ease-in-out duration-300">
+    <button :type="type" :class="`group/edit hover:scale-105 inline-flex items-center px-${padding} py-2 bg-${color}-light dark:bg-${color}-dark hover:bg-${color}-light-hover dark:hover:bg-${color}-dark-hover border border-${color}-light dark:border-${color}-dark ${rounded} font-semibold ${textSize} text-${color}-light dark:text-${color}-dark ${transform} tracking-widest ${shadowSize} focus:outline-none focus:ring-2 focus:ring-${color}-light dark:focus:ring-${color}-dark focus:ring-offset-2 focus:ring-offset-${color}-light dark:focus:ring-offset-${color}-dark disabled:opacity-25 shadow-primary-light/20 dark:shadow-primary-dark/20 shadow-[0_2px_10px] focus-within:shadow-[0_0_0_2px] focus-within:shadow-primary-light dark:focus-within:shadow-primary-dark transition ease-in-out duration-500`">
+        <div class="group-hover/edit:scale-110 flex gap-1 items-center">
             <Icon v-if="startIcon" :icon="startIcon" class="h-5 w-5" />
             <slot />
             <Icon v-if="endIcon" :icon="endIcon" class="h-5 w-5" />

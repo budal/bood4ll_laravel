@@ -120,6 +120,7 @@ class RolesController extends Controller
                             'type' => "toggle",
                             'name' => "active",
                             'title' => "Active",
+                            'color' => "success",
                         ],
                         [
                             'type' => "toggle",
