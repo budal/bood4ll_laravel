@@ -35,7 +35,7 @@ import { Icon } from '@iconify/vue'
 
 <template>
     <button :type="type" :class="className">
-        <div class="group-hover/edit:scale-110 flex gap-1 items-center transition ease-in-out duration-300">
+        <div class="group-hover/edit:scale-110 flex gap-1 items-center shadow-primary-light/20 dark:shadow-primary-dark/20 shadow-[0_2px_10px] focus-within:shadow-[0_0_0_2px] focus-within:shadow-primary-light dark:focus-within:shadow-primary-dark transition ease-in-out duration-300">
             <Icon v-if="startIcon" :icon="startIcon" class="h-5 w-5" />
             <slot />
             <Icon v-if="endIcon" :icon="endIcon" class="h-5 w-5" />

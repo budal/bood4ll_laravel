@@ -116,36 +116,36 @@ class RolesController extends Controller
                             'required' => true,
                             'multiple' => true,
                         ],
-                        // [
-                        //     'type' => "switch",
-                        //     'name' => "active",
-                        //     'title' => "Active",
-                        // ],
-                        // [
-                        //     'type' => "switch",
-                        //     'name' => "full_access",
-                        //     'title' => "Full Access",
-                        // ],
-                        // [
-                        //     'type' => "switch",
-                        //     'name' => "manage_nested",
-                        //     'title' => "Manage nested",
-                        // ],
-                        // [
-                        //     'type' => "switch",
-                        //     'name' => "remove_on_change_unit",
-                        //     'title' => "Remove on transfer",
-                        // ],
-                        // [
-                        //     'type' => "switch",
-                        //     'name' => "temporary",
-                        //     'title' => "Temporary",
-                        // ],
-                        // [
-                        //     'type' => "date",
-                        //     'name' => "expires",
-                        //     'title' => "Expires",
-                        // ],
+                        [
+                            'type' => "toggle",
+                            'name' => "active",
+                            'title' => "Active",
+                        ],
+                        [
+                            'type' => "toggle",
+                            'name' => "full_access",
+                            'title' => "Full Access",
+                        ],
+                        [
+                            'type' => "toggle",
+                            'name' => "manage_nested",
+                            'title' => "Manage nested",
+                        ],
+                        [
+                            'type' => "toggle",
+                            'name' => "remove_on_change_unit",
+                            'title' => "Remove on transfer",
+                        ],
+                        [
+                            'type' => "toggle",
+                            'name' => "temporary",
+                            'title' => "Temporary",
+                        ],
+                        [
+                            'type' => "date",
+                            'name' => "expires",
+                            'title' => "Expires",
+                        ],
                     ],
                 ],
             ],

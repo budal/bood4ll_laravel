@@ -9,7 +9,7 @@ const toggleState = ref(false)
 <template>
   <Toggle
     v-model:pressed="toggleState" aria-label="Toggle italic"
-    class="hover:bg-green3 text-mauve11 data-[state=on]:bg-green6 data-[state=on]:text-violet12 shadow-blackA7 flex h-[35px] w-[35px] items-center justify-center rounded bg-white text-base leading-4 shadow-[0_2px_10px] focus-within:shadow-[0_0_0_2px] focus-within:shadow-black"
+    class="min-h-[41px] w-full flex items-center justify-center rounded text-base leading-4 bg-zero-light dark:bg-zero-dark hover:bg-success-light-hover dark:hover:bg-success-dark-hover text-zero-light dark:text-zero-dark hover:text-success-light dark:hover:text-success-dark data-[state=on]:bg-success-light data-[state=on]:text-success-light             border border-zero-light dark:border-zero-dark         shadow-primary-light/20 dark:shadow-primary-dark/20 shadow-[0_2px_10px] focus-within:shadow-[0_0_0_2px] focus-within:shadow-primary-light dark:focus-within:shadow-primary-dark "
   >
     <Icon icon="radix-icons:font-italic" class="w-[15px] h-[15px]" />
   </Toggle>
