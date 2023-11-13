@@ -1,18 +1,18 @@
 <script setup lang="ts">
-    import { Toggle } from 'radix-vue'
-    import { Icon } from '@iconify/vue'
-    import { ref } from 'vue'
+  import { Toggle } from 'radix-vue'
+  import { Icon } from '@iconify/vue'
+  import { ref } from 'vue'
 
-    const toggleState = ref(false)
+  const toggleState = ref(false)
 
-    const props = withDefaults(
-        defineProps<{
-            color?: 'zero' | 'primary' | 'secondary' | 'danger' | 'success' | 'warning' | 'info';
-        }>(),
-        {
-            color: 'secondary',
-        }
-    );
+  const props = withDefaults(
+    defineProps<{
+      color?: 'zero' | 'primary' | 'secondary' | 'danger' | 'success' | 'warning' | 'info';
+    }>(),
+    {
+      color: 'secondary',
+    }
+  );
 </script>
 
 <template>

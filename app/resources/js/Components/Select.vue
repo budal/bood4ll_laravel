@@ -44,7 +44,7 @@
   }
 
   const filteredItems = computed(() =>
-    searchTerm.value === ''
+    searchTerm.value == ''
       ? props.content
       : filterArray(props.content, searchTerm.value)
   )

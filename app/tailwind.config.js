@@ -38,9 +38,9 @@ export default {
                 },
                 primary: {
                     'light': colors.gray[800],
-                    'light-hover': colors.gray[700],
-                    'dark': colors.gray[200],
-                    'dark-hover': colors.gray[50],
+                    'light-hover': colors.gray[600],
+                    'dark': colors.gray[100],
+                    'dark-hover': colors.gray[300],
                 },
                 secondary: {
                     'light': colors.white,
