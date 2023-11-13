@@ -30,8 +30,8 @@
     }
   ))
 
-  function filterArray(arrayList, search) {
-    return arrayList.filter((item) => {
+  function filterArray(arrayList: any, search: string) {
+    return arrayList.filter((item: any) => {
       let childrens = item.children_recursive;
       if(childrens && childrens.length){
         item.children_recursive = filterArray(childrens, search);
