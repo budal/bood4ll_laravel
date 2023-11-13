@@ -66,11 +66,13 @@
           <div 
             v-for="item in showContent" 
             :key="item.id" 
-            class="p-1 flex items-center text-primary-light dark:text-primary-dark rounded-md placeholder:text-xs sm:placeholder:text-sm text-xs sm:text-sm bg-primary-light dark:bg-primary-dark ring-0"
-            :class= "(disableSearch || !multiple) ? 'text-zero-light dark:text-zero-dark rounded-md placeholder:text-xs sm:placeholder:text-sm text-xs sm:text-sm bg-zero-light dark:bg-zero-dark' : ''" 
+            :class= "multiple ? 
+              'p-1 flex items-center text-primary-light dark:text-primary-dark rounded-md placeholder:text-xs sm:placeholder:text-sm text-xs sm:text-sm bg-primary-light dark:bg-primary-dark ring-0' : 
+              'text-zero-light dark:text-zero-dark rounded-md placeholder:text-xs sm:placeholder:text-sm bg-zero-light dark:bg-zero-dark'
+            " 
           >
             {{ $t(item.name) }}
-            <button v-if="!disableSearch && multiple" @click="removeItem(item.id)" type="button" class="ml-1 rounded-full focus:outline-none focus:ring-2 focus:ring-primary-light dark:focus:ring-primary-dark focus:ring-offset-1 focus:ring-offset-primary-light dark:focus:ring-offset-primary-dark">
+            <button v-if="multiple" @click="removeItem(item.id)" type="button" class="ml-1 rounded-full focus:outline-none focus:ring-2 focus:ring-primary-light dark:focus:ring-primary-dark focus:ring-offset-1 focus:ring-offset-primary-light dark:focus:ring-offset-primary-dark">
               <Icon 
                 icon="mdi:close-circle-outline" 
                 class="w-4 h-4 text-primary-light dark:text-primary-dark cursor-pointer" 
@@ -81,6 +83,8 @@
           <ComboboxTrigger class="grow w-0 ">
             <ComboboxInput
               v-if="!disableSearch"
+              :id="id"
+              :name="name"
               class="p-0 w-full bg-transparent text-ellipsis border-0 outline-0 focus:ring-0 placeholder:text-sm placeholder-primary-dark/20 dark:placeholder-primary-dark/20 text-zero-light dark:text-zero-dark" 
             />
           </ComboboxTrigger>

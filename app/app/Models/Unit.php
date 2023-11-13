@@ -23,25 +23,17 @@ class Unit extends Model
     {
         return $this->belongsTo(Unit::class, 'parent_id');
     }
-        
-    public function parentsNames()
-    {
-        // dd($this->parent()->with('parentRecursive')->get());
-        // return $this->belongsTo(Unit::class, 'parent_id');
-        
-        // return $this;
+    
+    public function parentRecursive() {
+        return $this->parent()->with('parentRecursive');
     }
-
+        
     public function getParentsNames() {
         if($this->parent) {
             return $this->parent->getParentsNames(). " > " . $this->name;
         } else {
             return $this->name;
         }
-    }
-    
-    public function parentRecursive() {
-        return $this->parent()->with('parentRecursive');
     }
     
     public function children()

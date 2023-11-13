@@ -29,9 +29,9 @@
         >
           <Icon icon="radix-icons:check" />
         </ComboboxItemIndicator>
-        <span>{{ item.name }} - {{ item.path }}</span>
+        <span>{{ item.name }}</span>
       </ComboboxItem>
-      <SelectItems :items="item.children_recursive" />
+      <SelectItems class="ml-5" :items="item.children_recursive" />
     </template>
   </ComboboxGroup>
 </template>

@@ -80,8 +80,8 @@ class UnitsController extends Controller
 
         $units = Unit::orderBy("parent_id")
             ->orderBy("name")
-            // ->where('parent_id', 0)
-            // ->with('childrenRecursive')
+            ->where('parent_id', 0)
+            ->with('childrenRecursive')
             ->get()
             ->map(function ($item) use ($unit) {
                 $item->path = $item->getParentsNames();
@@ -115,7 +115,7 @@ class UnitsController extends Controller
                             ],
                             [
                                 'type' => "input",
-                                'name' => "name",
+                                'name' => "shortname",
                                 'title' => "Short name",
                                 'required' => true,
                             ],

@@ -25,6 +25,8 @@
   import { ref, computed, reactive, watch, onBeforeUnmount } from 'vue'
 
   const props = defineProps<{
+    id?: string;
+    name?: string;
     apiRoute?: string;
     softDelete?: boolean | null;
     routes?: any;
@@ -126,7 +128,7 @@
     router.visit(searchRoute, {
       method: 'get',
       preserveState: true,
-      preserveScroll: true,
+            preserveScroll: true,
     })
   }, 500);
 
@@ -139,12 +141,12 @@
 
   // filters modal
   const filterContent = ref([
-    { id: 'active', title: 'Only active' },
-    { id: 'trashed', title: 'Only trashed', disabled: props.softDelete === true ? false : true },
-    { id: 'both', title: 'Active and trashed', disabled: props.softDelete === true ? false : true },
+    { id: 'active', name: 'Only active', disabled: false },
+    { id: 'trashed', name: 'Only trashed', disabled: props.softDelete === true ? false : true },
+    { id: 'both', name: 'Active and trashed', disabled: props.softDelete === true ? false : true },
   ])
 
-  const filterContentValue = ref(searchRoute.searchParams.get("trashed") || 'active')
+  const filterContentValue = ref(searchRoute.searchParams.get("trashed") || '')
 
   const filtersModal = ref(false);
 
@@ -284,7 +286,7 @@
         <Button v-if="routes.destroyRoute" color="danger" type="button" @click="openDeletionModal" start-icon="mdi:delete-outline" class="mr-2 h-full" :disabled="totalSelectedCheckBoxes === 0" />
       </div>
       <div class="flex-1 items-center">
-        <SearchInput :placeholder="$t('Search...')" id="search" name="search" class="w-full h-full" :value="filters.search" v-model="search" />
+        <SearchInput :placeholder="$t('Search...')" :id="id || 'search'" :name="name || 'search'" class="w-full h-full" :value="filters.search" v-model="search" />
       </div>
       <div class="flex-none items-center">
         <Button color="secondary" type="button" @click="openFiltersModal" class="ml-2 h-full" start-icon="mdi:filter-settings-outline" />

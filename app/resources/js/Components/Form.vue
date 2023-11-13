@@ -105,6 +105,8 @@
                                     />
             
                                     <Table v-if="field.type == 'table'"
+                                        :id="field.name"
+                                        :name="field.name"
                                         :menu="field.content.menu" 
                                         :softDelete="field.content.softDelete" 
                                         :routes="field.content.routes" 
