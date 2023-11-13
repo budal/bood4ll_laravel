@@ -273,7 +273,7 @@ class RolesController extends Controller
 
         DB::commit();
 
-        return Redirect::route('apps.roles.index')->with('status', 'Role edited.');
+        return Redirect::route('apps.roles.edit', $role->id)->with('status', 'Role edited.');
     }
 
     public function destroy(Request $request): RedirectResponse
