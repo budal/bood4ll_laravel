@@ -126,21 +126,25 @@ class RolesController extends Controller
                             'type' => "toggle",
                             'name' => "full_access",
                             'title' => "Full Access",
+                            'color' => "success",
                         ],
                         [
                             'type' => "toggle",
                             'name' => "manage_nested",
                             'title' => "Manage nested",
+                            'color' => "success",
                         ],
                         [
                             'type' => "toggle",
                             'name' => "remove_on_change_unit",
                             'title' => "Remove on transfer",
+                            'color' => "success",
                         ],
                         [
                             'type' => "toggle",
                             'name' => "temporary",
                             'title' => "Temporary",
+                            'color' => "success",
                         ],
                         [
                             'type' => "date",

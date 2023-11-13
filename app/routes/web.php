@@ -105,7 +105,6 @@ Route::middleware('auth')->group(function () {
         });
     });
 
-
     Route::get('/reports', [ProfileController::class, 'edit'])->name('reports')->breadcrumb('Reports');
 
     Route::get('/help', [ProfileController::class, 'edit'])->name('help')->breadcrumb('Help');
