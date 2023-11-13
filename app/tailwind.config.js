@@ -105,8 +105,8 @@ export default {
             },
             borderColor: {
                 zero: {
-                    'light': colors.gray[700],
-                    'dark': colors.gray[400],
+                    'light': colors.gray[300],
+                    'dark': colors.gray[600],
                 },
                 primary: {
                     'light': colors.gray[400],

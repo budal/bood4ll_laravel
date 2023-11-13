@@ -46,6 +46,10 @@
   // });
 
   // console.log(resultado)
+  const removeItem = (id: number) => {
+    let index = selectedItems.value.indexOf(id);
+    selectedItems.value.splice(index, 1);
+  }
 </script>
 
 <template>
@@ -66,7 +70,7 @@
             :class= "(disableSearch || !multiple) ? 'text-zero-light dark:text-zero-dark rounded-md text-sm bg-zero-light dark:bg-zero-dark' : ''" 
           >
             {{ $t(item.name) }}
-            <button v-if="!disableSearch && multiple" type="button" class="ml-1 rounded-full focus:outline-none focus:ring-2 focus:ring-primary-light dark:focus:ring-primary-dark focus:ring-offset-1 focus:ring-offset-primary-light dark:focus:ring-offset-primary-dark">
+            <button v-if="!disableSearch && multiple" @click="removeItem(item.id)" type="button" class="ml-1 rounded-full focus:outline-none focus:ring-2 focus:ring-primary-light dark:focus:ring-primary-dark focus:ring-offset-1 focus:ring-offset-primary-light dark:focus:ring-offset-primary-dark">
               <Icon 
                 icon="mdi:close-circle-outline" 
                 class="w-4 h-4 text-primary-light dark:text-primary-dark cursor-pointer" 

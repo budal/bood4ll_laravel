@@ -32,7 +32,7 @@ class UnitSeeder extends Seeder
                 \App\Models\Unit::factory(8)
                 ->state(new Sequence(
                     ['name' => 'Comando', 'shortname' => 'Comando', 'parent_id' => $unit->id],
-                    ['name' => 'Subomando', 'shortname' => 'Subomando', 'parent_id' => $unit->id],
+                    ['name' => 'Subcomando', 'shortname' => 'Subcomando', 'parent_id' => $unit->id],
                     ['name' => 'P/1', 'shortname' => 'P/1', 'parent_id' => $unit->id],
                     ['name' => 'P/2', 'shortname' => 'P/2', 'parent_id' => $unit->id],
                     ['name' => 'P/3', 'shortname' => 'P/3', 'parent_id' => $unit->id],
