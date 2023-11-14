@@ -28,7 +28,7 @@
     props.form.forEach((forms: any) => {
         forms.fields.forEach((fields: any) => {
             fields.forEach((field: any) => {
-                formItems[field.name] = props.data ? props.data[field.name] : '';
+                formItems[field.name] = props.data[field.name] ? props.data[field.name] : '';
             });
         });
     });
