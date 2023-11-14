@@ -25,18 +25,17 @@
   const selectedItems = ref(props.modelValue ? props.modelValue : (props.multiple ? [] : null))
   const searchTerm = ref('')
   const showContent = computed(() => props.content.filter(
-    (e: any) => { 
-      return props.multiple ? selectedItems.value.includes(e.id) : selectedItems.value == e.id; 
-    }
+    (e: any) => props.multiple ? selectedItems.value.includes(e.id) : selectedItems.value == e.id
   ))
 
   function filterArray(arrayList: any, search: string) {
     return arrayList.filter((item: any) => {
       let childrens = item.children_recursive;
-      if(childrens && childrens.length){
+      if (childrens && childrens.length){
         item.children_recursive = filterArray(childrens, search);
-        if(item.children_recursive && item.children_recursive.length){
-            return true;
+
+        if (item.children_recursive && item.children_recursive.length){
+          return true;
         }
       }
       return item.name.toLowerCase().indexOf(search) > -1;
@@ -48,6 +47,15 @@
       ? props.content
       : filterArray(props.content, searchTerm.value)
   )
+
+  const filteredItemsRef = () => {
+      console.log(
+        searchTerm.value == ''
+          ? props.content
+          : filterArray(props.content, searchTerm.value)
+
+      )
+    }
 
   const removeItem = (id: number) => {
     let index = selectedItems.value.indexOf(id);
@@ -62,7 +70,7 @@
     class="relative" 
     :multiple="multiple"
     @update:open="() => emit('update:modelValue', selectedItems)"
-    @update:searchTerm="console.log(searchTerm)"
+    @update:searchTerm="filteredItemsRef"
   >
     <ComboboxAnchor class="relative w-full min-h-[41px] flex bg-zero-light dark:bg-zero-dark border border-zero-light dark:border-zero-dark rounded-md focus-within:outline-none focus-within:ring-2 focus-within:ring-primary-light dark:focus-within:ring-primary-dark focus-within:ring-offset-1 focus-within:ring-offset-primary-light dark:focus-within:ring-offset-primary-dark shadow-primary-light/20 dark:shadow-primary-dark/20 shadow-[0_2px_10px] focus-within:shadow-[0_0_0_2px] focus-within:shadow-primary-light dark:focus-within:shadow-primary-dark transition ease-in-out duration-500 disabled:opacity-25">
       <div class="w-full">

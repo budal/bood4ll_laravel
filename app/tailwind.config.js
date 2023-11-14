@@ -24,7 +24,21 @@ export default {
         },
         {
             pattern: /(bg|border|ring|ring-offset|text)-(zero|primary|secondary|danger|success|warning|info)-(light|dark)/,
-            variants: ['dark', 'hover', 'focus', 'dark:hover', 'dark:focus', 'data-[state=on]', 'data-[state=on]:dark'],
+            variants: [
+                'dark', 
+                'hover', 
+                'focus', 
+                'dark:hover', 
+                'dark:focus', 
+                'data-[state=on]', 
+                'data-[state=on]:hover', 
+                'data-[state=on]:dark', 
+                'data-[state=on]:dark:hover', 
+                'data-[state=off]', 
+                'data-[state=off]:hover', 
+                'data-[state=off]:dark',
+                'data-[state=off]:dark:hover', 
+            ],
         },
     ],
     theme: {

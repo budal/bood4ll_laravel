@@ -281,7 +281,7 @@ class RolesController extends Controller
 
         DB::commit();
 
-        return Redirect::route('apps.roles.edit', $role->id)->with('status', 'Role edited.');
+        return Redirect::back()->with('status', 'Role edited.')->withInput();
     }
 
     public function adduser(Request $request): RedirectResponse

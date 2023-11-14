@@ -221,8 +221,10 @@ class UnitsController extends Controller
                                         [
                                             'icon' => "mdi:plus",
                                             'title' => "Unit creation",
-                                            'route' => "apps.units.create",
-                                            'route_id' => $unit->id,
+                                            'route' => [
+                                                "apps.units.create",
+                                                ['id' => $unit->id]
+                                            ],
                                             'modal' => true,
                                         ],
                                     ],
@@ -271,7 +273,7 @@ class UnitsController extends Controller
         } catch(\Exception $e) {
             dd($e);
             DB::rollback();
-            return Redirect::back()->with('status', "Error when inserting a new unit.");
+            return Redirect::back()->withInput()->with('status', "Error when inserting a new unit.");
         }
         
         DB::commit();
@@ -302,7 +304,7 @@ class UnitsController extends Controller
                 ->update($request->all());
         } catch(\Exception $e) {
             DB::rollback();
-            return Redirect::back()->with('status', "Error when editing the unit.");
+            return Redirect::back()->withInput()->with('status', "Error when editing the unit.");
         }
         
         DB::commit();
