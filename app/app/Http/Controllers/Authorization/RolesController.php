@@ -177,7 +177,8 @@ class RolesController extends Controller
                                     [
                                         'icon' => "mdi:plus",
                                         'title' => "Role creation",
-                                        'route' => "apps.roles.create",
+                                        'route' => "apps.roles.edit.create",
+                                        'route_id' => $role->id,
                                         'modal' => true,
                                     ],
                                 ],
@@ -281,6 +282,13 @@ class RolesController extends Controller
         DB::commit();
 
         return Redirect::route('apps.roles.edit', $role->id)->with('status', 'Role edited.');
+    }
+
+    public function adduser(Request $request): RedirectResponse
+    {
+        \inertia()->modal('File/Show');
+
+        return $this->index($request);
     }
 
     public function destroy(Request $request): RedirectResponse
