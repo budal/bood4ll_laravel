@@ -25,7 +25,9 @@ class EventServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        ResponseFactory::macro('modal', function ($modal) { 
+            inertia()->share(['modal' => $modal]); 
+        });
     }
 
     /**
