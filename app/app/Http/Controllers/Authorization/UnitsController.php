@@ -135,9 +135,10 @@ class UnitsController extends Controller
                             ],
                             [
                                 'type' => "toggle",
-                                'name' => "temporary",
-                                'title' => "Temporary",
-                                'color' => "success"
+                                'name' => "active",
+                                'title' => "Active",
+                                'color' => "success",
+                                'colorFalse' => "danger",
                             ],
                             [
                                 'type' => "date",

@@ -15,11 +15,10 @@ return new class extends Migration
             $table->id();
             $table->string('name', 255);
             $table->string('nickname', 100);
-            $table->unsignedBigInteger('parent_id')->nullable();
-            $table->boolean('temporary')->default(false);
-            $table->date('expires')->nullable();
             $table->date('founded')->nullable();
+            $table->unsignedBigInteger('parent_id')->nullable();
             $table->boolean('active')->default(true);
+            $table->date('expires')->nullable();
             $table->string('cellphone')->unique()->nullable();
             $table->string('landline')->nullable();
             $table->string('email')->nullable();
