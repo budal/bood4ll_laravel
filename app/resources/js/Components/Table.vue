@@ -330,7 +330,7 @@
           </DropdownMenuRoot>
         </template>
         <template v-else>
-          <Link as="span" :href="route(menu[0].route)" class="text-sm ml-2 h-full">
+          <Link as="span" :href="route(menu[0].route, menu[0].route_id)" class="text-sm ml-2 h-full">
             <Button color="primary" type="button" class="h-full" :start-icon="menu[0].icon" />
           </Link>
         </template>

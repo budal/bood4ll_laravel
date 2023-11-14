@@ -221,7 +221,8 @@ class UnitsController extends Controller
                                         [
                                             'icon' => "mdi:plus",
                                             'title' => "Unit creation",
-                                            'route' => "apps.roles.create",
+                                            'route' => "apps.units.create",
+                                            'route_id' => $unit->id,
                                             'modal' => true,
                                         ],
                                     ],

@@ -95,7 +95,7 @@ Route::middleware('auth')->group(function () {
 
             Route::controller(UnitsController::class)->group(function () {
                 Route::get('/units', 'index')->name('units.index')->middleware(['password.confirm', 'verified'])->breadcrumb('Units');
-                Route::get('/units/create', 'create')->name('units.create')->middleware(['password.confirm'])->breadcrumb('Unit creation', 'apps.units.index');
+                Route::get('/units/create/{unit?}', 'create')->name('units.create')->middleware(['password.confirm'])->breadcrumb('Unit creation', 'apps.units.index');
                 Route::post('/units/create', 'store')->name('units.store')->middleware(['password.confirm']);
                 Route::get('/units/edit/{unit}', 'edit')->name('units.edit')->middleware(['password.confirm'])->breadcrumb('Unit edition', 'apps.units.index');
                 Route::patch('/units/edit/{unit}', 'update')->name('units.update')->middleware(['password.confirm']);
