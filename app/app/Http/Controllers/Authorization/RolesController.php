@@ -108,20 +108,22 @@ class RolesController extends Controller
                             'span' => 2,
                         ],
                         [
-                            'type' => "select",
-                            'name' => "abilities",
-                            'title' => "Abilities",
-                            'span' => 3,
-                            'content' => $abilities,
-                            'required' => true,
-                            'multiple' => true,
-                        ],
-                        [
                             'type' => "toggle",
                             'name' => "active",
                             'title' => "Active",
                             'color' => "success",
                             'colorFalse' => "danger",
+                        ],
+                        [
+                            'type' => "toggle",
+                            'name' => "temporary",
+                            'title' => "Temporary",
+                            'color' => "info",
+                        ],
+                        [
+                            'type' => "date",
+                            'name' => "expires",
+                            'title' => "Expires in",
                         ],
                         [
                             'type' => "toggle",
@@ -139,19 +141,16 @@ class RolesController extends Controller
                             'type' => "toggle",
                             'name' => "remove_on_change_unit",
                             'title' => "Remove on transfer",
-                            'color' => "success",
-                            'colorFalse' => "danger",
-                        ],
-                        [
-                            'type' => "toggle",
-                            'name' => "temporary",
-                            'title' => "Temporary",
                             'color' => "info",
                         ],
                         [
-                            'type' => "date",
-                            'name' => "expires",
-                            'title' => "Expires in",
+                            'type' => "select",
+                            'name' => "abilities",
+                            'title' => "Abilities",
+                            'span' => 3,
+                            'content' => $abilities,
+                            'required' => true,
+                            'multiple' => true,
                         ],
                     ],
                 ],
@@ -221,6 +220,12 @@ class RolesController extends Controller
             $role = Role::firstOrCreate([
                 'name' => $request->name,
                 'description' => $request->description,
+                'active' => $request->active,
+                'temporary' => $request->temporary,
+                'expires' => $request->expires,
+                'full_access' => $request->full_access,
+                'manage_nested' => $request->manage_nested,
+                'remove_on_change_unit' => $request->remove_on_change_unit,
             ]);
         } catch(\Exception $e) {
             DB::rollback();
@@ -242,7 +247,6 @@ class RolesController extends Controller
     public function edit(Request $request, Role $role): Response
     {
         $role['abilities'] = $role->abilities()->get()->map->only('id')->pluck('id');
-        // $role['abilities'] = $role->abilities()->get()->map->only('id', 'name');
 
         return Inertia::render('Default/Edit', [
             'form' => $this->__form($request, $role),
@@ -258,6 +262,12 @@ class RolesController extends Controller
 
     public function update(Request $request, Role $role): RedirectResponse
     {
+        if ($request->temporary && !$request->expires) {
+            return Redirect::back()->with('status', "Define the expiration date.");
+        } elseif (!$request->temporary) {
+            $request->expires = null;
+        }
+        
         DB::beginTransaction();
 
         try {
@@ -265,6 +275,12 @@ class RolesController extends Controller
                 ->update([
                     'name' => $request->name,
                     'description' => $request->description,
+                    'active' => $request->active,
+                    'temporary' => $request->temporary,
+                    'expires' => $request->expires,
+                    'full_access' => $request->full_access,
+                    'manage_nested' => $request->manage_nested,
+                    'remove_on_change_unit' => $request->remove_on_change_unit,
                 ]);
         } catch(\Exception $e) {
             DB::rollback();

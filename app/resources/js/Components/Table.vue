@@ -206,10 +206,6 @@
       onFinish: () => toast.success(trans(usePage().props.status as string, usePage().props.statusComplements as undefined)),
     });
   }
-
-  const menuRoute = typeof props.menu[0].route === 'string' || props.menu[0].route instanceof String ? props.menu[0].route : props.menu[0].route[0];
-  const menuRouteComplements = typeof props.menu[0].route === 'string' || props.menu[0].route instanceof String ? '' : props.menu[0].route[1];
-  const menuIcon = props.menu[0].icon;
 </script>
 
 <template>
@@ -334,8 +330,12 @@
           </DropdownMenuRoot>
         </template>
         <template v-else>
-          <Link as="span" :href="route(menuRoute, menuRouteComplements)" class="text-sm ml-2 h-full">
-            <Button color="primary" type="button" class="h-full" :start-icon="menuIcon" />
+          <Link as="span" :href="route(
+            typeof props.menu[0].route === 'string' || props.menu[0].route instanceof String ? props.menu[0].route : props.menu[0].route[0], 
+            typeof props.menu[0].route === 'string' || props.menu[0].route instanceof String ? '' : props.menu[0].route[1]
+            )" class="text-sm ml-2 h-full"
+          >
+            <Button color="primary" type="button" class="h-full" :start-icon="props.menu[0].icon" />
           </Link>
         </template>
       </div>

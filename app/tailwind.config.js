@@ -27,9 +27,11 @@ export default {
             variants: [
                 'dark', 
                 'hover', 
-                'focus', 
                 'dark:hover', 
+                'focus', 
                 'dark:focus', 
+                'autofill', 
+                'dark:autofill', 
                 'data-[state=on]', 
                 'data-[state=on]:hover', 
                 'data-[state=on]:dark', 

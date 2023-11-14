@@ -80,7 +80,7 @@
             :key="item.id" 
             :class= "multiple ? 
               'p-1 flex items-center text-secondary-light dark:text-secondary-dark rounded-md placeholder:text-xs sm:placeholder:text-sm text-xs sm:text-sm bg-secondary-light dark:bg-secondary-dark ring-0 border border-zero-light dark:border-zero-dark' : 
-              'text-zero-light dark:text-zero-dark rounded-md placeholder:text-xs sm:placeholder:text-sm bg-zero-light dark:bg-zero-dark'
+              'items-center text-zero-light dark:text-zero-dark rounded-md placeholder:text-xs sm:placeholder:text-sm bg-zero-light dark:bg-zero-dark'
             " 
           >
             {{ $t(item.name) }}

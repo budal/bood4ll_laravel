@@ -15,11 +15,11 @@ return new class extends Migration {
             $table->string('name', 100);
             $table->string('description', 255);
             $table->boolean('active')->default(true);
+            $table->boolean('temporary')->default(false);
+            $table->date('expires')->nullable();
             $table->boolean('full_access')->default(false);
             $table->boolean('manage_nested')->default(false);
             $table->boolean('remove_on_change_unit')->default(true);
-            $table->boolean('temporary')->default(false);
-            $table->date('expires')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
