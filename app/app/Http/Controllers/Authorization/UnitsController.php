@@ -140,17 +140,17 @@ class UnitsController extends Controller
                             [
                                 'type' => "date",
                                 'name' => "expires",
-                                'title' => "Expires",
+                                'title' => "Expires in",
                             ],
                             [
                                 'type' => "input",
                                 'name' => "cellphone",
-                                'title' => "Cell Phone",
+                                'title' => "Cell phone",
                             ],
                             [
                                 'type' => "input",
                                 'name' => "landline",
-                                'title' => "Land Line",
+                                'title' => "Land line",
                             ],
                             [
                                 'type' => "input",
@@ -176,7 +176,7 @@ class UnitsController extends Controller
                             [
                                 'type' => "input",
                                 'name' => "postcode",
-                                'title' => "Post Code",
+                                'title' => "Post code",
                             ],
                             [
                                 'type' => "input",
@@ -192,7 +192,7 @@ class UnitsController extends Controller
                             [
                                 'type' => "input",
                                 'name' => "geo",
-                                'title' => "Coordenadas",
+                                'title' => "Geographic coordinates",
                                 'span' => 4,
                             ],
                          ],

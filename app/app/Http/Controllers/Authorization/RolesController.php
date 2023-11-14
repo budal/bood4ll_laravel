@@ -126,13 +126,13 @@ class RolesController extends Controller
                         [
                             'type' => "toggle",
                             'name' => "full_access",
-                            'title' => "Full Access",
+                            'title' => "Full access",
                             'color' => "info",
                         ],
                         [
                             'type' => "toggle",
                             'name' => "manage_nested",
-                            'title' => "Manage nested",
+                            'title' => "Manage nested data",
                             'color' => "info",
                         ],
                         [
@@ -151,7 +151,7 @@ class RolesController extends Controller
                         [
                             'type' => "date",
                             'name' => "expires",
-                            'title' => "Expires",
+                            'title' => "Expires in",
                         ],
                     ],
                 ],
