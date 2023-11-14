@@ -19,7 +19,10 @@
   );
 
   const emit = defineEmits(['update:modelValue']);
-  const toggleState = ref(props.modelValue)
+
+  emit('update:modelValue', props.modelValue || false)
+
+  const toggleState = ref(props.modelValue || false)
 </script>
 
 <template>

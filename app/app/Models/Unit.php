@@ -14,6 +14,25 @@ class Unit extends Model
 
     private $return_count = 0;
 
+    protected $fillable = [
+        'name',
+        'nickname',
+        'founded',
+        'parent_id',
+        'active',
+        'expires',
+        'cellphone',
+        'landline',
+        'email',
+        'country',
+        'state',
+        'city',
+        'address',
+        'complement',
+        'postcode',
+        'geo',
+    ];
+
     public function users()
     {
         return $this->belongsToMany(User::class);

@@ -24,7 +24,6 @@ class UnitsController extends Controller
             ->when(!$request->search, function ($query) {
                 $query->where("parent_id", "0");
             })
-            // ->with('parentRecursive')
             ->withCount('children')
             ->sort($request->sorted ?? "name")
             ->paginate(20)
@@ -87,8 +86,6 @@ class UnitsController extends Controller
                 $item->path = $item->getParentsNames();
                 return $item;
             });
-
-            // dd($units);
 
         $items = Unit::filter($request->all('search', 'sorted', 'trashed'))
             ->sort($request->sorted ?? "name")
@@ -264,34 +261,18 @@ class UnitsController extends Controller
         ]);
     }
 
-    public function store($request): RedirectResponse
+    public function store(Request $request, Unit $unit): RedirectResponse
     {
-        dd($request);
-
         DB::beginTransaction();
 
         try {
-            $unit = Unit::firstOrCreate([
-                'name' => $request->name,
-                'description' => $request->description,
-            ]);
+            $unit = Unit::firstOrCreate($request->except(['users']));
         } catch(\Exception $e) {
+            dd($e);
             DB::rollback();
-            return Redirect::back()->with('status', "Error when inserting a new role.");
+            return Redirect::back()->with('status', "Error when inserting a new unit.");
         }
         
-        try {
-            foreach($request->abilities as $ability_id) {
-                $abilities_role = AbilityRole::create([
-                    'role_id' => $unit->id,
-                    'ability_id' => $ability_id,
-                ]);
-            }
-        } catch(\Exception $e) {
-            DB::rollback();
-            return Redirect::back()->with('status', "Error when linking abilities to the role.");
-        }
-
         DB::commit();
 
         return Redirect::route('apps.units.index')->with('status', 'Unit created.');
@@ -313,56 +294,16 @@ class UnitsController extends Controller
 
     public function update(Unit $unit, Request $request): RedirectResponse
     {
-        dd($request);
-        
         DB::beginTransaction();
 
         try {
             Unit::where('id', $unit->id)
-                ->update([
-                    'name' => $request->name,
-                    'description' => $request->description,
-                ]);
+                ->update($request->all());
         } catch(\Exception $e) {
             DB::rollback();
-            return Redirect::back()->with('status', "Error when editing the role.");
+            return Redirect::back()->with('status', "Error when editing the unit.");
         }
         
-        try {
-            $abilities_role_saved = AbilityRole::where('role_id', $unit->id)
-                ->get()
-                ->map
-                ->only('id', 'ability_id')
-                ->pluck('ability_id', 'id');
-
-            $abilities_role_to_delete = AbilityRole::where('role_id', $unit->id)
-                ->whereNotIn('ability_id', $request->abilities)
-                ->get()
-                ->map
-                ->only('id', 'ability_id')
-                ->pluck('ability_id', 'id')
-                ->toArray();
-
-            $abilities_role_mainteined = $abilities_role_saved->diff($abilities_role_to_delete);
-
-            $abilities_role_deleted = AbilityRole::where('role_id', $unit->id)
-                ->whereIn('ability_id', $abilities_role_to_delete)
-                ->delete();
-                
-            $abilities_role_to_insert = collect($request->abilities)->diff($abilities_role_mainteined);
-
-            foreach($abilities_role_to_insert as $ability_id) {
-                $ability_role = AbilityRole::create([
-                    'role_id' => $unit->id,
-                    'ability_id' => $ability_id,
-                ]);
-            }
-        } catch(\Exception $e) {
-            DB::rollback();
-            dd($e);
-            return Redirect::back()->with('status', "Error when linking abilities to the role.");
-        }
-
         DB::commit();
 
         return Redirect::route('apps.units.index')->with('status', 'Unit edited.');
