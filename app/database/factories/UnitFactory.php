@@ -18,7 +18,7 @@ class UnitFactory extends Factory
     {
         return [
             'name' => fake()->company(),
-            'shortname' => fake()->company(),
+            'nickname' => fake()->company(),
             'parent_id' => fake()->randomNumber(1, false),
             'founded' => fake()->date(),
             'expires' => fake()->dateTimeBetween('-1 year', '+3 month'),

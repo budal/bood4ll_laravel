@@ -67,14 +67,13 @@
                 <form @submit.prevent="sendForm(mkForm.id)" class="space-y-6">
                     <div class="flex flex-col">
                         <template v-for="group in mkForm.fields">
-                            <header>
-                                <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">{{ $t(mkForm.title) }}</h2>
-                                <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">{{ $t(mkForm.subtitle) }}</p>
+                            <header v-if="mkForm.title || mkForm.subtitle" class="mb-6">
+                                <h2 v-if="mkForm.title" class="text-lg font-medium text-gray-900 dark:text-gray-100">{{ $t(mkForm.title) }}</h2>
+                                <p v-if="mkForm.subtitle" class="mt-1 text-sm text-gray-600 dark:text-gray-400">{{ $t(mkForm.subtitle) }}</p>
                             </header>
-                            <div :class="`grid sm:grid-cols-${mkForm.cols} sm:gap-4 mt-2`">
+                            <div :class="`grid sm:grid-cols-${mkForm.cols} sm:gap-4`">
                                 <template v-for="field in group">
-                                    <div :class="`${field.span ? `sm:col-span-${field.span}` : ''} mt-4`">
-                                    {{ field.condition }}
+                                    <div :class="`${field.span ? `sm:col-span-${field.span}` : ''}`">
                                         <InputLabel as="span" :for="field.name" :value="$t(field.title) + (field.required ? ' *' : '')" />
                         
                                         <TextInput v-if="field.type == 'input' || field.type == 'date'"

@@ -33,7 +33,7 @@ class UserFactory extends Factory
             'country' => fake()->countryCode(),
             'geo' => fake()->latitude() . "," . fake()->longitude(),
             'postcode' => fake()->postcode(),
-            'gerenal_record' => fake()->bothify('#.###.###-#'),
+            'gerenal_record' => fake()->bothify('##.###.###-#'),
             'individual_registration' => fake()->bothify('###.###.###-##'),
             'driver_licence' => fake()->regexify('[0-9]{16}'),
             'voter_registration' => fake()->regexify('[0-9]{16}'),

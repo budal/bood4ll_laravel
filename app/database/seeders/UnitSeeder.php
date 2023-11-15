@@ -16,14 +16,14 @@ class UnitSeeder extends Seeder
         \App\Models\Unit::factory(6)
             ->sequence(fn (Sequence $sequence) => [
                 'name' => ($sequence->index + 1) . " CRPM",
-                'shortname' => ($sequence->index + 1) . " CRPM",
+                'nickname' => ($sequence->index + 1) . " CRPM",
                 'parent_id' => 0
             ])->create();
         
         \App\Models\Unit::factory(30)
             ->sequence(fn (Sequence $sequence) => [
                 'name' => ($sequence->index + 1) . " BPM",
-                'shortname' => ($sequence->index + 1) . " BPM",
+                'nickname' => ($sequence->index + 1) . " BPM",
                 'parent_id' => \App\Models\Unit::where('parent_id', 0)
                     ->inRandomOrder()
                     ->first()
@@ -31,14 +31,14 @@ class UnitSeeder extends Seeder
             ])->afterCreating(function (\App\Models\Unit $unit) {
                 \App\Models\Unit::factory(8)
                 ->state(new Sequence(
-                    ['name' => 'Comando', 'shortname' => 'Comando', 'parent_id' => $unit->id],
-                    ['name' => 'Subcomando', 'shortname' => 'Subcomando', 'parent_id' => $unit->id],
-                    ['name' => 'P/1', 'shortname' => 'P/1', 'parent_id' => $unit->id],
-                    ['name' => 'P/2', 'shortname' => 'P/2', 'parent_id' => $unit->id],
-                    ['name' => 'P/3', 'shortname' => 'P/3', 'parent_id' => $unit->id],
-                    ['name' => 'P/4', 'shortname' => 'P/4', 'parent_id' => $unit->id],
-                    ['name' => 'P/5', 'shortname' => 'P/5', 'parent_id' => $unit->id],
-                    ['name' => 'P/6', 'shortname' => 'P/6', 'parent_id' => $unit->id],
+                    ['name' => 'Comando', 'nickname' => 'Comando', 'parent_id' => $unit->id],
+                    ['name' => 'Subcomando', 'nickname' => 'Subcomando', 'parent_id' => $unit->id],
+                    ['name' => 'P/1', 'nickname' => 'P/1', 'parent_id' => $unit->id],
+                    ['name' => 'P/2', 'nickname' => 'P/2', 'parent_id' => $unit->id],
+                    ['name' => 'P/3', 'nickname' => 'P/3', 'parent_id' => $unit->id],
+                    ['name' => 'P/4', 'nickname' => 'P/4', 'parent_id' => $unit->id],
+                    ['name' => 'P/5', 'nickname' => 'P/5', 'parent_id' => $unit->id],
+                    ['name' => 'P/6', 'nickname' => 'P/6', 'parent_id' => $unit->id],
                 ))->create();
 
                 \App\Models\Unit::factory(rand(3, 6))
