@@ -201,7 +201,7 @@ class RolesController extends Controller
 
     public function create(Request $request, Role $role): Response
     {
-        return Inertia::render('Default/Create', [
+        return Inertia::render('Default/Form', [
             'form' => $this->__form($request, $role),
             'routes' => [
                 'role' => [
@@ -248,7 +248,7 @@ class RolesController extends Controller
     {
         $role['abilities'] = $role->abilities()->get()->map->only('id')->pluck('id');
 
-        return Inertia::render('Default/Edit', [
+        return Inertia::render('Default/Form', [
             'form' => $this->__form($request, $role),
             'routes' => [
                 'role' => [

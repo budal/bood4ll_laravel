@@ -281,7 +281,7 @@
       </template>
     </Modal>
 
-    <div class="flex sticky top-0 sm:top-[95px] justify-between rounded-xl backdrop-blur-sm pt-1 px-2 mb-2 bg-secondary-light/30 dark:bg-secondary-dark/30">
+    <div class="flex sticky top-0 sm:top-[95px] justify-between rounded-xl backdrop-blur-sm pt-1 mb-2 bg-secondary-light/30 dark:bg-secondary-dark/30">
       <div class="flex-none items-center">
         <Button v-if="routes.destroyRoute" color="danger" type="button" @click="openDeletionModal" start-icon="mdi:delete-outline" class="mr-2 h-full" :disabled="totalSelectedCheckBoxes === 0" />
       </div>
@@ -340,146 +340,144 @@
         </template>
       </div>
     </div>
-    <div>
-      <div class="rounded-xl overflow-hidden border-2 border-secondary-light dark:border-secondary-dark">
-        <div class="overflow-x-auto flex">
-          <table class="table-auto w-full text-sm shadow-lg">
-            <thead v-if="items.data.length > 0">
-              <tr class="bg-zero-light dark:bg-zero-dark p-3 text-secondary-light dark:text-secondary-dark text-left">
+    <div class="rounded-xl overflow-hidden border-2 border-secondary-light dark:border-secondary-dark">
+      <div class="overflow-x-auto flex">
+        <table class="table-auto w-full text-sm shadow-lg">
+          <thead v-if="items.data.length > 0">
+            <tr class="bg-zero-light dark:bg-zero-dark p-3 text-secondary-light dark:text-secondary-dark text-left">
+              <th class="p-2">
+                <Checkbox v-if="routes.destroyRoute" name="remember" :checked="selectedcheckBox" @click="toggleSelection" class="w-8 h-8 rounded-full" />
+              </th>
+              <template v-for="(content, id) in titles">
                 <th class="p-2">
-                  <Checkbox v-if="routes.destroyRoute" name="remember" :checked="selectedcheckBox" @click="toggleSelection" class="w-8 h-8 rounded-full" />
-                </th>
-                <template v-for="(content, id) in titles">
-                  <th class="p-2">
-                    <Link v-if="content.disableSort != true" :href="sortBy(content.field).url" class="group focus:outline-none flex gap-1 items-center">
-                      <span class="border-b-2 border-transparent group-hover:border-zero-light dark:group-hover:border-zero-dark group-focus:border-zero-light dark:group-focus:border-zero-dark transition ease-in-out duration-500">
-                        {{ $t(content.title) }}
-                      </span>
-                      <Icon icon="mdi:chevron-up-circle-outline" v-if="sortBy(content.field).sortMe == 'asc'" class="h-4 w-4" />
-                      <Icon icon="mdi:chevron-down-circle-outline" v-if="sortBy(content.field).sortMe == 'desc'" class="h-4 w-4" />
-                    </Link>
-                  </th>
-                </template>
-                <th v-if="routes.editRoute" class="p-2"></th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr 
-                v-for="item in items.data" 
-                :key="`tr-${item.id}`" 
-                class="bg-secondary-light dark:bg-secondary-dark hover:bg-secondary-light-hover hover:dark:bg-secondary-dark-hover border-t border-secondary-light dark:border-secondary-dark text-secondary-light dark:text-secondary-dark"
-              >
-                <td class="p-2">
-                  <Checkbox v-if="routes.destroyRoute && !item.deleted_at" 
-                    class="w-8 h-8 rounded-full" 
-                    :checked="selectedCheckBoxes.has(item)" 
-                    :value="item.id" 
-                    :id="`checkbox-${item.id}`" 
-                    @click="toggle(item)" 
-                  />
-                  <Button v-if="routes.restoreRoute && item.deleted_at" 
-                    type="button"
-                    color="warning" padding="2" 
-                    @click="restore(item.id)"
-                  >
-                    <Icon icon="mdi:restore" class="h-5 w-5" />
-                  </Button>
-                </td>
-                <template v-for="content in titles">
-                  <td class="p-1">
-                    <p v-if="content.type == 'simple'" class="truncate text-xs leading-5 text-secondary-light dark:text-secondary-dark">
-                      {{ item[content.field] ?? '-' }}
-                    </p>
-                    
-                    <template v-if="content.type == 'composite'">
-                      <strong class="text-sm font-medium text-secondary-light dark:text-secondary-dark">{{ item[content.fields[0]] ?? '-' }}</strong>
-                      <p class="truncate text-xs leading-5 text-secondary-light dark:text-secondary-dark">{{ item[content.fields[1]] ?? '-' }}</p>
-                    </template>
-                    
-                    <Avatar 
-                      v-if="content.type == 'avatar'" 
-                      class="w-12 h-12 rounded-full" 
-                      :fallback="item[content.fallback]" 
-                    />
-                    
-                    <Switch 
-                      v-if="content.type == 'switch'" 
-                      :name="item.name" 
-                      :value="item.id" 
-                      :checked="item.checked" 
-                      @click="updateSwitch(content.route, content.method, item.id)"
-                    />
-                  </td>
-                </template>
-                <td v-if="routes.editRoute" class="p-2 text-right">
-                  <Link as="span" :href="route(routes.editRoute, item.id)">
-                    <Button color="primary" type="button">
-                      <Icon icon="mdi:chevron-right" class="h-5 w-5" />
-                    </Button>
+                  <Link v-if="content.disableSort != true" :href="sortBy(content.field).url" class="group focus:outline-none flex gap-1 items-center">
+                    <span class="border-b-2 border-transparent group-hover:border-zero-light dark:group-hover:border-zero-dark group-focus:border-zero-light dark:group-focus:border-zero-dark transition ease-in-out duration-500">
+                      {{ $t(content.title) }}
+                    </span>
+                    <Icon icon="mdi:chevron-up-circle-outline" v-if="sortBy(content.field).sortMe == 'asc'" class="h-4 w-4" />
+                    <Icon icon="mdi:chevron-down-circle-outline" v-if="sortBy(content.field).sortMe == 'desc'" class="h-4 w-4" />
                   </Link>
+                </th>
+              </template>
+              <th v-if="routes.editRoute" class="p-2"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr 
+              v-for="item in items.data" 
+              :key="`tr-${item.id}`" 
+              class="bg-secondary-light dark:bg-secondary-dark hover:bg-secondary-light-hover hover:dark:bg-secondary-dark-hover border-t border-secondary-light dark:border-secondary-dark text-secondary-light dark:text-secondary-dark"
+            >
+              <td class="p-2">
+                <Checkbox v-if="routes.destroyRoute && !item.deleted_at" 
+                  class="w-8 h-8 rounded-full" 
+                  :checked="selectedCheckBoxes.has(item)" 
+                  :value="item.id" 
+                  :id="`checkbox-${item.id}`" 
+                  @click="toggle(item)" 
+                />
+                <Button v-if="routes.restoreRoute && item.deleted_at" 
+                  type="button"
+                  color="warning" padding="2" 
+                  @click="restore(item.id)"
+                >
+                  <Icon icon="mdi:restore" class="h-5 w-5" />
+                </Button>
+              </td>
+              <template v-for="content in titles">
+                <td class="p-1">
+                  <p v-if="content.type == 'simple'" class="truncate text-xs leading-5 text-secondary-light dark:text-secondary-dark">
+                    {{ item[content.field] ?? '-' }}
+                  </p>
+                  
+                  <template v-if="content.type == 'composite'">
+                    <strong class="text-sm font-medium text-secondary-light dark:text-secondary-dark">{{ item[content.fields[0]] ?? '-' }}</strong>
+                    <p class="truncate text-xs leading-5 text-secondary-light dark:text-secondary-dark">{{ item[content.fields[1]] ?? '-' }}</p>
+                  </template>
+                  
+                  <Avatar 
+                    v-if="content.type == 'avatar'" 
+                    class="w-12 h-12 rounded-full" 
+                    :fallback="item[content.fallback]" 
+                  />
+                  
+                  <Switch 
+                    v-if="content.type == 'switch'" 
+                    :name="item.name" 
+                    :value="item.id" 
+                    :checked="item.checked" 
+                    @click="updateSwitch(content.route, content.method, item.id)"
+                  />
                 </td>
-              </tr> 
-              <tr v-if="items.data.length == 0">
-                <td class="p-4 text-center">
-                  <p class="text-md leading-5 text-secondary-light dark:text-secondary-dark">{{ $t('No items to show.') }}</p>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+              </template>
+              <td v-if="routes.editRoute" class="p-2 text-right">
+                <Link as="span" :href="route(routes.editRoute, item.id)">
+                  <Button color="primary" type="button">
+                    <Icon icon="mdi:chevron-right" class="h-5 w-5" />
+                  </Button>
+                </Link>
+              </td>
+            </tr> 
+            <tr v-if="items.data.length == 0">
+              <td class="p-4 text-center">
+                <p class="text-md leading-5 text-secondary-light dark:text-secondary-dark">{{ $t('No items to show.') }}</p>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div v-if="items.total > 0" class="flex sticky bottom-0 justify-between rounded-xl backdrop-blur-sm mt-5 bg-secondary-light/30 dark:bg-secondary-dark/30">
+      <div class="w-full flex flex-row sm:hidden">
+        <div class="basis-1/3 text-left">
+          <Link as="span" v-if="items.prev_page_url" :href="items.prev_page_url" class="text-sm">
+            <Button color="primary" type="button">{{ $t('Previous')}}</Button>
+          </Link>
+        </div>
+        <div v-if="items.from !== null" class="basis-1/3 text-center">
+          <span 
+            aria-current="page" class="relative inline-flex rounded-md bg-primary-light dark:bg-primary-dark px-4 py-1 text-sm font-semibold text-primary-light dark:text-primary-dark">
+            {{ `${items.current_page}/${items.last_page}` }}
+          </span>
+        </div>
+        <div class="basis-1/3 text-right">
+          <Link as="span" v-if="items.next_page_url" :href="items.next_page_url" class="text-sm">
+            <Button color="primary" type="button">{{ $t('Next')}}</Button>
+          </Link>
         </div>
       </div>
-      <div v-if="items.total > 0" class="flex sticky bottom-0 justify-between rounded-xl backdrop-blur-sm p-2 my-2 bg-secondary-light/30 dark:bg-secondary-dark/30">
-        <div class="w-full flex flex-row sm:hidden">
-          <div class="basis-1/3 text-left">
-            <Link as="span" v-if="items.prev_page_url" :href="items.prev_page_url" class="text-sm">
-              <Button color="primary" type="button">{{ $t('Previous')}}</Button>
-            </Link>
-          </div>
-          <div v-if="items.from !== null" class="basis-1/3 text-center">
-            <span 
-              aria-current="page" class="relative inline-flex rounded-md bg-primary-light dark:bg-primary-dark px-4 py-1 text-sm font-semibold text-primary-light dark:text-primary-dark">
-              {{ `${items.current_page}/${items.last_page}` }}
-            </span>
-          </div>
-          <div class="basis-1/3 text-right">
-            <Link as="span" v-if="items.next_page_url" :href="items.next_page_url" class="text-sm">
-              <Button color="primary" type="button">{{ $t('Next')}}</Button>
-            </Link>
-          </div>
+      <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+        <div>
+          <p v-if="items.from !== null" class="hidden lg:block text-xs text-secondary-light dark:text-secondary-dark">
+            {{ $t('Showing :from to :to of :total results', { from: items.from, to: items.to, total: items.total }) }}
+          </p>
         </div>
-        <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
-          <div>
-            <p v-if="items.from !== null" class="hidden lg:block text-xs text-secondary-light dark:text-secondary-dark">
-              {{ $t('Showing :from to :to of :total results', { from: items.from, to: items.to, total: items.total }) }}
-            </p>
-          </div>
-          <div>
-            <nav class="inline-flex shadow-sm gap-[2px]" aria-label="Pagination">
-              <Link as="span" v-if="items.prev_page_url" :href="items.prev_page_url" class="text-sm">
-                <Button color="primary" type="button">
-                  <span class="sr-only">{{ $t('Previous')}}</span>
-                  <Icon icon="mdi:chevron-left" class="h-4 w-4" />
-                </Button>
-              </Link>
+        <div>
+          <nav class="inline-flex shadow-sm gap-[2px]" aria-label="Pagination">
+            <Link as="span" v-if="items.prev_page_url" :href="items.prev_page_url" class="text-sm">
+              <Button color="primary" type="button">
+                <span class="sr-only">{{ $t('Previous')}}</span>
+                <Icon icon="mdi:chevron-left" class="h-4 w-4" />
+              </Button>
+            </Link>
 
-              <template v-if="items.from !== null" v-for="item in items.links">
-                <Link
-                  as="span"
-                  v-if="item.label > 0 && item.label != items.current_page || item.label == items.current_page"
-                  :key="item.key" :href="item.url" class="text-sm"
-                >
-                  <Button color="primary" type="button" :disabled="item.label == items.current_page">{{ item.label }}</Button>
-                </Link>
-              </template>
-
-              <Link as="span" v-if="items.next_page_url" :href="items.next_page_url" class="text-sm">
-                <Button color="primary" type="button">
-                  <span class="sr-only">{{ $t('Next')}}</span>
-                  <Icon icon="mdi:chevron-right" class="h-4 w-4" />
-                </Button>
+            <template v-if="items.from !== null" v-for="item in items.links">
+              <Link
+                as="span"
+                v-if="item.label > 0 && item.label != items.current_page || item.label == items.current_page"
+                :key="item.key" :href="item.url" class="text-sm"
+              >
+                <Button color="primary" type="button" :disabled="item.label == items.current_page">{{ item.label }}</Button>
               </Link>
-            </nav>
-          </div>
+            </template>
+
+            <Link as="span" v-if="items.next_page_url" :href="items.next_page_url" class="text-sm">
+              <Button color="primary" type="button">
+                <span class="sr-only">{{ $t('Next')}}</span>
+                <Icon icon="mdi:chevron-right" class="h-4 w-4" />
+              </Button>
+            </Link>
+          </nav>
         </div>
       </div>
     </div>

@@ -61,89 +61,91 @@
 </script>
 
 <template>
-    <template v-for="mkForm in form">
-        <section v-if="mkForm.condition !== false" class="mb-10 p-2 bg-zero-light/30 dark:bg-zero-dark/30 rounded-xl border-2 border-zero-light/10 dark:border-zero-dark/10">
-            <form @submit.prevent="sendForm(mkForm.id)" class="space-y-6">
-                <div class="flex flex-col">
-                    <template v-for="group in mkForm.fields">
-                        <header>
-                            <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">{{ $t(mkForm.title) }}</h2>
-                            <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">{{ $t(mkForm.subtitle) }}</p>
-                        </header>
-                        <div :class="`grid sm:grid-cols-${mkForm.cols} sm:gap-4 mt-2`">
-                            <template v-for="field in group">
-                                <div :class="`${field.span ? `sm:col-span-${field.span}` : ''} mt-4`">
-                                {{ field.condition }}
-                                    <InputLabel as="span" :for="field.name" :value="$t(field.title) + (field.required ? ' *' : '')" />
-                    
-                                    <TextInput v-if="field.type == 'input' || field.type == 'date'"
-                                        :id="field.name"
-                                        :name="field.name"
-                                        :type="field.type"
-                                        class="mt-1 block w-full"
-                                        v-model="jsForm[field.name]"
-                                        :required="field.required"
-                                        :autocomplete="field.name"
-                                    />
-            
-                                    <Toggle v-if="field.type == 'toggle'"
-                                        :id="field.name"
-                                        :name="field.name"
-                                        :type="field.type"
-                                        :color="field.color"
-                                        :colorFalse="field.colorFalse"
-                                        class="mt-1 block w-full"
-                                        v-model="jsForm[field.name]"
-                                        :required="field.required"
-                                        :autocomplete="field.name"
-                                    />
-            
-                                    <Select v-if="field.type == 'select'" 
-                                        :id="field.name"
-                                        :name="field.name"
-                                        :content="field.content"
-                                        class="mt-1 block w-full"
-                                        v-model="jsForm[field.name]"
-                                        :required="field.required"
-                                        :multiple="field.multiple"
-                                    />
-            
-                                    <Table v-if="field.type == 'table'"
-                                        :id="field.name"
-                                        :name="field.name"
-                                        :menu="field.content.menu" 
-                                        :softDelete="field.content.softDelete" 
-                                        :routes="field.content.routes" 
-                                        :filters="field.content.filters" 
-                                        :items="field.content.items" 
-                                        :titles="field.content.titles" 
-                                    />
-                    
-                                    <InputError class="mt-2" :message="jsForm.errors[field.name]" />
-                                </div>
-                            </template>
-                        </div>
-                    </template>
-    
-                </div>
+    <div class="grid grid-cols-1 gap-10">
+        <template v-for="mkForm in form">
+            <section v-if="mkForm.condition !== false" class="p-2 bg-zero-light/30 dark:bg-zero-dark/30 rounded-xl border-2 border-zero-light/10 dark:border-zero-dark/10">
+                <form @submit.prevent="sendForm(mkForm.id)" class="space-y-6">
+                    <div class="flex flex-col">
+                        <template v-for="group in mkForm.fields">
+                            <header>
+                                <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">{{ $t(mkForm.title) }}</h2>
+                                <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">{{ $t(mkForm.subtitle) }}</p>
+                            </header>
+                            <div :class="`grid sm:grid-cols-${mkForm.cols} sm:gap-4 mt-2`">
+                                <template v-for="field in group">
+                                    <div :class="`${field.span ? `sm:col-span-${field.span}` : ''} mt-4`">
+                                    {{ field.condition }}
+                                        <InputLabel as="span" :for="field.name" :value="$t(field.title) + (field.required ? ' *' : '')" />
+                        
+                                        <TextInput v-if="field.type == 'input' || field.type == 'date'"
+                                            :id="field.name"
+                                            :name="field.name"
+                                            :type="field.type"
+                                            class="mt-1 block w-full"
+                                            v-model="jsForm[field.name]"
+                                            :required="field.required"
+                                            :autocomplete="field.name"
+                                        />
+                
+                                        <Toggle v-if="field.type == 'toggle'"
+                                            :id="field.name"
+                                            :name="field.name"
+                                            :type="field.type"
+                                            :color="field.color"
+                                            :colorFalse="field.colorFalse"
+                                            class="mt-1 block w-full"
+                                            v-model="jsForm[field.name]"
+                                            :required="field.required"
+                                            :autocomplete="field.name"
+                                        />
+                
+                                        <Select v-if="field.type == 'select'" 
+                                            :id="field.name"
+                                            :name="field.name"
+                                            :content="field.content"
+                                            class="mt-1 block w-full"
+                                            v-model="jsForm[field.name]"
+                                            :required="field.required"
+                                            :multiple="field.multiple"
+                                        />
+                
+                                        <Table v-if="field.type == 'table'"
+                                            :id="field.name"
+                                            :name="field.name"
+                                            :menu="field.content.menu" 
+                                            :softDelete="field.content.softDelete" 
+                                            :routes="field.content.routes" 
+                                            :filters="field.content.filters" 
+                                            :items="field.content.items" 
+                                            :titles="field.content.titles" 
+                                        />
+                        
+                                        <InputError class="mt-2" :message="jsForm.errors[field.name]" />
+                                    </div>
+                                </template>
+                            </div>
+                        </template>
         
-                <div v-if="mkForm.id" class="flex items-center gap-4">
-                    <Button 
-                        color="primary" 
-                        :class="{ 'opacity-25': jsForm.processing }"
-                        :disabled="jsForm.processing">{{ $t('Save') }}
-                    </Button>
-    
-                    <Transition
-                        enter-active-class="transition ease-in-out"
-                        enter-from-class="opacity-0"
-                        leave-active-class="transition ease-in-out"
-                        leave-to-class="opacity-0"
-                    >
-                        <p v-if="jsForm.recentlySuccessful" class="text-sm text-gray-600 dark:text-gray-400">{{ $t('Saved.') }}</p>
-                    </Transition>
-                </div>
-            </form>
-        </section>
-    </template>
+                    </div>
+            
+                    <div v-if="mkForm.id" class="flex items-center gap-4">
+                        <Button 
+                            color="primary" 
+                            :class="{ 'opacity-25': jsForm.processing }"
+                            :disabled="jsForm.processing">{{ $t('Save') }}
+                        </Button>
+        
+                        <Transition
+                            enter-active-class="transition ease-in-out"
+                            enter-from-class="opacity-0"
+                            leave-active-class="transition ease-in-out"
+                            leave-to-class="opacity-0"
+                        >
+                            <p v-if="jsForm.recentlySuccessful" class="text-sm text-gray-600 dark:text-gray-400">{{ $t('Saved.') }}</p>
+                        </Transition>
+                    </div>
+                </form>
+            </section>
+        </template>
+    </div>
 </template>

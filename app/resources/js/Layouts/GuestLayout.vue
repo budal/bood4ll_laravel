@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import ApplicationLogo from '@/Components/ApplicationLogo.vue';
-import { Link } from '@inertiajs/vue3';
-import { useDark } from "@vueuse/core"
+    import ApplicationLogo from '@/Components/ApplicationLogo.vue';
+    import { Link } from '@inertiajs/vue3';
+    import { useDark } from "@vueuse/core"
 
-const isDark = useDark();
+    const isDark = useDark();
 </script>
 
 <template>

@@ -145,7 +145,7 @@ class UsersController extends Controller
 
     public function create()
     {
-        return Inertia::render('Default/Create', [
+        return Inertia::render('Default/Form', [
             'form' => $this->__form(),
             'routes' => [
                 'profile' => [
@@ -172,7 +172,7 @@ class UsersController extends Controller
     
     public function edit(User $user): Response
     {
-        return Inertia::render('Default/Edit', [
+        return Inertia::render('Default/Form', [
             'form' => $this->__form(),
             'routes' => [
                 'profile' => [

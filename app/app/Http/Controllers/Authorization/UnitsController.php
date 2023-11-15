@@ -253,7 +253,7 @@ class UnitsController extends Controller
 
     public function create(Request $request, Unit $unit)
     {
-        return Inertia::render('Default/Create', [
+        return Inertia::render('Default/Form', [
             'form' => $this->__form($request, $unit),
             'routes' => [
                 'role' => [
@@ -283,7 +283,7 @@ class UnitsController extends Controller
     
     public function edit(Request $request, Unit $unit): Response
     {
-        return Inertia::render('Default/Edit', [
+        return Inertia::render('Default/Form', [
             'form' => $this->__form($request, $unit),
             'routes' => [
                 'role' => [
