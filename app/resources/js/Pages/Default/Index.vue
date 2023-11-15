@@ -4,7 +4,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Table from '@/Components/Table.vue';
 
 defineProps<{
-    modal?: boolean;
+    isModal?: boolean;
     title: string;
     subtitle: string;
     softDelete: boolean;
@@ -19,7 +19,7 @@ defineProps<{
 
 <template>
     <section>
-        <ModalLayout v-if="modal">
+        <ModalLayout v-if="isModal">
             <header>
                 <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">{{ $t(title) }}</h2>
 

@@ -5,19 +5,19 @@
 
     withDefaults(
         defineProps<{
-            modal?: boolean;
+            isModal?: boolean;
             form: any;
             routes: any;
             data?: any;
         }>(),
         {
-            modal: false,
+            isModal: false,
         }
     );
 </script>
 
 <template>
-    <ModalLayout v-if="modal">
+    <ModalLayout v-if="isModal">
         <Form :form="form" :routes="routes" :data="data" />
     </ModalLayout>
     <AuthenticatedLayout v-else>

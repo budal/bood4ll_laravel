@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Inertia\Response;
+use Emargareten\InertiaModal\Modal;
 
 use App\Models\Role;
 use App\Models\Ability;
@@ -176,8 +177,10 @@ class RolesController extends Controller
                                     [
                                         'icon' => "mdi:plus",
                                         'title' => "Role creation",
-                                        'route' => "apps.roles.edit.create",
-                                        'route_id' => $role->id,
+                                        'route' => [
+                                            "apps.roles.edit.create",
+                                            ['id' => $role->id]
+                                        ],
                                         'modal' => true,
                                     ],
                                 ],
@@ -300,13 +303,77 @@ class RolesController extends Controller
         return Redirect::back()->with('status', 'Role edited.')->withInput();
     }
 
-    public function adduser(Request $request): RedirectResponse
-    {
-        \inertia()->modal('File/Show');
 
-        return $this->index($request);
+
+
+    public function __form2(Request $request, Role $role): Array
+    {
+        $abilities = Ability::sort("name")->get()->map->only(['id', 'name']);
+
+        $items = $role->users()
+            ->filter($request->all('search', 'sorted', 'trashed'))
+            ->paginate(20)
+            ->onEachSide(2)
+            ->appends($request->all('search', 'sorted', 'trashed'))
+            ->through(function($item){
+                $item->id = $item->pivot->role_id;
+                return $item;
+            });
+
+        return [
+            [
+                'id' => "role",
+                'title' => "Roles management",
+                'subtitle' => "Role name, abilities and settings",
+                'cols' => 3,
+                'fields' => [
+                    [
+                        [
+                            'type' => "input",
+                            'name' => "name",
+                            'title' => "Name",
+                            'required' => true,
+                        ],
+                        [
+                            'type' => "input",
+                            'name' => "description",
+                            'title' => "Description",
+                            'span' => 2,
+                        ],
+                    ],
+                ],
+            ],
+        ];
     }
 
+
+
+
+
+    public function adduser(Request $request, Role $role): Modal
+    {
+        $role['abilities'] = $role->abilities()->get()->map->only('id')->pluck('id');
+
+        return Inertia::modal('Default/Form', [
+            'form' => $this->__form2($request, $role),
+            'isModal' => true,
+            'routes' => [
+                'role' => [
+                    'route' => route('apps.roles.edit', $role->id),
+                    'method' => 'patch'
+                ],
+            ],
+            'data' => $role
+        ])
+            ->baseRoute('apps.roles.edit', $role)
+        ;
+    }
+
+
+
+
+
+    
     public function destroy(Request $request): RedirectResponse
     {
         $items = $request->all();

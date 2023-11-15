@@ -1,19 +1,19 @@
 <script setup lang="ts">
+    import Modal from '@/Components/Modal.vue'
     import { useDark } from "@vueuse/core"
+    import { useModal } from "/vendor/emargareten/inertia-modal"
 
     const isDark = useDark();
+    const { show, close, redirect } = useModal()
 </script>
 
 <template>
-    <div>
-        <div class="relative min-h-screen bg-zero-light dark:bg-zero-dark">
-            <div class="p-2">
-                <div class="max-w-7xl mx-auto">
-                    <div class="p-2 bg-secondary-light dark:bg-secondary-dark shadow sm:rounded-lg">
-                        <slot />
-                    </div>
-                </div>
-            </div>
+    <Modal 
+        :open="show" 
+        @close="redirect"
+    >
+        <div class="max-w-7xl mx-auto">
+            <slot />
         </div>
-    </div>
+    </Modal>
 </template>

@@ -7,6 +7,7 @@ import Avatar from '@/Components/Avatar.vue';
 import TailwindIndicator from '@/Components/TailwindIndicator.vue';
 import ToggleTheme from '@/Components/ToggleTheme.vue';
 import NavMenu from '@/Components/NavMenu.vue';
+import { Modal } from '/vendor/emargareten/inertia-modal'
 
 const apps = [
     {
@@ -147,6 +148,7 @@ const menuUser = [
                 </div>
             </div>
         </div>
+        <Modal />
     </div>
     <TailwindIndicator />
 </template>

@@ -8,14 +8,20 @@ import { ZiggyVue } from '../../vendor/tightenco/ziggy/dist/vue.m';
 import { i18nVue } from 'laravel-vue-i18n'
 import Vue3Toasity, { type ToastContainerOptions } from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
+import { modal } from '/vendor/emargareten/inertia-modal'
+
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,
+    progress: { color: '#4B5563', },
     resolve: (name) => resolvePageComponent(`./Pages/${name}.vue`, import.meta.glob<DefineComponent>('./Pages/**/*.vue')),
     setup({ el, App, props, plugin }) {
         createApp({ render: () => h(App, props) })
+            .use(modal, {
+                resolve: (name: string) => resolvePageComponent(`./Pages/${name}.vue`, import.meta.glob('./Pages/**/*.vue')),
+            })
             .use(plugin)
             .use(Vue3Toasity, {
                 autoClose: 3000,
@@ -35,8 +41,5 @@ createInertiaApp({
             })
             .use(ZiggyVue, Ziggy)
             .mount(el);
-    },
-    progress: {
-        color: '#4B5563',
     },
 });
