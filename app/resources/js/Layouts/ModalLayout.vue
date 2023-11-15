@@ -19,7 +19,7 @@
     <Modal 
         :open="show" 
         :title="$t(title)" 
-        @close="redirect"
+        @close="redirect({ preserveScroll: true })"
     >
         <div class="max-w-7xl mx-auto">
             <slot />
