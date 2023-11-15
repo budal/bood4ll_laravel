@@ -260,6 +260,7 @@
   "The ability ':ability' is activated.": "A abilitação ':ability' está ativada.",
   "The ability ':ability' is deactivated.": "A abilitação ':ability' está desativada.",
   "Error on activate/inactivate the ability.": "Erro ao ativar/desativar a abilitação.",
+  "Define the users who have access to this authorization": "Defina os usuários que terão acesso a essa autorização",
 
   "Units": "Unidades",
   "Unit": "Unidade",

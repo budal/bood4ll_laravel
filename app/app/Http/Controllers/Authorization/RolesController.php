@@ -357,6 +357,7 @@ class RolesController extends Controller
         return Inertia::modal('Default/Form', [
             'form' => $this->__form2($request, $role),
             'isModal' => true,
+            'title' => "Define the users who have access to this authorization",
             'routes' => [
                 'role' => [
                     'route' => route('apps.roles.edit', $role->id),
@@ -366,6 +367,7 @@ class RolesController extends Controller
             'data' => $role
         ])
             ->baseRoute('apps.roles.edit', $role)
+            // ->refreshBackdrop();
         ;
     }
 

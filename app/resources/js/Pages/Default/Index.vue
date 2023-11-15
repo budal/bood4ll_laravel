@@ -19,7 +19,7 @@ defineProps<{
 
 <template>
     <section>
-        <ModalLayout v-if="isModal">
+        <ModalLayout v-if="isModal" :title="title">
             <header>
                 <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">{{ $t(title) }}</h2>
 
