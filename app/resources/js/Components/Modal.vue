@@ -50,7 +50,7 @@
         <DialogPortal>
             <DialogOverlay class="backdrop-blur-sm bg-black/20 data-[state=open]:animate-overlayShow data-[state=close]:animate-overlayHide fixed inset-0 z-30" />
             <DialogContent
-                class="data-[state=open]:animate-contentShow overflow-auto data-[state=close]:animate-contentHide fixed top-[50%] left-[50%] max-h-[85vh] w-full max-w-md translate-x-[-50%] translate-y-[-50%] rounded-md bg-secondary-light dark:bg-secondary-dark p-[20px] shadow-[0px_10px_38px_-10px_rgba(22,_23,_24,_0.35),_0px_10px_20px_-15px_rgba(22,_23,_24,_0.2)] shadow-black dark:shadow-white focus:outline-none z-[100]"
+                class="data-[state=open]:animate-contentShow data-[state=close]:animate-contentHide fixed top-[50%] left-[50%] max-h-[85vh] w-full max-w-md translate-x-[-50%] translate-y-[-50%] rounded-md bg-secondary-light dark:bg-secondary-dark p-[20px] shadow-[0px_10px_38px_-10px_rgba(22,_23,_24,_0.35),_0px_10px_20px_-15px_rgba(22,_23,_24,_0.2)] shadow-black dark:shadow-white focus:outline-none z-[100]"
                 :class="maxWidthClass"
                 @escapeKeyDown="close"
                 @pointerDownOutside="close"
