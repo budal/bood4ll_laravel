@@ -19,7 +19,7 @@ return new class extends Migration
             $table->unsignedBigInteger('parent_id')->nullable();
             $table->boolean('active')->default(true);
             $table->date('expires')->nullable();
-            $table->string('cellphone')->unique()->nullable();
+            $table->string('cellphone')->nullable();
             $table->string('landline')->nullable();
             $table->string('email')->nullable();
             $table->string('country')->nullable();

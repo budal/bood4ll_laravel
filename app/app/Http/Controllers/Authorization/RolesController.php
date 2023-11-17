@@ -177,9 +177,9 @@ class RolesController extends Controller
                                 'menu' => [
                                     [
                                         'icon' => "mdi:plus",
-                                        'title' => "Role creation",
+                                        'title' => "Add user",
                                         'route' => [
-                                            "apps.roles.edit.create",
+                                            "apps.roles.edit.adduser",
                                             ['id' => $role->id]
                                         ],
                                         'modal' => true,
@@ -250,7 +250,9 @@ class RolesController extends Controller
     
     public function edit(Request $request, Role $role): Response
     {
-        $role['abilities'] = $role->abilities()->get()->map->only('id')->pluck('id');
+        $role['abilities'] = $role->abilities()->select('ability_id as id', 'name')->get();
+        // $role['abilities'] = $role->abilities()->get()->map->only('id')->pluck('id');
+
 
         return Inertia::render('Default/Form', [
             'form' => $this->__form($request, $role),

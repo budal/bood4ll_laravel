@@ -122,6 +122,7 @@ class UnitsController extends Controller
                                 'span' => 2,
                                 'content' => $units,
                                 'required' => true,
+                                // 'multiple' => true,
                             ],
                             [
                                 'type' => "toggle",
