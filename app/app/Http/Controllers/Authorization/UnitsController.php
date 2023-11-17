@@ -104,6 +104,14 @@ class UnitsController extends Controller
                                 'required' => true,
                             ],
                             [
+                                'type' => "select",
+                                'name' => "parent_id",
+                                'title' => "Unidade pai",
+                                'span' => 2,
+                                'content' => $units,
+                                'required' => true,
+                            ],
+                            [
                                 'type' => "input",
                                 'name' => "nickname",
                                 'title' => "Nickname",
@@ -114,15 +122,6 @@ class UnitsController extends Controller
                                 'name' => "founded",
                                 'title' => "Founded",
                                 'required' => true,
-                            ],
-                            [
-                                'type' => "select",
-                                'name' => "parent_id",
-                                'title' => "Unidade pai",
-                                'span' => 2,
-                                'content' => $units,
-                                'required' => true,
-                                // 'multiple' => true,
                             ],
                             [
                                 'type' => "toggle",

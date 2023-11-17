@@ -37,90 +37,13 @@
 
   const flatContent = getFlatList(props.content)
   
-        console.log(selectedItems.value)
-
-
-//   const operation = (list1, list2, isUnion = false) =>
-//     list1.filter(
-//       (set => a => isUnion === set.has(a.id))(new Set(list2.map(b => b.id)))
-//     );
-
-//   const inBoth = (list1, list2) => operation(list1, list2, true),
-//     inFirstOnly = operation,
-//     inSecondOnly = (list1, list2) => inFirstOnly(list2, list1);
-
-  
-// console.log('inBoth:', inBoth(props.content, props.modelValue)); 
-// console.log('inFirstOnly:', inFirstOnly(props.content, props.modelValue)); 
-// console.log('inSecondOnly:', inSecondOnly(props.content, props.modelValue));
-
-
-
-  const selectedItemsManage = computed(() => {
-    if (typeof props.modelValue === 'object' || props.modelValue instanceof Object) {
-      flatContent.filter((e) => {
-        // selectedItems.value.includes(e.id)
-        // console.log(selectedItems.value)
-      })
-      // return 1
+  const showContent = computed(() => {
+    if (props.multiple === true) {
+      return flatContent.filter((x: any) => selectedItems.value.includes(x.id))
     } else {
-      return 2
+      return flatContent.filter((x: any) => x.id == selectedItems.value)
     }
   })
-    
-  // console.log(selectedItemsManage.value)
-  
-    // const showContent = computed(() => props.content.filter(
-  //   (e: any) => props.multiple ? selectedItems.value.includes(e.id) : selectedItems.value == e.id
-  // ))
-  
-  
-  
-  
-  
-  // props.modelValue.map((e) => console.log(e.id))
-
-  // const gg = reactive([
-  //   {id: 1, name: 'a'},
-  //   {id: 2, name: 'b'},
-  //   {id: 3, name: 'c'},
-  //   {id: 4, name: 'd'},
-  // ])
-  
-  // gg.forEach(
-  //   (a) => console.log(a)
-  // )
-
-
-  // selectedItems2.reduce()
-
-
-
-  // console.log(getListId(selectedItems.value))
-
-
-
-  // const result = selectedItems.value.reduce((r, {groups}) => {
-  //   groups.forEach(e => e.selected && r.push(e.id));
-  //   return r;
-  // }, [])
-    
-
-
-  
-  // console.log(getList(selectedItems, 'id'))
-  // console.log(selectedItems)
-  
-  const showContent = ref([])
-
-  // const showContent = computed(() => props.content.filter(
-  //   (e: any) => props.multiple ? selectedItems.value.includes(e.id) : selectedItems.value == e.id
-  // ))
-
-
-  // const showContent = computed(() => getList(props.content).filter(
-  //   (e: any) => props.multiple ? selectedItems.value.includes(e.id) : selectedItems.value == e.id
-  // ))
 
   function filterArray(arrayList: any, search: string) {
     return arrayList.filter((item: any) => {
@@ -169,8 +92,8 @@
     <ComboboxAnchor class="relative w-full min-h-[41px] flex bg-zero-light dark:bg-zero-dark border border-zero-light dark:border-zero-dark rounded-md focus-within:outline-none focus-within:ring-2 focus-within:ring-primary-light dark:focus-within:ring-primary-dark focus-within:ring-offset-1 focus-within:ring-offset-primary-light dark:focus-within:ring-offset-primary-dark shadow-primary-light/20 dark:shadow-primary-dark/20 shadow-[0_2px_10px] focus-within:shadow-[0_0_0_2px] focus-within:shadow-primary-light dark:focus-within:shadow-primary-dark transition ease-in-out duration-500 disabled:opacity-25">
       <div class="w-full">
         <div class="flex flex-wrap gap-1 items-center my-[6px] ml-2">
-          <!-- <div 
-            v-for="item in props.modelValue" 
+          <div 
+            v-for="item in showContent" 
             :key="item.id" 
             :class= "multiple ? 
               'p-1 flex items-center text-secondary-light dark:text-secondary-dark rounded-md placeholder:text-xs sm:placeholder:text-sm text-xs sm:text-sm bg-secondary-light dark:bg-secondary-dark ring-0 border border-zero-light dark:border-zero-dark' : 
@@ -185,7 +108,7 @@
                 :key="item.id"
               />
             </button>
-          </div> -->
+          </div>
           <ComboboxTrigger class="grow w-0 ">
             <ComboboxInput
               v-if="!disableSearch"
