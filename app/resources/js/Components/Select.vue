@@ -24,7 +24,8 @@
 
   const selectedItems = ref(props.modelValue ? props.modelValue : (props.multiple ? [] : null))
   const searchTerm = ref('')
-  const showContent = computed(() => props.content.filter(
+  const getList = (data: any) => data.map((d: any) => [d, ...getList(d.children_recursive)]).flat()
+  const showContent = computed(() => getList(props.content).filter(
     (e: any) => props.multiple ? selectedItems.value.includes(e.id) : selectedItems.value == e.id
   ))
 
