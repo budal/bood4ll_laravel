@@ -13,18 +13,24 @@ class UnitSeeder extends Seeder
      */
     public function run(): void
     {
+        \App\Models\Unit::factory()->create([
+            'name' => '[ root ]',
+            'nickname' => '[ root ]',
+            'parent_id' => 0
+        ]);
+
         \App\Models\Unit::factory(6)
             ->sequence(fn (Sequence $sequence) => [
                 'name' => ($sequence->index + 1) . " CRPM",
                 'nickname' => ($sequence->index + 1) . " CRPM",
-                'parent_id' => 0
+                'parent_id' => 1
             ])->create();
         
         \App\Models\Unit::factory(30)
             ->sequence(fn (Sequence $sequence) => [
                 'name' => ($sequence->index + 1) . " BPM",
                 'nickname' => ($sequence->index + 1) . " BPM",
-                'parent_id' => \App\Models\Unit::where('parent_id', 0)
+                'parent_id' => \App\Models\Unit::where('parent_id', 1)
                     ->inRandomOrder()
                     ->first()
                     ->id

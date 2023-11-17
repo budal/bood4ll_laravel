@@ -26,7 +26,7 @@
         >
           <Icon icon="radix-icons:check" />
         </ComboboxItemIndicator>
-        <span>{{ item.name }}</span>
+        <span>{{ $t(item.name) }}</span>
       </ComboboxItem>
       <SelectItems class="ml-5" :items="item.children_recursive" />
     </template>

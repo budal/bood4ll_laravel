@@ -22,7 +22,7 @@ class UnitsController extends Controller
     {
         $items = Unit::filter($request->all('search', 'sorted', 'trashed'))
             ->when(!$request->search, function ($query) {
-                $query->where("parent_id", "0");
+                $query->where("parent_id", "1");
             })
             ->withCount('children')
             ->sort($request->sorted ?? "name")
@@ -70,13 +70,6 @@ class UnitsController extends Controller
     
     public function __form(Request $request, Unit $unit)
     {
-        $units2 = Unit::sort("name")->get()->map(function ($unit) {
-            $id = $unit['id'];
-            $title = $unit['name'];
-
-            return compact('id', 'title');
-        });
-
         $units = Unit::orderBy("parent_id")
             ->orderBy("name")
             ->where('parent_id', 0)
