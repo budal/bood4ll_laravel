@@ -65,12 +65,16 @@
     });
   }
 
+
+  
   const filteredItems = computed(() =>
     searchTerm.value == ''
       ? props.content
       : filterArray(props.content, searchTerm.value)
   )
 
+
+  
   const removeItem = (id: number) => {
     let index = selectedItems.value.indexOf(id);
     selectedItems.value.splice(index, 1);
