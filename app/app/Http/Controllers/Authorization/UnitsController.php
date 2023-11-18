@@ -246,7 +246,7 @@ class UnitsController extends Controller
 
     public function create(Request $request, Unit $unit)
     {
-        $data['parent_id'] = $request->unit;
+        $data['parent_id'] = $request->unit->id;
         
         return Inertia::render('Default/Form', [
             'form' => $this->__form($request, $unit),
@@ -256,7 +256,7 @@ class UnitsController extends Controller
                     'method' => 'post'
                 ],
             ],
-            // 'data' => $data
+            'data' => $data
         ]);
     }
 
