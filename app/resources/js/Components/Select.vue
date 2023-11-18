@@ -27,11 +27,17 @@
   const getListId = (data: any) => {
     if (typeof data === 'object' || data instanceof Object)
       return data.map((d: any) => (d.children_recursive) ? [d.id, ...getFlatList(d.children_recursive)] : [d.id]).flat()
-    else
-      return props.multiple === true ? [data] : data
+    else {
+      if (data === '')
+        return props.multiple === true ? [] : null
+      else 
+        return props.multiple === true ? [data] : data
+    }
   }
   
   const selectedItems = ref(getListId(props.modelValue))
+
+  emit('update:modelValue', selectedItems)
   
   const getFlatList = (data: any) => data.map((d: any) => (d.children_recursive) ? [d, ...getFlatList(d.children_recursive)] : [d]).flat()
 
@@ -64,15 +70,6 @@
       ? props.content
       : filterArray(props.content, searchTerm.value)
   )
-
-  const filteredItemsRef = () => {
-      console.log(
-        searchTerm.value == ''
-          ? props.content
-          : filterArray(props.content, searchTerm.value)
-
-      )
-    }
 
   const removeItem = (id: number) => {
     let index = selectedItems.value.indexOf(id);

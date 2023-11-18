@@ -12,6 +12,12 @@ class Role extends Model
     protected $fillable = [
         'name',
         'description',
+        'active',
+        'temporary',
+        'expires',
+        'full_access',
+        'manage_nested',
+        'remove_on_change_unit',
     ];
 
     public function abilities()

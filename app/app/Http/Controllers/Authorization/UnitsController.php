@@ -246,6 +246,8 @@ class UnitsController extends Controller
 
     public function create(Request $request, Unit $unit)
     {
+        $data['parent_id'] = $request->unit;
+        
         return Inertia::render('Default/Form', [
             'form' => $this->__form($request, $unit),
             'routes' => [
@@ -254,11 +256,13 @@ class UnitsController extends Controller
                     'method' => 'post'
                 ],
             ],
+            // 'data' => $data
         ]);
     }
 
     public function store(Request $request, Unit $unit): RedirectResponse
     {
+        dd($request);
         DB::beginTransaction();
 
         try {
@@ -290,12 +294,17 @@ class UnitsController extends Controller
 
     public function update(Unit $unit, Request $request): RedirectResponse
     {
+        dd($request);
         DB::beginTransaction();
 
         try {
             Unit::where('id', $unit->id)
                 ->update($request->all());
         } catch(\Exception $e) {
+
+            report($e);
+
+            // dd($e);
             DB::rollback();
             return Redirect::back()->withInput()->with('status', "Error when editing the unit.");
         }

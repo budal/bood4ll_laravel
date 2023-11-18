@@ -77,7 +77,7 @@ class RolesController extends Controller
     
     public function __form(Request $request, Role $role): Array
     {
-        $abilities = Ability::sort("name")->get()->map->only(['id', 'name']);
+        $abilities = Ability::sort("name")->get();
 
         $items = $role->users()
             ->filter($request->all('search', 'sorted', 'trashed'))
@@ -231,8 +231,10 @@ class RolesController extends Controller
                 'manage_nested' => $request->manage_nested,
                 'remove_on_change_unit' => $request->remove_on_change_unit,
             ]);
-        } catch(\Exception $e) {
+        } catch(Throwable $e) {
             DB::rollback();
+
+            report($e);
             return Redirect::back()->with('status', "Error when inserting a new role.");
         }
         
@@ -240,6 +242,8 @@ class RolesController extends Controller
             $role->abilities()->sync($request->abilities);
         } catch(\Exception $e) {
             DB::rollback();
+            dd($e);
+
             return Redirect::back()->with('status', "Error when syncing abilities to the role.");
         }
 
@@ -250,9 +254,7 @@ class RolesController extends Controller
     
     public function edit(Request $request, Role $role): Response
     {
-        $role['abilities'] = $role->abilities()->select('ability_id as id', 'name')->get();
-        // $role['abilities'] = $role->abilities()->get()->map->only('id')->pluck('id');
-
+        $role['abilities'] = $role->abilities;
 
         return Inertia::render('Default/Form', [
             'form' => $this->__form($request, $role),
@@ -288,14 +290,15 @@ class RolesController extends Controller
                     'manage_nested' => $request->manage_nested,
                     'remove_on_change_unit' => $request->remove_on_change_unit,
                 ]);
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             DB::rollback();
+            
             return Redirect::back()->with('status', "Error when editing the role.");
         }
         
         try {
             $role->abilities()->sync($request->abilities);
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             DB::rollback();
 
             return Redirect::back()->with('status', "Error when syncing abilities to the role.");
@@ -303,7 +306,7 @@ class RolesController extends Controller
 
         DB::commit();
 
-        return Redirect::back()->with('status', 'Role edited.')->withInput();
+        return Redirect::back()->with('status', 'Role edited.');
     }
 
 

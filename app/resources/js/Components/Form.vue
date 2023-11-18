@@ -29,7 +29,6 @@
         forms.fields.forEach((fields: any) => {
             fields.forEach((field: any) => {
                 formItems[field.name] = props.data ? props?.data[field.name] || '' : '';
-
             });
         });
     });
@@ -41,9 +40,10 @@
             preserveScroll: true,
             onSuccess: () => {
                 toast.success(trans(usePage().props.status as string));
-                jsForm.reset();
             },
             onError: () => {
+                toast.error('123');
+
                     // if (jsForm.errors.password) {
                     //     jsForm.reset('password', 'password_confirmation');
                     //     passwordInput.value?.focus();

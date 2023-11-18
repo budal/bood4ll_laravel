@@ -13,7 +13,7 @@ return new class extends Migration {
         Schema::create('roles', function (Blueprint $table) {
             $table->id();
             $table->string('name', 100);
-            $table->string('description', 255);
+            $table->string('description', 255)->nullable();
             $table->boolean('active')->default(true);
             $table->boolean('temporary')->default(false);
             $table->date('expires')->nullable();
