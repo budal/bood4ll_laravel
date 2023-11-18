@@ -51,6 +51,11 @@
     }
   })
 
+  const removeItem = (id: number) => {
+    let index = selectedItems.value.indexOf(id);
+    selectedItems.value.splice(index, 1);
+  }
+
   function filterArray(arrayList: any, search: string) {
     return arrayList.filter((item: any) => {
       let childrens = item.children_recursive;
@@ -75,10 +80,6 @@
 
 
   
-  const removeItem = (id: number) => {
-    let index = selectedItems.value.indexOf(id);
-    selectedItems.value.splice(index, 1);
-  }
 </script>
 
 <template>
