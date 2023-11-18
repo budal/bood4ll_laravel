@@ -74,11 +74,7 @@ class UnitsController extends Controller
             ->orderBy("name")
             ->where('parent_id', 0)
             ->with('childrenRecursive')
-            ->get()
-            ->map(function ($item) use ($unit) {
-                $item->path = $item->getParentsNames();
-                return $item;
-            });
+            ->get();
 
         $items = Unit::filter($request->all('search', 'sorted', 'trashed'))
             ->sort($request->sorted ?? "name")
@@ -97,18 +93,18 @@ class UnitsController extends Controller
                     'fields' => [
                         [
                             [
-                                'type' => "input",
-                                'name' => "name",
-                                'title' => "Name",
-                                'span' => 2,
-                                'required' => true,
-                            ],
-                            [
                                 'type' => "select",
                                 'name' => "parent_id",
                                 'title' => "Unidade pai",
                                 'span' => 2,
                                 'content' => $units,
+                                'required' => true,
+                            ],
+                            [
+                                'type' => "input",
+                                'name' => "name",
+                                'title' => "Name",
+                                'span' => 2,
                                 'required' => true,
                             ],
                             [

@@ -22,7 +22,7 @@
 
   const emit = defineEmits(['update:modelValue']);
 
-  const searchTerm = ref('')
+  const searchInput = ref('')
   
   const getListId = (data: any) => {
     if (typeof data === 'object' || data instanceof Object)
@@ -68,9 +68,9 @@
 
   
   const filteredItems = computed(() =>
-    searchTerm.value == ''
+    searchInput.value == ''
       ? props.content
-      : filterArray(props.content, searchTerm.value)
+      : filterArray(props.content, searchInput.value)
   )
 
 
@@ -84,7 +84,7 @@
 <template>
   <ComboboxRoot
     v-model="selectedItems" 
-    v-model:searchTerm="searchTerm"
+    v-model:searchInput="searchInput"
     class="relative" 
     :multiple="multiple"
     @update:open="() => emit('update:modelValue', selectedItems)"
@@ -112,7 +112,7 @@
           <ComboboxTrigger class="grow w-0 ">
             <ComboboxInput
               v-if="!disableSearch"
-              v-model="searchTerm"
+              v-model="searchInput"
               :id="id"
               :name="name"
               class="p-0 w-full bg-transparent text-ellipsis border-0 outline-0 focus:ring-0 placeholder:text-sm placeholder-primary-dark/20 dark:placeholder-primary-dark/20 text-zero-light dark:text-zero-dark" 
