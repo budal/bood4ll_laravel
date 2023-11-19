@@ -26,20 +26,27 @@
   
   const getListId = (data: any) => {
     if (typeof data === 'object' || data instanceof Object)
-      return data.map((d: any) => (d.children_recursive) ? [d.id, ...getFlatList(d.children_recursive)] : [d.id]).flat()
-    else {
+      return data.map((d: any) => (d.children_recursive) 
+        ? [d.id, ...getFlatList(d.children_recursive)] 
+        : [d.id]).flat()
+    else
       if (data === '')
-        return props.multiple === true ? [] : null
+        return props.multiple === true 
+          ? [] 
+          : null
       else 
-        return props.multiple === true ? [data] : data
-    }
+        return props.multiple === true 
+          ? [data] 
+          : data
   }
   
   const selectedItems = ref(getListId(props.modelValue))
 
   emit('update:modelValue', selectedItems)
   
-  const getFlatList = (data: any) => data.map((d: any) => (d.children_recursive) ? [d, ...getFlatList(d.children_recursive)] : [d]).flat()
+  const getFlatList = (data: any) => data.map((d: any) => (d.children_recursive) 
+    ? [d, ...getFlatList(d.children_recursive)] 
+    : [d]).flat()
 
   const flatContent = getFlatList(props.content)
   
@@ -58,6 +65,7 @@
 
   function filterArray(arrayList: any, search: string) {
     return arrayList.filter((item: any) => {
+      // console.log(item)
       let childrens = item.children_recursive;
       if (childrens && childrens.length){
         item.children_recursive = filterArray(childrens, search);
@@ -73,7 +81,7 @@
 
   
   const filteredItems = computed(() =>
-    searchInput.value == ''
+    searchInput.value === ''
       ? props.content
       : filterArray(props.content, searchInput.value)
   )
