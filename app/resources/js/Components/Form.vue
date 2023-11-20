@@ -76,10 +76,11 @@
                                     <div :class="`${field.span ? `sm:col-span-${field.span}` : ''}`">
                                         <InputLabel as="span" :for="field.name" :value="$t(field.title) + (field.required ? ' *' : '')" />
                         
-                                        <TextInput v-if="field.type == 'input' || field.type == 'date'"
+                                        <TextInput v-if="field.type == 'input' || field.type == 'date' || field.type == 'email'"
                                             :id="field.name"
                                             :name="field.name"
                                             :type="field.type"
+                                            :mask="field.mask"
                                             class="mt-1 block w-full"
                                             v-model="jsForm[field.name]"
                                             :required="field.required"

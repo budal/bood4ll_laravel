@@ -71,6 +71,7 @@ class UnitsController extends Controller
     public function __form(Request $request, Unit $unit)
     {
         $units = Unit::orderBy("parent_id")
+            // ->orderBy("parent_id")
             ->orderBy("name")
             ->where('parent_id', 0)
             ->with('childrenRecursive')
@@ -134,15 +135,17 @@ class UnitsController extends Controller
                             [
                                 'type' => "input",
                                 'name' => "cellphone",
+                                'mask' => "(##) #####-####",
                                 'title' => "Cell phone",
                             ],
                             [
                                 'type' => "input",
                                 'name' => "landline",
+                                'mask' => "(##) ####-####",
                                 'title' => "Land line",
                             ],
                             [
-                                'type' => "input",
+                                'type' => "email",
                                 'name' => "email",
                                 'title' => "Email",
                                 'span' => 2,
@@ -165,6 +168,7 @@ class UnitsController extends Controller
                             [
                                 'type' => "input",
                                 'name' => "postcode",
+                                'mask' => "#####-###",
                                 'title' => "Post code",
                             ],
                             [
