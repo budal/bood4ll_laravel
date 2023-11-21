@@ -3,6 +3,7 @@
   import { Icon } from '@iconify/vue'
   import { ref, computed } from 'vue';
   import SelectItems from '@/Components/SelectItems.vue'
+import { watch } from 'vue';
   
   const props = withDefaults(
     defineProps<{
@@ -65,10 +66,9 @@
 
   function filterArray(arrayList: any, search: string) {
     return arrayList.filter((item: any) => {
-      // console.log(item)
       let childrens = item.children_recursive;
 
-      if (childrens && childrens.length){
+      if (childrens){
         item.children_recursive = filterArray(childrens, search);
 
         if (item.children_recursive && item.children_recursive.length){
@@ -89,7 +89,29 @@
   )
 
 
-  
+
+  const filteredItems2 = ref([])
+
+
+  watch(
+    () => searchInput.value,
+    (search) => {
+      // console.log(search)
+
+      filteredItems2.value = props.content
+      
+      filteredItems2.value = search === ''
+        ? props.content
+        : filterArray(props.content, search)
+
+      console.log(props.content, filteredItems2.value)
+    },
+    { 
+      immediate: true 
+    }
+  )
+
+
 </script>
 
 <template>
@@ -143,7 +165,7 @@
     <ComboboxContent class="absolute z-[4] w-full mt-1 min-w-[160px] bg-white overflow-hidden bg-zero-light dark:bg-zero-dark text-zero-light dark:text-zero-dark rounded-md border border-zero-light dark:border-zero-dark rounded-full focus:outline-none focus:ring-2 focus:ring-primary-light dark:focus:ring-primary-dark focus:ring-offset-1 focus:ring-offset-primary-light dark:focus:ring-offset-primary-dark">
       <ComboboxViewport class="p-[5px] max-h-60">
         <ComboboxEmpty class="text-xs font-medium text-center">{{ $t('No items to show.') }}</ComboboxEmpty>
-        <SelectItems :items="filteredItems" />
+        <SelectItems :items="filteredItems2" />
       </ComboboxViewport>
     </ComboboxContent>
   </ComboboxRoot>

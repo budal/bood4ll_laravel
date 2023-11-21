@@ -72,6 +72,7 @@ class UnitsController extends Controller
     {
         $units = Unit::orderBy("parent_id")
             // ->orderBy("parent_id")
+            ->select("id", "name", "active")
             ->orderBy("name")
             ->where('parent_id', 0)
             ->with('childrenRecursive')
