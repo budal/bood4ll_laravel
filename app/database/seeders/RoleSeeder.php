@@ -14,7 +14,7 @@ class RoleSeeder extends Seeder
     public function run(): void
     {
         \App\Models\Role::factory()->create([
-            'name' => ':: SUPERADMIN ::',
+            'name' => '[ SUPERADMIN ]',
             'description' => 'Superadmin role',
             'active' => true,
             'full_access' => true,
