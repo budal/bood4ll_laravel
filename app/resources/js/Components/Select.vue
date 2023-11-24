@@ -99,7 +99,6 @@
         <div class="flex flex-wrap gap-1 items-center my-[6px] ml-2">
           <div 
             v-for="item in showContent" 
-             
             :class= "multiple ? 
               'p-1 flex items-center text-secondary-light dark:text-secondary-dark rounded-md placeholder:text-xs sm:placeholder:text-sm text-xs sm:text-sm bg-secondary-light dark:bg-secondary-dark ring-0 border border-zero-light dark:border-zero-dark' : 
               'items-center text-zero-light dark:text-zero-dark rounded-md placeholder:text-xs sm:placeholder:text-sm bg-zero-light dark:bg-zero-dark'

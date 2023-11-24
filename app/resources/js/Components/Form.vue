@@ -74,7 +74,12 @@
                             <div :class="`grid sm:grid-cols-${mkForm.cols} sm:gap-4`">
                                 <template v-for="field in group">
                                     <div :class="`${field.span ? `sm:col-span-${field.span}` : ''}`">
-                                        <InputLabel as="span" :for="field.name" :value="$t(field.title) + (field.required ? ' *' : '')" />
+                                        <InputLabel 
+                                            as="span" 
+                                            :for="field.name" 
+                                            :value="$t(field.title)" 
+                                            :required="field.required" 
+                                        />
                         
                                         <TextInput v-if="field.type == 'input' || field.type == 'date' || field.type == 'email'"
                                             :id="field.name"
