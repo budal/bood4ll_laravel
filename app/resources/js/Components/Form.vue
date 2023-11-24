@@ -81,7 +81,7 @@
                                             :name="field.name"
                                             :type="field.type"
                                             :mask="field.mask"
-                                            class="mt-1 block w-full"
+                                            class="mt-1 block w-full appearance-none"
                                             v-model="jsForm[field.name]"
                                             :required="field.required"
                                             :autocomplete="field.name"
