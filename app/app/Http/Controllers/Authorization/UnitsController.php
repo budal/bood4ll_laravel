@@ -71,7 +71,6 @@ class UnitsController extends Controller
     public function __form(Request $request, Unit $unit)
     {
         $units = Unit::orderBy("parent_id")
-            // ->orderBy("parent_id")
             ->select("id", "name", "active")
             ->orderBy("name")
             ->where('parent_id', 0)
@@ -247,7 +246,7 @@ class UnitsController extends Controller
 
     public function create(Request $request, Unit $unit)
     {
-        $data['parent_id'] = $request->unit->id;
+        $data['parent_id'] = $request->unit->id ?? '';
         
         return Inertia::render('Default/Form', [
             'form' => $this->__form($request, $unit),
