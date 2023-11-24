@@ -8,7 +8,7 @@ services:
       args:
         - UID=${UID:-1000}
         - USER=${USER:-laravel}
-    restart: unless-stopped
+    restart: always
     networks:
       - budal_laravel_network
     volumes:
@@ -79,7 +79,7 @@ services:
   nginx:
     container_name: budal_nginx
     image: nginx:alpine
-    restart: unless-stopped
+    restart: always
     networks:
       - budal_laravel_network
     ports:

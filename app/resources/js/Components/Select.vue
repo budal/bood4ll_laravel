@@ -1,9 +1,8 @@
 <script setup lang="ts">
-  import { ComboboxAnchor, ComboboxContent, ComboboxEmpty, ComboboxGroup, ComboboxInput, ComboboxItem, ComboboxItemIndicator, ComboboxLabel, ComboboxRoot, ComboboxSeparator, ComboboxTrigger, ComboboxViewport } from 'radix-vue'
-  import { Icon } from '@iconify/vue'
-  import { ref, computed } from 'vue';
   import SelectItems from '@/Components/SelectItems.vue'
-import { watch } from 'vue';
+  import { Icon } from '@iconify/vue'
+  import { ComboboxAnchor, ComboboxContent, ComboboxEmpty, ComboboxGroup, ComboboxInput, ComboboxItem, ComboboxItemIndicator, ComboboxLabel, ComboboxRoot, ComboboxSeparator, ComboboxTrigger, ComboboxViewport } from 'radix-vue'
+  import { ref, computed, watch } from 'vue';
   
   const props = withDefaults(
     defineProps<{
@@ -79,39 +78,12 @@ import { watch } from 'vue';
       return item.name.toLowerCase().indexOf(search) > -1;
     });
   }
-
-
   
   const filteredItems = computed(() =>
     searchInput.value === ''
-      ? props.content
-      : filterArray(props.content, searchInput.value)
+      ? JSON.parse(JSON.stringify(props.content))
+      : filterArray(JSON.parse(JSON.stringify(props.content)), searchInput.value)
   )
-
-
-
-  const filteredItems2 = ref([])
-
-
-  watch(
-    () => searchInput.value,
-    (search) => {
-      // console.log(search)
-
-      filteredItems2.value = props.content
-      
-      filteredItems2.value = search === ''
-        ? props.content
-        : filterArray(props.content, search)
-
-      console.log(props.content, filteredItems2.value)
-    },
-    { 
-      immediate: true 
-    }
-  )
-
-
 </script>
 
 <template>
@@ -165,7 +137,7 @@ import { watch } from 'vue';
     <ComboboxContent class="absolute z-[4] w-full mt-1 min-w-[160px] bg-white overflow-hidden bg-zero-light dark:bg-zero-dark text-zero-light dark:text-zero-dark rounded-md border border-zero-light dark:border-zero-dark rounded-full focus:outline-none focus:ring-2 focus:ring-primary-light dark:focus:ring-primary-dark focus:ring-offset-1 focus:ring-offset-primary-light dark:focus:ring-offset-primary-dark">
       <ComboboxViewport class="p-[5px] max-h-60">
         <ComboboxEmpty class="text-xs font-medium text-center">{{ $t('No items to show.') }}</ComboboxEmpty>
-        <SelectItems :items="filteredItems2" />
+        <SelectItems :items="filteredItems" />
       </ComboboxViewport>
     </ComboboxContent>
   </ComboboxRoot>
