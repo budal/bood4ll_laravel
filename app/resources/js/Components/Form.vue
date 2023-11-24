@@ -107,6 +107,7 @@
                                             v-model="jsForm[field.name]"
                                             :required="field.required"
                                             :multiple="field.multiple"
+                                            @keydown.enter.prevent
                                         />
                 
                                         <Table v-if="field.type == 'table'"

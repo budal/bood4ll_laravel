@@ -2,7 +2,7 @@
   import { ComboboxGroup, ComboboxItem, ComboboxItemIndicator } from 'radix-vue'
   import { Icon } from '@iconify/vue'
 
-  const props = withDefaults(
+  withDefaults(
     defineProps<{
       items: any;
       margin?: any;
