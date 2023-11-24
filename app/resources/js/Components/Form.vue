@@ -97,6 +97,8 @@
                                             v-model="jsForm[field.name]"
                                             :required="field.required"
                                             :autocomplete="field.name"
+                                            @keydown.enter.prevent
+                                            @click.prevent
                                         />
                 
                                         <Select v-if="field.type == 'select'" 
