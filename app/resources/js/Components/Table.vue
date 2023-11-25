@@ -47,9 +47,7 @@
     })
   }
 
-  let clear = () => {
-    selectedCheckBoxes.clear()
-  }
+  let clear = () => selectedCheckBoxes.clear()
 
   let toggle = (checkBox: any) => {
     if (selectedCheckBoxes.has(checkBox)) {
@@ -72,9 +70,7 @@
 
   const confirmingDeletionModal = ref(false);
 
-  const openDeletionModal = () => {
-    confirmingDeletionModal.value = true;
-  }
+  const openDeletionModal = () => confirmingDeletionModal.value = true
 
   const form = useForm({
     ids: [],
@@ -91,9 +87,7 @@
     });
   };
 
-  const closeDeletionModal = () => {
-    confirmingDeletionModal.value = false;
-  };
+  const closeDeletionModal = () => confirmingDeletionModal.value = false
 
 
   // restore
@@ -114,9 +108,7 @@
     });
   };
 
-  const closeRestoreModal = () => {
-    confirmRestoreModal.value = false;
-  };
+  const closeRestoreModal = () => confirmRestoreModal.value = false
 
 
   // search
@@ -124,7 +116,7 @@
 
   const debouncedWatch = debounce(() => {
     searchRoute.searchParams.set("search", search.value)
-    
+
     router.visit(searchRoute, {
       method: 'get',
       preserveState: true,
@@ -140,19 +132,17 @@
 
 
   // filters modal
-  const filterContent = ref([
+  const filterContent = [
     { id: 'active', name: 'Only active', disabled: false },
     { id: 'trashed', name: 'Only trashed', disabled: props.softDelete === true ? false : true },
     { id: 'both', name: 'Active and trashed', disabled: props.softDelete === true ? false : true },
-  ])
+  ]
 
   const filterContentValue = ref(searchRoute.searchParams.get("trashed") || '')
 
   const filtersModal = ref(false);
 
-  const openFiltersModal = () => {
-    filtersModal.value = true;
-  }
+  const openFiltersModal = () => filtersModal.value = true
 
   const refreshFilters = () => {
     searchRoute.searchParams.set("trashed", filterContentValue.value)
@@ -164,13 +154,11 @@
     })
   };
 
-  const closeFiltersModal = () => {
-    filtersModal.value = false;
-  };
+  const closeFiltersModal = () => filtersModal.value = false
 
 
   // toggleMenu
-  const toggleState = ref(false)
+  const tableMenuToggleState = ref(false)
 
 
   // sorting column
@@ -293,7 +281,7 @@
       </div>
       <div v-if="menu" class="flex-none items-center">
         <template v-if="menu.length > 1">
-          <DropdownMenuRoot v-model:open="toggleState">
+          <DropdownMenuRoot v-model:open="tableMenuToggleState">
             <DropdownMenuTrigger
               as="span"
               class="ml-2 h-full outline-none"

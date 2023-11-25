@@ -94,7 +94,7 @@
     emit('update:modelValue', selectedItems)
   }
 
-  const selectItems = props.disableSearch ? filteredItems : JSON.parse(JSON.stringify(props.content))
+  const selectItems = props.disableSearch ? JSON.parse(JSON.stringify(props.content)) : filteredItems
 </script>
 
 <template>
