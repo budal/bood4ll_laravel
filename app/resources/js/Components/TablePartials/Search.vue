@@ -1,11 +1,11 @@
 <script setup lang="ts">
   import SearchInput from '../SearchInput.vue';
   import debounce from "lodash.debounce";
-  import { router, useForm, usePage, Link } from '@inertiajs/vue3';
-  import { ref, computed, reactive, watch, onBeforeUnmount } from 'vue'
+  import { router } from '@inertiajs/vue3';
+  import { ref, watch, onBeforeUnmount } from 'vue'
 
-  const props = defineProps<{
-    value: any;
+  defineProps<{
+    search: any;
   }>();
 
   const searchRoute = new URL(window.location.href);
@@ -30,5 +30,5 @@
 </script>
 
 <template>
-  <SearchInput :placeholder="$t('Search...')" id="search" name="search" class="w-full h-full" :value="value" v-model="search" />
+  <SearchInput :placeholder="$t('Search...')" id="search" name="search" class="w-full h-full" :search="search" v-model="search" />
 </template>

@@ -110,4 +110,6 @@
       </div>
     </template>
   </Modal>
+
+  <Button v-if="routes.destroyRoute" color="danger" type="button" @click="openDeletionModal" start-icon="mdi:delete-outline" class="mr-2 h-full" :disabled="totalSelectedCheckBoxes === 0" />
 </template>

@@ -3,30 +3,20 @@
   import Avatar from '@/Components/Avatar.vue';
   import Button from '@/Components/Button.vue';
   import Checkbox from '@/Components/Checkbox.vue';
-  import InputLabel from '@/Components/InputLabel.vue';
   import Modal from '@/Components/Modal.vue';
-  import Select from '@/Components/Select.vue';
   import Switch from '@/Components/Switch.vue';
-  import Search from '@/Components/Partials/Search.vue';
-  import {
-    DropdownMenuArrow,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuPortal,
-    DropdownMenuRoot,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-  } from 'radix-vue'
+  import Filter from '@/Components/TablePartials/Filter.vue';
+  import Menu from '@/Components/TablePartials/Menu.vue';
+  import Search from '@/Components/TablePartials/Search.vue';
+  import Sort from '@/Components/TablePartials/Sort.vue';
   import { trans } from 'laravel-vue-i18n';
   import { toast } from 'vue3-toastify';
-  import { router, useForm, usePage, Link } from '@inertiajs/vue3';
-  import { ref, computed, reactive, watch, onBeforeUnmount } from 'vue'
+  import { useForm, usePage, Link } from '@inertiajs/vue3';
+  import { ref, computed, reactive } from 'vue'
 
   const props = defineProps<{
     id?: string;
     name?: string;
-    apiRoute?: string;
     softDelete?: boolean | null;
     routes?: any;
     filters?: any;
@@ -34,8 +24,6 @@
     titles: any;
     items: any;
   }>();
-
-  const searchRoute = new URL(window.location.href);
 
   // toggle checkboxes
   let selectedCheckBoxes = reactive(new Set())
@@ -110,59 +98,6 @@
   const closeRestoreModal = () => confirmRestoreModal.value = false
 
 
-  // filters modal
-  const filterContent = [
-    { id: 'active', name: 'Only active', disabled: false },
-    { id: 'trashed', name: 'Only trashed', disabled: props.softDelete === true ? false : true },
-    { id: 'both', name: 'Active and trashed', disabled: props.softDelete === true ? false : true },
-  ]
-
-  const filterContentValue = ref(searchRoute.searchParams.get("trashed") || '')
-
-  const filtersModal = ref(false);
-
-  const openFiltersModal = () => filtersModal.value = true
-
-  const refreshFilters = () => {
-    searchRoute.searchParams.set("trashed", filterContentValue.value)
-
-    router.visit(searchRoute, {
-      method: 'get',
-      preserveScroll: true,
-      onSuccess: () => closeFiltersModal(),
-    })
-  };
-
-  const closeFiltersModal = () => filtersModal.value = false
-
-
-  // toggleMenu
-  const tableMenuToggleState = ref(false)
-
-
-  // sorting column
-  const sortBy = (column: any) => {
-    let url = new URL(window.location.href);
-    let sortOrder = null;
-    let sortValue = url.searchParams.get("sorted")
-
-    if (sortValue == column) {
-      url.searchParams.set("sorted", "-" + column)
-      sortOrder = "asc"
-    } else if (sortValue === "-" + column) {
-      url.searchParams.set("sorted", column)
-      sortOrder = "desc"
-    } else {
-      url.searchParams.set("sorted", column)
-    }
-    
-    return {
-      url: url.href,
-      sortMe: sortOrder,
-    }
-  }
-
-
   // switch
   const formSwitch = useForm({});
 
@@ -216,94 +151,18 @@
     </template>
   </Modal>
 
-  <Modal 
-    :open="filtersModal" 
-    :title="$t('Manage which filters to apply to the list')" 
-    @close="closeFiltersModal"
-  >
-    <p class="mt-1 text-sm text-secondary-light dark:text-secondary-dark">
-      {{ $t('Selected filters refine searches according to your choices') }}
-    </p>
-    <div class="pt-3">
-      <InputLabel for="filterContent" :value="$t('Content')" />
-      <Select 
-        id="filterContent" 
-        name="filterContent" 
-        :content="filterContent" 
-        class="mt-1" 
-        v-model="filterContentValue" 
-        :disableSearch="true"
-      />
-    </div>
-    <template #buttons>
-      <div class="mt-6 flex justify-end">
-        <Button color="secondary" type="button" @click="closeFiltersModal" start-icon="mdi:cancel-outline">
-          {{ $t('Cancel') }}
-        </Button>
-        <Button color="primary" type="button" @click="refreshFilters" start-icon="mdi:check-outline" class="ml-3" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-          {{ $t('Apply') }}
-        </Button>
-      </div>
-    </template>
-  </Modal>
-
   <div class="flex sticky top-0 sm:top-[95px] justify-between rounded-xl backdrop-blur-sm pt-1 mb-2 bg-secondary-light/30 dark:bg-secondary-dark/30">
     <div class="flex-none items-center">
       <Button v-if="routes.destroyRoute" color="danger" type="button" @click="openDeletionModal" start-icon="mdi:delete-outline" class="mr-2 h-full" :disabled="totalSelectedCheckBoxes === 0" />
     </div>
     <div class="flex-1 items-center">
-      <Search :value="filters.search" />
+      <Search :search="filters.search" />
     </div>
     <div class="flex-none items-center">
-      <Button color="secondary" type="button" @click="openFiltersModal" class="ml-2 h-full" start-icon="mdi:filter-settings-outline" />
+      <Filter :softDelete="softDelete"/>
     </div>
     <div v-if="menu" class="flex-none items-center">
-      <template v-if="menu.length > 1">
-        <DropdownMenuRoot v-model:open="tableMenuToggleState">
-          <DropdownMenuTrigger
-            as="span"
-            class="ml-2 h-full outline-none"
-            :aria-label="$t('Table menu')"
-          >
-            <Button color="primary" type="button" start-icon="mdi:dots-horizontal" class="h-full" />
-          </DropdownMenuTrigger>
-
-          <DropdownMenuPortal>
-            <DropdownMenuContent
-              class="min-w-[220px] overflow-hidden outline-none bg-secondary-light dark:bg-secondary-dark text-primary-dark dark:text-primary-light rounded-md shadow-[0px_10px_38px_-10px_rgba(22,_23,_24,_0.35),_0px_10px_20px_-15px_rgba(22,_23,_24,_0.2)] shadow-primary-light dark:shadow-primary-dark will-change-[opacity,transform] data-[side=top]:animate-slideDownAndFade data-[side=right]:animate-slideLeftAndFade data-[side=bottom]:animate-slideUpAndFade data-[side=left]:animate-slideRightAndFade"
-              :align="'end'"
-            >
-              <DropdownMenuLabel class="leading-[25px] text-center">
-                <div class="pt-2 font-xs text-sm text-zero-light/40 dark:text-zero-dark/40">{{ $t('Select an option') }}</div>
-              </DropdownMenuLabel>
-              <DropdownMenuSeparator class="h-[0.5px] bg-zero-dark/10 dark:bg-zero-light/5" />
-              <template v-for="item in menu">
-                <Link :href="route(item.route)"> 
-                  <DropdownMenuItem
-                    as="span"
-                    :value="item.title"
-                    :class="item.class"
-                    class="px-[5px] flex pl-[10px] text-sm py-3 text-zero-light dark:text-zero-dark hover:bg-zero-light dark:hover:bg-zero-dark focus:outline-none focus:bg-zero-light dark:focus:bg-zero-dark"
-                  >
-                    <Icon :icon="item.icon" class="h-5 w-5 mr-2" />
-                    {{ $t(item.title) }} 
-                  </DropdownMenuItem>
-                </Link>
-              </template>
-              <DropdownMenuArrow class="fill-secondary-light dark:fill-secondary-dark" />
-            </DropdownMenuContent>
-          </DropdownMenuPortal>
-        </DropdownMenuRoot>
-      </template>
-      <template v-else>
-        <Link as="span" :href="route(
-          typeof props.menu[0].route === 'string' || props.menu[0].route instanceof String ? props.menu[0].route : props.menu[0].route[0], 
-          typeof props.menu[0].route === 'string' || props.menu[0].route instanceof String ? '' : props.menu[0].route[1]
-          )" class="text-sm ml-2 h-full"
-        >
-          <Button color="primary" type="button" class="h-full" :start-icon="props.menu[0].icon" />
-        </Link>
-      </template>
+      <Menu :menu="menu" />
     </div>
   </div>
   <div class="rounded-xl overflow-hidden border-2 border-secondary-light dark:border-secondary-dark">
@@ -314,15 +173,9 @@
             <th class="p-2">
               <Checkbox v-if="routes.destroyRoute" name="remember" :checked="selectedcheckBox" @click="toggleSelection" class="w-8 h-8 rounded-full" />
             </th>
-            <template v-for="(content, id) in titles">
+            <template v-for="sort in titles">
               <th class="p-2">
-                <Link v-if="content.disableSort != true" :href="sortBy(content.field).url" class="group focus:outline-none flex gap-1 items-center">
-                  <span class="border-b-2 border-transparent group-hover:border-zero-light dark:group-hover:border-zero-dark group-focus:border-zero-light dark:group-focus:border-zero-dark transition ease-in-out duration-500">
-                    {{ $t(content.title) }}
-                  </span>
-                  <Icon icon="mdi:chevron-up-circle-outline" v-if="sortBy(content.field).sortMe == 'asc'" class="h-4 w-4" />
-                  <Icon icon="mdi:chevron-down-circle-outline" v-if="sortBy(content.field).sortMe == 'desc'" class="h-4 w-4" />
-                </Link>
+                <Sort :sort="sort"/>
               </th>
             </template>
             <th v-if="routes.editRoute" class="p-2"></th>
