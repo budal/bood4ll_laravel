@@ -5,6 +5,7 @@
   import Checkbox from '@/Components/Checkbox.vue';
   import Modal from '@/Components/Modal.vue';
   import Switch from '@/Components/Switch.vue';
+  import Deletion from '@/Components/TablePartials/Deletion.vue';
   import Filter from '@/Components/TablePartials/Filter.vue';
   import Menu from '@/Components/TablePartials/Menu.vue';
   import Search from '@/Components/TablePartials/Search.vue';

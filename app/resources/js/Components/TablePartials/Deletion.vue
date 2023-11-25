@@ -38,6 +38,7 @@
     route: string;
   }>();
 
+  // toggle checkboxes
   let selectedCheckBoxes = reactive(new Set())
 
   let selectAll = (checkBoxes: any) => {
@@ -78,7 +79,7 @@
   const deleteItems = () => {
     selectedCheckBoxes.forEach((checkBox: any) => form.ids.push((checkBox.id) as never))
 
-    form.delete(props.route, {
+    form.delete(route(props.routes.destroyRoute), {
       preserveScroll: true,
       onSuccess: () => closeDeletionModal(),
       onError: () => toast.error(trans(usePage().props.status as string)),
@@ -88,6 +89,26 @@
 
   const closeDeletionModal = () => confirmingDeletionModal.value = false
 
+
+  // restore
+  const confirmRestoreModal = ref(false);
+  const restoreItemID = ref('');
+
+  const restore = (id: string) => {
+    confirmRestoreModal.value = true;
+    restoreItemID.value = id;
+  }
+
+  const restoreItem = () => {
+    form.post(route(props.routes.restoreRoute, restoreItemID.value), {
+      preserveScroll: true,
+      onSuccess: () => closeRestoreModal(),
+      onError: () => toast.error(trans(usePage().props.status as string)),
+      onFinish: () => toast.success(trans(usePage().props.status as string)),
+    });
+  };
+
+  const closeRestoreModal = () => confirmRestoreModal.value = false
 </script>
 
 <template>
@@ -106,6 +127,26 @@
         </Button>
         <Button color="danger" @click="deleteItems" start-icon="mdi:delete-sweep-outline" class="ml-3" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
           {{ $t('Erase selected') }}
+        </Button>
+      </div>
+    </template>
+  </Modal>
+
+  <Modal 
+    :open="confirmRestoreModal" 
+    :title="$t('Are you sure you want to restore this item?')" 
+    @close="closeRestoreModal"
+  >
+    <p class="mt-1 text-sm text-secondary-light dark:text-secondary-dark">
+      {{ $t('The selected item will be restored to the active items. Do you want to continue?') }}
+    </p>
+    <template #buttons>
+      <div class="mt-6 flex justify-end">
+        <Button color="secondary" @click="closeRestoreModal" start-icon="mdi:cancel-outline">
+          {{ $t('Cancel') }}
+        </Button>
+        <Button color="success" @click="restoreItem" start-icon="mdi:backup-restore" class="ml-3" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+          {{ $t('Restore') }}
         </Button>
       </div>
     </template>
