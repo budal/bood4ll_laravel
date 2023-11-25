@@ -2,7 +2,7 @@
   import SelectItems from '@/Components/SelectItems.vue'
   import { Icon } from '@iconify/vue'
   import { ComboboxAnchor, ComboboxContent, ComboboxEmpty, ComboboxGroup, ComboboxInput, ComboboxItem, ComboboxItemIndicator, ComboboxLabel, ComboboxRoot, ComboboxSeparator, ComboboxTrigger, ComboboxViewport } from 'radix-vue'
-  import { ref, computed, watch } from 'vue';
+  import { ref, computed } from 'vue';
   
   const props = withDefaults(
     defineProps<{
@@ -20,7 +20,7 @@
     }
   );
 
-  const emit = defineEmits(['update:modelValue', 'update:searchInput']);
+  const emit = defineEmits(['update:modelValue']);
 
   const searchInput = ref('')
   
@@ -84,6 +84,17 @@
       ? JSON.parse(JSON.stringify(props.content))
       : filterArray(JSON.parse(JSON.stringify(props.content)), searchInput.value)
   )
+
+  const onEscape = () => {
+    searchInput.value = ''
+  }
+
+  const onOpen = () => {
+    onEscape()
+    emit('update:modelValue', selectedItems)
+  }
+
+  const selectItems = props.disableSearch ? filteredItems : JSON.parse(JSON.stringify(props.content))
 </script>
 
 <template>
@@ -92,7 +103,7 @@
     v-model:searchInput="searchInput"
     class="relative" 
     :multiple="multiple"
-    @update:open="() => emit('update:modelValue', selectedItems)"
+    @update:open="onOpen"
   >
     <ComboboxAnchor class="relative w-full min-h-[41px] flex bg-zero-light dark:bg-zero-dark border border-zero-light dark:border-zero-dark rounded-md focus-within:outline-none focus-within:ring-2 focus-within:ring-primary-light dark:focus-within:ring-primary-dark focus-within:ring-offset-1 focus-within:ring-offset-primary-light dark:focus-within:ring-offset-primary-dark shadow-primary-light/20 dark:shadow-primary-dark/20 shadow-[0_2px_10px] focus-within:shadow-[0_0_0_2px] focus-within:shadow-primary-light dark:focus-within:shadow-primary-dark transition ease-in-out duration-500 disabled:opacity-25">
       <div class="w-full">
@@ -135,11 +146,13 @@
 
     <ComboboxContent 
       class="absolute z-[4] w-full mt-1 min-w-[160px] bg-white overflow-hidden bg-zero-light dark:bg-zero-dark text-zero-light dark:text-zero-dark rounded-md border border-zero-light dark:border-zero-dark rounded-full focus:outline-none focus:ring-2 focus:ring-primary-light dark:focus:ring-primary-dark focus:ring-offset-1 focus:ring-offset-primary-light dark:focus:ring-offset-primary-dark"
-      @escapeKeyDown="console.log('q')"  
+      @escapeKeyDown="onEscape"
+      @pointerDownOutside="onEscape"
+      @closeAutoFocus="onEscape"
     >
       <ComboboxViewport class="p-[5px] max-h-60">
         <ComboboxEmpty class="text-xs font-medium text-center">{{ $t('No items to show.') }}</ComboboxEmpty>
-        <SelectItems :items="filteredItems" />
+        <SelectItems :items="selectItems" />
       </ComboboxViewport>
     </ComboboxContent>
   </ComboboxRoot>
