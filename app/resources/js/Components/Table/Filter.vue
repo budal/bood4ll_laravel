@@ -1,8 +1,8 @@
 <script setup lang="ts">
-  import Button from '../Button.vue';
-  import InputLabel from '../InputLabel.vue';
-  import Modal from '../Modal.vue';
-  import Select from '../Select.vue';
+  import Button from '@/Components/Button.vue';
+  import InputLabel from '@/Components/InputLabel.vue';
+  import Modal from '@/Components/Modal.vue';
+  import Select from '@/Components/Select.vue';
   import { router } from '@inertiajs/vue3';
   import { ref } from 'vue'
 
@@ -18,7 +18,7 @@
     { id: 'both', name: 'Active and trashed', disabled: props.softDelete === true ? false : true },
   ]
 
-  const filterContentValue = ref(searchRoute.searchParams.get("trashed") || '')
+  const filterContentValue = ref(searchRoute.searchParams.get("trashed") || 'active')
 
   const filtersModal = ref(false);
 

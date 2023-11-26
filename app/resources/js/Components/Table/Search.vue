@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import SearchInput from '../SearchInput.vue';
+  import SearchInput from '@/Components/SearchInput.vue';
   import debounce from "lodash.debounce";
   import { router } from '@inertiajs/vue3';
   import { ref, watch, onBeforeUnmount } from 'vue'

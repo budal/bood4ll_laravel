@@ -10,12 +10,12 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('user_unit', function (Blueprint $table) {
+        Schema::create('unit_user', function (Blueprint $table) {
             $table->id();
-            $table->uuid('user_id');
             $table->unsignedBigInteger('unit_id');
-            $table->foreign('user_id')->references('id')->on('users');
-            $table->foreign('unit_id')->references('id')->on('units');
+            $table->uuid('user_id');
+            $table->foreign('unit_id')->references('id')->on('units')->onDelete('CASCADE');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('CASCADE');
             $table->timestamps();
             $table->softDeletes();
         });
@@ -26,6 +26,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('role_user');
+        Schema::dropIfExists('unit_user');
     }
 };

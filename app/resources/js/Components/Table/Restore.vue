@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import { Icon } from '@iconify/vue'
-  import Button from '../Button.vue';
-  import Modal from '../Modal.vue';
+  import Button from '@/Components/Button.vue';
+  import Modal from '@/Components/Modal.vue';
   import { trans } from 'laravel-vue-i18n';
   import { toast } from 'vue3-toastify';
   import { useForm, usePage } from '@inertiajs/vue3';

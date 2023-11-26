@@ -15,6 +15,6 @@ class SuperadminUserSeeder extends Seeder
     {
         $superAdmin = \App\Models\User::first();
         
-        $superAdmin->role()->attach(\App\Models\Role::first()->id);
+        $superAdmin->roles()->attach(\App\Models\Role::first()->id);
     }
 }

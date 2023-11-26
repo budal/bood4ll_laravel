@@ -20,6 +20,10 @@ class UserSeeder extends Seeder
             'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
         ]);
 
-        \App\Models\User::factory(rand(18000, 20000))->create();
+        \App\Models\User::factory(rand(18000, 20000))->afterCreating(function (\App\Models\User $user) {
+            $unit = \App\Models\Unit::inRandomOrder()->first();
+
+            $unit->users()->attach($user->id);
+    })->create();
     }
 }

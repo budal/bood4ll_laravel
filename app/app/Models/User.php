@@ -38,7 +38,12 @@ class User extends Authenticatable
         // static::creating(fn(User $user) => $user->uuid = (string) Uuid::uuid4());
     }
 
-    public function role()
+    public function units()
+    {
+        return $this->belongsToMany(Unit::class);
+    }
+    
+    public function roles()
     {
         return $this->belongsToMany(Role::class);
     }

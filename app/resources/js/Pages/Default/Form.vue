@@ -1,7 +1,7 @@
 <script setup lang="ts">
     import ModalLayout from '@/Layouts/ModalLayout.vue';
     import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-    import Form from '@/Components/Form.vue';
+    import Form from '@/Components/Form/Index.vue';
 
     withDefaults(
         defineProps<{
