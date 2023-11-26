@@ -309,10 +309,7 @@ class RolesController extends Controller
         return Redirect::back()->with('status', 'Role edited.');
     }
 
-
-
-
-    public function __form2(Request $request, Role $role): Array
+    public function __formModal(Request $request, Role $role): Array
     {
         $abilities = Ability::sort("name")->get()->map->only(['id', 'name']);
 
@@ -346,16 +343,12 @@ class RolesController extends Controller
         ];
     }
 
-
-
-
-
     public function adduser(Request $request, Role $role): Modal
     {
         $role['abilities'] = $role->abilities()->get()->map->only('id')->pluck('id');
 
         return Inertia::modal('Default/Form', [
-            'form' => $this->__form2($request, $role),
+            'form' => $this->__formModal($request, $role),
             'isModal' => true,
             'title' => "Define the users who have access to this authorization",
             'routes' => [

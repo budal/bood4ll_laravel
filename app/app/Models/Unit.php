@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
  
 
@@ -33,21 +35,23 @@ class Unit extends Model
         'geo',
     ];
 
-    public function users()
+    public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class);
     }
     
-    public function parent()
+    public function parent(): BelongsTo
     {
         return $this->belongsTo(Unit::class, 'parent_id');
     }
     
-    public function parentRecursive() {
+    public function parentRecursive() 
+    {
         return $this->parent()->with('parentRecursive');
     }
         
-    public function getParentsNames() {
+    public function getParentsNames() 
+    {
         if($this->parent) {
             return $this->parent->getParentsNames(). " > " . $this->name;
         } else {
@@ -55,15 +59,21 @@ class Unit extends Model
         }
     }
     
-    public function children()
+    public function children(): HasMany
     {
         return $this->hasMany(Unit::class, 'parent_id');
     }
 
-    public function childrenRecursive() {
-        return $this->children()->with('childrenRecursive');
+    public function childrenRecursive() 
+    {
+        return $this->children()->withCount('children')->with('childrenRecursive');
     }
-     
+
+    public function childrenRecursive2() 
+    {
+        return $this->children()->withCount('children')->with('childrenRecursive2');
+    }
+
     public function resolveRouteBinding($value, $field = null)
     {
         return $this->where($field ?? 'id', $value)->withTrashed()->firstOrFail();

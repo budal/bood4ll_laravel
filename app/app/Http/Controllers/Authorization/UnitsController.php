@@ -24,13 +24,14 @@ class UnitsController extends Controller
             ->when(!$request->search, function ($query) {
                 $query->where("parent_id", "1");
             })
-            ->withCount('children')
+            ->withCount(['children'])
+            ->with(['childrenRecursive'])
             ->sort($request->sorted ?? "name")
             ->paginate(20)
             ->onEachSide(2)
-            ->through(function($product){
-                $product->parents = $product->getParentsNames();
-                return $product;
+            ->through(function($item){
+                $item->parents = $item->getParentsNames();
+                return $item;
             })
             ->appends($request->all('search', 'sorted', 'trashed'));
 
@@ -80,7 +81,7 @@ class UnitsController extends Controller
         $items = Unit::filter($request->all('search', 'sorted', 'trashed'))
             ->sort($request->sorted ?? "name")
             ->where('parent_id', $unit->id)
-            ->withCount('children')
+            ->withCount(['children', 'childrenRecursive'])
             ->paginate(20)
             ->onEachSide(2)
             ->appends($request->all('search', 'sorted', 'trashed'));
