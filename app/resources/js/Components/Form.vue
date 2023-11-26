@@ -3,15 +3,12 @@
     import InputError from '@/Components/InputError.vue';
     import InputLabel from '@/Components/InputLabel.vue';
     import Select from '@/Components/Select.vue';
-    import Table from '@/Components/Table.vue';
+    import Table from '@/Components/Table/Index.vue';
     import TextInput from '@/Components/TextInput.vue';
     import Toggle from '@/Components/Toggle.vue';
     import { useForm, usePage } from '@inertiajs/vue3';
     import { toast } from 'vue3-toastify';
     import { trans } from 'laravel-vue-i18n';
-    import { ref } from 'vue';
-
-    const passwordInput = ref<HTMLInputElement | null>(null);
 
     const props = defineProps<{
         form: any;

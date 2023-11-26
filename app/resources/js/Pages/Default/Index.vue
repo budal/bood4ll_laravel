@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import ModalLayout from '@/Layouts/ModalLayout.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import Table from '@/Components/Table.vue';
+import Table from '@/Components/Table/Index.vue';
 
 defineProps<{
     isModal?: boolean;

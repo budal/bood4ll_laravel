@@ -5,11 +5,12 @@
   import Checkbox from '@/Components/Checkbox.vue';
   import Modal from '@/Components/Modal.vue';
   import Switch from '@/Components/Switch.vue';
-  import Deletion from '@/Components/TablePartials/Deletion.vue';
-  import Filter from '@/Components/TablePartials/Filter.vue';
-  import Menu from '@/Components/TablePartials/Menu.vue';
-  import Search from '@/Components/TablePartials/Search.vue';
-  import Sort from '@/Components/TablePartials/Sort.vue';
+  import Deletion from '@/Components/Table/Deletion.vue';
+  import Filter from '@/Components/Table/Filter.vue';
+  import Menu from '@/Components/Table/Menu.vue';
+  import Restore from '@/Components/Table/Restore.vue';
+  import Search from '@/Components/Table/Search.vue';
+  import Sort from '@/Components/Table/Sort.vue';
   import { trans } from 'laravel-vue-i18n';
   import { toast } from 'vue3-toastify';
   import { useForm, usePage, Link } from '@inertiajs/vue3';
@@ -78,27 +79,6 @@
   const closeDeletionModal = () => confirmingDeletionModal.value = false
 
 
-  // restore
-  const confirmRestoreModal = ref(false);
-  const restoreItemID = ref('');
-
-  const restore = (id: string) => {
-    confirmRestoreModal.value = true;
-    restoreItemID.value = id;
-  }
-
-  const restoreItem = () => {
-    form.post(route(props.routes.restoreRoute, restoreItemID.value), {
-      preserveScroll: true,
-      onSuccess: () => closeRestoreModal(),
-      onError: () => toast.error(trans(usePage().props.status as string)),
-      onFinish: () => toast.success(trans(usePage().props.status as string)),
-    });
-  };
-
-  const closeRestoreModal = () => confirmRestoreModal.value = false
-
-
   // switch
   const formSwitch = useForm({});
 
@@ -132,28 +112,9 @@
     </template>
   </Modal>
 
-  <Modal 
-    :open="confirmRestoreModal" 
-    :title="$t('Are you sure you want to restore this item?')" 
-    @close="closeRestoreModal"
-  >
-    <p class="mt-1 text-sm text-secondary-light dark:text-secondary-dark">
-      {{ $t('The selected item will be restored to the active items. Do you want to continue?') }}
-    </p>
-    <template #buttons>
-      <div class="mt-6 flex justify-end">
-        <Button color="secondary" @click="closeRestoreModal" start-icon="mdi:cancel-outline">
-          {{ $t('Cancel') }}
-        </Button>
-        <Button color="success" @click="restoreItem" start-icon="mdi:backup-restore" class="ml-3" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-          {{ $t('Restore') }}
-        </Button>
-      </div>
-    </template>
-  </Modal>
-
   <div class="flex sticky top-0 sm:top-[95px] justify-between rounded-xl backdrop-blur-sm pt-1 mb-2 bg-secondary-light/30 dark:bg-secondary-dark/30">
     <div class="flex-none items-center">
+      <!-- <Deletion :destroyRoute="routes.destroyRoute" /> -->
       <Button v-if="routes.destroyRoute" color="danger" type="button" @click="openDeletionModal" start-icon="mdi:delete-outline" class="mr-2 h-full" :disabled="totalSelectedCheckBoxes === 0" />
     </div>
     <div class="flex-1 items-center">
@@ -174,11 +135,9 @@
             <th class="p-2">
               <Checkbox v-if="routes.destroyRoute" name="remember" :checked="selectedcheckBox" @click="toggleSelection" class="w-8 h-8 rounded-full" />
             </th>
-            <template v-for="sort in titles">
-              <th class="p-2">
-                <Sort :sort="sort"/>
-              </th>
-            </template>
+            <th v-for="sort in titles" class="p-2">
+              <Sort :sort="sort"/>
+            </th>
             <th v-if="routes.editRoute" class="p-2"></th>
           </tr>
         </thead>
@@ -196,40 +155,29 @@
                 :id="`checkbox-${item.id}`" 
                 @click="toggle(item)" 
               />
-              <Button v-if="routes.restoreRoute && item.deleted_at" 
-                type="button"
-                color="warning" padding="2" 
-                @click="restore(item.id)"
-              >
-                <Icon icon="mdi:restore" class="h-5 w-5" />
-              </Button>
+              <Restore :restoreRoute="routes.restoreRoute" :item="item" />
             </td>
-            <template v-for="content in titles">
-              <td class="p-1">
-                <p v-if="content.type == 'simple'" class="truncate text-xs leading-5 text-secondary-light dark:text-secondary-dark">
-                  {{ item[content.field] ?? '-' }}
-                </p>
-                
-                <template v-if="content.type == 'composite'">
-                  <strong class="text-sm font-medium text-secondary-light dark:text-secondary-dark">{{ item[content.fields[0]] ?? '-' }}</strong>
-                  <p class="truncate text-xs leading-5 text-secondary-light dark:text-secondary-dark">{{ item[content.fields[1]] ?? '-' }}</p>
-                </template>
-                
-                <Avatar 
-                  v-if="content.type == 'avatar'" 
-                  class="w-12 h-12 rounded-full" 
-                  :fallback="item[content.fallback]" 
-                />
-                
-                <Switch 
-                  v-if="content.type == 'switch'" 
-                  :name="item.name" 
-                  :value="item.id" 
-                  :checked="item.checked" 
-                  @click="updateSwitch(content.route, content.method, item.id)"
-                />
-              </td>
-            </template>
+            <td v-for="content in titles" class="p-1">
+              <p v-if="content.type == 'simple'" class="truncate text-xs leading-5 text-secondary-light dark:text-secondary-dark">
+                {{ item[content.field] ?? '-' }}
+              </p>
+              <template v-if="content.type == 'composite'">
+                <strong class="text-sm font-medium text-secondary-light dark:text-secondary-dark">{{ item[content.fields[0]] ?? '-' }}</strong>
+                <p class="truncate text-xs leading-5 text-secondary-light dark:text-secondary-dark">{{ item[content.fields[1]] ?? '-' }}</p>
+              </template>
+              <Avatar 
+                v-if="content.type == 'avatar'" 
+                class="w-12 h-12 rounded-full" 
+                :fallback="item[content.fallback]" 
+              />
+              <Switch 
+                v-if="content.type == 'switch'" 
+                :name="item.name" 
+                :value="item.id" 
+                :checked="item.checked" 
+                @click="updateSwitch(content.route, content.method, item.id)"
+              />
+            </td>
             <td v-if="routes.editRoute" class="p-2 text-right">
               <Link as="span" :href="route(routes.editRoute, item.id)">
                 <Button color="primary" type="button">
@@ -280,7 +228,6 @@
               <Icon icon="mdi:chevron-left" class="h-4 w-4" />
             </Button>
           </Link>
-
           <template v-if="items.from !== null" v-for="item in items.links">
             <Link
               as="span"
@@ -290,7 +237,6 @@
               <Button color="primary" type="button" :disabled="item.label == items.current_page">{{ item.label }}</Button>
             </Link>
           </template>
-
           <Link as="span" v-if="items.next_page_url" :href="items.next_page_url" class="text-sm">
             <Button color="primary" type="button">
               <span class="sr-only">{{ $t('Next')}}</span>
