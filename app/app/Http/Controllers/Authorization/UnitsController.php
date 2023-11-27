@@ -24,8 +24,8 @@ class UnitsController extends Controller
             ->when(!$request->search, function ($query) {
                 $query->where("parent_id", "1");
             })
-            ->withCount(['children'])
-            ->with(['childrenRecursive'])
+            ->withCount('children', 'users')
+            ->with('childrenRecursive')
             ->sort($request->sorted ?? "name")
             ->paginate(20)
             ->onEachSide(2)
@@ -64,6 +64,11 @@ class UnitsController extends Controller
                     'title' => 'Subunits',
                     'field' => 'children_count',
                 ],
+                [
+                    'type' => 'simple',
+                    'title' => 'Staff',
+                    'field' => 'users_count',
+                ],
             ],
             'items' => $items
         ]);
@@ -78,171 +83,227 @@ class UnitsController extends Controller
             ->with('childrenRecursive')
             ->get();
 
-        $items = Unit::filter($request->all('search', 'sorted', 'trashed'))
+        $subunits = Unit::filter($request->all('search', 'sorted', 'trashed'))
             ->sort($request->sorted ?? "name")
             ->where('parent_id', $unit->id)
-            ->withCount(['children', 'childrenRecursive'])
+            ->withCount('children', 'users')
             ->paginate(20)
             ->onEachSide(2)
             ->appends($request->all('search', 'sorted', 'trashed'));
 
-            return [
-                [
-                    'id' => "role",
-                    'title' => "Unit management",
-                    'subtitle' => "Manage unit's info.",
-                    'cols' => 4,
-                    'fields' => [
+        $staff = $unit->users()
+            ->filter($request->all('search', 'sorted', 'trashed'))
+            ->sort($request->sorted ?? "name")
+            ->paginate(20)
+            ->onEachSide(2)
+            ->appends($request->all('search', 'sorted', 'trashed'));
+
+        return [
+            [
+                'id' => "role",
+                'title' => "Unit management",
+                'subtitle' => "Manage unit's info.",
+                'cols' => 4,
+                'fields' => [
+                    [
                         [
-                            [
-                                'type' => "select",
-                                'name' => "parent_id",
-                                'title' => "Unidade pai",
-                                'span' => 2,
-                                'content' => $units,
-                                'required' => true,
-                            ],
-                            [
-                                'type' => "input",
-                                'name' => "name",
-                                'title' => "Name",
-                                'span' => 2,
-                                'required' => true,
-                            ],
-                            [
-                                'type' => "input",
-                                'name' => "nickname",
-                                'title' => "Nickname",
-                                'required' => true,
-                            ],
-                            [
-                                'type' => "date",
-                                'name' => "founded",
-                                'title' => "Founded",
-                                'required' => true,
-                            ],
-                            [
-                                'type' => "toggle",
-                                'name' => "active",
-                                'title' => "Active",
-                                'color' => "success",
-                                'colorFalse' => "danger",
-                            ],
-                            [
-                                'type' => "date",
-                                'name' => "expires",
-                                'title' => "Expires in",
-                            ],
-                            [
-                                'type' => "input",
-                                'name' => "cellphone",
-                                'mask' => "(##) #####-####",
-                                'title' => "Cell phone",
-                            ],
-                            [
-                                'type' => "input",
-                                'name' => "landline",
-                                'mask' => "(##) ####-####",
-                                'title' => "Land line",
-                            ],
-                            [
-                                'type' => "email",
-                                'name' => "email",
-                                'title' => "Email",
-                                'span' => 2,
-                            ],
-                            [
-                                'type' => "input",
-                                'name' => "country",
-                                'title' => "Country",
-                            ],
-                            [
-                                'type' => "input",
-                                'name' => "state",
-                                'title' => "State",
-                            ],
-                            [
-                                'type' => "input",
-                                'name' => "city",
-                                'title' => "City",
-                            ],
-                            [
-                                'type' => "input",
-                                'name' => "postcode",
-                                'mask' => "#####-###",
-                                'title' => "Post code",
-                            ],
-                            [
-                                'type' => "input",
-                                'name' => "address",
-                                'title' => "Address",
-                                'span' => 3,
-                            ],
-                            [
-                                'type' => "input",
-                                'name' => "complement",
-                                'title' => "Complement",
-                            ],
-                            [
-                                'type' => "input",
-                                'name' => "geo",
-                                'title' => "Geographic coordinates",
-                                'span' => 4,
-                            ],
-                         ],
-                    ],
+                            'type' => "select",
+                            'name' => "parent_id",
+                            'title' => "Unidade pai",
+                            'span' => 2,
+                            'content' => $units,
+                            'required' => true,
+                        ],
+                        [
+                            'type' => "input",
+                            'name' => "name",
+                            'title' => "Name",
+                            'span' => 2,
+                            'required' => true,
+                        ],
+                        [
+                            'type' => "input",
+                            'name' => "nickname",
+                            'title' => "Nickname",
+                            'required' => true,
+                        ],
+                        [
+                            'type' => "date",
+                            'name' => "founded",
+                            'title' => "Founded",
+                            'required' => true,
+                        ],
+                        [
+                            'type' => "toggle",
+                            'name' => "active",
+                            'title' => "Active",
+                            'color' => "success",
+                            'colorFalse' => "danger",
+                        ],
+                        [
+                            'type' => "date",
+                            'name' => "expires",
+                            'title' => "Expires in",
+                        ],
+                        [
+                            'type' => "input",
+                            'name' => "cellphone",
+                            'mask' => "(##) #####-####",
+                            'title' => "Cell phone",
+                        ],
+                        [
+                            'type' => "input",
+                            'name' => "landline",
+                            'mask' => "(##) ####-####",
+                            'title' => "Land line",
+                        ],
+                        [
+                            'type' => "email",
+                            'name' => "email",
+                            'title' => "Email",
+                            'span' => 2,
+                        ],
+                        [
+                            'type' => "input",
+                            'name' => "country",
+                            'title' => "Country",
+                        ],
+                        [
+                            'type' => "input",
+                            'name' => "state",
+                            'title' => "State",
+                        ],
+                        [
+                            'type' => "input",
+                            'name' => "city",
+                            'title' => "City",
+                        ],
+                        [
+                            'type' => "input",
+                            'name' => "postcode",
+                            'mask' => "#####-###",
+                            'title' => "Post code",
+                        ],
+                        [
+                            'type' => "input",
+                            'name' => "address",
+                            'title' => "Address",
+                            'span' => 3,
+                        ],
+                        [
+                            'type' => "input",
+                            'name' => "complement",
+                            'title' => "Complement",
+                        ],
+                        [
+                            'type' => "input",
+                            'name' => "geo",
+                            'title' => "Geographic coordinates",
+                            'span' => 4,
+                        ],
+                        ],
                 ],
-                [
-                    'title' => "Subunits management",
-                    'subtitle' => "Manage unit's subunits",
-                    'condition' => $unit->id <> null,
-                    'cols' => 2,
-                    'fields' => [
+            ],
+            [
+                'title' => "Subunits management",
+                'subtitle' => "Manage unit's subunits",
+                'condition' => $unit->id <> null,
+                'cols' => 2,
+                'fields' => [
+                    [
                         [
-                            [
-                                'type' => "table",
-                                'name' => "users",
-                                'title' => "Subunits",
-                                'span' => 2,
-                                'content' => [
-                                    'softDelete' => Unit::hasGlobalScope('Illuminate\Database\Eloquent\SoftDeletingScope'),
-                                    'routes' => [
-                                        'editRoute' => "apps.units.edit",
-                                        'destroyRoute' => "apps.units.destroy",
-                                        'restoreRoute' => "apps.units.restore",
-                                    ],
-                                    'menu' => [
-                                        [
-                                            'icon' => "mdi:plus",
-                                            'title' => "Unit creation",
-                                            'route' => [
-                                                "apps.units.create",
-                                                ['id' => $unit->id]
-                                            ],
-                                            'modal' => true,
-                                        ],
-                                    ],
-                                    'filters' => $request->all('search', 'sorted', 'trashed'),
-                                    'titles' => [
-                                        [
-                                            'type' => 'simple',
-                                            'title' => 'Unit',
-                                            'field' => 'name',
-                                        ],
-                                        [
-                                            'type' => 'simple',
-                                            'title' => 'Subunits',
-                                            'field' => 'children_count',
-                                        ],
-                        
-                                    ],
-                                    'items' => $items
+                            'type' => "table",
+                            'name' => "users",
+                            'title' => "Subunits",
+                            'span' => 2,
+                            'content' => [
+                                'softDelete' => Unit::hasGlobalScope('Illuminate\Database\Eloquent\SoftDeletingScope'),
+                                'routes' => [
+                                    'editRoute' => "apps.units.edit",
+                                    'destroyRoute' => "apps.units.destroy",
+                                    'restoreRoute' => "apps.units.restore",
                                 ],
+                                'menu' => [
+                                    [
+                                        'icon' => "mdi:plus",
+                                        'title' => "Unit creation",
+                                        'route' => [
+                                            "apps.units.create",
+                                            ['id' => $unit->id]
+                                        ],
+                                        'modal' => true,
+                                    ],
+                                ],
+                                'filters' => $request->all('search', 'sorted', 'trashed'),
+                                'titles' => [
+                                    [
+                                        'type' => 'simple',
+                                        'title' => 'Unit',
+                                        'field' => 'name',
+                                    ],
+                                    [
+                                        'type' => 'simple',
+                                        'title' => 'Subunits',
+                                        'field' => 'children_count',
+                                    ],
+                                    [
+                                        'type' => 'simple',
+                                        'title' => 'Staff',
+                                        'field' => 'users_count',
+                                    ],
+                    
+                                ],
+                                'items' => $subunits
                             ],
                         ],
-                    ]
+                    ],
                 ]
-            ];
+            ],
+            [
+                'title' => "Staff management",
+                'subtitle' => "Manage unit's staff",
+                'condition' => $unit->id <> null,
+                'cols' => 2,
+                'fields' => [
+                    [
+                        [
+                            'type' => "table",
+                            'name' => "users",
+                            'title' => "Staff",
+                            'span' => 2,
+                            'content' => [
+                                'softDelete' => Unit::hasGlobalScope('Illuminate\Database\Eloquent\SoftDeletingScope'),
+                                'routes' => [
+                                    'editRoute' => "apps.units.edit",
+                                    'destroyRoute' => "apps.units.destroy",
+                                    'restoreRoute' => "apps.units.restore",
+                                ],
+                                'menu' => [
+                                    [
+                                        'icon' => "mdi:plus",
+                                        'title' => "Unit creation",
+                                        'route' => [
+                                            "apps.units.create",
+                                            ['id' => $unit->id]
+                                        ],
+                                        'modal' => true,
+                                    ],
+                                ],
+                                'filters' => $request->all('search', 'sorted', 'trashed'),
+                                'titles' => [
+                                    [
+                                        'type' => 'simple',
+                                        'title' => 'Unit',
+                                        'field' => 'name',
+                                    ],
+                                ],
+                                'items' => $staff
+                            ],
+                        ],
+                    ],
+                ]
+            ],
+        ];
     }
 
     public function create(Request $request, Unit $unit)

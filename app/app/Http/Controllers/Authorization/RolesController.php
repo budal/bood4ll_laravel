@@ -26,7 +26,7 @@ class RolesController extends Controller
     {
         $items = Role::filter($request->all('search', 'sorted', 'trashed'))
             ->sort($request->sorted ?? "name")
-            ->withCount(['abilities', 'users'])
+            ->withCount('abilities', 'users')
             ->paginate(20)
             ->onEachSide(2)
             ->appends($request->all('search', 'sorted', 'trashed'));

@@ -29,7 +29,12 @@
 </script>
 
 <template>
-  <Link v-if="sort.disableSort != true" :href="sortBy(sort.field).url" class="group focus:outline-none flex gap-1 items-center">
+  <Link 
+    v-if="sort.disableSort != true" 
+    :href="sortBy(sort.field).url" 
+    class="group focus:outline-none flex gap-1 items-center"
+    preserve-scroll
+  >
     <span class="border-b-2 border-transparent group-hover:border-zero-light dark:group-hover:border-zero-dark group-focus:border-zero-light dark:group-focus:border-zero-dark transition ease-in-out duration-500">
       {{ $t(sort.title) }}
     </span>
