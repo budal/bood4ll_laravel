@@ -271,6 +271,7 @@ class UnitsController extends Controller
                             'name' => "users",
                             'title' => "Staff",
                             'span' => 2,
+                            'shortcutKey' => "a",
                             'content' => [
                                 'softDelete' => Unit::hasGlobalScope('Illuminate\Database\Eloquent\SoftDeletingScope'),
                                 'routes' => [

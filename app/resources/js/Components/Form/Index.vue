@@ -14,6 +14,7 @@
         form: any;
         routes: any;
         data?: any;
+        shortcutKey?: string;
     }>();    
 
     interface FormItems {
@@ -117,6 +118,7 @@
                                         <Table v-if="field.type == 'table'"
                                             :id="field.name"
                                             :name="field.name"
+                                            :shortcutKey="field.shortcutKey"
                                             :menu="field.content.menu" 
                                             :softDelete="field.content.softDelete" 
                                             :routes="field.content.routes" 

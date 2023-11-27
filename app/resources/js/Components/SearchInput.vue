@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import { Icon } from '@iconify/vue'
-import { onBeforeMount } from 'vue';
+  import { onBeforeMount } from 'vue';
   import { useAttrs } from 'vue'
   import { computed, onBeforeUnmount, ref, watch } from 'vue'
 
@@ -31,6 +31,8 @@ import { onBeforeMount } from 'vue';
       shortcutKey: '/',
     }
   );
+
+  const searchName = (Math.random() + 1).toString(36).substring(7);
 
   const emit = defineEmits(['update:modelValue']);
   

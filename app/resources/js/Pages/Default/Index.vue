@@ -14,6 +14,7 @@ defineProps<{
     titles: object;
     menu?: object;
     items: object;
+    shortcutKey?: string;
 }>();
 </script>
 
@@ -27,7 +28,15 @@ defineProps<{
                     {{ $t(subtitle) }}
                 </p>
             </header>
-            <Table :menu="menu" :softDelete="softDelete" :routes="routes" :filters="filters" :items="items" :titles="titles" />
+            <Table 
+                :menu="menu" 
+                :softDelete="softDelete" 
+                :routes="routes" 
+                :filters="filters" 
+                :items="items" 
+                :titles="titles" 
+                :shortcutKey="shortcutKey" 
+            />
         </ModalLayout>
         <AuthenticatedLayout v-else>
             <header>
@@ -37,7 +46,15 @@ defineProps<{
                     {{ $t(subtitle) }}
                 </p>
             </header>
-            <Table :menu="menu" :softDelete="softDelete" :routes="routes" :filters="filters" :items="items" :titles="titles" />
+            <Table 
+                :menu="menu" 
+                :softDelete="softDelete" 
+                :routes="routes" 
+                :filters="filters" 
+                :items="items" 
+                :titles="titles" 
+                :shortcutKey="shortcutKey" 
+            />
         </AuthenticatedLayout>
     </section>
 </template>

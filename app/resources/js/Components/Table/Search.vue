@@ -7,6 +7,7 @@
   defineProps<{
     id?: string;
     name?: string;
+    shortcutKey?: string;
     search: any;
   }>();
 
@@ -32,5 +33,13 @@
 </script>
 
 <template>
-  <SearchInput :placeholder="$t('Search...')" :id="id" :name="name" class="w-full h-full" :search="search" v-model="search" />
+  <SearchInput 
+    v-model="search" 
+    :id="id" 
+    :name="name" 
+    :search="search" 
+    :shortcutKey="shortcutKey"
+    :placeholder="$t('Search...')" 
+    class="w-full h-full" 
+    />
 </template>
