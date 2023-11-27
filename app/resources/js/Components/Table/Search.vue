@@ -5,6 +5,8 @@
   import { ref, watch, onBeforeUnmount } from 'vue'
 
   defineProps<{
+    id?: string;
+    name?: string;
     search: any;
   }>();
 
@@ -30,5 +32,5 @@
 </script>
 
 <template>
-  <SearchInput :placeholder="$t('Search...')" id="search" name="search" class="w-full h-full" :search="search" v-model="search" />
+  <SearchInput :placeholder="$t('Search...')" :id="id" :name="name" class="w-full h-full" :search="search" v-model="search" />
 </template>

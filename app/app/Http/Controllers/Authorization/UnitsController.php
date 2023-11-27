@@ -293,7 +293,7 @@ class UnitsController extends Controller
                                 'titles' => [
                                     [
                                         'type' => 'simple',
-                                        'title' => 'Unit',
+                                        'title' => 'Name',
                                         'field' => 'name',
                                     ],
                                 ],

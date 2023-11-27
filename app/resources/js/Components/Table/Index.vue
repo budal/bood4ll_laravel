@@ -89,6 +89,8 @@
       onFinish: () => toast.success(trans(usePage().props.status as string, usePage().props.statusComplements as undefined)),
     });
   }
+
+  let searchName = (Math.random() + 1).toString(36).substring(7);
 </script>
 
 <template>
@@ -118,7 +120,7 @@
       <Button v-if="routes.destroyRoute" color="danger" type="button" @click="openDeletionModal" start-icon="mdi:delete-outline" class="mr-2 h-full" :disabled="totalSelectedCheckBoxes === 0" />
     </div>
     <div class="flex-1 items-center">
-      <Search :search="filters.search" />
+      <Search :id="id" :name="name" :search="filters.search" />
     </div>
     <div class="flex-none items-center">
       <Filter :softDelete="softDelete"/>
