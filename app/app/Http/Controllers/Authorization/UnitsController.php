@@ -327,20 +327,35 @@ class UnitsController extends Controller
 
     public function store(Request $request, Unit $unit): RedirectResponse
     {
-        dd($request);
         DB::beginTransaction();
 
         try {
-            $unit = Unit::firstOrCreate($request->except(['users']));
+            $unit = Unit::firstOrCreate([
+                'name' => $request->name,
+                'nickname' => $request->nickname,
+                'founded' => $request->founded,
+                'parent_id' => $request->parent_id,
+                'active' => $request->active,
+                'expires' => $request->expires,
+                'cellphone' => $request->cellphone,
+                'landline' => $request->landline,
+                'email' => $request->email,
+                'country' => $request->country,
+                'state' => $request->state,
+                'city' => $request->city,
+                'address' => $request->address,
+                'complement' => $request->complement,
+                'postcode' => $request->postcode,
+                'geo' => $request->geo,
+            ]);
         } catch(\Exception $e) {
-            dd($e);
             DB::rollback();
             return Redirect::back()->withInput()->with('status', "Error when inserting a new unit.");
         }
         
         DB::commit();
 
-        return Redirect::route('apps.units.index')->with('status', 'Unit created.');
+        return Redirect::route('apps.units.edit', $unit->id)->with('status', 'Unit created.');
     }
     
     public function edit(Request $request, Unit $unit): Response
@@ -359,14 +374,28 @@ class UnitsController extends Controller
 
     public function update(Unit $unit, Request $request): RedirectResponse
     {
-        dd($request);
         DB::beginTransaction();
 
         try {
-            Unit::where('id', $unit->id)
-                ->update($request->all());
+            Unit::where('id', $unit->id)->update([
+                'name' => $request->name,
+                'nickname' => $request->nickname,
+                'founded' => $request->founded,
+                'parent_id' => $request->parent_id,
+                'active' => $request->active,
+                'expires' => $request->expires,
+                'cellphone' => $request->cellphone,
+                'landline' => $request->landline,
+                'email' => $request->email,
+                'country' => $request->country,
+                'state' => $request->state,
+                'city' => $request->city,
+                'address' => $request->address,
+                'complement' => $request->complement,
+                'postcode' => $request->postcode,
+                'geo' => $request->geo,
+            ]);
         } catch(\Exception $e) {
-
             report($e);
 
             // dd($e);
@@ -376,7 +405,7 @@ class UnitsController extends Controller
         
         DB::commit();
 
-        return Redirect::route('apps.units.index')->with('status', 'Unit edited.');
+        return Redirect::back()->with('status', 'Unit edited.');
     }
 
     public function destroy(Request $request): RedirectResponse
