@@ -277,7 +277,7 @@ class UnitsController extends Controller
                             'shortcutKey' => "a",
                             'content' => [
                                 'routes' => [
-                                    'editRoute' => "apps.units.edit",
+                                    'editRoute' => "apps.users.edit",
                                     'destroyRoute' => "apps.units.destroy",
                                     'restoreRoute' => "apps.units.restore",
                                 ],
