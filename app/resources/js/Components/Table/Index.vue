@@ -234,7 +234,8 @@
             <Link
               as="span"
               v-if="item.label > 0 && item.label != items.current_page || item.label == items.current_page"
-              :key="item.key" :href="item.url" 
+              :key="item.key" 
+              :href="item.url" 
               class="text-sm"
               preserve-scroll
             >

@@ -87,12 +87,14 @@ class UnitsController extends Controller
             ->sort($request->subunits_sorted ?? "name")
             ->with('childrenRecursive')
             ->withCount('children', 'users')
-            ->paginate(20)
+            ->paginate($perPage = 20, $columns = ['*'], $pageName = 'subunits')
             ->onEachSide(2);
+            // dd($subunits);
 
         $staff = $unit->users()
             ->where('name', 'ilike', '%'.$request->staff_search.'%')
             ->sort($request->staff_sorted ?? "name")
+            // ->paginate($perPage = 20, $columns = ['*'], $pageName = 'staff')
             ->paginate(20)
             ->onEachSide(2);
 
