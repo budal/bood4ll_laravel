@@ -116,6 +116,7 @@
                                         />
                 
                                         <Table v-if="field.type == 'table'"
+                                            :prefix="mkForm.id"
                                             :id="field.name"
                                             :name="field.name"
                                             :shortcutKey="field.shortcutKey"

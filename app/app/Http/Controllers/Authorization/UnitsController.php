@@ -20,7 +20,7 @@ class UnitsController extends Controller
 {
     public function index(Request $request): Response
     {
-        $items = Unit::filter($request->all('search', 'sorted', 'trashed'))
+        $units = Unit::filter($request->all('search', 'sorted', 'trashed'))
             ->when(!$request->search, function ($query) {
                 $query->where("parent_id", "1");
             })
@@ -32,8 +32,7 @@ class UnitsController extends Controller
             ->through(function($item){
                 $item->parents = $item->getParentsNames();
                 return $item;
-            })
-            ->appends($request->all('search', 'sorted', 'trashed'));
+            });
 
         return Inertia::render('Default/Index', [
             'title' => "Units management",
@@ -70,7 +69,7 @@ class UnitsController extends Controller
                     'field' => 'users_count',
                 ],
             ],
-            'items' => $items
+            'items' => $units
         ]);
     }
     
@@ -83,24 +82,22 @@ class UnitsController extends Controller
             ->with('childrenRecursive')
             ->get();
 
-        $subunits = Unit::filter($request->all('search', 'sorted', 'trashed'))
-            ->sort($request->sorted ?? "name")
-            ->where('parent_id', $unit->id)
+        $subunits = Unit::where('parent_id', $unit->id)
+            ->filter($request->all('subunits_search', 'subunits_trashed'))
+            ->sort($request->subunits_sorted ?? "name")
             ->withCount('children', 'users')
             ->paginate(20)
-            ->onEachSide(2)
-            ->appends($request->all('search', 'sorted', 'trashed'));
+            ->onEachSide(2);
 
         $staff = $unit->users()
-            ->filter($request->all('search', 'sorted', 'trashed'))
-            ->sort($request->sorted ?? "name")
+            ->where('name', 'ilike', '%'.$request->staff_search.'%')
+            ->sort($request->staff_sorted ?? "name")
             ->paginate(20)
-            ->onEachSide(2)
-            ->appends($request->all('search', 'sorted', 'trashed'));
+            ->onEachSide(2);
 
         return [
             [
-                'id' => "role",
+                'id' => "unit",
                 'title' => "Unit management",
                 'subtitle' => "Manage unit's info.",
                 'cols' => 4,
@@ -205,6 +202,7 @@ class UnitsController extends Controller
                 ],
             ],
             [
+                'id' => "subunits",
                 'title' => "Subunits management",
                 'subtitle' => "Manage unit's subunits",
                 'condition' => $unit->id <> null,
@@ -260,6 +258,7 @@ class UnitsController extends Controller
                 ]
             ],
             [
+                'id' => "staff",
                 'title' => "Staff management",
                 'subtitle' => "Manage unit's staff",
                 'condition' => $unit->id <> null,
@@ -273,7 +272,6 @@ class UnitsController extends Controller
                             'span' => 2,
                             'shortcutKey' => "a",
                             'content' => [
-                                'softDelete' => Unit::hasGlobalScope('Illuminate\Database\Eloquent\SoftDeletingScope'),
                                 'routes' => [
                                     'editRoute' => "apps.units.edit",
                                     'destroyRoute' => "apps.units.destroy",
@@ -314,7 +312,7 @@ class UnitsController extends Controller
         return Inertia::render('Default/Form', [
             'form' => $this->__form($request, $unit),
             'routes' => [
-                'role' => [
+                'unit' => [
                     'route' => route('apps.units.store'),
                     'method' => 'post'
                 ],
@@ -346,7 +344,7 @@ class UnitsController extends Controller
         return Inertia::render('Default/Form', [
             'form' => $this->__form($request, $unit),
             'routes' => [
-                'role' => [
+                'unit' => [
                     'route' => route('apps.units.update', $unit->id),
                     'method' => 'patch'
                 ],

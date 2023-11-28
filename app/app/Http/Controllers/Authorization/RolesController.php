@@ -67,7 +67,7 @@ class RolesController extends Controller
                 ],
                 [
                     'type' => 'simple',
-                    'title' => 'Users',
+                    'title' => 'Staff',
                     'field' => 'users_count',
                 ],
             ],

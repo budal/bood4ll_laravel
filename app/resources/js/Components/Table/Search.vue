@@ -4,7 +4,8 @@
   import { router } from '@inertiajs/vue3';
   import { ref, watch, onBeforeUnmount } from 'vue'
 
-  defineProps<{
+  const props = defineProps<{
+    prefix?: string | null;
     id?: string;
     name?: string;
     shortcutKey?: string;
@@ -16,7 +17,7 @@
   const search = ref('');
 
   const debouncedWatch = debounce(() => {
-    searchRoute.searchParams.set("search", search.value)
+    searchRoute.searchParams.set(props.prefix ? `${props.prefix}_search` : "search", search.value)
 
     router.visit(searchRoute, {
       method: 'get',

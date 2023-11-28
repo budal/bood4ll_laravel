@@ -69,11 +69,6 @@ class Unit extends Model
         return $this->children()->withCount('children')->with('childrenRecursive');
     }
 
-    public function childrenRecursive2() 
-    {
-        return $this->children()->withCount('children')->with('childrenRecursive2');
-    }
-
     public function resolveRouteBinding($value, $field = null)
     {
         return $this->where($field ?? 'id', $value)->withTrashed()->firstOrFail();
@@ -81,11 +76,17 @@ class Unit extends Model
 
     public function scopeFilter($query, array $filters)
     {
-        $query->when($filters['search'] ?? null, function ($query, $search) {
+        $search = array_filter($filters, function ($key){ return(strpos($key,'search') !== false); }, ARRAY_FILTER_USE_KEY);
+        $filterSearch = reset($search);
+
+        $trash = array_filter($filters, function ($key){ return(strpos($key,'trash') !== false); }, ARRAY_FILTER_USE_KEY);
+        $filterTrash = reset($search);
+
+        $query->when($filterSearch ?? null, function ($query, $search) {
             $query->where(function ($query) use ($search) {
                 $query->where('name', 'ilike', '%'.$search.'%');
             });
-        })->when($filters['trashed'] ?? null, function ($query, $trashed) {
+        })->when($filterTrash ?? null, function ($query, $trashed) {
             if ($trashed === 'both') {
                 $query->withTrashed();
             } elseif ($trashed === 'trashed') {

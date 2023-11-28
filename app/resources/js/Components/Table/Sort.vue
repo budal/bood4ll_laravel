@@ -2,23 +2,26 @@
   import { Icon } from '@iconify/vue'
   import { Link } from '@inertiajs/vue3';
 
-  defineProps<{
+  const props = defineProps<{
+    prefix?: string | null;
     sort: any;
   }>();
+
+  const sortedFieldName = props.prefix ? `${props.prefix}_sorted` : "sorted"
 
   const sortBy = (column: any) => {
     let url = new URL(window.location.href);
     let sortOrder = null;
-    let sortValue = url.searchParams.get("sorted")
+    let sortValue = url.searchParams.get(sortedFieldName)
 
     if (sortValue == column) {
-      url.searchParams.set("sorted", "-" + column)
+      url.searchParams.set(sortedFieldName, "-" + column)
       sortOrder = "asc"
     } else if (sortValue === "-" + column) {
-      url.searchParams.set("sorted", column)
+      url.searchParams.set(sortedFieldName, column)
       sortOrder = "desc"
     } else {
-      url.searchParams.set("sorted", column)
+      url.searchParams.set(sortedFieldName, column)
     }
     
     return {

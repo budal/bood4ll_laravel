@@ -7,10 +7,13 @@
   import { ref } from 'vue'
 
   const props = defineProps<{
+    prefix?: string | null;
     softDelete?: boolean | null;
   }>();
 
   const searchRoute = new URL(window.location.href);
+
+  const filterFieldName = props.prefix ? `${props.prefix}_trashed` : "trashed"
 
   const filterContent = [
     { id: 'active', name: 'Only active', disabled: false },
@@ -18,14 +21,14 @@
     { id: 'both', name: 'Active and trashed', disabled: props.softDelete === true ? false : true },
   ]
 
-  const filterContentValue = ref(searchRoute.searchParams.get("trashed") || 'active')
+  const filterContentValue = ref(searchRoute.searchParams.get(filterFieldName) || 'active')
 
   const filtersModal = ref(false);
 
   const openFiltersModal = () => filtersModal.value = true
 
   const refreshFilters = () => {
-    searchRoute.searchParams.set("trashed", filterContentValue.value)
+    searchRoute.searchParams.set(filterFieldName, filterContentValue.value)
 
     router.visit(searchRoute, {
       method: 'get',

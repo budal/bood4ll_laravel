@@ -17,6 +17,7 @@
   import { ref, computed, reactive } from 'vue'
 
   const props = defineProps<{
+    prefix?: string;
     id?: string;
     name?: string;
     softDelete?: boolean | null;
@@ -119,10 +120,10 @@
       <Button v-if="routes.destroyRoute" color="danger" type="button" @click="openDeletionModal" start-icon="mdi:delete-outline" class="mr-2 h-full" :disabled="totalSelectedCheckBoxes === 0" />
     </div>
     <div class="flex-1 items-center">
-      <Search :id="id" :name="name" :search="filters.search" :shortcutKey="shortcutKey" />
+      <Search :prefix="prefix" :id="id" :name="name" :search="filters.search" :shortcutKey="shortcutKey" />
     </div>
     <div class="flex-none items-center">
-      <Filter :softDelete="softDelete"/>
+      <Filter :prefix="prefix" :softDelete="softDelete"/>
     </div>
     <div v-if="menu" class="flex-none items-center">
       <Menu :menu="menu" />
@@ -137,7 +138,7 @@
               <Checkbox v-if="routes.destroyRoute" name="remember" :checked="selectedcheckBox" @click="toggleSelection" class="w-8 h-8 rounded-full" />
             </th>
             <th v-for="sort in titles" class="p-2">
-              <Sort :sort="sort"/>
+              <Sort :prefix="prefix" :sort="sort"/>
             </th>
             <th v-if="routes.editRoute" class="p-2"></th>
           </tr>
