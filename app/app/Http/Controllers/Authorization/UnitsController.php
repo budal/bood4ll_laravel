@@ -20,7 +20,7 @@ class UnitsController extends Controller
 {
     public function index(Request $request): Response
     {
-        $units = Unit::filter($request->all('search', 'sorted', 'trashed'))
+        $units = Unit::filter($request->all('search', 'trashed'))
             ->when(!$request->search, function ($query) {
                 $query->where("parent_id", "1");
             })
@@ -32,7 +32,8 @@ class UnitsController extends Controller
             ->through(function($item){
                 $item->parents = $item->getParentsNames();
                 return $item;
-            });
+            })
+            ->appends($request->all('search', 'trashed', 'sorted'));
 
         return Inertia::render('Default/Index', [
             'title' => "Units management",
@@ -75,8 +76,6 @@ class UnitsController extends Controller
     
     public function __form(Request $request, Unit $unit)
     {
-        $url = $request->getRequestUri();
-        
         $units = Unit::orderBy("parent_id")
             ->select("id", "name", "active")
             ->orderBy("name")
@@ -90,15 +89,15 @@ class UnitsController extends Controller
             ->with('childrenRecursive')
             ->withCount('children', 'users')
             ->paginate($perPage = 20, $columns = ['*'], $pageName = 'subunits')
-            ->withPath($url)
-            ->onEachSide(2);
+            ->onEachSide(2)
+            ->appends($request->all('subunits_search', 'subunits_trashed', 'subunits_sorted'));
 
         $staff = $unit->users()
             ->where('name', 'ilike', '%'.$request->staff_search.'%')
             ->sort($request->staff_sorted ?? "name")
             ->paginate($perPage = 20, $columns = ['*'], $pageName = 'staff')
-            ->withPath($url)
-            ->onEachSide(2);
+            ->onEachSide(2)
+            ->appends($request->all('staff_search'));
 
         return [
             [
