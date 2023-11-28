@@ -11,9 +11,9 @@
     softDelete?: boolean | null;
   }>();
 
-  const searchRoute = new URL(window.location.href);
+  let searchRoute = new URL(window.location.href);
 
-  const filterFieldName = props.prefix ? `${props.prefix}_trashed` : "trashed"
+  let filterFieldName = props.prefix ? `${props.prefix}_trashed` : "trashed"
 
   const filterContent = [
     { id: 'active', name: 'Only active', disabled: false },
@@ -21,7 +21,7 @@
     { id: 'both', name: 'Active and trashed', disabled: props.softDelete === true ? false : true },
   ]
 
-  const filterContentValue = ref(searchRoute.searchParams.get(filterFieldName) || 'active')
+  let filterContentValue = ref(searchRoute.searchParams.get(filterFieldName) || 'active')
 
   const filtersModal = ref(false);
 
