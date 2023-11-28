@@ -75,6 +75,8 @@ class UnitsController extends Controller
     
     public function __form(Request $request, Unit $unit)
     {
+        $url = $request->getRequestUri();
+        
         $units = Unit::orderBy("parent_id")
             ->select("id", "name", "active")
             ->orderBy("name")
@@ -88,14 +90,14 @@ class UnitsController extends Controller
             ->with('childrenRecursive')
             ->withCount('children', 'users')
             ->paginate($perPage = 20, $columns = ['*'], $pageName = 'subunits')
+            ->withPath($url)
             ->onEachSide(2);
-            // dd($subunits);
 
         $staff = $unit->users()
             ->where('name', 'ilike', '%'.$request->staff_search.'%')
             ->sort($request->staff_sorted ?? "name")
-            // ->paginate($perPage = 20, $columns = ['*'], $pageName = 'staff')
-            ->paginate(20)
+            ->paginate($perPage = 20, $columns = ['*'], $pageName = 'staff')
+            ->withPath($url)
             ->onEachSide(2);
 
         return [
