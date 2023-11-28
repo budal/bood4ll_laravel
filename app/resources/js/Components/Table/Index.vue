@@ -181,7 +181,7 @@
               />
             </td>
             <td v-if="routes.editRoute" class="p-2 text-right">
-              <Link as="span" :href="route(routes.editRoute, item.id)">
+              <Link as="span" :href="route(routes.editRoute, item.id)" preserve-scroll>
                 <Button color="primary" type="button">
                   <Icon icon="mdi:chevron-right" class="h-5 w-5" />
                 </Button>
@@ -200,7 +200,7 @@
   <div v-if="items.total > 0" class="flex sticky bottom-0 justify-between rounded-xl backdrop-blur-sm mt-5 bg-secondary-light/30 dark:bg-secondary-dark/30">
     <div class="w-full flex flex-row sm:hidden">
       <div class="basis-1/3 text-left">
-        <Link as="span" v-if="items.prev_page_url" :href="items.prev_page_url" class="text-sm">
+        <Link as="span" v-if="items.prev_page_url" :href="items.prev_page_url" class="text-sm" preserve-scroll>
           <Button color="primary" type="button">{{ $t('Previous')}}</Button>
         </Link>
       </div>
@@ -211,7 +211,7 @@
         </span>
       </div>
       <div class="basis-1/3 text-right">
-        <Link as="span" v-if="items.next_page_url" :href="items.next_page_url" class="text-sm">
+        <Link as="span" v-if="items.next_page_url" :href="items.next_page_url" class="text-sm" preserve-scroll>
           <Button color="primary" type="button">{{ $t('Next')}}</Button>
         </Link>
       </div>
@@ -224,7 +224,7 @@
       </div>
       <div>
         <nav class="inline-flex shadow-sm gap-[2px]" aria-label="Pagination">
-          <Link as="span" v-if="items.prev_page_url" :href="items.prev_page_url" class="text-sm">
+          <Link as="span" v-if="items.prev_page_url" :href="items.prev_page_url" class="text-sm" preserve-scroll>
             <Button color="primary" type="button">
               <span class="sr-only">{{ $t('Previous')}}</span>
               <Icon icon="mdi:chevron-left" class="h-4 w-4" />
@@ -234,12 +234,14 @@
             <Link
               as="span"
               v-if="item.label > 0 && item.label != items.current_page || item.label == items.current_page"
-              :key="item.key" :href="item.url" class="text-sm"
+              :key="item.key" :href="item.url" 
+              class="text-sm"
+              preserve-scroll
             >
               <Button color="primary" type="button" :disabled="item.label == items.current_page">{{ item.label }}</Button>
             </Link>
           </template>
-          <Link as="span" v-if="items.next_page_url" :href="items.next_page_url" class="text-sm">
+          <Link as="span" v-if="items.next_page_url" :href="items.next_page_url" class="text-sm" preserve-scroll>
             <Button color="primary" type="button">
               <span class="sr-only">{{ $t('Next')}}</span>
               <Icon icon="mdi:chevron-right" class="h-4 w-4" />

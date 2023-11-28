@@ -85,6 +85,7 @@ class UnitsController extends Controller
         $subunits = Unit::where('parent_id', $unit->id)
             ->filter($request->all('subunits_search', 'subunits_trashed'))
             ->sort($request->subunits_sorted ?? "name")
+            ->with('childrenRecursive')
             ->withCount('children', 'users')
             ->paginate(20)
             ->onEachSide(2);
@@ -94,8 +95,6 @@ class UnitsController extends Controller
             ->sort($request->staff_sorted ?? "name")
             ->paginate(20)
             ->onEachSide(2);
-
-            // dd($staff);
 
         return [
             [

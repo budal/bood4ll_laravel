@@ -133,10 +133,9 @@
                                 </template>
                             </div>
                         </template>
-        
                     </div>
             
-                    <div v-if="mkForm.id" class="flex items-center gap-4">
+                    <div v-if="props.routes[mkForm.id]" class="flex items-center gap-4">
                         <Button 
                             color="primary" 
                             :class="{ 'opacity-25': jsForm.processing }"
