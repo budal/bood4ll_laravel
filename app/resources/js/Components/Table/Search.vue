@@ -14,10 +14,14 @@
 
   const searchRoute = new URL(window.location.href);
 
-  const search = ref('');
+  const searchFieldName = props.prefix ? `${props.prefix}_search` : "search"
+
+  const value =  searchRoute.searchParams.get(searchFieldName)
+
+  const search = ref(value || '');
 
   const debouncedWatch = debounce(() => {
-    searchRoute.searchParams.set(props.prefix ? `${props.prefix}_search` : "search", search.value)
+    searchRoute.searchParams.set(searchFieldName, search.value)
 
     router.visit(searchRoute, {
       method: 'get',
@@ -38,7 +42,7 @@
     v-model="search" 
     :id="id" 
     :name="name" 
-    :search="search" 
+    :value="search" 
     :shortcutKey="shortcutKey"
     :placeholder="$t('Search...')" 
     class="w-full h-full" 

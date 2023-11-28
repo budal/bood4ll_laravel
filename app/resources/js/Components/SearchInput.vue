@@ -111,7 +111,7 @@
   )
 
   onBeforeMount(() => {
-    emit('update:modelValue', props.value ?? '')
+    emit('update:modelValue', props.modelValue ?? '')
   })
 
   onBeforeUnmount(() => {
