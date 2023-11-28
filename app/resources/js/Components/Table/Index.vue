@@ -230,6 +230,9 @@
               <Icon icon="mdi:chevron-left" class="h-4 w-4" />
             </Button>
           </Link>
+
+{{ console.log(items.links) }}
+
           <template v-if="items.from !== null" v-for="item in items.links">
             <Link
               as="span"
