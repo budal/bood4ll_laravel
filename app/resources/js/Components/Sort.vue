@@ -38,7 +38,7 @@
     class="group focus:outline-none flex gap-1 items-center"
     preserve-scroll
   >
-    <span class="border-b-2 border-transparent group-hover:border-zero-light dark:group-hover:border-zero-dark group-focus:border-zero-light dark:group-focus:border-zero-dark transition ease-in-out duration-500">
+    <span class="border-b-2 border-transparent group-hover:border-zero-dark dark:group-hover:border-zero-white group-focus:border-zero-dark dark:group-focus:border-zero-white transition ease-in-out duration-500">
       {{ $t(sort.title) }}
     </span>
     <Icon icon="mdi:chevron-up-circle-outline" v-if="sortBy(sort.field).sortMe == 'asc'" class="h-4 w-4" />
