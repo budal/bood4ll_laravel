@@ -47,7 +47,7 @@ class Unit extends Model
 
     public function childrenRecursive() 
     {
-        return $this->children()->withCount('users', 'children')->with('childrenRecursive');
+        return $this->children()->with('childrenRecursive');
     }
 
 

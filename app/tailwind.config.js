@@ -47,10 +47,12 @@ export default {
         extend: {
             colors: {
                 zero: {
+                    'white': colors.white,
                     'light': colors.gray[100],
                     'light-hover': colors.gray[200],
-                    'dark': colors.gray[900],
+                    'dark': colors.gray[800],
                     'dark-hover': colors.gray[700],
+                    'black': colors.gray[900],
                 },
                 primary: {
                     'light': colors.gray[800],
@@ -59,34 +61,34 @@ export default {
                     'dark-hover': colors.gray[300],
                 },
                 secondary: {
-                    'light': colors.white,
-                    'light-hover': colors.gray[200],
-                    'dark': colors.gray[800],
-                    'dark-hover': colors.gray[700],
+                    'light': colors.gray[100],
+                    'light-hover': colors.gray[300],
+                    'dark': colors.gray[700],
+                    'dark-hover': colors.gray[600],
                 },
                 danger: {
                     'light': colors.red[600],
                     'light-hover': colors.red[400],
-                    'dark': colors.red[600],
-                    'dark-hover': colors.red[400],
+                    'dark': colors.red[800],
+                    'dark-hover': colors.red[600],
                 },
                 success: {
-                    'light': colors.green[700],
-                    'light-hover': colors.green[500],
-                    'dark': colors.green[700],
-                    'dark-hover': colors.green[500],
+                    'light': colors.green[600],
+                    'light-hover': colors.green[400],
+                    'dark': colors.green[800],
+                    'dark-hover': colors.green[600],
                 },
                 warning: {
-                    'light': colors.yellow[400],
-                    'light-hover': colors.yellow[200],
+                    'light': colors.yellow[300],
+                    'light-hover': colors.yellow[100],
                     'dark': colors.yellow[400],
                     'dark-hover': colors.yellow[200],
                 },
                 info: {
-                    'light': colors.blue[800],
-                    'light-hover': colors.blue[500],
+                    'light': colors.blue[600],
+                    'light-hover': colors.blue[400],
                     'dark': colors.blue[800],
-                    'dark-hover': colors.blue[500],
+                    'dark-hover': colors.blue[600],
                 },
             },
             textColor: {
@@ -121,31 +123,31 @@ export default {
             },
             borderColor: {
                 zero: {
-                    'light': colors.gray[300],
-                    'dark': colors.gray[600],
+                    'light': colors.gray[100],
+                    'dark': colors.gray[900],
                 },
                 primary: {
-                    'light': colors.gray[400],
-                    'dark': colors.gray[500],
+                    'light': colors.gray[700],
+                    'dark': colors.gray[200],
                 },
                 secondary: {
-                    'light': colors.gray[300],
-                    'dark': colors.gray[700],
+                    'light': colors.gray[200],
+                    'dark': colors.gray[600],
                 },
                 danger: {
-                    'light': colors.red[700],
+                    'light': colors.red[500],
                     'dark': colors.red[700],
                 },
                 success: {
-                    'light': colors.green[800],
-                    'dark': colors.green[800],
+                    'light': colors.green[500],
+                    'dark': colors.green[700],
                 },
                 warning: {
-                    'light': colors.yellow[500],
-                    'dark': colors.yellow[500],
+                    'light': colors.yellow[200],
+                    'dark': colors.yellow[300],
                 },
                 info: {
-                    'light': colors.blue[700],
+                    'light': colors.blue[500],
                     'dark': colors.blue[700],
                 },
             },

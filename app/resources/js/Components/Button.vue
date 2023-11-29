@@ -17,6 +17,7 @@
             method?: 'get' | 'post' | 'patch' | 'put' | 'delete';
             srOnly?: string;
             title?: string;
+            menu?: object;
             url?: string;
             link?: {
                 route: string | [];
@@ -42,8 +43,7 @@
                 method: props.method,
                 preserveScroll: props.preserveScroll,
             })
-        }
-        if (props.link) {
+        } else  if (props.link) {
             if (typeof props.link == 'string') {
                 router.visit(route(props.link as string), {
                     method: props.method,

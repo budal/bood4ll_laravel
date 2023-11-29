@@ -136,7 +136,7 @@
         <thead v-if="items.data.length > 0">
           <tr class="bg-zero-light dark:bg-zero-dark p-3 text-secondary-light dark:text-secondary-dark text-left">
             <th class="p-2">
-              <Checkbox v-if="routes.destroyRoute" name="remember" :checked="selectedcheckBox" @click="toggleSelection" class="w-8 h-8 rounded-full" />
+              <Checkbox v-if="routes.destroyRoute" name="remember" :checked="selectedcheckBox" @click="toggleSelection" class="w-8 h-8 rounded-lg" />
             </th>
             <th v-for="sort in titles" class="p-2">
               <Sort :prefix="prefix" :sort="sort" class="justify-center" />
@@ -152,7 +152,7 @@
           >
             <td class="p-2">
               <Checkbox v-if="routes.destroyRoute && !item.deleted_at" 
-                class="w-8 h-8 rounded-full" 
+                class="w-8 h-8 rounded-lg" 
                 :checked="selectedCheckBoxes.has(item)" 
                 :value="item.id" 
                 :id="`checkbox-${item.id}`" 
