@@ -15,6 +15,7 @@
   import { ref } from 'vue'
 
   defineProps<{
+    disabled: boolean;
     menu: any;
   }>();
 
@@ -29,7 +30,7 @@
         class="h-full outline-none"
         :aria-label="$t('Table menu')"
       >
-        <Button color="info" type="button" start-icon="mdi:dots-horizontal" class="h-full" />
+        <Button color="info" type="button" start-icon="mdi:dots-horizontal" class="h-full" :disabled="disabled" />
       </DropdownMenuTrigger>
 
       <DropdownMenuPortal>

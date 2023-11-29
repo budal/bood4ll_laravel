@@ -3,14 +3,14 @@
   import Avatar from '@/Components/Avatar.vue';
   import Button from '@/Components/Button.vue';
   import Checkbox from '@/Components/Checkbox.vue';
+  import Dropdown from '@/Components/Dropdown.vue';
   import Modal from '@/Components/Modal.vue';
+  import Sort from '@/Components/Sort.vue';
   import Switch from '@/Components/Switch.vue';
   import Deletion from '@/Components/Table/Deletion.vue';
   import Filter from '@/Components/Table/Filter.vue';
-  import Menu from '@/Components/Table/Menu.vue';
   import Restore from '@/Components/Table/Restore.vue';
   import Search from '@/Components/Table/Search.vue';
-  import Sort from '@/Components/Table/Sort.vue';
   import { trans } from 'laravel-vue-i18n';
   import { toast } from 'vue3-toastify';
   import { useForm, usePage, Link } from '@inertiajs/vue3';
@@ -116,9 +116,9 @@
 
   <div class="flex sticky top-0 sm:top-[95px] justify-between rounded-xl backdrop-blur-sm pt-1 mb-2 bg-zero-light/30 dark:bg-zero-dark/30">
     <div class="flex gap-2 w-full">
-      <Menu v-if="menu" :menu="menu" />
       <!-- <Deletion :destroyRoute="routes.destroyRoute" /> -->
       <Button v-if="routes.destroyRoute" color="danger" type="button" @click="openDeletionModal" start-icon="mdi:delete-outline" class="h-full" :disabled="totalSelectedCheckBoxes === 0" />
+      <Dropdown v-if="menu" :menu="menu" :disabled="totalSelectedCheckBoxes === 0" />
       <Search :prefix="prefix" :id="id" :name="name" :search="filters.search" :shortcutKey="shortcutKey" class="flex-1" />
       <Filter :prefix="prefix" :softDelete="softDelete"/>
       <Button 
@@ -234,7 +234,7 @@
         </p>
       </div>
       <div>
-        <nav class="inline-flex shadow-sm gap-[2px]" aria-label="Pagination">
+        <nav class="inline-flex gap-[2px]" aria-label="Pagination">
           <Button 
             v-if="items.prev_page_url" 
             type="button"
