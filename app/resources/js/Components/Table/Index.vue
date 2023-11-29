@@ -11,7 +11,7 @@
   import Sort from '@/Components/Table/Sort.vue';
   import { trans } from 'laravel-vue-i18n';
   import { toast } from 'vue3-toastify';
-  import { useForm, usePage, Link } from '@inertiajs/vue3';
+  import { useForm, usePage } from '@inertiajs/vue3';
   import { ref, computed, reactive } from 'vue'
 
   const props = defineProps<{
@@ -27,7 +27,6 @@
     shortcutKey?: string;
   }>();
 
-  // toggle checkboxes
   let selectedCheckBoxes = reactive(new Set())
 
   let selectAll = (checkBoxes: any) => {
