@@ -23,7 +23,7 @@ export default {
             variants: ['sm'],
         },
         {
-            pattern: /(bg|border|ring|ring-offset|text)-(zero|primary|secondary|danger|success|warning|info)-(light|dark)/,
+            pattern: /(bg|border|ring|ring-offset|text|shadow)-(zero|primary|secondary|danger|success|warning|info)-(light|dark)/,
             variants: [
                 'dark', 
                 'hover', 
@@ -61,8 +61,8 @@ export default {
                     'dark-hover': colors.gray[300],
                 },
                 secondary: {
-                    'light': colors.gray[100],
-                    'light-hover': colors.gray[300],
+                    'light': colors.white,
+                    'light-hover': colors.gray[200],
                     'dark': colors.gray[700],
                     'dark-hover': colors.gray[600],
                 },
@@ -123,7 +123,7 @@ export default {
             },
             borderColor: {
                 zero: {
-                    'light': colors.gray[200],
+                    'light': colors.gray[300],
                     'dark': colors.gray[600],
                 },
                 primary: {

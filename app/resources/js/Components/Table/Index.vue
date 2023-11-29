@@ -114,7 +114,7 @@
     </template>
   </Modal>
 
-  <div class="flex sticky top-0 sm:top-[95px] justify-between rounded-xl backdrop-blur-sm pt-1 mb-2 bg-secondary-light/30 dark:bg-secondary-dark/30">
+  <div class="flex sticky top-0 sm:top-[95px] justify-between rounded-xl backdrop-blur-sm pt-1 mb-2 bg-zero-light/30 dark:bg-zero-dark/30">
     <div class="flex gap-2 w-full">
       <Menu v-if="menu" :menu="menu" />
       <!-- <Deletion :destroyRoute="routes.destroyRoute" /> -->
@@ -130,11 +130,11 @@
       />
     </div>
   </div>
-  <div class="rounded-xl overflow-hidden border-2 border-secondary-light dark:border-secondary-dark">
+  <div class="rounded-xl overflow-hidden border-2 border-zero-light dark:border-zero-dark shadow-primary-light/20 dark:shadow-primary-dark/20 shadow-[0_2px_10px]">
     <div class="overflow-x-auto flex">
       <table class="table-auto w-full text-sm shadow-lg">
         <thead v-if="items.data.length > 0">
-          <tr class="bg-zero-light dark:bg-zero-dark p-3 text-secondary-light dark:text-secondary-dark text-left">
+          <tr class="bg-zero-light dark:bg-zero-dark p-3 text-zero-light dark:text-zero-dark text-left">
             <th class="p-2">
               <Checkbox v-if="routes.destroyRoute" name="remember" :checked="selectedcheckBox" @click="toggleSelection" class="w-8 h-8 rounded-lg" />
             </th>
@@ -199,7 +199,7 @@
       </table>
     </div>
   </div>
-  <div v-if="items.total > 0" class="flex sticky bottom-0 justify-between rounded-xl backdrop-blur-sm mt-5 bg-secondary-light/30 dark:bg-secondary-dark/30">
+  <div v-if="items.total > 0" class="flex sticky bottom-0 justify-between rounded-xl backdrop-blur-sm mt-5 bg-zero-light/30 dark:bg-zero-dark/30">
     <div class="w-full flex flex-row sm:hidden">
       <div class="basis-1/3 text-left">
         <Button 

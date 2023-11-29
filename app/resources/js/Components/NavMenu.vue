@@ -42,14 +42,14 @@ import { Link } from '@inertiajs/vue3';
                 />
               </NavigationMenuTrigger>
               <NavigationMenuContent class="z-[30] top-0 data-[motion=from-start]:animate-enterFromLeft data-[motion=from-end]:animate-enterFromRight data-[motion=to-start]:animate-exitToLeft data-[motion=to-end]:animate-exitToRight absolute top-0 left-0 w-full sm:w-auto">
-                <div class="container mx-auto grid gap-2 p-2 w-screen max-w-xl md:max-w-3xl lg:max-w-5xl sm:grid-flow-row sm:grid-cols-2 lg:grid-cols-3">
+                <div class="container mx-auto grid gap-2 p-2 bg-zero-light-hover dark:bg-zero-dark-hover w-screen max-w-xl md:max-w-3xl lg:max-w-5xl sm:grid-flow-row sm:grid-cols-2 lg:grid-cols-3">
                   <template v-for="subitem in item.links">
                       <NavigationMenuLink as-child>
                         <Link
                           :href="route(subitem.route)"
-                          class="border-transparent bg-secondary-light dark:bg-secondary-dark hover:bg-secondary-light-hover/50 dark:hover:bg-secondary-dark/50 focus:bg-secondary-light-hover/50 dark:focus:bg-secondary-dark/50 block select-none rounded-[6px] p-3 text-[15px] leading-none no-underline outline-none transition-colors"
+                          class="border-transparent bg-zero-light dark:bg-zero-dark hover:bg-zero-light-hover dark:hover:bg-zero-dark-hover focus:bg-zero-light-hover dark:focus:bg-zero-dark-hover block select-none rounded-[6px] p-3 text-[15px] leading-none no-underline shadow-primary-light/20 dark:shadow-primary-dark/20 shadow-[0_2px_10px] outline-none transition-colors duration-500"
                           :class="routeCurrent.includes(route(subitem.route)) ?
-                            'ring-4 focus-visible:ring ring-warning-light dark:ring-warning-dark' : 
+                            'ring-2 focus-visible:ring ring-warning-light dark:ring-warning-dark' : 
                             ''"
                         >
                           <div class="text-zero-light dark:text-zero-dark mb-[5px] font-medium leading-[1.2]">

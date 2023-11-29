@@ -111,44 +111,42 @@ const menuUser = [
 </script>
 
 <template>
-    <div>
-        <div class="relative min-h-screen bg-zero-white dark:bg-zero-black">
-            <nav class="bg-zero-light dark:bg-zero-dark sm:sticky sm:top-0 z-[10]  border-b border-zero-light dark:border-zero-dark">
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div class="flex justify-between h-16">
-                        <div class="flex">
-                            <div class="shrink-0 flex items-center">
-                                <Link :href="route('home')" class="p-1 rounded-full focus:outline-none focus:ring-2 focus:ring-zero-light dark:focus:ring-zero-dark focus:ring-offset-1 focus:ring-offset-zero-light dark:focus:ring-offset-zero-dark transition ease-in-out duration-500">
-                                    <ApplicationLogo class="block h-9 w-auto fill-current text-zero-light dark:text-zero-dark" />
-                                </Link>
-                            </div>
-                            <div class="hidden space-x-8 sm:-my-px sm:ml-6 sm:flex">
-                                <NavMenu :content="menuNav" />
-                            </div>
+    <div class="relative min-h-screen bg-zero-white dark:bg-zero-black">
+        <nav class="bg-zero-light dark:bg-zero-dark sm:sticky sm:top-0 z-[10]  border-b border-zero-light dark:border-zero-dark">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between h-16">
+                    <div class="flex">
+                        <div class="shrink-0 flex items-center">
+                            <Link :href="route('home')" class="p-1 rounded-full focus:outline-none focus:ring-2 focus:ring-zero-light dark:focus:ring-zero-dark focus:ring-offset-1 focus:ring-offset-zero-light dark:focus:ring-offset-zero-dark transition ease-in-out duration-500">
+                                <ApplicationLogo class="block h-9 w-auto fill-current text-zero-light dark:text-zero-dark" />
+                            </Link>
                         </div>
-                        <div class="xs:-mr-2 flex items-center sm:ml-6">
-                            <ToggleTheme />
-                            <NavUser :content="menuUser">
-                                <template #trigger>
-                                    <Avatar :fallback="$page.props.auth.user.name" />
-                                </template>
-                            </NavUser>
+                        <div class="hidden space-x-8 sm:-my-px sm:ml-6 sm:flex">
+                            <NavMenu :content="menuNav" />
                         </div>
+                    </div>
+                    <div class="xs:-mr-2 flex items-center sm:ml-6">
+                        <ToggleTheme />
+                        <NavUser :content="menuUser">
+                            <template #trigger>
+                                <Avatar :fallback="$page.props.auth.user.name" />
+                            </template>
+                        </NavUser>
                     </div>
                 </div>
-            </nav>
-            <div class="sm:sticky sm:top-[65px] z-[5]">
-                <Breadcrumbs />
             </div>
-            <div class="py-12">
-                <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-                    <div class="p-4 sm:p-8 bg-zero-light dark:bg-zero-dark sm:rounded-lg shadow-primary-light/20 dark:shadow-primary-dark/20 shadow-[0_2px_10px]">
-                        <slot />
-                    </div>
+        </nav>
+        <div class="sm:sticky sm:top-[65px] z-[5]">
+            <Breadcrumbs />
+        </div>
+        <div class="py-12">
+            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+                <div class="p-4 sm:p-8 bg-zero-light dark:bg-zero-dark sm:rounded-lg shadow-primary-light/20 dark:shadow-primary-dark/20 shadow-[0_2px_10px]">
+                    <slot />
                 </div>
             </div>
         </div>
-        <Modal />
     </div>
+    <Modal />
     <TailwindIndicator />
 </template>

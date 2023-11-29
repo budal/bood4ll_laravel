@@ -13,7 +13,7 @@
     }>(),
     {
       color: 'secondary',
-      colorFalse: 'zero',
+      colorFalse: 'secondary',
       modelValue: false,
     }
   );
