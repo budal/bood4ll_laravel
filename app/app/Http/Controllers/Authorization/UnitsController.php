@@ -26,7 +26,8 @@ class UnitsController extends Controller
             })
             ->with('childrenRecursive')
             ->withCount('children', 'users')
-            // ->withSum('allUsers', 'users')
+            // ->with('get_recursive')
+            // ->withSum('users', 'users')
             ->sort($request->sorted ?? "name")
             ->paginate(20)
             ->onEachSide(2)
@@ -36,7 +37,7 @@ class UnitsController extends Controller
             })
             ->appends($request->all('search', 'trashed', 'sorted'));
 
-            dd($units);
+            // dd($units);
 
         return Inertia::render('Default/Index', [
             'title' => "Units management",
@@ -103,7 +104,7 @@ class UnitsController extends Controller
             ->filter($request->all('subunits_search', 'subunits_trashed'))
             ->sort($request->subunits_sorted ?? "name")
             ->with('childrenRecursive')
-            ->withCount('children', 'users', 'allUsers')
+            ->withCount('children', 'users')
             ->paginate($perPage = 20, $columns = ['*'], $pageName = 'subunits')
             ->onEachSide(2)
             ->appends($request->all('subunits_search', 'subunits_trashed', 'subunits_sorted'));

@@ -14,6 +14,8 @@ class Unit extends Model
 {
     use HasFactory, SoftDeletes;
 
+    private $return_count = 0;
+
     protected $fillable = [
         'name',
         'nickname',
@@ -48,6 +50,33 @@ class Unit extends Model
         return $this->children()->withCount('users', 'children')->with('childrenRecursive');
     }
 
+
+
+
+    public function get_recursive() 
+    {
+        // dd($this->withCount('users', 'children')->with('childrenRecursive')->get()->map(function ($a){
+        //     $total = 0;
+            
+        //     if ($a->childrenRecursive) {
+        //         $total += $a->users_count;
+
+        //         dd($total);
+        //     }
+
+        //     return $total;
+        // }));
+    
+            return($this->with('childrenRecursive'));
+    
+    
+    }
+
+
+
+
+
+    
     public function parent(): BelongsTo
     {
         return $this->belongsTo(Unit::class, 'parent_id');
