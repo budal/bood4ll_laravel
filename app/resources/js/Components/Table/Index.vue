@@ -4,11 +4,11 @@
   import Checkbox from '@/Components/Checkbox.vue';
   import Dropdown from '@/Components/Dropdown.vue';
   import Modal from '@/Components/Modal.vue';
-  import Sort from '@/Components/Sort.vue';
   import Switch from '@/Components/Switch.vue';
   import Filter from '@/Components/Table/Filter.vue';
   import Restore from '@/Components/Table/Restore.vue';
   import Search from '@/Components/Table/Search.vue';
+  import Sort from '@/Components/Table/Sort.vue';
   import { trans } from 'laravel-vue-i18n';
   import { toast } from 'vue3-toastify';
   import { useForm, usePage, Link } from '@inertiajs/vue3';
