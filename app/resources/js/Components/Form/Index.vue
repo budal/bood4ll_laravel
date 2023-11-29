@@ -73,13 +73,15 @@
                                 <template v-for="field in group">
                                     <div :class="`${field.span ? `sm:col-span-${field.span}` : ''}`">
                                         <InputLabel 
+                                            v-if="field.title"
                                             as="span" 
                                             :for="field.name" 
                                             :value="$t(field.title)" 
                                             :required="field.required" 
                                         />
                         
-                                        <TextInput v-if="field.type == 'input' || field.type == 'date' || field.type == 'email'"
+                                        <TextInput 
+                                            v-if="field.type == 'input' || field.type == 'date' || field.type == 'email'"
                                             :id="field.name"
                                             :name="field.name"
                                             :type="field.type"
@@ -87,10 +89,11 @@
                                             class="mt-1 block w-full appearance-none"
                                             v-model="jsForm[field.name]"
                                             :required="field.required"
-                                            :autocomplete="field.name"
+                                            :autocomplete="field.autocomplete === true ? field.name: false"
                                         />
                 
-                                        <Toggle v-if="field.type == 'toggle'"
+                                        <Toggle 
+                                            v-if="field.type == 'toggle'"
                                             :id="field.name"
                                             :name="field.name"
                                             :type="field.type"
@@ -104,7 +107,8 @@
                                             @click.prevent
                                         />
                 
-                                        <Select v-if="field.type == 'select'" 
+                                        <Select 
+                                            v-if="field.type == 'select'" 
                                             :id="field.name"
                                             :name="field.name"
                                             :content="field.content"
@@ -115,7 +119,8 @@
                                             @keydown.enter.prevent
                                         />
                 
-                                        <Table v-if="field.type == 'table'"
+                                        <Table 
+                                            v-if="field.type == 'table'"
                                             :prefix="mkForm.id"
                                             :id="field.name"
                                             :name="field.name"

@@ -40,11 +40,19 @@ class UnitsController extends Controller
             'subtitle' => "Manage the units users are classified in.",
             'softDelete' => Unit::hasGlobalScope('Illuminate\Database\Eloquent\SoftDeletingScope'),
             'routes' => [
+                'createRoute' => [
+                    'route' => "apps.units.create",
+                ],
                 'editRoute' => "apps.units.edit",
                 'destroyRoute' => "apps.units.destroy",
                 'restoreRoute' => "apps.units.restore",
             ],
             'menu' => [
+                [
+                    'icon' => "mdi:plus",
+                    'title' => "Unit creation",
+                    'route' => "apps.units.create"
+                ],
                 [
                     'icon' => "mdi:plus",
                     'title' => "Unit creation",
@@ -216,25 +224,17 @@ class UnitsController extends Controller
                         [
                             'type' => "table",
                             'name' => "users",
-                            'title' => "Subunits",
                             'span' => 2,
                             'content' => [
                                 'softDelete' => Unit::hasGlobalScope('Illuminate\Database\Eloquent\SoftDeletingScope'),
                                 'routes' => [
+                                    'createRoute' => [
+                                        'route' => "apps.units.create",
+                                        'attributes' => $unit->id
+                                    ],
                                     'editRoute' => "apps.units.edit",
                                     'destroyRoute' => "apps.units.destroy",
                                     'restoreRoute' => "apps.units.restore",
-                                ],
-                                'menu' => [
-                                    [
-                                        'icon' => "mdi:plus",
-                                        'title' => "Unit creation",
-                                        'route' => [
-                                            "apps.units.create",
-                                            ['id' => $unit->id]
-                                        ],
-                                        'modal' => true,
-                                    ],
                                 ],
                                 'filters' => $request->all('search', 'sorted', 'trashed'),
                                 'titles' => [
@@ -272,7 +272,6 @@ class UnitsController extends Controller
                         [
                             'type' => "table",
                             'name' => "users",
-                            'title' => "Staff",
                             'span' => 2,
                             'shortcutKey' => "a",
                             'content' => [

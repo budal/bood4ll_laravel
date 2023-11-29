@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { Icon } from '@iconify/vue'
+    import { Icon } from '@iconify/vue'
+    import { router } from '@inertiajs/vue3';
 
     const props = withDefaults(
         defineProps<{
@@ -12,6 +13,15 @@ import { Icon } from '@iconify/vue'
             shadowSize?: 'shadow-sm' | 'shadow' | 'shadow-md' | 'shadow-lg' | 'shadow-xl' | 'shadow-2xl' | 'shadow-inner' | 'shadow-none';
             startIcon?: string;
             endIcon?: string;
+            preserveScroll?: boolean;
+            method?: 'get' | 'post' | 'patch' | 'put' | 'delete';
+            srOnly?: string;
+            title?: string;
+            url?: string;
+            link?: {
+                route: string | [];
+                attributes: [];
+            } | string;
         }>(),
         {
             type: 'submit',
@@ -21,15 +31,45 @@ import { Icon } from '@iconify/vue'
             textSize: 'text-xs',
             transform: 'uppercase',
             shadowSize: 'shadow-sm',
+            preserveScroll: false,
+            method: 'get',
         }
     );
+
+    const onClick = () => {
+        if (props.url) {
+            router.visit(props.url, {
+                method: props.method,
+                preserveScroll: props.preserveScroll,
+            })
+        }
+        if (props.link) {
+            if (typeof props.link == 'string') {
+                router.visit(route(props.link as string), {
+                    method: props.method,
+                    preserveScroll: props.preserveScroll,
+                })
+            } else {
+                router.visit(route(props.link.route as string, props.link.attributes), {
+                    method: props.method,
+                    preserveScroll: props.preserveScroll,
+                })
+            }
+        }
+    };
 </script>
 
 <template>
-    <button :type="type" :class="`group/edit hover:scale-105 inline-flex items-center px-${padding} py-2 bg-${color}-light dark:bg-${color}-dark hover:bg-${color}-light-hover dark:hover:bg-${color}-dark-hover border border-${color}-light dark:border-${color}-dark ${rounded} font-semibold ${textSize} text-${color}-light dark:text-${color}-dark ${transform} tracking-widest ${shadowSize} focus:outline-none focus:ring-2 focus:ring-${color}-light dark:focus:ring-${color}-dark focus:ring-offset-2 focus:ring-offset-${color}-light dark:focus:ring-offset-${color}-dark disabled:opacity-25 shadow-primary-light/20 dark:shadow-primary-dark/20 shadow-[0_2px_10px] focus-within:shadow-[0_0_0_2px] focus-within:shadow-primary-light dark:focus-within:shadow-primary-dark transition ease-in-out duration-500`">
+    <button 
+        @click="onClick"
+        :type="type" 
+        :class="`group/edit hover:scale-105 inline-flex items-center px-${padding} py-2 bg-${color}-light dark:bg-${color}-dark hover:bg-${color}-light-hover dark:hover:bg-${color}-dark-hover border border-${color}-light dark:border-${color}-dark ${rounded} font-semibold ${textSize} text-${color}-light dark:text-${color}-dark ${transform} tracking-widest ${shadowSize} focus:outline-none focus:ring-2 focus:ring-${color}-light dark:focus:ring-${color}-dark focus:ring-offset-2 focus:ring-offset-${color}-light dark:focus:ring-offset-${color}-dark disabled:opacity-25 shadow-primary-light/20 dark:shadow-primary-dark/20 shadow-[0_2px_10px] focus-within:shadow-[0_0_0_2px] focus-within:shadow-primary-light dark:focus-within:shadow-primary-dark transition ease-in-out duration-500`"
+    >
         <div class="group-hover/edit:scale-110 flex gap-1 items-center">
             <Icon v-if="startIcon" :icon="startIcon" class="h-5 w-5" />
             <slot />
+            <span v-if="srOnly" class="sr-only">{{ srOnly }}</span>
+            <span v-if="title">{{ title }}</span>
             <Icon v-if="endIcon" :icon="endIcon" class="h-5 w-5" />
         </div>
     </button>

@@ -36,6 +36,7 @@ class RolesController extends Controller
             'subtitle' => "Define roles, grouping abilities to define specific access.",
             'softDelete' => Role::hasGlobalScope('Illuminate\Database\Eloquent\SoftDeletingScope'),
             'routes' => [
+                'createRoute' => "apps.roles.create",
                 'editRoute' => "apps.roles.edit",
                 'destroyRoute' => "apps.roles.destroy",
                 'restoreRoute' => "apps.roles.restore",
@@ -167,23 +168,17 @@ class RolesController extends Controller
                         [
                             'type' => "table",
                             'name' => "users",
-                            'title' => "Authorized users",
                             'span' => 2,
                             'content' => [
                                 'softDelete' => Role::hasGlobalScope('Illuminate\Database\Eloquent\SoftDeletingScope'),
                                 'routes' => [
-                                    'destroyRoute' => "apps.roles.destroy",
-                                ],
-                                'menu' => [
-                                    [
-                                        'icon' => "mdi:plus",
-                                        'title' => "Add user",
-                                        'route' => [
-                                            "apps.roles.edit.adduser",
-                                            ['id' => $role->id]
-                                        ],
-                                        'modal' => true,
+                                    'createRoute' => [
+                                        'route' => "apps.roles.edit.adduser",
+                                        'attributes' => $role->id,
+                                        'preserveScroll' => true
                                     ],
+
+                                    'destroyRoute' => "apps.roles.destroy",
                                 ],
                                 'filters' => $request->all('search', 'sorted', 'trashed'),
                                 'titles' => [

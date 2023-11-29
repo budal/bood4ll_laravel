@@ -26,7 +26,7 @@
     <DropdownMenuRoot v-model:open="tableMenuToggleState">
       <DropdownMenuTrigger
         as="span"
-        class="ml-2 h-full outline-none"
+        class="h-full outline-none"
         :aria-label="$t('Table menu')"
       >
         <Button color="primary" type="button" start-icon="mdi:dots-horizontal" class="h-full" />
@@ -63,7 +63,7 @@
     <Link as="span" :href="route(
       typeof menu[0].route === 'string' || menu[0].route instanceof String ? menu[0].route : menu[0].route[0], 
       typeof menu[0].route === 'string' || menu[0].route instanceof String ? '' : menu[0].route[1]
-      )" class="text-sm ml-2 h-full"
+      )" class="text-sm h-full"
     >
       <Button color="primary" type="button" class="h-full" :start-icon="menu[0].icon" />
     </Link>

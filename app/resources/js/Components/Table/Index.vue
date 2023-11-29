@@ -115,18 +115,19 @@
   </Modal>
 
   <div class="flex sticky top-0 sm:top-[95px] justify-between rounded-xl backdrop-blur-sm pt-1 mb-2 bg-secondary-light/30 dark:bg-secondary-dark/30">
-    <div class="flex-none items-center">
+    <div class="flex gap-2 w-full">
+      <Menu v-if="menu" :menu="menu" />
       <!-- <Deletion :destroyRoute="routes.destroyRoute" /> -->
-      <Button v-if="routes.destroyRoute" color="danger" type="button" @click="openDeletionModal" start-icon="mdi:delete-outline" class="mr-2 h-full" :disabled="totalSelectedCheckBoxes === 0" />
-    </div>
-    <div class="flex-1 items-center">
-      <Search :prefix="prefix" :id="id" :name="name" :search="filters.search" :shortcutKey="shortcutKey" />
-    </div>
-    <div class="flex-none items-center">
+      <Button v-if="routes.destroyRoute" color="danger" type="button" @click="openDeletionModal" start-icon="mdi:delete-outline" class="h-full" :disabled="totalSelectedCheckBoxes === 0" />
+      <Search :prefix="prefix" :id="id" :name="name" :search="filters.search" :shortcutKey="shortcutKey" class="flex-1" />
       <Filter :prefix="prefix" :softDelete="softDelete"/>
-    </div>
-    <div v-if="menu" class="flex-none items-center">
-      <Menu :menu="menu" />
+      <Button 
+        v-if="routes.createRoute" 
+        type="button"
+        :link="routes.createRoute" 
+        startIcon="mdi:plus"
+        :preserveScroll="routes.createRoute.preserveScroll"
+      />
     </div>
   </div>
   <div class="rounded-xl overflow-hidden border-2 border-secondary-light dark:border-secondary-dark">
@@ -181,11 +182,12 @@
               />
             </td>
             <td v-if="routes.editRoute" class="p-2 text-right">
-              <Link as="span" :href="route(routes.editRoute, item.id)" preserve-scroll>
-                <Button color="primary" type="button">
-                  <Icon icon="mdi:chevron-right" class="h-5 w-5" />
-                </Button>
-              </Link>
+              <Button 
+                type="button"
+                :url="route(routes.editRoute, item.id)" 
+                :srOnly="$t('Edit')" 
+                startIcon="mdi:chevron-right" 
+              />
             </td>
           </tr> 
           <tr v-if="items.data.length == 0">
@@ -200,20 +202,29 @@
   <div v-if="items.total > 0" class="flex sticky bottom-0 justify-between rounded-xl backdrop-blur-sm mt-5 bg-secondary-light/30 dark:bg-secondary-dark/30">
     <div class="w-full flex flex-row sm:hidden">
       <div class="basis-1/3 text-left">
-        <Link as="span" v-if="items.prev_page_url" :href="items.prev_page_url" class="text-sm" preserve-scroll>
-          <Button color="primary" type="button">{{ $t('Previous')}}</Button>
-        </Link>
+        <Button 
+          v-if="items.prev_page_url" 
+          type="button"
+          :url="items.prev_page_url" 
+          :title="$t('Previous')" 
+          :preserveScroll="true"
+        />
       </div>
       <div v-if="items.from !== null" class="basis-1/3 text-center">
         <span 
-          aria-current="page" class="relative inline-flex rounded-md bg-primary-light dark:bg-primary-dark px-4 py-1 text-sm font-semibold text-primary-light dark:text-primary-dark">
+          aria-current="page" 
+          class="relative inline-flex rounded-md bg-zero-light dark:bg-zero-dark px-4 py-1 text-sm font-semibold text-zero-light dark:text-zero-dark"
+        >
           {{ `${items.current_page}/${items.last_page}` }}
         </span>
       </div>
       <div class="basis-1/3 text-right">
-        <Link as="span" v-if="items.next_page_url" :href="items.next_page_url" class="text-sm" preserve-scroll>
-          <Button color="primary" type="button">{{ $t('Next')}}</Button>
-        </Link>
+        <Button 
+          v-if="items.next_page_url" 
+          :url="items.next_page_url" 
+          :title="$t('Next')" 
+          :preserveScroll="true"
+        />
       </div>
     </div>
     <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
@@ -224,31 +235,32 @@
       </div>
       <div>
         <nav class="inline-flex shadow-sm gap-[2px]" aria-label="Pagination">
-          <Link as="span" v-if="items.prev_page_url" :href="items.prev_page_url" class="text-sm" preserve-scroll>
-            <Button color="primary" type="button">
-              <span class="sr-only">{{ $t('Previous')}}</span>
-              <Icon icon="mdi:chevron-left" class="h-4 w-4" />
-            </Button>
-          </Link>
-
+          <Button 
+            v-if="items.prev_page_url" 
+            type="button"
+            :url="items.prev_page_url" 
+            :srOnly="$t('Previous')" 
+            startIcon="mdi:chevron-left" 
+            :preserveScroll="true"
+          />
           <template v-if="items.from !== null" v-for="item in items.links">
-            <Link
-              as="span"
+            <Button 
               v-if="item.label > 0 && item.label != items.current_page || item.label == items.current_page"
-              :key="item.key" 
-              :href="item.url" 
-              class="text-sm"
-              preserve-scroll
-            >
-              <Button color="primary" type="button" :disabled="item.label == items.current_page">{{ item.label }}</Button>
-            </Link>
+              type="button"
+              :url="item.url" 
+              :title="item.label" 
+              :preserveScroll="true"
+              :disabled="item.label == items.current_page"
+            />
           </template>
-          <Link as="span" v-if="items.next_page_url" :href="items.next_page_url" class="text-sm" preserve-scroll>
-            <Button color="primary" type="button">
-              <span class="sr-only">{{ $t('Next')}}</span>
-              <Icon icon="mdi:chevron-right" class="h-4 w-4" />
-            </Button>
-          </Link>
+          <Button 
+            v-if="items.next_page_url" 
+            type="button"
+            :url="items.next_page_url" 
+            :srOnly="$t('Next')" 
+            startIcon="mdi:chevron-right" 
+            :preserveScroll="true"
+          />
         </nav>
       </div>
     </div>

@@ -73,5 +73,5 @@
     </template>
   </Modal>
 
-  <Button color="secondary" type="button" @click="openFiltersModal" class="ml-2 h-full" start-icon="mdi:filter-settings-outline" />
+  <Button color="secondary" type="button" @click="openFiltersModal" class="h-full" start-icon="mdi:filter-settings-outline" />
 </template>
