@@ -79,10 +79,10 @@ export default {
                     'dark-hover': colors.green[600],
                 },
                 warning: {
-                    'light': colors.yellow[300],
-                    'light-hover': colors.yellow[100],
-                    'dark': colors.yellow[400],
-                    'dark-hover': colors.yellow[200],
+                    'light': colors.yellow[400],
+                    'light-hover': colors.yellow[200],
+                    'dark': colors.yellow[600],
+                    'dark-hover': colors.yellow[400],
                 },
                 info: {
                     'light': colors.blue[600],
@@ -123,8 +123,8 @@ export default {
             },
             borderColor: {
                 zero: {
-                    'light': colors.gray[100],
-                    'dark': colors.gray[900],
+                    'light': colors.gray[200],
+                    'dark': colors.gray[600],
                 },
                 primary: {
                     'light': colors.gray[700],
@@ -143,8 +143,8 @@ export default {
                     'dark': colors.green[700],
                 },
                 warning: {
-                    'light': colors.yellow[200],
-                    'dark': colors.yellow[300],
+                    'light': colors.yellow[500],
+                    'dark': colors.yellow[700],
                 },
                 info: {
                     'light': colors.blue[500],
@@ -153,8 +153,8 @@ export default {
             },
             ringColor: {
                 zero: {
-                    'light': colors.gray[400],
-                    'dark': colors.gray[500],
+                    'light': colors.gray[800],
+                    'dark': colors.gray[200],
                 },
                 primary: {
                     'light': colors.gray[800],
@@ -165,19 +165,19 @@ export default {
                     'dark': colors.gray[500],
                 },
                 danger: {
-                    'light': colors.red[700],
+                    'light': colors.red[500],
                     'dark': colors.red[700],
                 },
                 success: {
-                    'light': colors.green[800],
-                    'dark': colors.green[800],
+                    'light': colors.green[500],
+                    'dark': colors.green[700],
                 },
                 warning: {
                     'light': colors.yellow[500],
-                    'dark': colors.yellow[500],
+                    'dark': colors.yellow[700],
                 },
                 info: {
-                    'light': colors.blue[700],
+                    'light': colors.blue[500],
                     'dark': colors.blue[700],
                 },
             },
@@ -203,12 +203,12 @@ export default {
                     'dark': colors.green[900],
                 },
                 warning: {
-                    'light': colors.yellow[200],
+                    'light': colors.yellow[300],
                     'dark': colors.yellow[900],
                 },
                 info: {
-                    'light': colors.blue[200],
-                    'dark': colors.blue[950],
+                    'light': colors.blue[300],
+                    'dark': colors.blue[900],
                 },
             },
             fontFamily: {

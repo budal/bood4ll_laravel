@@ -112,13 +112,13 @@ const menuUser = [
 
 <template>
     <div>
-        <div class="relative min-h-screen bg-zero-light dark:bg-zero-dark">
-            <nav class="bg-secondary-light dark:bg-secondary-dark sm:sticky sm:top-0 z-[10]">
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-b border-secondary-light dark:border-secondary-dark ">
+        <div class="relative min-h-screen bg-zero-white dark:bg-zero-black">
+            <nav class="bg-zero-light dark:bg-zero-dark sm:sticky sm:top-0 z-[10]  border-b border-zero-light dark:border-zero-dark">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="flex justify-between h-16">
                         <div class="flex">
                             <div class="shrink-0 flex items-center">
-                                <Link :href="route('home')" class="p-1 rounded-full focus:outline-none focus:ring-2 focus:ring-primary-light dark:focus:ring-primary-dark focus:ring-offset-1 focus:ring-offset-primary-light dark:focus:ring-offset-primary-dark transition ease-in-out duration-500">
+                                <Link :href="route('home')" class="p-1 rounded-full focus:outline-none focus:ring-2 focus:ring-zero-light dark:focus:ring-zero-dark focus:ring-offset-1 focus:ring-offset-zero-light dark:focus:ring-offset-zero-dark transition ease-in-out duration-500">
                                     <ApplicationLogo class="block h-9 w-auto fill-current text-zero-light dark:text-zero-dark" />
                                 </Link>
                             </div>
@@ -142,7 +142,7 @@ const menuUser = [
             </div>
             <div class="py-12">
                 <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-                    <div class="p-4 sm:p-8 bg-secondary-light dark:bg-secondary-dark shadow sm:rounded-lg">
+                    <div class="p-4 sm:p-8 bg-zero-light dark:bg-zero-dark sm:rounded-lg shadow-primary-light/20 dark:shadow-primary-dark/20 shadow-[0_2px_10px]">
                         <slot />
                     </div>
                 </div>
