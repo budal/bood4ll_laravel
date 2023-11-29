@@ -1,5 +1,4 @@
 <script setup lang="ts">
-  import { Icon } from '@iconify/vue'
   import Avatar from '@/Components/Avatar.vue';
   import Button from '@/Components/Button.vue';
   import Checkbox from '@/Components/Checkbox.vue';
@@ -7,7 +6,6 @@
   import Modal from '@/Components/Modal.vue';
   import Sort from '@/Components/Sort.vue';
   import Switch from '@/Components/Switch.vue';
-  import Deletion from '@/Components/Table/Deletion.vue';
   import Filter from '@/Components/Table/Filter.vue';
   import Restore from '@/Components/Table/Restore.vue';
   import Search from '@/Components/Table/Search.vue';
@@ -116,7 +114,6 @@
 
   <div class="flex sticky top-0 sm:top-[95px] justify-between rounded-xl backdrop-blur-sm pt-1 mb-2 bg-zero-light/30 dark:bg-zero-dark/30">
     <div class="flex gap-2 w-full">
-      <!-- <Deletion :destroyRoute="routes.destroyRoute" /> -->
       <Button v-if="routes.destroyRoute" color="danger" type="button" @click="openDeletionModal" start-icon="mdi:delete-outline" class="h-full" :disabled="totalSelectedCheckBoxes === 0" />
       <Dropdown v-if="menu" :menu="menu" :disabled="totalSelectedCheckBoxes === 0" />
       <Search :prefix="prefix" :id="id" :name="name" :search="filters.search" :shortcutKey="shortcutKey" class="flex-1" />
