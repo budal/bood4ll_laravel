@@ -139,7 +139,7 @@
               <Checkbox v-if="routes.destroyRoute" name="remember" :checked="selectedcheckBox" @click="toggleSelection" class="w-8 h-8 rounded-full" />
             </th>
             <th v-for="sort in titles" class="p-2">
-              <Sort :prefix="prefix" :sort="sort"/>
+              <Sort :prefix="prefix" :sort="sort" class="justify-center" />
             </th>
             <th v-if="routes.editRoute" class="p-2"></th>
           </tr>
@@ -161,12 +161,12 @@
               <Restore :restoreRoute="routes.restoreRoute" :item="item" />
             </td>
             <td v-for="content in titles" class="p-1">
-              <p v-if="content.type == 'simple'" class="truncate text-xs leading-5 text-secondary-light dark:text-secondary-dark">
+              <p v-if="content.type == 'simple'" class="truncate text-xs leading-5 text-secondary-light dark:text-secondary-dark text-center">
                 {{ item[content.field] ?? '-' }}
               </p>
               <template v-if="content.type == 'composite'">
-                <strong class="text-sm font-medium text-secondary-light dark:text-secondary-dark">{{ item[content.fields[0]] ?? '-' }}</strong>
-                <p class="truncate text-xs leading-5 text-secondary-light dark:text-secondary-dark">{{ item[content.fields[1]] ?? '-' }}</p>
+                <p class="text-sm font-medium text-secondary-light dark:text-secondary-dark text-center">{{ item[content.fields[0]] ?? '-' }}</p>
+                <p class="truncate text-xs leading-5 text-secondary-light dark:text-secondary-dark text-center">{{ item[content.fields[1]] ?? '-' }}</p>
               </template>
               <Avatar 
                 v-if="content.type == 'avatar'" 

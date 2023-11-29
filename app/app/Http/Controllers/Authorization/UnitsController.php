@@ -24,8 +24,8 @@ class UnitsController extends Controller
             ->when(!$request->search, function ($query) {
                 $query->where("parent_id", "1");
             })
-            ->withCount('children', 'users')
             ->with('childrenRecursive')
+            ->withCount('children', 'users', 'allUsers')
             ->sort($request->sorted ?? "name")
             ->paginate(20)
             ->onEachSide(2)
@@ -77,6 +77,11 @@ class UnitsController extends Controller
                     'title' => 'Staff',
                     'field' => 'users_count',
                 ],
+                [
+                    'type' => 'simple',
+                    'title' => 'All staff',
+                    'field' => 'all_users_count',
+                ],
             ],
             'items' => $units
         ]);
@@ -95,7 +100,7 @@ class UnitsController extends Controller
             ->filter($request->all('subunits_search', 'subunits_trashed'))
             ->sort($request->subunits_sorted ?? "name")
             ->with('childrenRecursive')
-            ->withCount('children', 'users')
+            ->withCount('children', 'users', 'allUsers')
             ->paginate($perPage = 20, $columns = ['*'], $pageName = 'subunits')
             ->onEachSide(2)
             ->appends($request->all('subunits_search', 'subunits_trashed', 'subunits_sorted'));
@@ -252,6 +257,11 @@ class UnitsController extends Controller
                                         'type' => 'simple',
                                         'title' => 'Staff',
                                         'field' => 'users_count',
+                                    ],
+                                    [
+                                        'type' => 'simple',
+                                        'title' => 'All staff',
+                                        'field' => 'all_users_count',
                                     ],
                     
                                 ],

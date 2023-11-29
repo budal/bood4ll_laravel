@@ -32,7 +32,7 @@
     }
   );
 
-  const searchName = (Math.random() + 1).toString(36).substring(7);
+  const randomName = (Math.random() + 1).toString(36).substring(7);
 
   const emit = defineEmits(['update:modelValue']);
   
@@ -133,8 +133,8 @@
             type="search"
             data-search-input="true"
             :data-shortcut-enabled="shortcutListenerEnabled"
-            :id="name"
-            :name="name"
+            :id="name || randomName"
+            :name="name || randomName"
             :value="modelValue"
             @focus="hasFocus = true"
             @blur="hasFocus = false"
