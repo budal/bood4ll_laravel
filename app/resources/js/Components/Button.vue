@@ -1,7 +1,6 @@
 <script setup lang="ts">
     import { Icon } from '@iconify/vue'
     import { router } from '@inertiajs/vue3';
-    import { ref } from 'vue';
 
     const props = withDefaults(
         defineProps<{
@@ -56,15 +55,13 @@
             }
         }
     };
-    
-  const tableMenuToggleState = ref(false)
 </script>
 
 <template>
     <button 
         @click="onClick"
         :type="type" 
-        :class="`group/edit hover:scale-105 inline-flex items-center px-${padding} py-2 bg-${color}-light dark:bg-${color}-dark hover:bg-${color}-light-hover dark:hover:bg-${color}-dark-hover border border-${color}-light dark:border-${color}-dark ${rounded} font-semibold ${textSize} text-${color}-light dark:text-${color}-dark ${transform} tracking-widest focus:outline-none focus:ring-2 focus:ring-${color}-light dark:focus:ring-${color}-dark focus:ring-offset-2 focus:ring-offset-${color}-light dark:focus:ring-offset-${color}-dark disabled:opacity-25 transition ease-in-out duration-500`"
+        :class="`group/edit hover:scale-105 inline-flex items-center px-${padding} py-2 bg-${color}-light dark:bg-${color}-dark hover:bg-${color}-light-hover dark:hover:bg-${color}-dark-hover border border-${color}-light dark:border-${color}-dark ${rounded} font-semibold ${textSize} text-${color}-light dark:text-${color}-dark ${transform} tracking-widest focus:outline-none focus:ring-2 focus:ring-primary-light dark:focus:ring-primary-dark focus:ring-offset-2 focus:ring-offset-primary-light dark:focus:ring-offset-primary-dark disabled:opacity-25 transition ease-in-out duration-500`"
     >
         <div class="group-hover/edit:scale-110 flex gap-1 items-center">
             <Icon v-if="startIcon" :icon="startIcon" class="h-5 w-5" />

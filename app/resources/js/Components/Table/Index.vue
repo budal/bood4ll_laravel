@@ -56,6 +56,42 @@
     }
   }
 
+
+
+  let content = reactive(new Set());
+
+  if (props.routes.restoreRoute) {
+    content.add({
+      'title': "Filters",
+      'icon': "mdi:filter-outline",
+      'items': [
+        { id: 'active', title: 'Only active', disabled: false },
+        { id: 'trashed', title: 'Only trashed', disabled: false },
+        { id: 'both', title: 'Active and trashed', disabled: false },
+      ]
+    })
+  }
+
+  if (props.routes.destroyRoute) {
+    content.add({
+      'title': "Delete",
+      'icon': "mdi:delete-outline",
+      'route': props.routes.destroyRoute
+    })
+  }
+
+  if (props.routes.restoreRoute) {
+    content.add({
+      'title': "Restore",
+      'icon': "mdi:restore",
+      'route': props.routes.restoreRoute
+    })
+  }
+
+  if (props.menu) {
+    props.menu.forEach((item: object) => content.add(item))
+  }
+
   const confirmingDeletionModal = ref(false);
 
   const openDeletionModal = () => confirmingDeletionModal.value = true
@@ -114,7 +150,7 @@
   <div class="flex sticky top-0 sm:top-[95px] justify-between rounded-xl backdrop-blur-sm pt-1 mb-2 bg-zero-light/30 dark:bg-zero-dark/30">
     <div class="flex gap-2 w-full">
       <Button v-if="routes.destroyRoute" color="danger" type="button" @click="openDeletionModal" start-icon="mdi:delete-outline" class="h-full" :disabled="totalSelectedCheckBoxes === 0" />
-      <Dropdown v-if="menu" :menu="menu" />
+      <Dropdown v-if="content" :menu="menu" :content="content" />
       <Search :prefix="prefix" :id="id" :name="name" :search="filters.search" :shortcutKey="shortcutKey" class="flex-1" />
       <Filter :prefix="prefix" :softDelete="softDelete"/>
       <Button 

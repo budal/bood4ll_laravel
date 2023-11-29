@@ -33,6 +33,7 @@
   "Items removed succesfully!": "Itens removidos com sucesso!",
   "Item restored.": "Item restaurado.",
   "Restore": "Restaurar",
+  "Delete": "Deletar",
   "Full access": "Acesso completo",
   "Manage nested data": "Gerenciar subordinados",
   "Remove on transfer": "Remover na transferência",
@@ -48,8 +49,8 @@
   "Complement": "Complemento",
   "Geographic coordinates": "Coordenadas geográficas",
   "[ root ]": "[ raiz ]",
-  "Staff": "Efetivo",
-  "All staff": "Efetivo total",
+  "Total": "Total",
+  "Filter": "Filtro",
 
   "No items to show.": "Sem itens para exibir.",
   "Showing :from to :to of :total results": "Exibindo :from a :to de :total resultados",
@@ -276,6 +277,7 @@
   "Manage unit's subunits": "Gerencie as subunidades dessa unidade",
   "Unit creation": "Criação de unidades",
   "Unit edition": "Edição de unidades",
+  "Staff": "Efetivo",
   
   "Content": "Conteúdo",
   "Only active": "Apenas ativos",

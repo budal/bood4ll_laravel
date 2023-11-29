@@ -51,18 +51,23 @@ class UnitsController extends Controller
                 'destroyRoute' => "apps.units.destroy",
                 'restoreRoute' => "apps.units.restore",
             ],
-            'menu' => [
-                [
-                    'icon' => "mdi:plus",
-                    'title' => "Unit creation",
-                    'route' => "apps.units.create"
-                ],
-                [
-                    'icon' => "mdi:plus",
-                    'title' => "Unit creation",
-                    'route' => "apps.units.create"
-                ],
-            ],
+            // 'menu' => [
+            //     [
+            //         'icon' => "mdi:filter-outline",
+            //         'title' => "Filter",
+            //         'route' => "apps.units.create"
+            //     ],
+            //     [
+            //         'icon' => "mdi:delete-outline",
+            //         'title' => "Delete",
+            //         'route' => "apps.units.create"
+            //     ],
+            //     [
+            //         'icon' => "mdi:restore",
+            //         'title' => "Restore",
+            //         'route' => "apps.units.create"
+            //     ],
+            // ],
             'filters' => $request->all('search', 'sorted', 'trashed'),
             'titles' => [
                 [
@@ -83,7 +88,7 @@ class UnitsController extends Controller
                 ],
                 [
                     'type' => 'simple',
-                    'title' => 'All staff',
+                    'title' => 'Total',
                     'field' => 'all_users_count',
                 ],
             ],

@@ -23,7 +23,7 @@ export default {
             variants: ['sm'],
         },
         {
-            pattern: /(bg|border|ring|ring-offset|text)-(zero|primary|secondary|danger|success|warning|info)-(light|dark)/,
+            pattern: /(bg|border|text)-(zero|primary|secondary|danger|success|warning|info)-(light|dark)/,
             variants: [
                 'dark', 
                 'hover', 
