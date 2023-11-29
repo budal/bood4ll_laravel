@@ -25,7 +25,8 @@ class UnitsController extends Controller
                 $query->where("parent_id", "1");
             })
             ->with('childrenRecursive')
-            ->withCount('children', 'users', 'allUsers')
+            ->withCount('children', 'users')
+            // ->withSum('allUsers', 'users')
             ->sort($request->sorted ?? "name")
             ->paginate(20)
             ->onEachSide(2)
@@ -34,6 +35,8 @@ class UnitsController extends Controller
                 return $item;
             })
             ->appends($request->all('search', 'trashed', 'sorted'));
+
+            dd($units);
 
         return Inertia::render('Default/Index', [
             'title' => "Units management",

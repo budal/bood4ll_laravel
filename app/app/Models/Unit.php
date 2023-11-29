@@ -14,8 +14,6 @@ class Unit extends Model
 {
     use HasFactory, SoftDeletes;
 
-    private $return_count = 0;
-
     protected $fillable = [
         'name',
         'nickname',
@@ -40,11 +38,16 @@ class Unit extends Model
         return $this->belongsToMany(User::class);
     }
     
-    public function allUsers(): BelongsToMany
+    public function children(): HasMany
     {
-        return $this->belongsToMany(User::class);
+        return $this->hasMany(Unit::class, 'parent_id');
     }
-    
+
+    public function childrenRecursive() 
+    {
+        return $this->children()->withCount('users', 'children')->with('childrenRecursive');
+    }
+
     public function parent(): BelongsTo
     {
         return $this->belongsTo(Unit::class, 'parent_id');
@@ -64,16 +67,6 @@ class Unit extends Model
         }
     }
     
-    public function children(): HasMany
-    {
-        return $this->hasMany(Unit::class, 'parent_id');
-    }
-
-    public function childrenRecursive() 
-    {
-        return $this->children()->withCount('children')->with('childrenRecursive');
-    }
-
     public function resolveRouteBinding($value, $field = null)
     {
         return $this->where($field ?? 'id', $value)->withTrashed()->firstOrFail();
