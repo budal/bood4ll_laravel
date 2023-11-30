@@ -9,7 +9,7 @@
   import Sort from '@/Components/Table/Sort.vue';
   import { trans } from 'laravel-vue-i18n';
   import { toast } from 'vue3-toastify';
-  import { useForm, usePage } from '@inertiajs/vue3';
+  import { router, useForm, usePage } from '@inertiajs/vue3';
   import { ref, computed, reactive } from 'vue'
 
   const props = defineProps<{
@@ -75,9 +75,9 @@
         title: "Filters",
         icon: "mdi:filter-outline",
         items: [
-          { title: 'Only active', icon: "mdi:playlist-check", route: activeRoute.href },
-          { title: 'Only trashed', icon: "mdi:playlist-remove", route: trashedRoute.href },
-          { title: 'Active and trashed', icon: "mdi:list-status", route: bothRoute.href },
+          { id: 'active', title: 'Only active', icon: "mdi:playlist-check", route: activeRoute.href },
+          { id: 'trashed', title: 'Only trashed', icon: "mdi:playlist-remove", route: trashedRoute.href },
+          { id: 'both', title: 'Active and trashed', icon: "mdi:list-status", route: bothRoute.href },
         ]
       })
   
@@ -115,14 +115,30 @@
     return content
   })
 
+  const isValidUrl = (urlString: string) => {
+      try { 
+      	if (Boolean(new URL(urlString))) return urlString; 
+      }
+      catch (e){ 
+      	return route(urlString); 
+      }
+    }
+
+  const selectedItem = (item: any) => {
+    if (item.list) {
+      // openDeletionModal()
 
 
+      console.log(item)
+    } else {
+      router.visit(isValidUrl(item.route) as string, {
+        method: item.method,
+        preserveScroll: true,
+      })
+    }
+  }
 
-
-
-
-
-
+  // modal
   const confirmingDeletionModal = ref(false);
 
   const openDeletionModal = () => confirmingDeletionModal.value = true
@@ -144,7 +160,6 @@
 
   const closeDeletionModal = () => confirmingDeletionModal.value = false
 
-
   // switch
   const formSwitch = useForm({});
 
@@ -155,6 +170,14 @@
       onFinish: () => toast.success(trans(usePage().props.status as string, usePage().props.statusComplements as undefined)),
     });
   }
+
+
+
+
+
+
+
+
 </script>
 
 <template>
@@ -180,7 +203,7 @@
 
   <div class="flex sticky top-0 sm:top-[95px] justify-between rounded-xl backdrop-blur-sm pt-1 mb-2 bg-zero-light/30 dark:bg-zero-dark/30">
     <div class="flex gap-2 w-full">
-      <Dropdown v-if="content" :prefix="prefix" :content="content" />
+      <Dropdown v-if="content" :prefix="prefix" :content="content" @select="(item) => selectedItem(item)" />
       <Search :prefix="prefix" :id="id" :name="name" :shortcutKey="shortcutKey" class="flex-1" />
       <Button 
         v-if="routes.createRoute" 
@@ -210,7 +233,10 @@
           <tr 
             v-for="item in items.data" 
             :key="`tr-${item.id}`" 
-            class="bg-secondary-light dark:bg-secondary-dark hover:bg-secondary-light-hover hover:dark:bg-secondary-dark-hover border-t border-secondary-light dark:border-secondary-dark text-secondary-light dark:text-secondary-dark"
+            class=" border-t text-secondary-light dark:text-secondary-dark"
+            :class="item.deleted_at 
+              ? 'bg-danger-light/20 dark:bg-danger-dark/20 hover:bg-danger-light-hover/20 hover:dark:bg-danger-dark-hover/20 border-danger-light/20 dark:border-danger-dark/20' 
+              : 'bg-secondary-light dark:bg-secondary-dark hover:bg-secondary-light-hover hover:dark:bg-secondary-dark-hover border-secondary-light dark:border-secondary-dark'"
           >
             <td class="p-2 w-0">
               <Checkbox v-if="!item.deleted_at && (routes.destroyRoute || routes.restoreRoute)" 

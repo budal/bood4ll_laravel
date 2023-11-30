@@ -1,8 +1,6 @@
 <script setup lang="ts">
   import { Icon } from '@iconify/vue'
-  import Button from '@/Components/Button.vue';
   import DropdownItem from '@/Components/DropdownItem.vue';
-  import Modal from '@/Components/Modal.vue';
   import {
     DropdownMenuCheckboxItem,
     DropdownMenuItem,
@@ -15,94 +13,20 @@
     DropdownMenuSubContent,
     DropdownMenuSubTrigger,
   } from 'radix-vue'
-  import { router, useForm } from '@inertiajs/vue3';
-  import { computed, ref } from 'vue'
-import { watch } from 'vue';
+  import { ref } from 'vue';
 
-  const props = defineProps<{
+  defineProps<{
     prefix?: string;
     content: any;
   }>();
 
-  const confirmingModal = ref(false);
-
-  const openModal = () => confirmingModal.value = true
-  const closeModal = () => confirmingModal.value = false
-
-  const form = useForm({
-    ids: [],
-  });
-
-  const deleteItems = () => {
-    // selectedToDelete.forEach((checkBox: any) => form.ids.push((checkBox.id) as never))
-
-    // form.delete(route(props.routes.destroyRoute), {
-    //   preserveScroll: true,
-    //   onSuccess: () => closeModal(),
-    //   onError: () => toast.error(trans(usePage().props.status as string)),
-    //   onFinish: () => toast.success(trans(usePage().props.status as string)),
-    // });
-  };
-
-
-
-
-
-
+  const emit = defineEmits(['selectItem'])
 
   const radioRef = ref('active')
   const checkRef = ref(true)
-
-  const action = (item: any) => {
-    const isValidUrl = (urlString: string) => {
-      try { 
-      	if (Boolean(new URL(urlString))) return urlString; 
-      }
-      catch (e){ 
-      	return route(urlString); 
-      }
-    }
-    
-    if (item.list) {
-      openModal()
-
-      // confirmingModal.value = true
-
-      console.log(confirmingModal.value, item.route, item.list)
-
-      // return true
-    } else {
-      router.visit(isValidUrl(item.route) as string, {
-        method: item.method,
-        preserveScroll: true,
-      })
-    }
-  }
-
-  watch(() => confirmingModal.value, () => console.log(1))
 </script>
 
 <template>
-  <Modal 
-    :open="confirmingModal"
-    :title="$t('Are you sure you want to delete the selected items?')" 
-    @close="closeModal"
-  >
-    <p class="mt-1 text-sm text-secondary-light dark:text-secondary-dark">
-      {{ $t('The selected items will be removed from the active items. Do you want to continue?') }}
-    </p>
-    <template #buttons>
-      <div class="mt-6 flex justify-end">
-        <Button color="secondary" @click="closeModal" start-icon="mdi:cancel-outline">
-          {{ $t('Cancel') }}
-        </Button>
-        <Button color="danger" @click="deleteItems" start-icon="mdi:delete-sweep-outline" class="ml-3" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-          {{ $t('Erase selected') }}
-        </Button>
-      </div>
-    </template>
-  </Modal>
-
   <template v-for="item in content">
     <DropdownMenuSub v-if="item.items">
       <DropdownMenuSubTrigger
@@ -122,6 +46,7 @@ import { watch } from 'vue';
             v-if="!item.type"
             :prefix="prefix"
             :content="item.items" 
+            @select-item="(item) => $emit('selectItem', item)"
           />
 
           <template v-if="item.type == 'check'">
@@ -172,7 +97,7 @@ import { watch } from 'vue';
           as="span"
           :menu="item.title"
           :disabled="item.disabled"
-          @select="action(item)"
+          @select="$emit('selectItem', item)"
           class="group px-[5px] flex pl-[25px] leading-none rounded-[3px] items-center relative select-none text-sm py-3 focus:outline-none cursor-pointer data-[state=open]:bg-zero-light data-[state=open]:dark:bg-zero-dark data-[highlighted]:bg-zero-light data-[highlighted]:dark:bg-zero-dark data-[highlighted]:text-zero-light data-[highlighted]:dark:text-zero-dark data-[highlighted]:data-[state=open]:bg-zero-light data-[highlighted]:data-[state=open]:dark:bg-zero-dark data-[disabled]:text-zero-light/50 data-[disabled]:dark:text-zero-light/50 data-[disabled]:pointer-events-none"
         >
           <Icon v-if="item.icon" :icon="item.icon" class="h-5 w-5 mr-1" />

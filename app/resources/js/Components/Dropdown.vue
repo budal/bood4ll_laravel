@@ -14,8 +14,9 @@
     content: any;
   }>();
 
-  const toggleState = ref(false)
+  const emit = defineEmits(['select'])
 
+  const toggleState = ref(false)
 </script>
 
 <template>
@@ -34,7 +35,7 @@
           :align="'start'"
           :side-offset="2"
         >
-          <DropdownItem :prefix="prefix" :content="content"/>
+          <DropdownItem :prefix="prefix" :content="content" @select-item="(item) => $emit('select', item)" />
         </DropdownMenuContent>
       </DropdownMenuPortal>
     </DropdownMenuRoot>

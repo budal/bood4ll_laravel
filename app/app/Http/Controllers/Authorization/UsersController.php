@@ -188,10 +188,8 @@ class UsersController extends Controller
 
     public function destroy(Request $request): RedirectResponse
     {
-        $items = $request->all();
-
         try {
-            $usersToDelete = User::whereIn('id', $items['ids'])->delete();
+            User::whereIn('id', $request->ids)->delete();
         } catch (Throwable $e) {
             report($e);
      
@@ -201,10 +199,16 @@ class UsersController extends Controller
         return back()->with('status', 'Users removed succesfully!');
     }
 
-    public function restore(User $user)
+    public function restore(Request $request)
     {
-        $user->restore();
-
-        return Redirect::back()->with('status', 'User restored.');
+        try {
+            User::whereIn('id', $request->ids)->restore();
+        } catch (Throwable $e) {
+            report($e);
+     
+            return false;
+        }
+        
+        return back()->with('status', 'Users restaured succesfully!');
     }
 }
