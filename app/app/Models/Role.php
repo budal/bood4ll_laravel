@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -10,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Role extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'name',
@@ -39,6 +40,12 @@ class Role extends Model
             $query->where(function ($query) use ($search) {
                 $query->where('name', 'ilike', '%'.$search.'%');
             });
+        })->when($filters['trashed'] ?? null, function ($query, $trashed) {
+            if ($trashed === 'both') {
+                $query->withTrashed();
+            } elseif ($trashed === 'trashed') {
+                $query->onlyTrashed();
+            }
         });
     }
 

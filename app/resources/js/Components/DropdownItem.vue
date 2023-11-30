@@ -2,7 +2,7 @@
   import { Icon } from '@iconify/vue'
   import DropdownItem from '@/Components/DropdownItem.vue';
   import {
-DropdownMenuCheckboxItem,
+    DropdownMenuCheckboxItem,
     DropdownMenuItem,
     DropdownMenuItemIndicator,
     DropdownMenuPortal,
@@ -13,15 +13,35 @@ DropdownMenuCheckboxItem,
     DropdownMenuSubContent,
     DropdownMenuSubTrigger,
   } from 'radix-vue'
+  import { router } from '@inertiajs/vue3';
   import { ref } from 'vue'
 
-  defineProps<{
+  const props = defineProps<{
     prefix?: string;
     content: any;
   }>();
 
   const radioRef = ref('active')
   const checkRef = ref(true)
+
+  const action = (item: any) => {
+    const isValidUrl = (urlString: string) => {
+      try { 
+      	if (Boolean(new URL(urlString))) return urlString; 
+      }
+      catch (e){ 
+      	return route(urlString); 
+      }
+    }
+
+    console.log(item.method)
+
+    router.visit(isValidUrl(item.route) as string, {
+      // method: 'get',
+      method: item.method,
+      preserveScroll: true,
+    })
+  }
 </script>
 
 <template>
@@ -94,6 +114,7 @@ DropdownMenuCheckboxItem,
           as="span"
           :menu="item.title"
           :disabled="item.disabled"
+          @select="action(item)"
           class="group px-[5px] flex pl-[25px] leading-none rounded-[3px] items-center relative select-none text-sm py-3 focus:outline-none cursor-pointer data-[state=open]:bg-zero-light data-[state=open]:dark:bg-zero-dark data-[highlighted]:bg-zero-light data-[highlighted]:dark:bg-zero-dark data-[highlighted]:text-zero-light data-[highlighted]:dark:text-zero-dark data-[highlighted]:data-[state=open]:bg-zero-light data-[highlighted]:data-[state=open]:dark:bg-zero-dark data-[disabled]:text-zero-light/50 data-[disabled]:dark:text-zero-light/50 data-[disabled]:pointer-events-none"
         >
           <Icon v-if="item.icon" :icon="item.icon" class="h-5 w-5 mr-1" />

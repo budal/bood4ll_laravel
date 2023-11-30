@@ -24,7 +24,7 @@
     shortcutKey?: string;
   }>();
 
-  let searchRoute = new URL(window.location.href);
+  let indexRoute = new URL(window.location.href);
 
   let selectedCheckBoxes = reactive(new Set())
 
@@ -46,17 +46,27 @@
   let content = computed(() => {
     let content = reactive(new Set());
 
-    const showRestoreItems = searchRoute.searchParams.get('trashed')
+    let filterFieldName = props.prefix ? `${props.prefix}_trashed` : "trashed"
+    
+    const showRestoreItems = indexRoute.searchParams.get(filterFieldName)
     
     if (props.routes.restoreRoute) {
+      const activeRoute = new URL(window.location.href);
+      activeRoute.searchParams.set(filterFieldName, 'active');
+
+      const trashedRoute = new URL(window.location.href);
+      trashedRoute.searchParams.set(filterFieldName, 'trashed');
+      
+      const bothRoute = new URL(window.location.href);
+      bothRoute.searchParams.set(filterFieldName, 'both');
+
       content.add({
         title: "Filters",
         icon: "mdi:filter-outline",
-        route: searchRoute,
         items: [
-          { id: 'active', title: 'Only active', icon: "mdi:playlist-check" },
-          { id: 'trashed', title: 'Only trashed', icon: "mdi:playlist-remove" },
-          { id: 'both', title: 'Active and trashed', icon: "mdi:list-status" },
+          { title: 'Only active', icon: "mdi:playlist-check", route: activeRoute.href },
+          { title: 'Only trashed', icon: "mdi:playlist-remove", route: trashedRoute.href },
+          { title: 'Active and trashed', icon: "mdi:list-status", route: bothRoute.href },
         ]
       })
   
@@ -68,7 +78,8 @@
         title: "Delete",
         icon: "mdi:delete-outline",
         disabled: totalSelectedCheckBoxes.value === 0,
-        route: props.routes.destroyRoute
+        route: props.routes.destroyRoute,
+        method: "delete",
       })
     }
   
@@ -77,7 +88,8 @@
         title: "Restore",
         icon: "mdi:restore",
         disabled: totalSelectedCheckBoxes.value === 0,
-        route: props.routes.restoreRoute
+        route: props.routes.restoreRoute,
+        method: "post",
       })
     }
   
