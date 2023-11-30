@@ -26,6 +26,8 @@
     shortcutKey?: string;
   }>();
 
+  let searchRoute = new URL(window.location.href);
+
   let selectedCheckBoxes = reactive(new Set())
 
   let selectAll = (checkBoxes: any) => {
@@ -61,11 +63,14 @@
 
   let content = computed(() => {
     let content = reactive(new Set());
+
+    const showRestoreItems = searchRoute.searchParams.get('trashed')
     
     if (props.routes.restoreRoute) {
       content.add({
         title: "Filters",
         icon: "mdi:filter-outline",
+        route: searchRoute,
         items: [
           { id: 'active', title: 'Only active', icon: "mdi:playlist-check" },
           { id: 'trashed', title: 'Only trashed', icon: "mdi:playlist-remove" },
@@ -76,7 +81,7 @@
       content.add({ title: "-" })
     }
   
-    if (props.routes.destroyRoute) {
+    if (props.routes.destroyRoute && (showRestoreItems == 'active' || showRestoreItems == 'both')) {
       content.add({
         title: "Delete",
         icon: "mdi:delete-outline",
@@ -85,7 +90,7 @@
       })
     }
   
-    if (props.routes.restoreRoute) {
+    if (props.routes.restoreRoute && (showRestoreItems == 'trashed' || showRestoreItems == 'both')) {
       content.add({
         title: "Restore",
         icon: "mdi:restore",
