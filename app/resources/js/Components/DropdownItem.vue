@@ -1,6 +1,8 @@
 <script setup lang="ts">
   import { Icon } from '@iconify/vue'
+  import Button from '@/Components/Button.vue';
   import DropdownItem from '@/Components/DropdownItem.vue';
+  import Modal from '@/Components/Modal.vue';
   import {
     DropdownMenuCheckboxItem,
     DropdownMenuItem,
@@ -13,13 +15,40 @@
     DropdownMenuSubContent,
     DropdownMenuSubTrigger,
   } from 'radix-vue'
-  import { router } from '@inertiajs/vue3';
-  import { ref } from 'vue'
+  import { router, useForm } from '@inertiajs/vue3';
+  import { computed, ref } from 'vue'
+import { watch } from 'vue';
 
   const props = defineProps<{
     prefix?: string;
     content: any;
   }>();
+
+  const confirmingModal = ref(false);
+
+  const openModal = () => confirmingModal.value = true
+  const closeModal = () => confirmingModal.value = false
+
+  const form = useForm({
+    ids: [],
+  });
+
+  const deleteItems = () => {
+    // selectedToDelete.forEach((checkBox: any) => form.ids.push((checkBox.id) as never))
+
+    // form.delete(route(props.routes.destroyRoute), {
+    //   preserveScroll: true,
+    //   onSuccess: () => closeModal(),
+    //   onError: () => toast.error(trans(usePage().props.status as string)),
+    //   onFinish: () => toast.success(trans(usePage().props.status as string)),
+    // });
+  };
+
+
+
+
+
+
 
   const radioRef = ref('active')
   const checkRef = ref(true)
@@ -33,17 +62,47 @@
       	return route(urlString); 
       }
     }
+    
+    if (item.list) {
+      openModal()
 
-    console.log(item.route, item.list)
+      // confirmingModal.value = true
 
-    // router.visit(isValidUrl(item.route) as string, {
-    //   method: item.method,
-    //   preserveScroll: true,
-    // })
+      console.log(confirmingModal.value, item.route, item.list)
+
+      // return true
+    } else {
+      router.visit(isValidUrl(item.route) as string, {
+        method: item.method,
+        preserveScroll: true,
+      })
+    }
   }
+
+  watch(() => confirmingModal.value, () => console.log(1))
 </script>
 
 <template>
+  <Modal 
+    :open="confirmingModal"
+    :title="$t('Are you sure you want to delete the selected items?')" 
+    @close="closeModal"
+  >
+    <p class="mt-1 text-sm text-secondary-light dark:text-secondary-dark">
+      {{ $t('The selected items will be removed from the active items. Do you want to continue?') }}
+    </p>
+    <template #buttons>
+      <div class="mt-6 flex justify-end">
+        <Button color="secondary" @click="closeModal" start-icon="mdi:cancel-outline">
+          {{ $t('Cancel') }}
+        </Button>
+        <Button color="danger" @click="deleteItems" start-icon="mdi:delete-sweep-outline" class="ml-3" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+          {{ $t('Erase selected') }}
+        </Button>
+      </div>
+    </template>
+  </Modal>
+
   <template v-for="item in content">
     <DropdownMenuSub v-if="item.items">
       <DropdownMenuSubTrigger
