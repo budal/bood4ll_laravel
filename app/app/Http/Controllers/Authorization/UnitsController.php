@@ -42,7 +42,6 @@ class UnitsController extends Controller
         return Inertia::render('Default/Index', [
             'title' => "Units management",
             'subtitle' => "Manage the units users are classified in.",
-            'softDelete' => Unit::hasGlobalScope('Illuminate\Database\Eloquent\SoftDeletingScope'),
             'routes' => [
                 'createRoute' => [
                     'route' => "apps.units.create",

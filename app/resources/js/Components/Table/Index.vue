@@ -18,7 +18,6 @@
     prefix?: string;
     id?: string;
     name?: string;
-    softDelete?: boolean | null;
     routes?: any;
     filters?: any;
     menu?: any;
@@ -62,33 +61,38 @@
 
   if (props.routes.restoreRoute) {
     content.add({
-      'title': "Filters",
-      'icon': "mdi:filter-outline",
-      'items': [
-        { id: 'active', title: 'Only active', disabled: false },
-        { id: 'trashed', title: 'Only trashed', disabled: false },
-        { id: 'both', title: 'Active and trashed', disabled: false },
+      title: "Filters",
+      type: 'check',
+      icon: "mdi:filter-outline",
+      items: [
+        { id: 'active', title: 'Only active', icon: "mdi:playlist-check" },
+        { id: 'trashed', title: 'Only trashed', icon: "mdi:playlist-remove" },
+        { id: 'both', title: 'Active and trashed', icon: "mdi:list-status" },
       ]
     })
+
+    content.add({ title: "-" })
   }
 
   if (props.routes.destroyRoute) {
     content.add({
-      'title': "Delete",
-      'icon': "mdi:delete-outline",
-      'route': props.routes.destroyRoute
+      title: "Delete",
+      icon: "mdi:delete-outline",
+      route: props.routes.destroyRoute
     })
   }
 
   if (props.routes.restoreRoute) {
     content.add({
-      'title': "Restore",
-      'icon': "mdi:restore",
-      'route': props.routes.restoreRoute
+      title: "Restore",
+      icon: "mdi:restore",
+      route: props.routes.restoreRoute
     })
   }
 
   if (props.menu) {
+    content.add({ title: "-" })
+    
     props.menu.forEach((item: object) => content.add(item))
   }
 
@@ -149,10 +153,10 @@
 
   <div class="flex sticky top-0 sm:top-[95px] justify-between rounded-xl backdrop-blur-sm pt-1 mb-2 bg-zero-light/30 dark:bg-zero-dark/30">
     <div class="flex gap-2 w-full">
-      <Button v-if="routes.destroyRoute" color="danger" type="button" @click="openDeletionModal" start-icon="mdi:delete-outline" class="h-full" :disabled="totalSelectedCheckBoxes === 0" />
+      <!-- <Button v-if="routes.destroyRoute" color="danger" type="button" @click="openDeletionModal" start-icon="mdi:delete-outline" class="h-full" :disabled="totalSelectedCheckBoxes === 0" /> -->
       <Dropdown v-if="content" :content="content" />
       <Search :prefix="prefix" :id="id" :name="name" :search="filters.search" :shortcutKey="shortcutKey" class="flex-1" />
-      <Filter :prefix="prefix" :softDelete="softDelete"/>
+      <!-- <Filter :prefix="prefix" :softDelete="softDelete"/> -->
       <Button 
         v-if="routes.createRoute" 
         type="button"
@@ -168,7 +172,7 @@
         <thead v-if="items.data.length > 0">
           <tr class="bg-zero-light dark:bg-zero-dark p-3 text-zero-light dark:text-zero-dark text-left">
             <th class="p-2">
-              <Checkbox v-if="routes.destroyRoute" name="remember" :checked="selectedcheckBox" @click="toggleSelection" class="w-8 h-8 rounded-lg" />
+              <Checkbox v-if="routes.destroyRoute || routes.restoreRoute" name="remember" :checked="selectedcheckBox" @click="toggleSelection" class="w-8 h-8 rounded-lg" />
             </th>
             <th v-for="sort in titles" class="p-2">
               <Sort :prefix="prefix" :sort="sort" class="justify-center" />
@@ -183,14 +187,13 @@
             class="bg-secondary-light dark:bg-secondary-dark hover:bg-secondary-light-hover hover:dark:bg-secondary-dark-hover border-t border-secondary-light dark:border-secondary-dark text-secondary-light dark:text-secondary-dark"
           >
             <td class="p-2">
-              <Checkbox v-if="routes.destroyRoute && !item.deleted_at" 
+              <Checkbox v-if="routes.destroyRoute || routes.restoreRoute" 
                 class="w-8 h-8 rounded-lg" 
                 :checked="selectedCheckBoxes.has(item)" 
                 :value="item.id" 
                 :id="`checkbox-${item.id}`" 
                 @click="toggle(item)" 
               />
-              <Restore :restoreRoute="routes.restoreRoute" :item="item" />
             </td>
             <td v-for="content in titles" class="p-1">
               <p v-if="content.type == 'simple'" class="truncate text-xs leading-5 text-secondary-light dark:text-secondary-dark text-center">

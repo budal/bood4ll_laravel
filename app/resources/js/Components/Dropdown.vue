@@ -18,7 +18,7 @@
 </script>
 
 <template>
-  <template v-if="content.size > 1">
+  <template v-if="content.size">
     <DropdownMenuRoot v-model:open="toggleState">
       <DropdownMenuTrigger
         as="span"
@@ -34,13 +34,6 @@
           :side-offset="2"
         >
           <DropdownItem :content="content"/>
-        
-        
-          <!-- <DropdownMenuSeparator class="h-[0.5px] bg-zero-dark/10 dark:bg-zero-light/5" /> -->
-          
-          
-          
-          
         </DropdownMenuContent>
       </DropdownMenuPortal>
     </DropdownMenuRoot>

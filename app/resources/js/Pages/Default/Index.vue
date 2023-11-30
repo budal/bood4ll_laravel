@@ -7,7 +7,6 @@ defineProps<{
     isModal?: boolean;
     title: string;
     subtitle: string;
-    softDelete: boolean;
     routes?: object;
     status?: string;
     filters: object;
@@ -29,7 +28,6 @@ defineProps<{
             </header>
             <Table 
                 :menu="menu" 
-                :softDelete="softDelete" 
                 :routes="routes" 
                 :filters="filters" 
                 :items="items" 
@@ -46,7 +44,6 @@ defineProps<{
             </header>
             <Table 
                 :menu="menu" 
-                :softDelete="softDelete" 
                 :routes="routes" 
                 :filters="filters" 
                 :items="items" 
