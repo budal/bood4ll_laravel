@@ -57,46 +57,59 @@
 
 
 
-  let content = reactive(new Set());
-  
-  let totalSelectedCheckBoxesRef = ref(new Set());
 
-  if (props.routes.restoreRoute) {
-    content.add({
-      title: "Filters",
-      icon: "mdi:filter-outline",
-      items: [
-        { id: 'active', title: 'Only active', icon: "mdi:playlist-check" },
-        { id: 'trashed', title: 'Only trashed', icon: "mdi:playlist-remove" },
-        { id: 'both', title: 'Active and trashed', icon: "mdi:list-status" },
-      ]
-    })
 
-    content.add({ title: "-" })
-  }
-
-  if (props.routes.destroyRoute) {
-    content.add({
-      title: "Delete",
-      icon: "mdi:delete-outline",
-      disabled: totalSelectedCheckBoxes.value === 0,
-      route: props.routes.destroyRoute
-    })
-  }
-
-  if (props.routes.restoreRoute) {
-    content.add({
-      title: "Restore",
-      icon: "mdi:restore",
-      route: props.routes.restoreRoute
-    })
-  }
-
-  if (props.menu) {
-    content.add({ title: "-" })
+  let content = computed(() => {
+    let content = reactive(new Set());
     
-    props.menu.forEach((item: object) => content.add(item))
-  }
+    if (props.routes.restoreRoute) {
+      content.add({
+        title: "Filters",
+        icon: "mdi:filter-outline",
+        items: [
+          { id: 'active', title: 'Only active', icon: "mdi:playlist-check" },
+          { id: 'trashed', title: 'Only trashed', icon: "mdi:playlist-remove" },
+          { id: 'both', title: 'Active and trashed', icon: "mdi:list-status" },
+        ]
+      })
+  
+      content.add({ title: "-" })
+    }
+  
+    if (props.routes.destroyRoute) {
+      content.add({
+        title: "Delete",
+        icon: "mdi:delete-outline",
+        disabled: totalSelectedCheckBoxes.value === 0,
+        route: props.routes.destroyRoute
+      })
+    }
+  
+    if (props.routes.restoreRoute) {
+      content.add({
+        title: "Restore",
+        icon: "mdi:restore",
+        disabled: totalSelectedCheckBoxes.value === 0,
+        route: props.routes.restoreRoute
+      })
+    }
+  
+    if (props.menu) {
+      content.add({ title: "-" })
+      
+      props.menu.forEach((item: object) => content.add(item))
+    }
+
+    return content
+  })
+
+
+
+
+
+
+
+
 
   const confirmingDeletionModal = ref(false);
 
