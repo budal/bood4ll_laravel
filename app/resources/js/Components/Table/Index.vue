@@ -208,19 +208,23 @@
                 @click="toggle(item)" 
               />
             </td>
-            <td v-for="content in titles" class="p-1">
+            <td v-for="content in titles" class="p-1 text-center">
+
               <p v-if="content.type == 'simple'" class="truncate text-xs leading-5 text-secondary-light dark:text-secondary-dark text-center">
                 {{ item[content.field] ?? '-' }}
               </p>
+
               <template v-if="content.type == 'composite'">
                 <p class="text-sm font-medium text-secondary-light dark:text-secondary-dark text-center">{{ item[content.fields[0]] ?? '-' }}</p>
                 <p class="truncate text-xs leading-5 text-secondary-light dark:text-secondary-dark text-center">{{ item[content.fields[1]] ?? '-' }}</p>
               </template>
+
               <Avatar 
                 v-if="content.type == 'avatar'" 
                 class="w-12 h-12 rounded-full" 
                 :fallback="item[content.fallback]" 
               />
+
               <Switch 
                 v-if="content.type == 'switch'" 
                 :name="item.name" 

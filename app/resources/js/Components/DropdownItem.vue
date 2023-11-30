@@ -37,7 +37,6 @@
     console.log(item.method)
 
     router.visit(isValidUrl(item.route) as string, {
-      // method: 'get',
       method: item.method,
       preserveScroll: true,
     })
