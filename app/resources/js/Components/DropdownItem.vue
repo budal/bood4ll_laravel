@@ -20,8 +20,8 @@ DropdownMenuCheckboxItem,
     content: any;
   }>();
 
-  const person = ref('active')
-  const checkboxOne = ref(true)
+  const radioRef = ref('active')
+  const checkRef = ref(true)
 </script>
 
 <template>
@@ -49,7 +49,7 @@ DropdownMenuCheckboxItem,
           <template v-if="item.type == 'check'">
             <DropdownMenuCheckboxItem
               v-for="check in item.items"
-              v-model:checked="checkboxOne"
+              v-model:checked="checkRef"
               class="group px-[5px] flex pl-[25px] leading-none rounded-[3px] items-center relative select-none text-sm py-3 focus:outline-none cursor-pointer data-[state=open]:bg-zero-light data-[state=open]:dark:bg-zero-dark data-[highlighted]:bg-zero-light data-[highlighted]:dark:bg-zero-dark data-[highlighted]:text-zero-light data-[highlighted]:dark:text-zero-dark data-[highlighted]:data-[state=open]:bg-zero-light data-[highlighted]:data-[state=open]:dark:bg-zero-dark data-[disabled]:text-zero-light/50 data-[disabled]:dark:text-zero-light/50 data-[disabled]:pointer-events-none"
             >
               <DropdownMenuItemIndicator class="absolute left-0 w-[25px] inline-flex items-center justify-center">
@@ -66,7 +66,7 @@ DropdownMenuCheckboxItem,
           <template v-if="item.type == 'radio'">
             <DropdownMenuRadioGroup 
               v-if="item.type == 'radio'"
-              v-model="person"
+              v-model="radioRef"
             >
               <DropdownMenuRadioItem
                 v-for="radio in item.items"
