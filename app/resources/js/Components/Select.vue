@@ -111,15 +111,15 @@
           <div 
             v-for="item in showContent" 
             :class= "multiple ? 
-              'p-1 flex items-center text-secondary-light dark:text-secondary-dark rounded-md placeholder:text-xs sm:placeholder:text-sm text-xs sm:text-sm bg-secondary-light dark:bg-secondary-dark ring-0 border border-zero-light dark:border-zero-dark' : 
+              'p-1 flex items-center text-zero-light dark:text-zero-dark rounded-md placeholder:text-xs sm:placeholder:text-sm text-xs sm:text-sm bg-zero-light dark:bg-zero-dark ring-0 border border-zero-light dark:border-zero-dark' : 
               'items-center text-zero-light dark:text-zero-dark rounded-md placeholder:text-xs sm:placeholder:text-sm bg-zero-white dark:bg-zero-black'
             " 
           >
             {{ $t(item.name) }}
-            <button v-if="multiple" @click="removeItem(item.id)" type="button" class="ml-1 rounded-full focus:outline-none focus:ring-2 focus:ring-secondary-light dark:focus:ring-secondary-dark focus:ring-offset-1 focus:ring-offset-secondary-light dark:focus:ring-offset-secondary-dark">
+            <button v-if="multiple" @click="removeItem(item.id)" type="button" class="ml-1 rounded-full focus:outline-none focus:ring-2 focus:ring-zero-light dark:focus:ring-zero-dark focus:ring-offset-1 focus:ring-offset-zero-light dark:focus:ring-offset-zero-dark">
               <Icon 
                 icon="mdi:close-circle-outline" 
-                class="w-4 h-4 text-secondary-light dark:text-secondary-dark cursor-pointer" 
+                class="w-4 h-4 text-zero-light dark:text-zero-dark cursor-pointer" 
                 :key="item.id"
               />
             </button>
