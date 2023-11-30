@@ -23,38 +23,41 @@
     shortcutKey?: string;
   }>();
 
+  // checkboxes
   let indexRoute = new URL(window.location.href);
 
-  // delete
-  let selectedToDelete = reactive(new Set())
+  let selectedItems = reactive(new Set())
 
-  let toggleDelete = (checkBox: any) => (selectedToDelete.has(checkBox)) 
-    ? selectedToDelete.delete(checkBox) 
-    : selectedToDelete.add(checkBox)
-
-  let totalSelectedToDelete = computed(() => selectedToDelete.size)
-
-  // restore
-  let selectedToRestore = reactive(new Set())
-
-  let toggleRestore = (checkBox: any) => (selectedToRestore.has(checkBox)) 
-    ? selectedToRestore.delete(checkBox) 
-    : selectedToRestore.add(checkBox)
-
-  let totalselectedToRestore = computed(() => selectedToRestore.size)
-
-  // delete & restore
-  let selectAll = (checkBoxes: any) => checkBoxes.forEach((checkBox: unknown) => selectedToDelete.add(checkBox))
+  let totalSelectedItem = computed(() => selectedItems.size)
   
-  let clear = () => selectedToDelete.clear()
+  let selectedAll = computed(() => totalSelectedItem.value == props.items.data.length)
   
-  let selectedAll = computed(() => totalSelectedToDelete.value == props.items.data.length)
+  let clear = () => selectedItems.clear()
+  
+  let selectAll = (checkBoxes: any) => checkBoxes.forEach((item: unknown) => selectedItems.add(item))
+
+  let toggle = (item: any) => (selectedItems.has(item)) 
+    ? selectedItems.delete(item) 
+    : selectedItems.add(item)
+  
   const toggleSelection = () => (selectedAll.value) 
     ? clear()
     : selectAll(props.items.data)
 
+  let toDeleteItems = computed(() => {
+    let items = reactive(new Set())
+    selectedItems.forEach((item: any) => item.deleted_at ? items.add(item) : false )
+    return items
+  })
+
+  let toRestoreItems = computed(() => {
+    let items = reactive(new Set())
+    selectedItems.forEach((item: any) => !item.deleted_at ? items.add(item) : false )
+    return items
+  })
+
   // menu
-  let content = computed(() => {
+  let menuItems = computed(() => {
     let content = reactive(new Set());
 
     let filterFieldName = props.prefix ? `${props.prefix}_trashed` : "trashed"
@@ -75,9 +78,9 @@
         title: "Filters",
         icon: "mdi:filter-outline",
         items: [
-          { id: 'active', title: 'Only active', icon: "mdi:playlist-check", route: activeRoute.href },
-          { id: 'trashed', title: 'Only trashed', icon: "mdi:playlist-remove", route: trashedRoute.href },
-          { id: 'both', title: 'Active and trashed', icon: "mdi:list-status", route: bothRoute.href },
+          { title: 'Only active', icon: "mdi:playlist-check", route: activeRoute.href },
+          { title: 'Only trashed', icon: "mdi:playlist-remove", route: trashedRoute.href },
+          { title: 'Active and trashed', icon: "mdi:list-status", route: bothRoute.href },
         ]
       })
   
@@ -88,8 +91,8 @@
       content.add({
         title: "Delete",
         icon: "mdi:delete-outline",
-        disabled: totalSelectedToDelete.value === 0,
-        list: selectedToDelete,
+        disabled: totalSelectedItem.value === 0,
+        list: toDeleteItems,
         route: props.routes.destroyRoute,
         method: "delete",
       })
@@ -99,8 +102,8 @@
       content.add({
         title: "Restore",
         icon: "mdi:restore",
-        disabled: totalselectedToRestore.value === 0,
-        list: selectedToRestore,
+        disabled: totalSelectedItem.value === 0,
+        list: toRestoreItems,
         route: props.routes.restoreRoute,
         method: "post",
       })
@@ -124,12 +127,12 @@
       }
     }
 
-  const selectedItem = (item: any) => {
+  const action = (item: any) => {
     if (item.list) {
       // openDeletionModal()
+      
 
-
-      console.log(item)
+      console.log(item.list)
     } else {
       router.visit(isValidUrl(item.route) as string, {
         method: item.method,
@@ -148,7 +151,7 @@
   });
 
   const deleteItems = () => {
-    selectedToDelete.forEach((checkBox: any) => form.ids.push((checkBox.id) as never))
+    selectedItems.forEach((checkBox: any) => form.ids.push((checkBox.id) as never))
 
     form.delete(route(props.routes.destroyRoute), {
       preserveScroll: true,
@@ -203,7 +206,7 @@
 
   <div class="flex sticky top-0 sm:top-[95px] justify-between rounded-xl backdrop-blur-sm pt-1 mb-2 bg-zero-light/30 dark:bg-zero-dark/30">
     <div class="flex gap-2 w-full">
-      <Dropdown v-if="content" :prefix="prefix" :content="content" @select="(item) => selectedItem(item)" />
+      <Dropdown v-if="menuItems" :prefix="prefix" :content="menuItems" @select="(item) => action(item)" />
       <Search :prefix="prefix" :id="id" :name="name" :shortcutKey="shortcutKey" class="flex-1" />
       <Button 
         v-if="routes.createRoute" 
@@ -239,19 +242,15 @@
               : 'bg-secondary-light dark:bg-secondary-dark hover:bg-secondary-light-hover hover:dark:bg-secondary-dark-hover border-secondary-light dark:border-secondary-dark'"
           >
             <td class="p-2 w-0">
-              <Checkbox v-if="!item.deleted_at && (routes.destroyRoute || routes.restoreRoute)" 
+              <Checkbox v-if="(routes.destroyRoute || routes.restoreRoute)" 
                 class="w-8 h-8 rounded-lg" 
-                :checked="selectedToDelete.has(item)" 
+                :class="item.deleted_at 
+                  ? ''
+                  : ''"
+                :checked="selectedItems.has(item)" 
                 :value="item.id" 
-                :id="`checkboxToDelete-${item.id}`" 
-                @click="toggleDelete(item)" 
-              />
-              <Checkbox v-if="item.deleted_at && (routes.destroyRoute || routes.restoreRoute)" 
-                class="w-8 h-8 rounded-lg" 
-                :checked="selectedToDelete.has(item)" 
-                :value="item.id" 
-                :id="`checkboxToRestore-${item.id}`" 
-                @click="toggleRestore(item)" 
+                :id="`checkboxItem-${item.id}`" 
+                @click="toggle(item)" 
               />
             </td>
             <td v-for="content in titles" class="p-1 text-center">
