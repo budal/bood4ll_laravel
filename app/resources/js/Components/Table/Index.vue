@@ -28,9 +28,7 @@
 
   let selectedItems = reactive(new Set())
 
-  let totalSelectedItem = computed(() => selectedItems.size)
-  
-  let selectedAll = computed(() => totalSelectedItem.value == props.items.data.length)
+  let selectedAll = computed(() => selectedItems.size == props.items.data.length)
   
   let clear = () => selectedItems.clear()
   
@@ -91,7 +89,7 @@
       content.add({
         title: "Delete",
         icon: "mdi:delete-outline",
-        disabled: totalSelectedItem.value === 0,
+        disabled: toDeleteItems.value.size === 0,
         list: toDeleteItems,
         route: props.routes.destroyRoute,
         method: "delete",
@@ -107,7 +105,7 @@
       content.add({
         title: "Restore",
         icon: "mdi:restore",
-        disabled: totalSelectedItem.value === 0,
+        disabled: toRestoreItems.value.size === 0,
         list: toRestoreItems,
         route: props.routes.restoreRoute,
         method: "post",
@@ -140,9 +138,6 @@
   const action = (item: any) => {
     if (item.list) {
       openModal(item)
-      
-
-      console.log(item)
     } else {
       router.visit(isValidUrl(item.route) as string, {
         method: item.method,
@@ -154,13 +149,13 @@
   // modal
   const confirmingDeletionModal = ref(false);
 
-  const modalInfo = ref([]);
+  const modalInfo = ref();
 
   const openModal = (item: any) => {
     modalInfo.value = item
     confirmingDeletionModal.value = true
 
-    console.log(modalInfo)
+    console.log(item)
   }
 
   const closeModal = () => confirmingDeletionModal.value = false
