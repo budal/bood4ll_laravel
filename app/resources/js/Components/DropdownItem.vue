@@ -19,8 +19,8 @@ DropdownMenuCheckboxItem,
     content: any;
   }>();
 
-  const person = ref('pedro')
-  const checkboxOne = ref(false)
+  const person = ref('active')
+  const checkboxOne = ref(true)
 </script>
 
 <template>
@@ -29,7 +29,7 @@ DropdownMenuCheckboxItem,
       <DropdownMenuSubTrigger
         class="group px-[5px] flex pl-[25px] leading-none rounded-[3px] items-center relative select-none text-sm py-3 focus:outline-none cursor-pointer data-[state=open]:bg-zero-light data-[state=open]:dark:bg-zero-dark data-[highlighted]:bg-zero-light data-[highlighted]:dark:bg-zero-dark data-[highlighted]:text-zero-light data-[highlighted]:dark:text-zero-dark data-[highlighted]:data-[state=open]:bg-zero-light data-[highlighted]:data-[state=open]:dark:bg-zero-dark data-[disabled]:text-zero-light/50 data-[disabled]:dark:text-zero-light/50 data-[disabled]:pointer-events-none"
       >
-        <Icon :icon="item.icon" class="h-5 w-5 mr-1" />
+        <Icon v-if="item.icon" :icon="item.icon" class="h-5 w-5 mr-1" />
         {{ $t(item.title) }} 
         <div class="ml-auto pl-[20px] text-zero-light dark:text-zero-dark group-data-[highlighted]:text-zero-light/70 group-data-[highlighted]:dark:text-zero-dark/70 group-data-[disabled]:text-zero-light/50 group-data-[disabled]:dark:text-zero-dark/50" >
           <Icon icon="mdi:chevron-right" />
@@ -53,6 +53,7 @@ DropdownMenuCheckboxItem,
               <DropdownMenuItemIndicator class="absolute left-0 w-[25px] inline-flex items-center justify-center">
                 <Icon icon="radix-icons:check" />
               </DropdownMenuItemIndicator>
+              <Icon v-if="check.icon" :icon="check.icon" class="h-5 w-5 mr-1" />
               {{ $t(check.title) }}
               <div v-if="check.shortcut" class="ml-auto mr-2 pl-[20px] text-zero-light dark:text-zero-dark group-data-[highlighted]:text-zero-light/70 group-data-[highlighted]:dark:text-zero-dark/70 group-data-[disabled]:text-zero-light/50 group-data-[disabled]:dark:text-zero-dark/50" >
                 {{ check.shortcut }}
@@ -68,11 +69,12 @@ DropdownMenuCheckboxItem,
               <DropdownMenuRadioItem
                 v-for="radio in item.items"
                 class="group px-[5px] flex pl-[25px] leading-none rounded-[3px] items-center relative select-none text-sm py-3 focus:outline-none cursor-pointer data-[state=open]:bg-zero-light data-[state=open]:dark:bg-zero-dark data-[highlighted]:bg-zero-light data-[highlighted]:dark:bg-zero-dark data-[highlighted]:text-zero-light data-[highlighted]:dark:text-zero-dark data-[highlighted]:data-[state=open]:bg-zero-light data-[highlighted]:data-[state=open]:dark:bg-zero-dark data-[disabled]:text-zero-light/50 data-[disabled]:dark:text-zero-light/50 data-[disabled]:pointer-events-none"
-                value="pedro"
+                :value="radio.id"
               >
                 <DropdownMenuItemIndicator class="absolute left-0 w-[25px] inline-flex items-center justify-center">
                   <Icon icon="radix-icons:dot-filled" />
                 </DropdownMenuItemIndicator>
+                <Icon v-if="radio.shortcut" :icon="radio.icon" class="h-5 w-5 mr-1" />
                 {{ $t(radio.title) }}
                 <div v-if="radio.shortcut" class="ml-auto mr-2 pl-[20px] text-zero-light dark:text-zero-dark group-data-[highlighted]:text-zero-light/70 group-data-[highlighted]:dark:text-zero-dark/70 group-data-[disabled]:text-zero-light/50 group-data-[disabled]:dark:text-zero-dark/50" >
                   {{ radio.shortcut }}
@@ -92,7 +94,7 @@ DropdownMenuCheckboxItem,
           :disabled="item.disabled"
           class="group px-[5px] flex pl-[25px] leading-none rounded-[3px] items-center relative select-none text-sm py-3 focus:outline-none cursor-pointer data-[state=open]:bg-zero-light data-[state=open]:dark:bg-zero-dark data-[highlighted]:bg-zero-light data-[highlighted]:dark:bg-zero-dark data-[highlighted]:text-zero-light data-[highlighted]:dark:text-zero-dark data-[highlighted]:data-[state=open]:bg-zero-light data-[highlighted]:data-[state=open]:dark:bg-zero-dark data-[disabled]:text-zero-light/50 data-[disabled]:dark:text-zero-light/50 data-[disabled]:pointer-events-none"
         >
-          <Icon :icon="item.icon" class="h-5 w-5 mr-1" />
+          <Icon v-if="item.icon" :icon="item.icon" class="h-5 w-5 mr-1" />
           {{ $t(item.title) }}
 
           <div v-if="item.shortcut" class="ml-auto mr-2 pl-[20px] text-zero-light dark:text-zero-dark group-data-[highlighted]:text-zero-light/70 group-data-[highlighted]:dark:text-zero-dark/70 group-data-[disabled]:text-zero-light/50 group-data-[disabled]:dark:text-zero-dark/50" >
