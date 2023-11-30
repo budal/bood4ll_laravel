@@ -10,6 +10,7 @@
   import { ref } from 'vue'
 
   defineProps<{
+    prefix?: string;
     content: any;
   }>();
 
@@ -33,7 +34,7 @@
           :align="'start'"
           :side-offset="2"
         >
-          <DropdownItem :content="content"/>
+          <DropdownItem :prefix="prefix" :content="content"/>
         </DropdownMenuContent>
       </DropdownMenuPortal>
     </DropdownMenuRoot>

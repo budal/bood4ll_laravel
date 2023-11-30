@@ -16,6 +16,7 @@ DropdownMenuCheckboxItem,
   import { ref } from 'vue'
 
   defineProps<{
+    prefix?: string;
     content: any;
   }>();
 
@@ -41,6 +42,7 @@ DropdownMenuCheckboxItem,
         >
           <DropdownItem 
             v-if="!item.type"
+            :prefix="prefix"
             :content="item.items" 
           />
 

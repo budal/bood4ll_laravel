@@ -141,8 +141,8 @@
             @keyup="onKeypress"
             @keydown="onKeydown"
         />
-        <span v-if="showClearIcon" @click="clear" class="text-primary-light dark:text-primary-dark absolute inset-y-2 right-2 px-2 rounded-lg text-xs p-1 bg-primary-light dark:bg-primary-dark ring-0">{{ $t("'Esc' to clear") }}</span>
-        <span v-if="showShortcutIcon" class="text-primary-light dark:text-primary-dark absolute inset-y-2 right-2 px-2 rounded-lg text-sm p-1 bg-primary-light dark:bg-primary-dark ring-0">{{ shortcutKey }}</span>
+        <span v-if="showClearIcon" @click="clear" class="text-zero-light dark:text-zero-dark absolute inset-y-2 right-2 px-2 rounded-lg text-xs p-1 bg-zero-light dark:bg-zero-dark ring-0">{{ $t("'Esc' to clear") }}</span>
+        <span v-if="showShortcutIcon" class="text-zero-light dark:text-zero-dark absolute inset-y-2 right-2 px-2 rounded-lg text-sm p-1 bg-zero-light dark:bg-zero-dark ring-0">{{ shortcutKey }}</span>
       </div>
     </div>
 </template>

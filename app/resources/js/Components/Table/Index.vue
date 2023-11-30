@@ -5,8 +5,6 @@
   import Dropdown from '@/Components/Dropdown.vue';
   import Modal from '@/Components/Modal.vue';
   import Switch from '@/Components/Switch.vue';
-  import Filter from '@/Components/Table/Filter.vue';
-  import Restore from '@/Components/Table/Restore.vue';
   import Search from '@/Components/Table/Search.vue';
   import Sort from '@/Components/Table/Sort.vue';
   import { trans } from 'laravel-vue-i18n';
@@ -30,36 +28,20 @@
 
   let selectedCheckBoxes = reactive(new Set())
 
-  let selectAll = (checkBoxes: any) => {
-    checkBoxes.forEach((checkBox: unknown) => {
-      selectedCheckBoxes.add(checkBox)
-    })
-  }
+  let selectAll = (checkBoxes: any) => checkBoxes.forEach((checkBox: unknown) => selectedCheckBoxes.add(checkBox))
 
   let clear = () => selectedCheckBoxes.clear()
 
-  let toggle = (checkBox: any) => {
-    if (selectedCheckBoxes.has(checkBox)) {
-      selectedCheckBoxes.delete(checkBox)
-    } else {
-      selectedCheckBoxes.add(checkBox)
-    }
-  }
+  let toggle = (checkBox: any) => (selectedCheckBoxes.has(checkBox)) 
+    ? selectedCheckBoxes.delete(checkBox) 
+    : selectedCheckBoxes.add(checkBox)
 
   let totalSelectedCheckBoxes = computed(() => selectedCheckBoxes.size)
   let selectedcheckBox = computed(() => totalSelectedCheckBoxes.value == props.items.data.length)
 
-  const toggleSelection = () => {
-    if (selectedcheckBox.value) {
-      clear()
-    } else {
-      selectAll(props.items.data)
-    }
-  }
-
-
-
-
+  const toggleSelection = () => (selectedcheckBox.value) 
+    ? clear()
+    : selectAll(props.items.data)
 
   let content = computed(() => {
     let content = reactive(new Set());
@@ -81,7 +63,7 @@
       content.add({ title: "-" })
     }
   
-    if (props.routes.destroyRoute && (showRestoreItems == 'active' || showRestoreItems == 'both')) {
+    if (props.routes.destroyRoute && showRestoreItems != 'trashed') {
       content.add({
         title: "Delete",
         icon: "mdi:delete-outline",
@@ -173,11 +155,12 @@
 
   <div class="flex sticky top-0 sm:top-[95px] justify-between rounded-xl backdrop-blur-sm pt-1 mb-2 bg-zero-light/30 dark:bg-zero-dark/30">
     <div class="flex gap-2 w-full">
-      <Dropdown v-if="content" :content="content" />
+      <Dropdown v-if="content" :prefix="prefix" :content="content" />
       <Search :prefix="prefix" :id="id" :name="name" :search="filters.search" :shortcutKey="shortcutKey" class="flex-1" />
       <Button 
         v-if="routes.createRoute" 
         type="button"
+        color="success"
         :link="routes.createRoute" 
         startIcon="mdi:plus"
         :preserveScroll="routes.createRoute.preserveScroll"
