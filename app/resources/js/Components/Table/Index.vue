@@ -132,14 +132,14 @@
       try { 
       	if (Boolean(new URL(urlString))) return urlString; 
       }
-      catch (e){ 
+      catch (e) { 
       	return route(urlString); 
       }
     }
 
   const action = (item: any) => {
     if (item.list) {
-      openModal()
+      openModal(item)
       
 
       console.log(item)
@@ -154,7 +154,21 @@
   // modal
   const confirmingDeletionModal = ref(false);
 
-  const openModal = () => confirmingDeletionModal.value = true
+  const modalInfo = ref([]);
+
+  const openModal = (item: any) => {
+    modalInfo.value = item
+    confirmingDeletionModal.value = true
+
+    console.log(modalInfo)
+  }
+
+  const closeModal = () => confirmingDeletionModal.value = false
+
+
+
+
+
 
   const form = useForm({
     ids: [],
@@ -171,7 +185,6 @@
     });
   };
 
-  const closeModal = () => confirmingDeletionModal.value = false
 
   // switch
   const formSwitch = useForm({});
