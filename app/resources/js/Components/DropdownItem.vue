@@ -34,10 +34,12 @@
       }
     }
 
-    router.visit(isValidUrl(item.route) as string, {
-      method: item.method,
-      preserveScroll: true,
-    })
+    console.log(item.route, item.list)
+
+    // router.visit(isValidUrl(item.route) as string, {
+    //   method: item.method,
+    //   preserveScroll: true,
+    // })
   }
 </script>
 
@@ -115,8 +117,8 @@
           class="group px-[5px] flex pl-[25px] leading-none rounded-[3px] items-center relative select-none text-sm py-3 focus:outline-none cursor-pointer data-[state=open]:bg-zero-light data-[state=open]:dark:bg-zero-dark data-[highlighted]:bg-zero-light data-[highlighted]:dark:bg-zero-dark data-[highlighted]:text-zero-light data-[highlighted]:dark:text-zero-dark data-[highlighted]:data-[state=open]:bg-zero-light data-[highlighted]:data-[state=open]:dark:bg-zero-dark data-[disabled]:text-zero-light/50 data-[disabled]:dark:text-zero-light/50 data-[disabled]:pointer-events-none"
         >
           <Icon v-if="item.icon" :icon="item.icon" class="h-5 w-5 mr-1" />
-          {{ $t(item.title) }}
-
+          {{ $t(item.title) }} 
+          {{ item.list ? `(${item.list.size})` : null }}
           <div v-if="item.shortcut" class="ml-auto mr-2 pl-[20px] text-zero-light dark:text-zero-dark group-data-[highlighted]:text-zero-light/70 group-data-[highlighted]:dark:text-zero-dark/70 group-data-[disabled]:text-zero-light/50 group-data-[disabled]:dark:text-zero-dark/50" >
             {{ item.shortcut }}
           </div> 

@@ -77,6 +77,7 @@
         title: "Delete",
         icon: "mdi:delete-outline",
         disabled: totalSelectedCheckBoxes.value === 0,
+        list: selectedCheckBoxes,
         route: props.routes.destroyRoute,
         method: "delete",
       })
