@@ -189,26 +189,22 @@ class UsersController extends Controller
     public function destroy(Request $request): RedirectResponse
     {
         try {
-            User::whereIn('id', $request->ids)->delete();
+            User::whereIn('id', $request->list)->delete();
+            return back()->with('status', 'Items removed succesfully!');
         } catch (Throwable $e) {
             report($e);
-     
-            return false;
+            return back()->with('status', 'Error on remove selected items.');
         }
-        
-        return back()->with('status', 'Users removed succesfully!');
     }
 
-    public function restore(Request $request)
+    public function restore(Request $request): RedirectResponse
     {
         try {
-            User::whereIn('id', $request->ids)->restore();
+            User::whereIn('id', $request->list)->restore();
+            return back()->with('status', 'Items restored succesfully!');
         } catch (Throwable $e) {
             report($e);
-     
-            return false;
+            return back()->with('status', 'Erro ao restaurar os itens selecionados.');
         }
-        
-        return back()->with('status', 'Users restaured succesfully!');
     }
 }

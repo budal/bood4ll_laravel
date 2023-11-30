@@ -44,13 +44,13 @@
 
   let toDeleteItems = computed(() => {
     let items = reactive(new Set())
-    selectedItems.forEach((item: any) => !item.deleted_at ? items.add(item) : false )
+    selectedItems.forEach((item: any) => !item.deleted_at ? items.add(item.id) : false )
     return items
   })
 
   let toRestoreItems = computed(() => {
     let items = reactive(new Set())
-    selectedItems.forEach((item: any) => item.deleted_at ? items.add(item) : false )
+    selectedItems.forEach((item: any) => item.deleted_at ? items.add(item.id) : false )
     return items
   })
 
@@ -113,7 +113,7 @@
         modalSubTitle: "The selected item will be restored to the active items. Do you want to continue?",
         buttonTitle: "Restore selected",
         buttonIcon: "mdi:backup-restore",
-        buttonColor: "success",
+        buttonColor: "warning",
       })
     }
   
@@ -154,29 +154,27 @@
   const openModal = (item: any) => {
     modalInfo.value = item
     confirmingDeletionModal.value = true
-
-    console.log(item)
   }
 
   const closeModal = () => confirmingDeletionModal.value = false
 
+  const form = useForm({ list: [] });
 
+  const submitModal = () => {
+    modalInfo.value.list.forEach((id: any) => form.list.push((id) as never))
 
-
-
-
-  const form = useForm({
-    ids: [],
-  });
-
-  const deleteItems = () => {
-    selectedItems.forEach((checkBox: any) => form.ids.push((checkBox.id) as never))
-
-    form.delete(route(props.routes.destroyRoute), {
+    form.submit(modalInfo.value.method, route(modalInfo.value.route), {
       preserveScroll: true,
-      onSuccess: () => closeModal(),
-      onError: () => toast.error(trans(usePage().props.status as string)),
-      onFinish: () => toast.success(trans(usePage().props.status as string)),
+      onSuccess: () => {
+        toast.success(trans(usePage().props.status as string))
+        clear()
+        closeModal()
+      },
+      onError: () => {
+        toast.error(trans(usePage().props.status as string))
+        clear()
+        closeModal()
+      },
     });
   };
 
@@ -191,32 +189,25 @@
       onFinish: () => toast.success(trans(usePage().props.status as string, usePage().props.statusComplements as undefined)),
     });
   }
-
-
-
-
-
-
-
-
 </script>
 
 <template>
   <Modal 
+    v-if="modalInfo"
     :open="confirmingDeletionModal"
-    :title="$t('Are you sure you want to delete the selected items?')" 
+    :title=" $t(modalInfo.modalTitle)" 
     @close="closeModal"
   >
     <p class="mt-1 text-sm text-secondary-light dark:text-secondary-dark">
-      {{ $t('The selected items will be removed from the active items. Do you want to continue?') }}
+      {{ $t(modalInfo.modalSubTitle) }}
     </p>
     <template #buttons>
       <div class="mt-6 flex justify-end">
         <Button color="secondary" @click="closeModal" start-icon="mdi:cancel-outline">
           {{ $t('Cancel') }}
         </Button>
-        <Button color="danger" @click="deleteItems" start-icon="mdi:delete-sweep-outline" class="ml-3" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-          {{ $t('Erase selected') }}
+        <Button :color="modalInfo.buttonColor" @click="submitModal" :start-icon="modalInfo.buttonIcon" class="ml-3" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+          {{ $t(modalInfo.buttonTitle) }}
         </Button>
       </div>
     </template>
