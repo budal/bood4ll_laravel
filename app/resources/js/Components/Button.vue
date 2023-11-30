@@ -35,24 +35,21 @@
         }
     );
 
+    const isValidUrl = (urlString: any, attributes: any) => {
+      try { 
+      	if (Boolean(new URL(urlString))) return urlString; 
+      }
+      catch (e){ 
+      	return route(urlString, attributes); 
+      }
+    }
+
     const onClick = () => {
-        if (props.url) {
-            router.visit(props.url, {
+        if (props.link) {
+            router.visit(isValidUrl((typeof props.link == 'string' ? props.link : props.link?.route), props.link?.attributes), {
                 method: props.method,
                 preserveScroll: props.preserveScroll,
             })
-        } else if (props.link) {
-            if (typeof props.link == 'string') {
-                router.visit(route(props.link as string), {
-                    method: props.method,
-                    preserveScroll: props.preserveScroll,
-                })
-            } else {
-                router.visit(route(props.link.route as string, props.link.attributes), {
-                    method: props.method,
-                    preserveScroll: props.preserveScroll,
-                })
-            }
         }
     };
 </script>

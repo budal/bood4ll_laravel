@@ -25,23 +25,35 @@
 
   let indexRoute = new URL(window.location.href);
 
+  // delete
   let selectedToDelete = reactive(new Set())
 
-  let selectAll = (checkBoxes: any) => checkBoxes.forEach((checkBox: unknown) => selectedToDelete.add(checkBox))
-
-  let clear = () => selectedToDelete.clear()
-
-  let toggle = (checkBox: any) => (selectedToDelete.has(checkBox)) 
+  let toggleDelete = (checkBox: any) => (selectedToDelete.has(checkBox)) 
     ? selectedToDelete.delete(checkBox) 
     : selectedToDelete.add(checkBox)
 
-  let totalselectedToDelete = computed(() => selectedToDelete.size)
-  let selectedAll = computed(() => totalselectedToDelete.value == props.items.data.length)
+  let totalSelectedToDelete = computed(() => selectedToDelete.size)
 
+  // restore
+  let selectedToRestore = reactive(new Set())
+
+  let toggleRestore = (checkBox: any) => (selectedToRestore.has(checkBox)) 
+    ? selectedToRestore.delete(checkBox) 
+    : selectedToRestore.add(checkBox)
+
+  let totalselectedToRestore = computed(() => selectedToRestore.size)
+
+  // delete & restore
+  let selectAll = (checkBoxes: any) => checkBoxes.forEach((checkBox: unknown) => selectedToDelete.add(checkBox))
+  
+  let clear = () => selectedToDelete.clear()
+  
+  let selectedAll = computed(() => totalSelectedToDelete.value == props.items.data.length)
   const toggleSelection = () => (selectedAll.value) 
     ? clear()
     : selectAll(props.items.data)
 
+  // menu
   let content = computed(() => {
     let content = reactive(new Set());
 
@@ -76,7 +88,7 @@
       content.add({
         title: "Delete",
         icon: "mdi:delete-outline",
-        disabled: totalselectedToDelete.value === 0,
+        disabled: totalSelectedToDelete.value === 0,
         list: selectedToDelete,
         route: props.routes.destroyRoute,
         method: "delete",
@@ -87,8 +99,8 @@
       content.add({
         title: "Restore",
         icon: "mdi:restore",
-        disabled: totalselectedToDelete.value === 0,
-        list: selectedToDelete,
+        disabled: totalselectedToRestore.value === 0,
+        list: selectedToRestore,
         route: props.routes.restoreRoute,
         method: "post",
       })
@@ -201,12 +213,19 @@
             class="bg-secondary-light dark:bg-secondary-dark hover:bg-secondary-light-hover hover:dark:bg-secondary-dark-hover border-t border-secondary-light dark:border-secondary-dark text-secondary-light dark:text-secondary-dark"
           >
             <td class="p-2 w-0">
-              <Checkbox v-if="routes.destroyRoute || routes.restoreRoute" 
+              <Checkbox v-if="!item.deleted_at && (routes.destroyRoute || routes.restoreRoute)" 
                 class="w-8 h-8 rounded-lg" 
                 :checked="selectedToDelete.has(item)" 
                 :value="item.id" 
-                :id="`checkbox-${item.id}`" 
-                @click="toggle(item)" 
+                :id="`checkboxToDelete-${item.id}`" 
+                @click="toggleDelete(item)" 
+              />
+              <Checkbox v-if="item.deleted_at && (routes.destroyRoute || routes.restoreRoute)" 
+                class="w-8 h-8 rounded-lg" 
+                :checked="selectedToDelete.has(item)" 
+                :value="item.id" 
+                :id="`checkboxToRestore-${item.id}`" 
+                @click="toggleRestore(item)" 
               />
             </td>
             <td v-for="content in titles" class="p-1 text-center">
@@ -237,7 +256,7 @@
             <td v-if="routes.editRoute" class="p-2 text-right">
               <Button 
                 type="button"
-                :url="route(routes.editRoute, item.id)" 
+                :link="route(routes.editRoute, item.id)" 
                 :srOnly="$t('Edit')" 
                 startIcon="mdi:chevron-right" 
               />
@@ -258,7 +277,7 @@
         <Button 
           v-if="items.prev_page_url" 
           type="button"
-          :url="items.prev_page_url" 
+          :link="items.prev_page_url" 
           :title="$t('Previous')" 
           :preserveScroll="true"
         />
@@ -274,7 +293,7 @@
       <div class="basis-1/3 text-right">
         <Button 
           v-if="items.next_page_url" 
-          :url="items.next_page_url" 
+          :link="items.next_page_url" 
           :title="$t('Next')" 
           :preserveScroll="true"
         />
@@ -291,7 +310,7 @@
           <Button 
             v-if="items.prev_page_url" 
             type="button"
-            :url="items.prev_page_url" 
+            :link="items.prev_page_url" 
             :srOnly="$t('Previous')" 
             startIcon="mdi:chevron-left" 
             :preserveScroll="true"
@@ -300,7 +319,7 @@
             <Button 
               v-if="item.label > 0 && item.label != items.current_page || item.label == items.current_page"
               type="button"
-              :url="item.url" 
+              :link="item.url" 
               :title="item.label" 
               :preserveScroll="true"
               :disabled="item.label == items.current_page"
@@ -309,7 +328,7 @@
           <Button 
             v-if="items.next_page_url" 
             type="button"
-            :url="items.next_page_url" 
+            :link="items.next_page_url" 
             :srOnly="$t('Next')" 
             startIcon="mdi:chevron-right" 
             :preserveScroll="true"
