@@ -20,54 +20,41 @@ class UsersController extends Controller
 {
     public function index(Request $request): Response
     {
-        $routes = [
-            'editRoute' => "apps.users.edit",
-            'destroyRoute' => "apps.users.destroy",
-            'restoreRoute' => "apps.users.restore",
-        ];
-        
-        $titles = [
-            [
-                'type' => 'avatar',
-                'title' => 'Avatar',
-                'field' => 'id',
-                'fallback' => 'name',
-                'disableSort' => true
-            ],    
-            [
-                'type' => 'composite',
-                'title' => 'User',
-                'field' => 'name',
-                'fields' => ['name', 'email']
-            ],    
-            [
-                'type' => 'simple',
-                'title' => 'Username',
-                'field' => 'username'
-            ],    
-            [
-                'type' => 'simple',
-                'title' => 'Active',
-                'field' => 'active'
-            ]    
-        ];    
-
-        $menu = [
-            [
-                'icon' => "mdi:plus",
-                'title' => "Add",
-                'route' => "apps.users.create"
-            ]
-        ];
-
         return Inertia::render('Default/Index', [
             'title' => "Users management",
             'subtitle' => "Manage users informations and authorizations.",
-            'softDelete' => User::hasGlobalScope('Illuminate\Database\Eloquent\SoftDeletingScope'),
-            'routes' => $routes,
+            'routes' =>  [
+                'createRoute' => "apps.users.create",
+                'editRoute' => "apps.users.edit",
+                'destroyRoute' => "apps.users.destroy",
+                'restoreRoute' => "apps.users.restore",
+            ],
             'filters' => $request->all('search', 'sorted', 'trashed'),
-            'titles' => $titles,
-            'menu' => $menu,
+            'titles' => [
+                [
+                    'type' => 'avatar',
+                    'title' => 'Avatar',
+                    'field' => 'id',
+                    'fallback' => 'name',
+                    'disableSort' => true
+                ],    
+                [
+                    'type' => 'composite',
+                    'title' => 'User',
+                    'field' => 'name',
+                    'fields' => ['name', 'email']
+                ],    
+                [
+                    'type' => 'simple',
+                    'title' => 'Username',
+                    'field' => 'username'
+                ],    
+                [
+                    'type' => 'simple',
+                    'title' => 'Active',
+                    'field' => 'active'
+                ]    
+            ],
             'items' => User::filter($request->all('search', 'sorted', 'trashed'))
                 ->sort($request->sorted ?? "name")
                 ->paginate(20)

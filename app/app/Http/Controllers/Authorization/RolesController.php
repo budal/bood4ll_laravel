@@ -34,7 +34,6 @@ class RolesController extends Controller
         return Inertia::render('Default/Index', [
             'title' => "Roles management",
             'subtitle' => "Define roles, grouping abilities to define specific access.",
-            'softDelete' => Role::hasGlobalScope('Illuminate\Database\Eloquent\SoftDeletingScope'),
             'routes' => [
                 'createRoute' => "apps.roles.create",
                 'editRoute' => "apps.roles.edit",
@@ -43,12 +42,7 @@ class RolesController extends Controller
             ],
             'menu' => [
                 [
-                    'icon' => "mdi:badge-account-horizontal-outline",
-                    'title' => "Role creation",
-                    'route' => "apps.roles.create"
-                ],
-                [
-                    'icon' => "mdi:list-status",
+                    'icon' => "mdi:book-cog-outline",
                     'title' => "Abilities management",
                     'route' => "apps.abilities.index"
                 ],            
@@ -170,7 +164,6 @@ class RolesController extends Controller
                             'name' => "users",
                             'span' => 2,
                             'content' => [
-                                'softDelete' => Role::hasGlobalScope('Illuminate\Database\Eloquent\SoftDeletingScope'),
                                 'routes' => [
                                     'createRoute' => [
                                         'route' => "apps.roles.edit.adduser",

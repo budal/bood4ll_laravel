@@ -239,7 +239,6 @@ class UnitsController extends Controller
                             'name' => "users",
                             'span' => 2,
                             'content' => [
-                                'softDelete' => Unit::hasGlobalScope('Illuminate\Database\Eloquent\SoftDeletingScope'),
                                 'routes' => [
                                     'createRoute' => [
                                         'route' => "apps.units.create",

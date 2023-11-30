@@ -58,6 +58,8 @@
 
 
   let content = reactive(new Set());
+  
+  let totalSelectedCheckBoxesRef = ref(new Set());
 
   if (props.routes.restoreRoute) {
     content.add({
@@ -77,6 +79,7 @@
     content.add({
       title: "Delete",
       icon: "mdi:delete-outline",
+      disabled: totalSelectedCheckBoxes.value === 0,
       route: props.routes.destroyRoute
     })
   }
@@ -152,10 +155,8 @@
 
   <div class="flex sticky top-0 sm:top-[95px] justify-between rounded-xl backdrop-blur-sm pt-1 mb-2 bg-zero-light/30 dark:bg-zero-dark/30">
     <div class="flex gap-2 w-full">
-      <!-- <Button v-if="routes.destroyRoute" color="danger" type="button" @click="openDeletionModal" start-icon="mdi:delete-outline" class="h-full" :disabled="totalSelectedCheckBoxes === 0" /> -->
       <Dropdown v-if="content" :content="content" />
       <Search :prefix="prefix" :id="id" :name="name" :search="filters.search" :shortcutKey="shortcutKey" class="flex-1" />
-      <!-- <Filter :prefix="prefix" :softDelete="softDelete"/> -->
       <Button 
         v-if="routes.createRoute" 
         type="button"
@@ -170,7 +171,7 @@
       <table class="table-auto w-full text-sm shadow-lg">
         <thead v-if="items.data.length > 0">
           <tr class="bg-zero-light dark:bg-zero-dark p-3 text-zero-light dark:text-zero-dark text-left">
-            <th class="p-2">
+            <th class="p-2 w-0">
               <Checkbox v-if="routes.destroyRoute || routes.restoreRoute" name="remember" :checked="selectedcheckBox" @click="toggleSelection" class="w-8 h-8 rounded-lg" />
             </th>
             <th v-for="sort in titles" class="p-2">
@@ -185,7 +186,7 @@
             :key="`tr-${item.id}`" 
             class="bg-secondary-light dark:bg-secondary-dark hover:bg-secondary-light-hover hover:dark:bg-secondary-dark-hover border-t border-secondary-light dark:border-secondary-dark text-secondary-light dark:text-secondary-dark"
           >
-            <td class="p-2">
+            <td class="p-2 w-0">
               <Checkbox v-if="routes.destroyRoute || routes.restoreRoute" 
                 class="w-8 h-8 rounded-lg" 
                 :checked="selectedCheckBoxes.has(item)" 

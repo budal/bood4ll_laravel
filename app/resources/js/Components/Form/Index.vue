@@ -129,7 +129,6 @@
                                             :name="field.name"
                                             :shortcutKey="field.shortcutKey"
                                             :menu="field.content.menu" 
-                                            :softDelete="field.content.softDelete" 
                                             :routes="field.content.routes" 
                                             :filters="field.content.filters" 
                                             :items="field.content.items" 
