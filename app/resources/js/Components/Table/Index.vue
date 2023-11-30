@@ -62,7 +62,6 @@
   if (props.routes.restoreRoute) {
     content.add({
       title: "Filters",
-      type: 'check',
       icon: "mdi:filter-outline",
       items: [
         { id: 'active', title: 'Only active', icon: "mdi:playlist-check" },
