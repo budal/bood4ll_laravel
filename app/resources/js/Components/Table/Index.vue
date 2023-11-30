@@ -46,13 +46,13 @@
 
   let toDeleteItems = computed(() => {
     let items = reactive(new Set())
-    selectedItems.forEach((item: any) => item.deleted_at ? items.add(item) : false )
+    selectedItems.forEach((item: any) => !item.deleted_at ? items.add(item) : false )
     return items
   })
 
   let toRestoreItems = computed(() => {
     let items = reactive(new Set())
-    selectedItems.forEach((item: any) => !item.deleted_at ? items.add(item) : false )
+    selectedItems.forEach((item: any) => item.deleted_at ? items.add(item) : false )
     return items
   })
 
@@ -95,6 +95,11 @@
         list: toDeleteItems,
         route: props.routes.destroyRoute,
         method: "delete",
+        modalTitle: "Are you sure you want to delete the selected items?",
+        modalSubTitle: "The selected items will be removed from the active items. Do you want to continue?",
+        buttonTitle: "Erase selected",
+        buttonIcon: "mdi:delete-sweep-outline",
+        buttonColor: "danger",
       })
     }
   
@@ -106,6 +111,11 @@
         list: toRestoreItems,
         route: props.routes.restoreRoute,
         method: "post",
+        modalTitle: "Are you sure you want to restore the selected items?",
+        modalSubTitle: "The selected item will be restored to the active items. Do you want to continue?",
+        buttonTitle: "Restore selected",
+        buttonIcon: "mdi:backup-restore",
+        buttonColor: "success",
       })
     }
   
@@ -129,10 +139,10 @@
 
   const action = (item: any) => {
     if (item.list) {
-      // openDeletionModal()
+      openModal()
       
 
-      console.log(item.list)
+      console.log(item)
     } else {
       router.visit(isValidUrl(item.route) as string, {
         method: item.method,
@@ -144,7 +154,7 @@
   // modal
   const confirmingDeletionModal = ref(false);
 
-  const openDeletionModal = () => confirmingDeletionModal.value = true
+  const openModal = () => confirmingDeletionModal.value = true
 
   const form = useForm({
     ids: [],
@@ -155,13 +165,13 @@
 
     form.delete(route(props.routes.destroyRoute), {
       preserveScroll: true,
-      onSuccess: () => closeDeletionModal(),
+      onSuccess: () => closeModal(),
       onError: () => toast.error(trans(usePage().props.status as string)),
       onFinish: () => toast.success(trans(usePage().props.status as string)),
     });
   };
 
-  const closeDeletionModal = () => confirmingDeletionModal.value = false
+  const closeModal = () => confirmingDeletionModal.value = false
 
   // switch
   const formSwitch = useForm({});
@@ -187,14 +197,14 @@
   <Modal 
     :open="confirmingDeletionModal"
     :title="$t('Are you sure you want to delete the selected items?')" 
-    @close="closeDeletionModal"
+    @close="closeModal"
   >
     <p class="mt-1 text-sm text-secondary-light dark:text-secondary-dark">
       {{ $t('The selected items will be removed from the active items. Do you want to continue?') }}
     </p>
     <template #buttons>
       <div class="mt-6 flex justify-end">
-        <Button color="secondary" @click="closeDeletionModal" start-icon="mdi:cancel-outline">
+        <Button color="secondary" @click="closeModal" start-icon="mdi:cancel-outline">
           {{ $t('Cancel') }}
         </Button>
         <Button color="danger" @click="deleteItems" start-icon="mdi:delete-sweep-outline" class="ml-3" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">

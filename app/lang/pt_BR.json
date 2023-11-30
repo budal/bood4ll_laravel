@@ -33,6 +33,7 @@
   "Items removed succesfully!": "Itens removidos com sucesso!",
   "Item restored.": "Item restaurado.",
   "Restore": "Restaurar",
+  "Restore selected": "Restaurar selecionados",
   "Delete": "Deletar",
   "Full access": "Acesso completo",
   "Manage nested data": "Gerenciar subordinados",
@@ -51,13 +52,18 @@
   "[ root ]": "[ raiz ]",
   "Total": "Total",
   "Filters": "Filtros",
+  "Content": "Conteúdo",
+  "Only active": "Apenas ativos",
+  "Only trashed": "Apenas excluídos",
+  "Active and trashed": "Ativos e excluídos",
+  "Description": "Descrição",
 
   "No items to show.": "Sem itens para exibir.",
   "Showing :from to :to of :total results": "Exibindo :from a :to de :total resultados",
   "Are you sure you want to delete the selected items?": "Você tem certeza que deseja apagar os itens selecionados?",
   "The selected items will be removed from the active items. Do you want to continue?": "Os itens selecionados serão removidos dos itens ativos. Você deseja continuar?",
-  "Are you sure you want to restore this item?": "Você tem certeza que deseja restaurar esse item?",
-  "The selected item will be restored to the active items. Do you want to continue?": "O item selecionado será restaurado aos itens ativos. Você deseja continuar?",
+  "Are you sure you want to restore the selected items?": "Você tem certeza que deseja restaurar os itens selecionados?",
+  "The selected item will be restored to the active items. Do you want to continue?": "Os itens selecionados serão restaurados aos itens ativos. Você deseja continuar?",
   "Manage which filters to apply to the list": "Gerencie quais filtros aplicar para a lista",
   "Selected filters refine searches according to your choices": "Os filtros selecionados refinam as pesquisas conforme suas escolhas",
   "Define the expiration date.": "Defina a data de expiração.",
@@ -239,8 +245,6 @@
   "User profile Information": "Informações do perfil de usuário",
   "User account profile information": "Informações do perfil da conta do usuário",
   
-  "Description": "Descrição",
-  
   "Roles": "Funções",
   "Role": "Função",
   "Roles management": "Gerenciamento de funções",
@@ -279,10 +283,6 @@
   "Unit edition": "Edição de unidades",
   "Staff": "Efetivo",
   
-  "Content": "Conteúdo",
-  "Only active": "Apenas ativos",
-  "Only trashed": "Apenas excluídos",
-  "Active and trashed": "Ativos e excluídos",
   
   "": ""
 }
