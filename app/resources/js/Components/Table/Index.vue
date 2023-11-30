@@ -25,20 +25,20 @@
 
   let indexRoute = new URL(window.location.href);
 
-  let selectedCheckBoxes = reactive(new Set())
+  let selectedToDelete = reactive(new Set())
 
-  let selectAll = (checkBoxes: any) => checkBoxes.forEach((checkBox: unknown) => selectedCheckBoxes.add(checkBox))
+  let selectAll = (checkBoxes: any) => checkBoxes.forEach((checkBox: unknown) => selectedToDelete.add(checkBox))
 
-  let clear = () => selectedCheckBoxes.clear()
+  let clear = () => selectedToDelete.clear()
 
-  let toggle = (checkBox: any) => (selectedCheckBoxes.has(checkBox)) 
-    ? selectedCheckBoxes.delete(checkBox) 
-    : selectedCheckBoxes.add(checkBox)
+  let toggle = (checkBox: any) => (selectedToDelete.has(checkBox)) 
+    ? selectedToDelete.delete(checkBox) 
+    : selectedToDelete.add(checkBox)
 
-  let totalSelectedCheckBoxes = computed(() => selectedCheckBoxes.size)
-  let selectedcheckBox = computed(() => totalSelectedCheckBoxes.value == props.items.data.length)
+  let totalselectedToDelete = computed(() => selectedToDelete.size)
+  let selectedAll = computed(() => totalselectedToDelete.value == props.items.data.length)
 
-  const toggleSelection = () => (selectedcheckBox.value) 
+  const toggleSelection = () => (selectedAll.value) 
     ? clear()
     : selectAll(props.items.data)
 
@@ -76,8 +76,8 @@
       content.add({
         title: "Delete",
         icon: "mdi:delete-outline",
-        disabled: totalSelectedCheckBoxes.value === 0,
-        list: selectedCheckBoxes,
+        disabled: totalselectedToDelete.value === 0,
+        list: selectedToDelete,
         route: props.routes.destroyRoute,
         method: "delete",
       })
@@ -87,7 +87,8 @@
       content.add({
         title: "Restore",
         icon: "mdi:restore",
-        disabled: totalSelectedCheckBoxes.value === 0,
+        disabled: totalselectedToDelete.value === 0,
+        list: selectedToDelete,
         route: props.routes.restoreRoute,
         method: "post",
       })
@@ -119,7 +120,7 @@
   });
 
   const deleteItems = () => {
-    selectedCheckBoxes.forEach((checkBox: any) => form.ids.push((checkBox.id) as never))
+    selectedToDelete.forEach((checkBox: any) => form.ids.push((checkBox.id) as never))
 
     form.delete(route(props.routes.destroyRoute), {
       preserveScroll: true,
@@ -185,7 +186,7 @@
         <thead v-if="items.data.length > 0">
           <tr class="bg-zero-light dark:bg-zero-dark p-3 text-zero-light dark:text-zero-dark text-left">
             <th class="p-2 w-0">
-              <Checkbox v-if="routes.destroyRoute || routes.restoreRoute" name="remember" :checked="selectedcheckBox" @click="toggleSelection" class="w-8 h-8 rounded-lg" />
+              <Checkbox v-if="(routes.destroyRoute || routes.restoreRoute)" name="remember" :checked="selectedAll" @click="toggleSelection" class="w-8 h-8 rounded-lg" />
             </th>
             <th v-for="sort in titles" class="p-2">
               <Sort :prefix="prefix" :sort="sort" class="justify-center" />
@@ -202,7 +203,7 @@
             <td class="p-2 w-0">
               <Checkbox v-if="routes.destroyRoute || routes.restoreRoute" 
                 class="w-8 h-8 rounded-lg" 
-                :checked="selectedCheckBoxes.has(item)" 
+                :checked="selectedToDelete.has(item)" 
                 :value="item.id" 
                 :id="`checkbox-${item.id}`" 
                 @click="toggle(item)" 
