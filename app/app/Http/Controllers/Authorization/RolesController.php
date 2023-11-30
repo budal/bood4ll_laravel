@@ -47,7 +47,6 @@ class RolesController extends Controller
                     'route' => "apps.abilities.index"
                 ],            
             ],
-            'filters' => $request->all('search', 'sorted', 'trashed'),
             'titles' => [
                 [
                     'type' => 'composite',
@@ -173,7 +172,6 @@ class RolesController extends Controller
 
                                     'destroyRoute' => "apps.roles.destroy",
                                 ],
-                                'filters' => $request->all('search', 'sorted', 'trashed'),
                                 'titles' => [
                                     [
                                         'type' => 'composite',

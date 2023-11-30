@@ -130,7 +130,6 @@
                                             :shortcutKey="field.shortcutKey"
                                             :menu="field.content.menu" 
                                             :routes="field.content.routes" 
-                                            :filters="field.content.filters" 
                                             :items="field.content.items" 
                                             :titles="field.content.titles" 
                                         />

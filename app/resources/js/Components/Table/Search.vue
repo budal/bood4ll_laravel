@@ -9,7 +9,6 @@
     id?: string;
     name?: string;
     shortcutKey?: string;
-    search: any;
   }>();
 
   const searchRoute = new URL(window.location.href);

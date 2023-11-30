@@ -50,24 +50,6 @@ class UnitsController extends Controller
                 'destroyRoute' => "apps.units.destroy",
                 'restoreRoute' => "apps.units.restore",
             ],
-            // 'menu' => [
-            //     [
-            //         'icon' => "mdi:filter-outline",
-            //         'title' => "Filter",
-            //         'route' => "apps.units.create"
-            //     ],
-            //     [
-            //         'icon' => "mdi:delete-outline",
-            //         'title' => "Delete",
-            //         'route' => "apps.units.create"
-            //     ],
-            //     [
-            //         'icon' => "mdi:restore",
-            //         'title' => "Restore",
-            //         'route' => "apps.units.create"
-            //     ],
-            // ],
-            'filters' => $request->all('search', 'sorted', 'trashed'),
             'titles' => [
                 [
                     'type' => $request->search ? 'composite' : 'simple',
@@ -248,7 +230,6 @@ class UnitsController extends Controller
                                     'destroyRoute' => "apps.units.destroy",
                                     'restoreRoute' => "apps.units.restore",
                                 ],
-                                'filters' => $request->all('search', 'sorted', 'trashed'),
                                 'titles' => [
                                     [
                                         'type' => 'simple',
@@ -308,7 +289,6 @@ class UnitsController extends Controller
                                         'modal' => true,
                                     ],
                                 ],
-                                'filters' => $request->all('search', 'sorted', 'trashed'),
                                 'titles' => [
                                     [
                                         'type' => 'simple',

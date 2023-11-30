@@ -9,7 +9,6 @@ defineProps<{
     subtitle: string;
     routes?: object;
     status?: string;
-    filters: object;
     titles: object;
     menu?: object;
     items: object;
@@ -29,7 +28,6 @@ defineProps<{
             <Table 
                 :menu="menu" 
                 :routes="routes" 
-                :filters="filters" 
                 :items="items" 
                 :titles="titles" 
                 :shortcutKey="shortcutKey" 
@@ -45,7 +43,6 @@ defineProps<{
             <Table 
                 :menu="menu" 
                 :routes="routes" 
-                :filters="filters" 
                 :items="items" 
                 :titles="titles" 
                 :shortcutKey="shortcutKey" 

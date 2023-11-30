@@ -67,7 +67,6 @@ class AbilitiesController extends Controller
             'subtitle' => "Define which abilities will be showed in the roles management.",
             'softDelete' => Ability::hasGlobalScope('Illuminate\Database\Eloquent\SoftDeletingScope'),
             'routes' => [],
-            'filters' => $request->all('search', 'sorted', 'trashed'),
             'titles' => $titles,
             'items' => ['data' => $items]
         ]);

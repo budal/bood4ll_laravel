@@ -17,7 +17,6 @@
     id?: string;
     name?: string;
     routes?: any;
-    filters?: any;
     menu?: any;
     titles: any;
     items: any;
@@ -168,7 +167,7 @@
   <div class="flex sticky top-0 sm:top-[95px] justify-between rounded-xl backdrop-blur-sm pt-1 mb-2 bg-zero-light/30 dark:bg-zero-dark/30">
     <div class="flex gap-2 w-full">
       <Dropdown v-if="content" :prefix="prefix" :content="content" />
-      <Search :prefix="prefix" :id="id" :name="name" :search="filters.search" :shortcutKey="shortcutKey" class="flex-1" />
+      <Search :prefix="prefix" :id="id" :name="name" :shortcutKey="shortcutKey" class="flex-1" />
       <Button 
         v-if="routes.createRoute" 
         type="button"

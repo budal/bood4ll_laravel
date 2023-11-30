@@ -29,7 +29,6 @@ class UsersController extends Controller
                 'destroyRoute' => "apps.users.destroy",
                 'restoreRoute' => "apps.users.restore",
             ],
-            'filters' => $request->all('search', 'sorted', 'trashed'),
             'titles' => [
                 [
                     'type' => 'avatar',
