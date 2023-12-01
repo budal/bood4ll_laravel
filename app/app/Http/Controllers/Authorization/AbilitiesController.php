@@ -56,16 +56,22 @@ class AbilitiesController extends Controller
                 [
                     'icon' => "mdi:check-circle-outline",
                     'title' => "Activate abilities",
-                    'route' => "apps.abilities.update",
+                    'route' => [
+                        'route' => "apps.abilities.update",
+                        'attributes' => "on"
+                    ],
                     'method' => "post",
-                    'showList' => true,
+                    'list' => true,
                 ],            
                 [
                     'icon' => "mdi:close-circle-outline",
                     'title' => "Deactivate abilities",
-                    'route' => "apps.abilities.update",
+                    'route' => [
+                        'route' => "apps.abilities.update",
+                        'attributes' => "off"
+                    ],
                     'method' => "post",
-                    'showList' => true,
+                    'list' => true,
                 ],            
             ],
             'titles' => [
@@ -79,7 +85,10 @@ class AbilitiesController extends Controller
                     'type' => 'toggle',
                     'title' => 'Active',
                     'field' => 'id',
-                    'route' => 'apps.abilities.update',
+                    'route' => [
+                        'route' => "apps.abilities.update",
+                        'attributes' => "toggle"
+                    ],
                     'method' => 'post',
                     'color' => 'success',
                     'colorFalse' => 'danger',

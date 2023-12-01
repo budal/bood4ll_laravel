@@ -132,23 +132,30 @@ import { onMounted } from 'vue';
     return content
   })
 
-  const isValidUrl = (urlString: string) => {
-      try { 
-      	if (Boolean(new URL(urlString))) return urlString; 
-      }
-      catch (e) { 
-      	return route(urlString); 
-      }
+  const isValidUrl = (urlString: any, attributes: any) => {
+    try { 
+      if (Boolean(new URL(urlString))) return urlString; 
     }
+    catch (e){ 
+      return route(urlString, attributes); 
+    }
+  }
 
   const action = (item: any) => {
     if (item.list) {
       openModal(item)
     } else {
-      router.visit(isValidUrl(item.route) as string, {
-        method: item.method,
-        preserveScroll: true,
-      })
+      if (item.route) {
+        const link = typeof item.route === 'string' ? { route: item.route, attributes: [] } : item.route;
+
+        router.visit(
+          isValidUrl(link.route, link.attributes),
+          {
+            method: item.method,
+            preserveScroll: true,
+          }
+        );
+      }
     }
   }
 

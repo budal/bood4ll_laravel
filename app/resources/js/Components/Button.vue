@@ -36,20 +36,25 @@
     );
 
     const isValidUrl = (urlString: any, attributes: any) => {
-      try { 
-      	if (Boolean(new URL(urlString))) return urlString; 
-      }
-      catch (e){ 
-      	return route(urlString, attributes); 
-      }
+        try { 
+            if (Boolean(new URL(urlString))) return urlString; 
+        }
+        catch (e){ 
+      	    return route(urlString, attributes); 
+        }
     }
 
     const onClick = () => {
         if (props.link) {
-            router.visit(isValidUrl((typeof props.link == 'string' ? props.link : props.link?.route), props.link?.attributes), {
-                method: props.method,
-                preserveScroll: props.preserveScroll,
-            })
+            const link = typeof props.link === 'string' ? { route: props.link, attributes: [] } : props.link;
+
+            router.visit(
+                isValidUrl(link.route, link.attributes),
+                {
+                    method: props.method,
+                    preserveScroll: props.preserveScroll,
+                }
+            );
         }
     };
 </script>
