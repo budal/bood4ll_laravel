@@ -34,15 +34,12 @@ class Ability extends Model
     {
         $query->when($mode, function ($query, $mode) use ($list) {
             if ($mode === 'on') {
-
-                $abilities = collect($list)->map(function (string $item, string $key) {
-                    return ['name' => $item];
-                });
-
-                dd($abilities->all());
-                 
-                dd(Ability::updateOrCreate($abilities->all(), ['name'], 'name'));
-
+                $this->total = 0;
+                foreach ($list as $name) {
+                    if (Ability::updateOrCreate(['name' => $name])) {
+                        $this->total++;
+                    }
+                }
             } elseif ($mode === 'off') {
                 $this->total = Ability::whereIn('name', $list)->delete();
             } elseif ($mode === 'toggle') {
