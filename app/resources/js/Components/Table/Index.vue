@@ -127,14 +127,17 @@ import { onMounted } from 'vue';
       content.add({ title: "-" })
       
       props.menu.forEach((item: any) => {
+        content.add({
+          title: item.title,
+          icon: item.icon,
+          disabled: activeItems.value.size === 0,
+          list: activeItems,
+          route: isValidUrl(item.route.route, item.route.attributes),
+          method: item.method,
+        })
 
-
-// add list
-
-        content.add(item)
+        console.log(isValidUrl(item.route.route, item.route.attributes))
       })
-
-      // console.log(content)
     }
 
     return content
@@ -202,7 +205,6 @@ import { onMounted } from 'vue';
   };
 
   // toggle
-
   const updateFormToogle = async (route: any, ids: any) => {
     if (route.route) {
       const link = typeof route.route === 'string' ? { route: route.route, attributes: [] } : route.route;
