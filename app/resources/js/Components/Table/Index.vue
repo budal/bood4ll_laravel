@@ -212,12 +212,15 @@ import { onMounted } from 'vue';
 
   // toggle
   const updateFormToogle = async (route: any, ids: any) => {
+    const url = isValidUrl(route.route)
+    console.log(url, route)
+
     if (route.route) {
       const toggleForm = useForm({ list: [] });
 
       ids.forEach((id: any) => toggleForm.list.push((id) as never))
       
-      toggleForm.submit(route.method, isValidUrl(route.route), {
+      toggleForm.submit(route.method, url, {
         preserveScroll: true,
         onSuccess: () => toast.success(trans(usePage().props.status as string)),
         onError: () => toast.error(trans(usePage().props.status as string)),
