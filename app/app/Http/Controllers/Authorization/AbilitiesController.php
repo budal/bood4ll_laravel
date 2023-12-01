@@ -87,7 +87,8 @@ class AbilitiesController extends Controller
                     'field' => 'id',
                     'route' => [
                         'route' => "apps.abilities.update",
-                        'attributes' => "toggle"
+                        'method' => "post",
+                        'attributes' => "toggle",
                     ],
                     'method' => 'post',
                     'color' => 'success',
@@ -98,8 +99,10 @@ class AbilitiesController extends Controller
         ]);
     }
     
-    public function update($ability): RedirectResponse
+    public function update(Request $request, $mode): RedirectResponse
     {
+        
+        dd($request);
         $getAbility = Ability::where('name', $ability)->first();
 
         try {

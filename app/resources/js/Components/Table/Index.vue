@@ -134,7 +134,7 @@ import { onMounted } from 'vue';
         content.add(item)
       })
 
-      console.log(content)
+      // console.log(content)
     }
 
     return content
@@ -179,37 +179,46 @@ import { onMounted } from 'vue';
 
   const closeModal = () => confirmingDeletionModal.value = false
 
-  const form = useForm({ list: [] });
+  const modalForm = useForm({ list: [] });
 
   const submitModal = () => {
-    modalInfo.value.list.forEach((id: any) => form.list.push((id) as never))
+    modalInfo.value.list.forEach((id: any) => modalForm.list.push((id) as never))
 
-    form.submit(modalInfo.value.method, route(modalInfo.value.route), {
+    modalForm.submit(modalInfo.value.method, route(modalInfo.value.route), {
       preserveScroll: true,
       onSuccess: () => {
         toast.success(trans(usePage().props.status as string))
         clear()
-        form.list = []
+        modalForm.list = []
         closeModal()
       },
       onError: () => {
         toast.error(trans(usePage().props.status as string))
         clear()
-        form.list = []
+        modalForm.list = []
         closeModal()
       },
     });
   };
 
   // toggle
-  const formToggle = useForm({});
 
-  const updateFormToogle = async (routeUri: string, method: 'get' | 'post', id: string) => {
-    await formToggle.submit(method, route(routeUri, id), {
-      preserveScroll: true,
-      onError: () => toast.error(trans(usePage().props.status as string)),
-      onFinish: () => toast.success(trans(usePage().props.status as string, usePage().props.statusComplements as undefined)),
-    });
+  const updateFormToogle = async (route: any, ids: any) => {
+    if (route.route) {
+      const link = typeof route.route === 'string' ? { route: route.route, attributes: [] } : route.route;
+
+      const toggleForm = useForm({ list: [] });
+
+      ids.forEach((id: any) => toggleForm.list.push((id) as never))
+      
+      console.log(isValidUrl(link.route, route.attributes), toggleForm)
+
+      toggleForm.submit(route.method, isValidUrl(link.route, route.attributes), {
+        preserveScroll: true,
+        onSuccess: () => toast.success(trans(usePage().props.status as string)),
+        onError: () => toast.error(trans(usePage().props.status as string)),
+      });
+    }
   }
 </script>
 
@@ -228,7 +237,7 @@ import { onMounted } from 'vue';
         <Button color="secondary" @click="closeModal" start-icon="mdi:cancel-outline">
           {{ $t('Cancel') }}
         </Button>
-        <Button :color="modalInfo.buttonColor" @click="submitModal" :start-icon="modalInfo.buttonIcon" class="ml-3" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+        <Button :color="modalInfo.buttonColor" @click="submitModal" :start-icon="modalInfo.buttonIcon" class="ml-3" :class="{ 'opacity-25': modalForm.processing }" :disabled="modalForm.processing">
           {{ $t(modalInfo.buttonTitle) }}
         </Button>
       </div>
@@ -308,7 +317,7 @@ import { onMounted } from 'vue';
                 :color="content.color"
                 :colorFalse="content.colorFalse"
                 v-model="item.checked"
-                @click="updateFormToogle(content.route, content.method, item.id)"
+                @click="updateFormToogle(content.route, [item.id])"
               />
             </td>
             <td v-if="routes.editRoute" class="p-2 text-right">
