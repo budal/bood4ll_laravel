@@ -56,7 +56,6 @@ class AbilitiesController extends Controller
                 [
                     'icon' => "mdi:plus-circle-outline",
                     'title' => "Activate abilities",
-                    // 'route' => "apps.abilities.update",
                     'route' => [
                         'route' => "apps.abilities.update",
                         'attributes' => "on"
@@ -67,7 +66,7 @@ class AbilitiesController extends Controller
                     'modalSubTitle' => "The selected items will be activated. Do you want to continue?",
                     'buttonTitle' => "Activate selected",
                     'buttonIcon' => "mdi:plus-circle-outline",
-                    'buttonColor' => "warning",
+                    'buttonColor' => "success",
                 ],            
                 [
                     'icon' => "mdi:minus-circle-outline",

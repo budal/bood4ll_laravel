@@ -127,13 +127,17 @@ import { onMounted } from 'vue';
       content.add({ title: "-" })
       
       props.menu.forEach((item: any) => {
+        const link = typeof item.route === 'string' ? { route: item.route, attributes: [] } : item.route;
+
+        console.log(link)
+
         if (item.list == 'checkboxes') {
           content.add({
             title: item.title,
             icon: item.icon,
             disabled: activeItems.value.size === 0,
             list: activeItems,
-            route: isValidUrl(item.route.route, item.route.attributes),
+            route: isValidUrl(link.route, item.route.attributes),
             method: item.method,
             modalTitle: item.modalTitle,
             modalSubTitle: item.modalSubTitle,
