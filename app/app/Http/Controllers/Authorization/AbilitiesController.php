@@ -98,7 +98,6 @@ class AbilitiesController extends Controller
                     'field' => 'id',
                     'route' => [
                         'route' => "apps.abilities.update",
-                        'method' => "post",
                         'attributes' => "toggle",
                     ],
                     'method' => 'post',

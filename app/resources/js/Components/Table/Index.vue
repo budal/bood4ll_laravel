@@ -213,6 +213,7 @@ import { onMounted } from 'vue';
   // toggle
   const updateFormToogle = async (route: any, ids: any) => {
     const url = isValidUrl(route.route)
+    
     console.log(url, route)
 
     if (route.route) {
