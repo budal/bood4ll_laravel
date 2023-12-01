@@ -43,9 +43,7 @@ class UnitsController extends Controller
             'title' => "Units management",
             'subtitle' => "Manage the units users are classified in.",
             'routes' => [
-                'createRoute' => [
-                    'route' => "apps.units.create",
-                ],
+                'createRoute' => "apps.units.create",
                 'editRoute' => "apps.units.edit",
                 'destroyRoute' => "apps.units.destroy",
                 'restoreRoute' => "apps.units.restore",

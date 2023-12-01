@@ -93,7 +93,7 @@ import { onMounted } from 'vue';
   
     if (props.routes.destroyRoute && showRestoreItems != 'trashed') {
       content.add({
-        title: "Delete",
+        title: "Erase",
         icon: "mdi:delete-outline",
         disabled: activeItems.value.size === 0,
         list: activeItems,
@@ -127,17 +127,13 @@ import { onMounted } from 'vue';
       content.add({ title: "-" })
       
       props.menu.forEach((item: any) => {
-        const link = typeof item.route === 'string' ? { route: item.route, attributes: [] } : item.route;
-
-        console.log(link)
-
         if (item.list == 'checkboxes') {
           content.add({
             title: item.title,
             icon: item.icon,
             disabled: activeItems.value.size === 0,
             list: activeItems,
-            route: isValidUrl(link.route, item.route.attributes),
+            route: isValidUrl(item.route),
             method: item.method,
             modalTitle: item.modalTitle,
             modalSubTitle: item.modalSubTitle,
@@ -154,12 +150,13 @@ import { onMounted } from 'vue';
     return content
   })
 
-  const isValidUrl = (urlString: any, attributes: any) => {
+  const isValidUrl = (url: any) => {
     try { 
-      if (Boolean(new URL(urlString))) return urlString; 
+      if (Boolean(new URL(url))) return url; 
     }
     catch (e){ 
-      return route(urlString, attributes); 
+      const link = typeof url === 'string' ? { route: url, attributes: [] } : url;
+      return route(link.route, link.attributes); 
     }
   }
 
@@ -168,10 +165,8 @@ import { onMounted } from 'vue';
       openModal(item)
     } else {
       if (item.route) {
-        const link = typeof item.route === 'string' ? { route: item.route, attributes: [] } : item.route;
-
         router.visit(
-          isValidUrl(link.route, link.attributes),
+          isValidUrl(item.route),
           {
             method: item.method,
             preserveScroll: true,
@@ -187,7 +182,6 @@ import { onMounted } from 'vue';
   let modalInfo = ref();
 
   const openModal = (item: any) => {
-    console.log(item)
     modalInfo.value = item
     confirmingDeletionModal.value = true
   }
@@ -219,15 +213,11 @@ import { onMounted } from 'vue';
   // toggle
   const updateFormToogle = async (route: any, ids: any) => {
     if (route.route) {
-      const link = typeof route.route === 'string' ? { route: route.route, attributes: [] } : route.route;
-
       const toggleForm = useForm({ list: [] });
 
       ids.forEach((id: any) => toggleForm.list.push((id) as never))
       
-      console.log(isValidUrl(link.route, route.attributes), toggleForm)
-
-      toggleForm.submit(route.method, isValidUrl(link.route, route.attributes), {
+      toggleForm.submit(route.method, isValidUrl(route.route), {
         preserveScroll: true,
         onSuccess: () => toast.success(trans(usePage().props.status as string)),
         onError: () => toast.error(trans(usePage().props.status as string)),
