@@ -126,7 +126,15 @@ import { onMounted } from 'vue';
     if (props.menu) {
       content.add({ title: "-" })
       
-      props.menu.forEach((item: object) => content.add(item))
+      props.menu.forEach((item: any) => {
+
+
+// add list
+
+        content.add(item)
+      })
+
+      console.log(content)
     }
 
     return content
