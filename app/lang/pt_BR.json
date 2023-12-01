@@ -148,8 +148,10 @@
   "Deactivate abilities": "Desativar abilitações",
   "Ability": "Abilitação",
   "Show all abilities": "Exibir todas as abilitações",
-  "The ability ':ability' is activated.": "A abilitação ':ability' está ativada.",
-  "The ability ':ability' is deactivated.": "A abilitação ':ability' está desativada.",
+  "The ability ':ability' was activated.": "A abilitação ':ability' foi ativada.",
+  "The ability ':ability' was deactivated.": "A abilitação ':ability' foi desativada.",
+  "A total of ':total' abilities were activated.": "Um total de ':total' abilitações foram ativadas.",
+  "A total of ':total' abilities were deactivated.": "Um total de ':total' abilitações foram desativadas.",
   "Error on activate/inactivate the ability.": "Erro ao ativar/desativar a abilitação.",
   "Define the users who have access to this authorization": "Defina os usuários que terão acesso a essa autorização",
 

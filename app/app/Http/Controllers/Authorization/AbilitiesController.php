@@ -111,34 +111,53 @@ class AbilitiesController extends Controller
     
     public function update(Request $request, $mode): RedirectResponse
     {
-        if ($mode == "on") {
-
-        } elseif ($mode == "on") {
-
-        } elseif ($mode == "toggle") {
-            
-        }
-
-
-        dd($request);
-        $getAbility = Ability::where('name', $ability)->first();
-
         try {
-            if ($getAbility) {
-                $getAbility->delete();
+            $ability = Ability::sync($mode, $request->list);
+
+            if ($mode == "toggle") {
                 return Redirect::back()->with([
-                    'status' => "The ability ':ability' is deactivated.", 
-                    'statusComplements' => ['ability' => $ability]
+                    'status' => $ability->action == 'delete' 
+                        ? "The ability ':ability' was deactivated."
+                        : "The ability ':ability' was activated." ,
+                    'statusComplements' => ['ability' => $ability->name]
                 ]);
-            } else {
-                Ability::updateOrCreate(['name' => $ability]);
-                return Redirect::back()->with([
-                    'status' => "The ability ':ability' is activated.", 
-                    'statusComplements' => ['ability' => $ability]
+            } elseif ($mode == "on") {
+                return Redirect::route('apps.abilities.index')->with([
+                    'status' => "A total of ':total' abilities were activated.",
+                    'statusComplements' => ['total' => $ability->total]
+                ]);
+            } elseif ($mode == "off") {
+                return Redirect::route('apps.abilities.index')->with([
+                    'status' => "A total of ':total' abilities were deactivated.",
+                    'statusComplements' => ['total' => $ability->total]
                 ]);
             }
         } catch (Throwable $e) {
+            dd($e);
             return Redirect::back()->with('status', "Error on activate/inactivate the ability.");
         }
+
+        // dd($syncAbilities);
+        
+        
+        // $getAbility = Ability::where('name', $ability)->first();
+
+        // try {
+        //     if ($getAbility) {
+        //         $getAbility->delete();
+        //         return Redirect::back()->with([
+        //             'status' => "The ability ':ability' is deactivated.", 
+        //             'statusComplements' => ['ability' => $ability]
+        //         ]);
+        //     } else {
+        //         Ability::updateOrCreate(['name' => $ability]);
+        //         return Redirect::back()->with([
+        //             'status' => "The ability ':ability' is activated.", 
+        //             'statusComplements' => ['ability' => $ability]
+        //         ]);
+        //     }
+        // } catch (Throwable $e) {
+        //     return Redirect::back()->with('status', "Error on activate/inactivate the ability.");
+        // }
     }
 }

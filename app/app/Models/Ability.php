@@ -30,6 +30,39 @@ class Ability extends Model
         });
     }
 
+    public function scopeSync($query, string $mode, array $list)
+    {
+        $query->when($mode, function ($query, $mode) use ($list) {
+            if ($mode === 'on') {
+
+                $abilities = collect($list)->map(function (string $item, string $key) {
+                    return ['name' => $item];
+                });
+
+                dd($abilities->all());
+                 
+                dd(Ability::updateOrCreate($abilities->all(), ['name'], 'name'));
+
+            } elseif ($mode === 'off') {
+                $this->total = Ability::whereIn('name', $list)->delete();
+            } elseif ($mode === 'toggle') {
+                $this->name = $list[0];
+
+                if ($ability = Ability::where('name', $this->name)->first()) {
+                    if ($ability->delete()) {
+                        $this->action = 'delete';
+                    }
+                } else {
+                    if (Ability::updateOrCreate(['name' => $this->name])) {
+                        $this->action = 'insert';
+                    }
+                }
+            }
+        });
+
+        return $this;
+    }
+
     public function scopeSort($query, string $attribute = null): void
     {
         $sort_order = 'ASC';

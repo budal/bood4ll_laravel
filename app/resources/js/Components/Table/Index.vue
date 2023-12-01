@@ -180,11 +180,9 @@
     route: any, 
     ids: any
   ) => {
-    ids.forEach((id: any) => modalForm.list.push((id) as never))
-
     const toggleForm = useForm({ list: [] });
-
-    console.log(method, route)
+    
+    ids.forEach((id: any) => toggleForm.list.push((id) as never))
 
     toggleForm.submit(method, isValidUrl(route), {
       preserveScroll: true,
@@ -209,7 +207,6 @@
   let modalInfo = ref();
 
   const openModal = (item: any) => {
-    console.log(item)
     modalInfo.value = item
     confirmingDeletionModal.value = true
   }
