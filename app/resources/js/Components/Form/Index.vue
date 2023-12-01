@@ -92,7 +92,8 @@
                                             class="mt-1 block w-full appearance-none"
                                             v-model="jsForm[field.name]"
                                             :required="field.required"
-                                            :autocomplete="field.autocomplete === true ? field.name: false"
+                                            :autocomplete="field.autocomplete"
+                                            :autofocus="field.autofocus"
                                         />
                 
                                         <Toggle 
@@ -104,8 +105,6 @@
                                             :colorFalse="field.colorFalse"
                                             class="mt-1 block w-full"
                                             v-model="jsForm[field.name]"
-                                            :required="field.required"
-                                            :autocomplete="field.name"
                                             @keydown.enter.prevent
                                             @click.prevent
                                         />
@@ -118,6 +117,7 @@
                                             class="mt-1 block w-full"
                                             v-model="jsForm[field.name]"
                                             :required="field.required"
+                                            :autocomplete="field.autocomplete"
                                             :multiple="field.multiple"
                                             @keydown.enter.prevent
                                         />

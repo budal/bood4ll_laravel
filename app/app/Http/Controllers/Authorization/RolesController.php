@@ -96,6 +96,7 @@ class RolesController extends Controller
                             'name' => "name",
                             'title' => "Name",
                             'required' => true,
+                            'autofocus' => true,
                         ],
                         [
                             'type' => "input",
