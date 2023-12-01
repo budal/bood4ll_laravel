@@ -54,7 +54,7 @@ class AbilitiesController extends Controller
             ],
             'menu' => [
                 [
-                    'icon' => "mdi:check-circle-outline",
+                    'icon' => "mdi:plus-circle-outline",
                     'title' => "Activate abilities",
                     // 'route' => "apps.abilities.update",
                     'route' => [
@@ -63,9 +63,14 @@ class AbilitiesController extends Controller
                     ],
                     'method' => "post",
                     'list' => 'checkboxes',
+                    'modalTitle' => "Are you sure you want to activate the selected items?",
+                    'modalSubTitle' => "The selected items will be activated. Do you want to continue?",
+                    'buttonTitle' => "Activate selected",
+                    'buttonIcon' => "mdi:plus-circle-outline",
+                    'buttonColor' => "warning",
                 ],            
                 [
-                    'icon' => "mdi:close-circle-outline",
+                    'icon' => "mdi:minus-circle-outline",
                     'title' => "Deactivate abilities",
                     'route' => [
                         'route' => "apps.abilities.update",
@@ -73,6 +78,12 @@ class AbilitiesController extends Controller
                     ],
                     'method' => "post",
                     'list' => 'checkboxes',
+                    'modalTitle' => "Are you sure you want to erase the selected items?",
+                    'modalSubTitle' => "The selected item will be erased from the database. This action can't be undone. Do you want to continue?",
+                    'buttonTitle' => "Erase selected",
+                    'buttonIcon' => "mdi:minus-circle-outline",
+                    'buttonColor' => "danger",
+            
                 ],            
             ],
             'titles' => [

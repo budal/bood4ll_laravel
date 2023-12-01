@@ -99,7 +99,7 @@ import { onMounted } from 'vue';
         list: activeItems,
         route: props.routes.destroyRoute,
         method: "delete",
-        modalTitle: "Are you sure you want to delete the selected items?",
+        modalTitle: "Are you sure you want to remove the selected items?",
         modalSubTitle: "The selected items will be removed from the active items. Do you want to continue?",
         buttonTitle: "Erase selected",
         buttonIcon: "mdi:delete-sweep-outline",
@@ -135,6 +135,11 @@ import { onMounted } from 'vue';
             list: activeItems,
             route: isValidUrl(item.route.route, item.route.attributes),
             method: item.method,
+            modalTitle: item.modalTitle,
+            modalSubTitle: item.modalSubTitle,
+            buttonTitle: item.buttonTitle,
+            buttonIcon: item.buttonIcon,
+            buttonColor: item.buttonColor,
           })
         } else {
           content.add(item);
@@ -178,6 +183,7 @@ import { onMounted } from 'vue';
   let modalInfo = ref();
 
   const openModal = (item: any) => {
+    console.log(item)
     modalInfo.value = item
     confirmingDeletionModal.value = true
   }
