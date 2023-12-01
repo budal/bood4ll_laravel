@@ -182,31 +182,25 @@
   ) => {
     ids.forEach((id: any) => modalForm.list.push((id) as never))
 
-console.log(ids)
+    const toggleForm = useForm({ list: [] });
 
-    // const url = isValidUrl(route)
-    
-    // const toggleForm = useForm({ list: [] });
+    console.log(method, route)
 
-    // ids.forEach((id: any) => toggleForm.list.push((id) as never))
-    
-    // console.log(url, toggleForm)
-
-    // toggleForm.submit(method, route(url), {
-    //   preserveScroll: true,
-    //   onSuccess: () => {
-    //     toast.success(trans(usePage().props.status as string))
-    //     clear()
-    //     toggleForm.list = []
-    //     closeModal()
-    //   },
-    //   onError: () => {
-    //     toast.error(trans(usePage().props.status as string))
-    //     clear()
-    //     toggleForm.list = []
-    //     closeModal()
-    //   },
-    // });
+    toggleForm.submit(method, isValidUrl(route), {
+      preserveScroll: true,
+      onSuccess: () => {
+        toast.success(trans(usePage().props.status as string))
+        clear()
+        toggleForm.list = []
+        closeModal()
+      },
+      onError: () => {
+        toast.error(trans(usePage().props.status as string))
+        clear()
+        toggleForm.list = []
+        closeModal()
+      },
+    });
   }
 
   // modal
@@ -215,6 +209,7 @@ console.log(ids)
   let modalInfo = ref();
 
   const openModal = (item: any) => {
+    console.log(item)
     modalInfo.value = item
     confirmingDeletionModal.value = true
   }
@@ -339,7 +334,7 @@ console.log(ids)
                 :color="content.color"
                 :colorFalse="content.colorFalse"
                 v-model="item.checked"
-                @click="updateFormToogle(item.method, content.route, [item.id])"
+                @click="updateFormToogle(content.method, content.route, [item.id])"
               />
             </td>
             <td v-if="routes.editRoute" class="p-2 text-right">

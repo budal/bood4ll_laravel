@@ -111,7 +111,15 @@ class AbilitiesController extends Controller
     
     public function update(Request $request, $mode): RedirectResponse
     {
-        
+        if ($mode == "on") {
+
+        } elseif ($mode == "on") {
+
+        } elseif ($mode == "toggle") {
+            
+        }
+
+
         dd($request);
         $getAbility = Ability::where('name', $ability)->first();
 
