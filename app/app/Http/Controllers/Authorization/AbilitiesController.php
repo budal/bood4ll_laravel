@@ -56,12 +56,13 @@ class AbilitiesController extends Controller
                 [
                     'icon' => "mdi:check-circle-outline",
                     'title' => "Activate abilities",
+                    // 'route' => "apps.abilities.update",
                     'route' => [
                         'route' => "apps.abilities.update",
                         'attributes' => "on"
                     ],
                     'method' => "post",
-                    'list' => true,
+                    'list' => 'checkboxes',
                 ],            
                 [
                     'icon' => "mdi:close-circle-outline",
@@ -71,7 +72,7 @@ class AbilitiesController extends Controller
                         'attributes' => "off"
                     ],
                     'method' => "post",
-                    'list' => true,
+                    'list' => 'checkboxes',
                 ],            
             ],
             'titles' => [

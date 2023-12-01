@@ -127,16 +127,18 @@ import { onMounted } from 'vue';
       content.add({ title: "-" })
       
       props.menu.forEach((item: any) => {
-        content.add({
-          title: item.title,
-          icon: item.icon,
-          disabled: activeItems.value.size === 0,
-          list: activeItems,
-          route: isValidUrl(item.route.route, item.route.attributes),
-          method: item.method,
-        })
-
-        console.log(isValidUrl(item.route.route, item.route.attributes))
+        if (item.list == 'checkboxes') {
+          content.add({
+            title: item.title,
+            icon: item.icon,
+            disabled: activeItems.value.size === 0,
+            list: activeItems,
+            route: isValidUrl(item.route.route, item.route.attributes),
+            method: item.method,
+          })
+        } else {
+          content.add(item);
+        }
       })
     }
 
