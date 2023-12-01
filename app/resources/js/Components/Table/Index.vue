@@ -11,8 +11,6 @@
   import { toast } from 'vue3-toastify';
   import { router, useForm, usePage } from '@inertiajs/vue3';
   import { ref, computed, reactive } from 'vue'
-import { watch } from 'vue';
-import { onMounted } from 'vue';
 
   const props = withDefaults(
     defineProps<{
@@ -176,6 +174,41 @@ import { onMounted } from 'vue';
     }
   }
 
+  // toggle
+  const updateFormToogle = async (
+    method: 'get' | 'post' | 'put' | 'patch' | 'delete', 
+    route: any, 
+    ids: any
+  ) => {
+    ids.forEach((id: any) => modalForm.list.push((id) as never))
+
+console.log(ids)
+
+    // const url = isValidUrl(route)
+    
+    // const toggleForm = useForm({ list: [] });
+
+    // ids.forEach((id: any) => toggleForm.list.push((id) as never))
+    
+    // console.log(url, toggleForm)
+
+    // toggleForm.submit(method, route(url), {
+    //   preserveScroll: true,
+    //   onSuccess: () => {
+    //     toast.success(trans(usePage().props.status as string))
+    //     clear()
+    //     toggleForm.list = []
+    //     closeModal()
+    //   },
+    //   onError: () => {
+    //     toast.error(trans(usePage().props.status as string))
+    //     clear()
+    //     toggleForm.list = []
+    //     closeModal()
+    //   },
+    // });
+  }
+
   // modal
   const confirmingDeletionModal = ref(false);
 
@@ -193,7 +226,7 @@ import { onMounted } from 'vue';
   const submitModal = () => {
     modalInfo.value.list.forEach((id: any) => modalForm.list.push((id) as never))
 
-    modalForm.submit(modalInfo.value.method, route(modalInfo.value.route), {
+    modalForm.submit(modalInfo.value.method, isValidUrl(modalInfo.value.route), {
       preserveScroll: true,
       onSuccess: () => {
         toast.success(trans(usePage().props.status as string))
@@ -209,25 +242,6 @@ import { onMounted } from 'vue';
       },
     });
   };
-
-  // toggle
-  const updateFormToogle = async (route: any, ids: any) => {
-    const url = isValidUrl(route.route)
-    
-    console.log(url, route)
-
-    if (route.route) {
-      const toggleForm = useForm({ list: [] });
-
-      ids.forEach((id: any) => toggleForm.list.push((id) as never))
-      
-      toggleForm.submit(route.method, url, {
-        preserveScroll: true,
-        onSuccess: () => toast.success(trans(usePage().props.status as string)),
-        onError: () => toast.error(trans(usePage().props.status as string)),
-      });
-    }
-  }
 </script>
 
 <template>
@@ -325,7 +339,7 @@ import { onMounted } from 'vue';
                 :color="content.color"
                 :colorFalse="content.colorFalse"
                 v-model="item.checked"
-                @click="updateFormToogle(content.route, [item.id])"
+                @click="updateFormToogle(item.method, content.route, [item.id])"
               />
             </td>
             <td v-if="routes.editRoute" class="p-2 text-right">
