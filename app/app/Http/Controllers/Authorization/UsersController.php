@@ -188,6 +188,7 @@ class UsersController extends Controller
 
     public function destroy(Request $request): RedirectResponse
     {
+        // dd($request);
         try {
             User::whereIn('id', $request->list)->delete();
             return back()->with('status', 'Items removed succesfully!');
@@ -199,6 +200,7 @@ class UsersController extends Controller
 
     public function restore(Request $request): RedirectResponse
     {
+        // dd($request);
         try {
             User::whereIn('id', $request->list)->restore();
             return back()->with('status', 'Items restored succesfully!');

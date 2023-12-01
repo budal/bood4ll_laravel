@@ -10,7 +10,7 @@
   import { trans } from 'laravel-vue-i18n';
   import { toast } from 'vue3-toastify';
   import { router, useForm, usePage } from '@inertiajs/vue3';
-  import { ref, computed, reactive } from 'vue'
+  import { ref, computed, reactive, watch } from 'vue'
 
   const props = defineProps<{
     prefix?: string;
@@ -30,25 +30,24 @@
 
   let selectedAll = computed(() => selectedItems.size == props.items.data.length)
   
-  let clear = () => selectedItems.clear()
+  let clear = () => {
+    selectedItems.clear();
+    modalInfo.value = null;
+  }
   
-  let selectAll = (checkBoxes: any) => checkBoxes.forEach((item: unknown) => selectedItems.add(item))
+  let selectAll = (items: any) => items.forEach((item: unknown) => selectedItems.add(item))
 
-  let toggle = (item: any) => (selectedItems.has(item)) 
-    ? selectedItems.delete(item) 
-    : selectedItems.add(item)
-  
-  const toggleSelection = () => (selectedAll.value) 
-    ? clear()
-    : selectAll(props.items.data)
+  let toggle = (item: any) => (selectedItems.has(item)) ? selectedItems.delete(item) : selectedItems.add(item)
 
-  let toDeleteItems = computed(() => {
+  const toggleAll = () => (selectedAll.value) ? clear() : selectAll(props.items.data)
+
+  let activeItems = computed(() => {
     let items = reactive(new Set())
     selectedItems.forEach((item: any) => !item.deleted_at ? items.add(item.id) : false )
     return items
   })
 
-  let toRestoreItems = computed(() => {
+  let trashedItems = computed(() => {
     let items = reactive(new Set())
     selectedItems.forEach((item: any) => item.deleted_at ? items.add(item.id) : false )
     return items
@@ -89,8 +88,8 @@
       content.add({
         title: "Delete",
         icon: "mdi:delete-outline",
-        disabled: toDeleteItems.value.size === 0,
-        list: toDeleteItems,
+        disabled: activeItems.value.size === 0,
+        list: activeItems,
         route: props.routes.destroyRoute,
         method: "delete",
         modalTitle: "Are you sure you want to delete the selected items?",
@@ -105,8 +104,8 @@
       content.add({
         title: "Restore",
         icon: "mdi:restore",
-        disabled: toRestoreItems.value.size === 0,
-        list: toRestoreItems,
+        disabled: trashedItems.value.size === 0,
+        list: trashedItems,
         route: props.routes.restoreRoute,
         method: "post",
         modalTitle: "Are you sure you want to restore the selected items?",
@@ -149,7 +148,7 @@
   // modal
   const confirmingDeletionModal = ref(false);
 
-  const modalInfo = ref();
+  let modalInfo = ref();
 
   const openModal = (item: any) => {
     modalInfo.value = item
@@ -168,11 +167,13 @@
       onSuccess: () => {
         toast.success(trans(usePage().props.status as string))
         clear()
+        form.list = []
         closeModal()
       },
       onError: () => {
         toast.error(trans(usePage().props.status as string))
         clear()
+        form.list = []
         closeModal()
       },
     });
@@ -233,7 +234,7 @@
         <thead v-if="items.data.length > 0">
           <tr class="bg-zero-light dark:bg-zero-dark p-3 text-zero-light dark:text-zero-dark text-left">
             <th class="p-2 w-0">
-              <Checkbox v-if="(routes.destroyRoute || routes.restoreRoute)" name="remember" :checked="selectedAll" @click="toggleSelection" class="w-8 h-8 rounded-lg" />
+              <Checkbox v-if="(routes.destroyRoute || routes.restoreRoute)" name="remember" :checked="selectedAll" @click="toggleAll" class="w-8 h-8 rounded-lg" />
             </th>
             <th v-for="sort in titles" class="p-2">
               <Sort :prefix="prefix" :sort="sort" class="justify-center" />
