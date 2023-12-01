@@ -148,6 +148,7 @@
   "Deactivate abilities": "Desativar abilitações",
   "Ability": "Abilitação",
   "Show all abilities": "Exibir todas as abilitações",
+  "There are no abilities to select. Click here to manage them.": "Não há abilitações para selecionar. Clique aqui para gerenciá-las.",
   "The ability ':ability' was activated.": "A abilitação ':ability' foi ativada.",
   "The ability ':ability' was deactivated.": "A abilitação ':ability' foi desativada.",
   "A total of ':total' abilities were activated.": "Um total de ':total' abilitações foram ativadas.",

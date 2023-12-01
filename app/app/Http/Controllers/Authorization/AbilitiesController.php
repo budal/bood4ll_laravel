@@ -133,31 +133,7 @@ class AbilitiesController extends Controller
                 ]);
             }
         } catch (Throwable $e) {
-            dd($e);
             return Redirect::back()->with('status', "Error on activate/inactivate the ability.");
         }
-
-        // dd($syncAbilities);
-        
-        
-        // $getAbility = Ability::where('name', $ability)->first();
-
-        // try {
-        //     if ($getAbility) {
-        //         $getAbility->delete();
-        //         return Redirect::back()->with([
-        //             'status' => "The ability ':ability' is deactivated.", 
-        //             'statusComplements' => ['ability' => $ability]
-        //         ]);
-        //     } else {
-        //         Ability::updateOrCreate(['name' => $ability]);
-        //         return Redirect::back()->with([
-        //             'status' => "The ability ':ability' is activated.", 
-        //             'statusComplements' => ['ability' => $ability]
-        //         ]);
-        //     }
-        // } catch (Throwable $e) {
-        //     return Redirect::back()->with('status', "Error on activate/inactivate the ability.");
-        // }
     }
 }

@@ -1,7 +1,8 @@
 <script setup lang="ts">
   import SelectItems from '@/Components/SelectItems.vue'
   import { Icon } from '@iconify/vue'
-  import { ComboboxAnchor, ComboboxContent, ComboboxEmpty, ComboboxGroup, ComboboxInput, ComboboxItem, ComboboxItemIndicator, ComboboxLabel, ComboboxRoot, ComboboxSeparator, ComboboxTrigger, ComboboxViewport } from 'radix-vue'
+  import { ComboboxAnchor, ComboboxContent, ComboboxEmpty, ComboboxInput, ComboboxRoot, ComboboxTrigger, ComboboxViewport } from 'radix-vue'
+  import { Link } from '@inertiajs/vue3'
   import { ref, computed } from 'vue';
   
   const props = withDefaults(
@@ -130,6 +131,7 @@
               v-model="searchInput"
               :id="id"
               :name="name"
+              autocomplete="off"
               class="p-0 w-full bg-transparent text-ellipsis border-0 outline-0 focus:ring-0 placeholder:text-sm placeholder-primary-dark/20 dark:placeholder-primary-dark/20 text-zero-light dark:text-zero-dark" 
             />
           </ComboboxTrigger>
@@ -153,6 +155,12 @@
       <ComboboxViewport class="p-[5px] max-h-60">
         <ComboboxEmpty class="text-xs font-medium text-center">{{ $t('No items to show.') }}</ComboboxEmpty>
         <SelectItems :items="selectItems" />
+        <p v-if="selectItems.length == 0" class="text-xs font-medium text-center">
+          <Link :href="route('apps.abilities.index')">
+            {{ $t('There are no abilities to select. Click here to manage them.') }}
+          </Link>
+        </p>
+
       </ComboboxViewport>
     </ComboboxContent>
   </ComboboxRoot>
