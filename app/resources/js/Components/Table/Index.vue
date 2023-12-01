@@ -4,24 +4,31 @@
   import Checkbox from '@/Components/Checkbox.vue';
   import Dropdown from '@/Components/Dropdown.vue';
   import Modal from '@/Components/Modal.vue';
-  import Switch from '@/Components/Switch.vue';
+  import Toggle from '@/Components/Toggle.vue';
   import Search from '@/Components/Table/Search.vue';
   import Sort from '@/Components/Table/Sort.vue';
   import { trans } from 'laravel-vue-i18n';
   import { toast } from 'vue3-toastify';
   import { router, useForm, usePage } from '@inertiajs/vue3';
-  import { ref, computed, reactive, watch } from 'vue'
+  import { ref, computed, reactive } from 'vue'
+import { watch } from 'vue';
+import { onMounted } from 'vue';
 
-  const props = defineProps<{
-    prefix?: string;
-    id?: string;
-    name?: string;
-    routes?: any;
-    menu?: any;
-    titles: any;
-    items: any;
-    shortcutKey?: string;
-  }>();
+  const props = withDefaults(
+    defineProps<{
+      prefix?: string;
+      id?: string;
+      name?: string;
+      routes?: any;
+      menu?: any;
+      titles: any;
+      items: any;
+      shortcutKey?: string;
+    }>(),
+    {
+      routes: [],
+    }
+  );
 
   // checkboxes
   let indexRoute = new URL(window.location.href);
@@ -179,12 +186,11 @@
     });
   };
 
+  // toggle
+  const formToggle = useForm({});
 
-  // switch
-  const formSwitch = useForm({});
-
-  const updateSwitch = (routeUri: string, method: 'get' | 'post', id: string) => {
-    formSwitch.submit(method, route(routeUri, id), {
+  const updateFormToogle = async (routeUri: string, method: 'get' | 'post', id: string) => {
+    await formToggle.submit(method, route(routeUri, id), {
       preserveScroll: true,
       onError: () => toast.error(trans(usePage().props.status as string)),
       onFinish: () => toast.success(trans(usePage().props.status as string, usePage().props.statusComplements as undefined)),
@@ -234,7 +240,7 @@
         <thead v-if="items.data.length > 0">
           <tr class="bg-zero-light dark:bg-zero-dark p-3 text-zero-light dark:text-zero-dark text-left">
             <th class="p-2 w-0">
-              <Checkbox v-if="(routes.destroyRoute || routes.restoreRoute)" name="remember" :checked="selectedAll" @click="toggleAll" class="w-8 h-8 rounded-lg" />
+              <Checkbox v-if="(routes.showCheckboxes == true || routes.destroyRoute || routes.restoreRoute)" name="remember" :checked="selectedAll" @click="toggleAll" class="w-8 h-8 rounded-lg" />
             </th>
             <th v-for="sort in titles" class="p-2">
               <Sort :prefix="prefix" :sort="sort" class="justify-center" />
@@ -252,7 +258,7 @@
               : 'bg-secondary-light dark:bg-secondary-dark hover:bg-secondary-light-hover hover:dark:bg-secondary-dark-hover border-secondary-light dark:border-secondary-dark'"
           >
             <td class="p-2 w-0">
-              <Checkbox v-if="(routes.destroyRoute || routes.restoreRoute)" 
+              <Checkbox v-if="(routes.showCheckboxes == true || routes.destroyRoute || routes.restoreRoute)" 
                 class="w-8 h-8 rounded-lg" 
                 :class="item.deleted_at 
                   ? ''
@@ -280,12 +286,14 @@
                 :fallback="item[content.fallback]" 
               />
 
-              <Switch 
-                v-if="content.type == 'switch'" 
+              <Toggle 
+                v-if="content.type == 'toggle'" 
+                :id="item.id" 
                 :name="item.name" 
-                :value="item.id" 
-                :checked="item.checked" 
-                @click="updateSwitch(content.route, content.method, item.id)"
+                :color="content.color"
+                :colorFalse="content.colorFalse"
+                v-model="item.checked"
+                @click="updateFormToogle(content.route, content.method, item.id)"
               />
             </td>
             <td v-if="routes.editRoute" class="p-2 text-right">

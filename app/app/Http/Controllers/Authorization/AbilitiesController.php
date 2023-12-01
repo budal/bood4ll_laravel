@@ -46,28 +46,43 @@ class AbilitiesController extends Controller
             return $a['title'] <=> $b['title'];
         });
         
-        $titles = [
-            [
-                'type' => 'composite',
-                'title' => 'Ability',
-                'field' => 'title',
-                'fields' => ['title', 'command']
-            ],
-            [
-                'type' => 'switch',
-                'title' => 'Active',
-                'field' => 'id',
-                'route' => 'apps.abilities.update',
-                'method' => 'post',
-            ],
-        ];
-
         return Inertia::render('Default/Index', [
             'title' => "Abilities management",
             'subtitle' => "Define which abilities will be showed in the roles management.",
-            'softDelete' => Ability::hasGlobalScope('Illuminate\Database\Eloquent\SoftDeletingScope'),
-            'routes' => [],
-            'titles' => $titles,
+            'routes' => [
+                'showCheckboxes' => true,
+            ],
+            'menu' => [
+                [
+                    'icon' => "mdi:check-circle-outline",
+                    'title' => "Activate abilities",
+                    'route' => "apps.abilities.update",
+                    'showList' => true,
+                ],            
+                [
+                    'icon' => "mdi:close-circle-outline",
+                    'title' => "Deactivate abilities",
+                    'route' => "apps.abilities.update",
+                    'showList' => true,
+                ],            
+            ],
+            'titles' => [
+                [
+                    'type' => 'composite',
+                    'title' => 'Ability',
+                    'field' => 'title',
+                    'fields' => ['title', 'command'],
+                ],
+                [
+                    'type' => 'toggle',
+                    'title' => 'Active',
+                    'field' => 'id',
+                    'route' => 'apps.abilities.update',
+                    'method' => 'post',
+                    'color' => 'success',
+                    'colorFalse' => 'danger',
+                ],
+            ],
             'items' => ['data' => $items]
         ]);
     }
