@@ -300,6 +300,12 @@ class RolesController extends Controller
     {
         $abilities = Ability::sort("name")->get()->map->only(['id', 'name']);
 
+        $users = User::filter($request->all('users_search', 'users_sorted', 'users_trashed'))
+            ->sort($request->sorted ?? "name")
+            ->paginate(5)
+            ->onEachSide(1)
+            ->appends($request->all('users_search', 'users_sorted', 'users_trashed'));
+
         $items = $role->users()
             ->filter($request->all('search', 'sorted', 'trashed'))
             ->paginate(20)
@@ -312,20 +318,34 @@ class RolesController extends Controller
 
         return [
             [
-                'id' => "role",
+                'id' => "users",
                 'fields' => [
                     [
                         [
-                            'type' => "select",
-                            'name' => "abilities",
-                            'title' => "Abilities",
-                            'span' => 3,
-                            'content' => $abilities,
-                            'required' => true,
-                            'multiple' => true,
+                            'type' => "table",
+                            'name' => "users",
+                            'span' => 2,
+                            'shortcutKey' => "a",
+                            'content' => [
+                                'menu' => [
+                                    [
+                                        'icon' => "mdi:book-cog-outline",
+                                        'title' => "Abilities management",
+                                        'route' => "apps.abilities.index"
+                                    ],            
+                                ],
+                                'titles' => [
+                                    [
+                                        'type' => 'simple',
+                                        'title' => 'Name',
+                                        'field' => 'name',
+                                    ],
+                                ],
+                                'items' => $users
+                            ],
                         ],
                     ],
-                ],
+                ]
             ],
         ];
     }

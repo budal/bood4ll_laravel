@@ -106,9 +106,7 @@ class Unit extends Model
         $filterSearch = reset($search);
 
         $trash = array_filter($filters, function ($key){ return(strpos($key,'trash') !== false); }, ARRAY_FILTER_USE_KEY);
-        $filterTrash = reset($search);
-
-        
+        $filterTrash = reset($trash);
 
         $query->when($filterSearch ?? null, function ($query, $search) {
             $query->where(function ($query) use ($search) {
