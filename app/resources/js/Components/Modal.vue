@@ -13,13 +13,16 @@
 
     const props = withDefaults(
         defineProps<{
+            theme?: 'zero' | 'primary' | 'secondary' | 'danger' | 'success' | 'warning' | 'info' ;
             title?: string;
+            subTitle?: string;
             open?: boolean;
             maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl';
             closeable?: boolean;
         }>(),
         {
             title: '',
+            subtitle: '',
             open: false,
             maxWidth: '2xl',
             closeable: true,
@@ -50,20 +53,24 @@
         <DialogPortal>
             <DialogOverlay class="backdrop-blur-sm bg-black/20 data-[state=open]:animate-overlayShow data-[state=close]:animate-overlayHide fixed inset-0 z-30" />
             <DialogContent
-                class="data-[state=open]:animate-contentShow data-[state=close]:animate-contentHide fixed top-[50%] left-[50%] max-h-[85vh] w-full max-w-md translate-x-[-50%] translate-y-[-50%] rounded-md bg-secondary-light dark:bg-secondary-dark p-[20px] shadow-primary-light/20 dark:shadow-primary-dark/20 shadow-[0_2px_10px] focus:outline-none z-[100]"
-                :class="maxWidthClass"
+                class="data-[state=open]:animate-contentShow data-[state=close]:animate-contentHide fixed top-[50%] left-[50%] max-h-[85vh] w-full max-w-md translate-x-[-50%] translate-y-[-50%] rounded-md p-[20px] shadow-primary-light/20 dark:shadow-primary-dark/20 shadow-[0_2px_10px] focus:outline-none z-[100]"
+                :class="`${maxWidthClass} bg-${theme}-light-hover dark:bg-${theme}-dark-hover`"
                 @escapeKeyDown="close"
                 @pointerDownOutside="close"
             >
-                <DialogTitle v-if="title" class="text-zero-light dark:text-zero-dark m-0 text-[20px] font-semibold">
+                <DialogTitle v-if="title" :class="`text-${theme}-light dark:text-${theme}-dark m-0 text-[20px] font-semibold`">
                     {{ title }}
                 </DialogTitle>
                 <DialogDescription class="mt-[10px] mb-5 text-[15px] leading-normal">
+                    <p  v-if="subTitle" :class="`mt-1 text-sm text-${theme}-light/70 dark:text-${theme}-dark/70`">
+                    {{ $t(subTitle) }}
+                    </p>
                     <slot />
                 </DialogDescription>
                 <slot name="buttons" />
                 <DialogClose
-                    class="text-secondary-light dark:text-secondary-dark hover:bg-secondary-light-hover dark:hover:bg-secondary-dark-hover absolute top-[10px] right-[10px] inline-flex h-[25px] w-[25px] appearance-none items-center justify-center rounded-full focus:shadow-[0_0_0_2px] focus:outline-none"
+                    class="absolute top-[10px] right-[10px] inline-flex h-[25px] w-[25px] appearance-none items-center justify-center rounded-full focus:shadow-[0_0_0_2px] focus:outline-none"
+                    :class="`text-${theme}-light dark:text-${theme}-dark hover:bg-${theme}-light-hover dark:hover:bg-${theme}-dark-hover`"
                     aria-label="Close"
                     @click="close"
                 >

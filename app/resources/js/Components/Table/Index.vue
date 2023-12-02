@@ -90,22 +90,6 @@
       content.add({ title: "-" })
     }
   
-    if (props.routes.destroyRoute && showRestoreItems != 'trashed') {
-      content.add({
-        title: "Erase",
-        icon: "mdi:delete-outline",
-        disabled: activeItems.value.size === 0,
-        list: activeItems,
-        route: props.routes.destroyRoute,
-        method: "delete",
-        modalTitle: "Are you sure you want to remove the selected items?",
-        modalSubTitle: "The selected items will be removed from the active items. Do you want to continue?",
-        buttonTitle: "Erase selected",
-        buttonIcon: "mdi:delete-sweep-outline",
-        buttonColor: "danger",
-      })
-    }
-  
     if (props.routes.restoreRoute && (showRestoreItems == 'trashed' || showRestoreItems == 'both')) {
       content.add({
         title: "Restore",
@@ -119,6 +103,39 @@
         buttonTitle: "Restore selected",
         buttonIcon: "mdi:backup-restore",
         buttonColor: "warning",
+      })
+    }
+  
+    if (props.routes.destroyRoute && showRestoreItems != 'trashed') {
+      content.add({
+        title: "Remove",
+        icon: "mdi:delete-outline",
+        disabled: activeItems.value.size === 0,
+        list: activeItems,
+        route: props.routes.destroyRoute,
+        method: "delete",
+        modalTitle: "Are you sure you want to remove the selected items?",
+        modalSubTitle: "The selected items will be removed from the active items. Do you want to continue?",
+        buttonTitle: "Erase selected",
+        buttonIcon: "mdi:delete-sweep-outline",
+        buttonColor: "danger",
+      })
+    }
+  
+    if (props.routes.forceDestroyRoute && showRestoreItems == 'trashed') {
+      content.add({
+        title: "Erase",
+        icon: "mdi:delete-forever-outline",
+        disabled: trashedItems.value.size === 0,
+        list: trashedItems,
+        route: props.routes.forceDestroyRoute,
+        method: "delete",
+        modalTheme: "danger",
+        modalTitle: "Are you sure you want to erase the selected items?",
+        modalSubTitle: "The selected item will be erased from the database. This action can't be undone. Do you want to continue?",
+        buttonTitle: "Erase selected",
+        buttonIcon: "mdi:delete-sweep-outline",
+        buttonColor: "danger",
       })
     }
   
@@ -241,14 +258,15 @@
   <Modal 
     v-if="modalInfo"
     :open="confirmingDeletionModal"
-    :title=" $t(modalInfo.modalTitle)" 
+    :title="$t(modalInfo.modalTitle)" 
+    :subTitle="$t(modalInfo.modalSubTitle)" 
+    :theme="modalInfo?.modalTheme || 'secondary'"
     @close="closeModal"
   >
-    <p class="mt-1 text-sm text-secondary-light dark:text-secondary-dark">
-      {{ $t(modalInfo.modalSubTitle) }}
-    </p>
     <template #buttons>
-      <div class="mt-6 flex justify-end">
+      <div 
+        class="mt-6 flex justify-end"
+      >
         <Button color="secondary" @click="closeModal" start-icon="mdi:cancel-outline">
           {{ $t('Cancel') }}
         </Button>

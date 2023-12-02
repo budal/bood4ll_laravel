@@ -116,20 +116,20 @@ class AbilitiesController extends Controller
 
             if ($mode == "toggle") {
                 return Redirect::back()->with([
-                    'status' => $ability->action == 'delete' 
+                    'toast_message' => $ability->action == 'delete' 
                         ? "The ability ':ability' was deactivated."
                         : "The ability ':ability' was activated." ,
-                    'statusComplements' => ['ability' => $ability->name]
+                    'toast_replacements' => ['ability' => $ability->name]
                 ]);
             } elseif ($mode == "on") {
                 return Redirect::route('apps.abilities.index')->with([
-                    'status' => "A total of ':total' abilities were activated.",
-                    'statusComplements' => ['total' => $ability->total]
+                    'toast_message' => "A total of ':total' abilities were activated.",
+                    'toast_replacements' => ['total' => $ability->total]
                 ]);
             } elseif ($mode == "off") {
                 return Redirect::route('apps.abilities.index')->with([
-                    'status' => "A total of ':total' abilities were deactivated.",
-                    'statusComplements' => ['total' => $ability->total]
+                    'toast_message' => "A total of ':total' abilities were deactivated.",
+                    'toast_replacements' => ['total' => $ability->total]
                 ]);
             }
         } catch (Throwable $e) {

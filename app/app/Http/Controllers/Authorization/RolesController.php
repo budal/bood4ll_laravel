@@ -38,6 +38,7 @@ class RolesController extends Controller
                 'createRoute' => "apps.roles.create",
                 'editRoute' => "apps.roles.edit",
                 'destroyRoute' => "apps.roles.destroy",
+                'forceDestroyRoute' => "apps.roles.forcedestroy",
                 'restoreRoute' => "apps.roles.restore",
             ],
             'menu' => [
@@ -61,7 +62,7 @@ class RolesController extends Controller
                 ],
                 [
                     'type' => 'simple',
-                    'title' => 'Staff',
+                    'title' => 'Users',
                     'field' => 'users_count',
                 ],
             ],
@@ -358,6 +359,31 @@ class RolesController extends Controller
                     $query->where('inalterable', null);
                     $query->orWhere('inalterable', false);
                 })->delete();
+
+            return back()->with([
+                'toast_type' => "success",
+                'toast_message' => "{0} Nothing to remove.|[1] A role was removed.|[2,*] :total roles were removed.",
+                'toast_count' => $total,
+                'toast_replacements' => ['total' => $total]
+            ]);
+        } catch (Throwable $e) {
+            report($e);
+     
+            return back()->with([
+                'toast_type' => "error",
+                'toast_message' => "Error on remove selected items.",
+            ]);
+        }
+    }
+
+    public function forceDestroy(Request $request): RedirectResponse
+    {
+        try {
+            $total = Role::whereIn('id', $request->list)
+                ->where(function ($query) {
+                    $query->where('inalterable', null);
+                    $query->orWhere('inalterable', false);
+                })->forceDelete();
 
             return back()->with([
                 'toast_type' => "success",
