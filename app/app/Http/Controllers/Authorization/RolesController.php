@@ -165,12 +165,6 @@ class RolesController extends Controller
                             'span' => 2,
                             'content' => [
                                 'routes' => [
-                                    'createRoute' => [
-                                        'route' => "apps.roles.edit.adduser",
-                                        'attributes' => $role->id,
-                                        'preserveScroll' => true
-                                    ],
-
                                     'destroyRoute' => "apps.roles.destroy",
                                 ],
                                 'menu' => [
@@ -210,16 +204,16 @@ class RolesController extends Controller
                                     ],
                     
                                     [
-                                        'icon' => "mdi:minus-circle-outline",
+                                        'icon' => "mdi:eye-outline",
                                         'title' => "Display",
                                         'items' => [
                                             [
-                                                'icon' => "mdi:plus-circle-outline",
+                                                'icon' => "mdi:key-outline",
                                                 'title' => "Authorized",
                                                 'route' => "apps.abilities.update",
                                             ],
                                             [
-                                                'icon' => "mdi:plus-circle-outline",
+                                                'icon' => "mdi:format-list-checkbox",
                                                 'title' => "All",
                                                 'route' => "apps.abilities.update",
                                             ]
@@ -350,6 +344,77 @@ class RolesController extends Controller
         return Redirect::back()->with('status', 'Role edited.');
     }
 
+    public function destroy(Request $request): RedirectResponse
+    {
+        try {
+            $total = Role::whereIn('id', $request->list)
+                ->where(function ($query) {
+                    $query->where('inalterable', null);
+                    $query->orWhere('inalterable', false);
+                })->delete();
+
+            return back()->with([
+                'toast_type' => "success",
+                'toast_message' => "{0} Nothing to remove.|[1] A role was removed.|[2,*] :total roles were removed.",
+                'toast_count' => $total,
+                'toast_replacements' => ['total' => $total]
+            ]);
+        } catch (Throwable $e) {
+            report($e);
+     
+            return back()->with([
+                'toast_type' => "error",
+                'toast_message' => "Error on remove selected items.",
+            ]);
+        }
+    }
+
+    public function forceDestroy(Request $request): RedirectResponse
+    {
+        try {
+            $total = Role::whereIn('id', $request->list)
+                ->where(function ($query) {
+                    $query->where('inalterable', null);
+                    $query->orWhere('inalterable', false);
+                })->forceDelete();
+
+            return back()->with([
+                'toast_type' => "success",
+                'toast_message' => "{0} Nothing to remove.|[1] A role was removed.|[2,*] :total roles were removed.",
+                'toast_count' => $total,
+                'toast_replacements' => ['total' => $total]
+            ]);
+        } catch (Throwable $e) {
+            report($e);
+     
+            return back()->with([
+                'toast_type' => "error",
+                'toast_message' => "Error on remove selected items.",
+            ]);
+        }
+    }
+
+    public function restore(Request $request): RedirectResponse
+    {
+        try {
+            $total = Role::whereIn('id', $request->list)->restore();
+
+            return back()->with([
+                'toast_type' => "success",
+                'toast_message' => "{0} Nothing to restore.|[1] A role was restored.|[2,*] :total roles were restored.",
+                'toast_count' => $total,
+                'toast_replacements' => ['total' => $total]
+            ]);
+        } catch (Throwable $e) {
+            report($e);
+     
+            return back()->with([
+                'toast_type' => "error",
+                'toast_message' => "Error on restore selected items.",
+            ]);
+        }
+    }
+
     public function __formModal(Request $request, Role $role): Array
     {
         $abilities = Ability::sort("name")->get()->map->only(['id', 'name']);
@@ -423,76 +488,5 @@ class RolesController extends Controller
         ->baseRoute('apps.roles.edit', $role)
         // ->refreshBackdrop()
         ;
-    }
-    
-    public function destroy(Request $request): RedirectResponse
-    {
-        try {
-            $total = Role::whereIn('id', $request->list)
-                ->where(function ($query) {
-                    $query->where('inalterable', null);
-                    $query->orWhere('inalterable', false);
-                })->delete();
-
-            return back()->with([
-                'toast_type' => "success",
-                'toast_message' => "{0} Nothing to remove.|[1] A role was removed.|[2,*] :total roles were removed.",
-                'toast_count' => $total,
-                'toast_replacements' => ['total' => $total]
-            ]);
-        } catch (Throwable $e) {
-            report($e);
-     
-            return back()->with([
-                'toast_type' => "error",
-                'toast_message' => "Error on remove selected items.",
-            ]);
-        }
-    }
-
-    public function forceDestroy(Request $request): RedirectResponse
-    {
-        try {
-            $total = Role::whereIn('id', $request->list)
-                ->where(function ($query) {
-                    $query->where('inalterable', null);
-                    $query->orWhere('inalterable', false);
-                })->forceDelete();
-
-            return back()->with([
-                'toast_type' => "success",
-                'toast_message' => "{0} Nothing to remove.|[1] A role was removed.|[2,*] :total roles were removed.",
-                'toast_count' => $total,
-                'toast_replacements' => ['total' => $total]
-            ]);
-        } catch (Throwable $e) {
-            report($e);
-     
-            return back()->with([
-                'toast_type' => "error",
-                'toast_message' => "Error on remove selected items.",
-            ]);
-        }
-    }
-
-    public function restore(Request $request): RedirectResponse
-    {
-        try {
-            $total = Role::whereIn('id', $request->list)->restore();
-
-            return back()->with([
-                'toast_type' => "success",
-                'toast_message' => "{0} Nothing to restore.|[1] A role was restored.|[2,*] :total roles were restored.",
-                'toast_count' => $total,
-                'toast_replacements' => ['total' => $total]
-            ]);
-        } catch (Throwable $e) {
-            report($e);
-     
-            return back()->with([
-                'toast_type' => "error",
-                'toast_message' => "Error on restore selected items.",
-            ]);
-        }
     }
 }
