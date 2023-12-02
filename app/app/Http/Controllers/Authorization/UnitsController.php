@@ -211,13 +211,11 @@ class UnitsController extends Controller
                 'title' => "Subunits management",
                 'subtitle' => "Manage unit's subunits",
                 'condition' => $unit->id <> null,
-                'cols' => 2,
                 'fields' => [
                     [
                         [
                             'type' => "table",
                             'name' => "users",
-                            'span' => 2,
                             'content' => [
                                 'routes' => [
                                     'createRoute' => [

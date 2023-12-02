@@ -173,6 +173,60 @@ class RolesController extends Controller
 
                                     'destroyRoute' => "apps.roles.destroy",
                                 ],
+                                'menu' => [
+                                    [
+                                        'icon' => "mdi:plus-circle-outline",
+                                        'title' => "Activate abilities",
+                                        'route' => [
+                                            'route' => "apps.abilities.update",
+                                            'attributes' => "on"
+                                        ],
+                                        'method' => "post",
+                                        'list' => 'checkboxes',
+                                        'modalTitle' => "Are you sure you want to activate the selected items?",
+                                        'modalSubTitle' => "The selected items will be activated. Do you want to continue?",
+                                        'buttonTitle' => "Activate selected",
+                                        'buttonIcon' => "mdi:plus-circle-outline",
+                                        'buttonColor' => "success",
+                                    ],
+                                    [
+                                        'icon' => "mdi:minus-circle-outline",
+                                        'title' => "Deactivate abilities",
+                                        'route' => [
+                                            'route' => "apps.abilities.update",
+                                            'attributes' => "off"
+                                        ],
+                                        'method' => "post",
+                                        'list' => 'checkboxes',
+                                        'modalTitle' => "Are you sure you want to erase the selected items?",
+                                        'modalSubTitle' => "The selected item will be erased from the database. This action can't be undone. Do you want to continue?",
+                                        'buttonTitle' => "Erase selected",
+                                        'buttonIcon' => "mdi:minus-circle-outline",
+                                        'buttonColor' => "danger",
+                                
+                                    ],
+                                    [
+                                        'title' => "-",
+                                    ],
+                    
+                                    [
+                                        'icon' => "mdi:minus-circle-outline",
+                                        'title' => "Display",
+                                        'items' => [
+                                            [
+                                                'icon' => "mdi:plus-circle-outline",
+                                                'title' => "Authorized",
+                                                'route' => "apps.abilities.update",
+                                            ],
+                                            [
+                                                'icon' => "mdi:plus-circle-outline",
+                                                'title' => "All",
+                                                'route' => "apps.abilities.update",
+                                            ]
+
+                                        ],
+                                    ],
+                                ],
                                 'titles' => [
                                     [
                                         'type' => 'composite',

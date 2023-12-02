@@ -67,7 +67,7 @@ class AbilitiesController extends Controller
                     'buttonTitle' => "Activate selected",
                     'buttonIcon' => "mdi:plus-circle-outline",
                     'buttonColor' => "success",
-                ],            
+                ],
                 [
                     'icon' => "mdi:minus-circle-outline",
                     'title' => "Deactivate abilities",
@@ -83,7 +83,7 @@ class AbilitiesController extends Controller
                     'buttonIcon' => "mdi:minus-circle-outline",
                     'buttonColor' => "danger",
             
-                ],            
+                ],
             ],
             'titles' => [
                 [
