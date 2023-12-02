@@ -10,7 +10,7 @@
             modelValue: string;
             autocomplete: boolean;
         }>(),{
-            type: 'input',
+            type: 'text',
             autocomplete: false,
         }
     );

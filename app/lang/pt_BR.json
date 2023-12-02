@@ -139,6 +139,8 @@
   "Role edited.": "Função editada.",
   "Error when editing the role.": "Erro ao editar a função.",
   "Role restored.": "Função restaurada.",
+  "{0} Nothing to remove.|[1] A role was removed.|[2,*] :total roles were removed.": "{0} Nada a remover.|[1] Uma função foi removida.|[2,*] :total funções foram removidas.",
+  "{0} Nothing to restore.|[1] A role was restored.|[2,*] :total roles were restored.": "{0} Nada a restaurar.|[1] Uma função foi restaurada.|[2,*] :total funções foram restauradas.",
   "Authorizations management": "Gerenciamento de autorizações",
   "Define which users will have access to this authorization": "Defina quais usuários terão acesso a essa autorização",
   "Abilities management": "Gerenciar abilitações",

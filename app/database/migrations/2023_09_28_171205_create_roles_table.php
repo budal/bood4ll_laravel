@@ -14,6 +14,7 @@ return new class extends Migration {
             $table->id();
             $table->string('name', 100);
             $table->string('description', 255)->nullable();
+            $table->boolean('inalterable')->default(false);
             $table->boolean('active')->default(true);
             $table->boolean('temporary')->default(false);
             $table->date('expires')->nullable();

@@ -4,6 +4,7 @@
   import Checkbox from '@/Components/Checkbox.vue';
   import Dropdown from '@/Components/Dropdown.vue';
   import Modal from '@/Components/Modal.vue';
+  import Toast from '@/Components/Toast.vue';
   import Toggle from '@/Components/Toggle.vue';
   import Search from '@/Components/Table/Search.vue';
   import Sort from '@/Components/Table/Sort.vue';
@@ -187,13 +188,13 @@
     toggleForm.submit(method, isValidUrl(route), {
       preserveScroll: true,
       onSuccess: () => {
-        toast.success(trans(usePage().props.status as string))
+        Toast()
         clear()
         toggleForm.list = []
         closeModal()
       },
       onError: () => {
-        toast.error(trans(usePage().props.status as string))
+        Toast()
         clear()
         toggleForm.list = []
         closeModal()
@@ -221,13 +222,13 @@
     modalForm.submit(modalInfo.value.method, isValidUrl(modalInfo.value.route), {
       preserveScroll: true,
       onSuccess: () => {
-        toast.success(trans(usePage().props.status as string))
+        Toast()
         clear()
         modalForm.list = []
         closeModal()
       },
       onError: () => {
-        toast.error(trans(usePage().props.status as string))
+        Toast()
         clear()
         modalForm.list = []
         closeModal()
@@ -296,12 +297,13 @@
               : 'bg-secondary-light dark:bg-secondary-dark hover:bg-secondary-light-hover hover:dark:bg-secondary-dark-hover border-secondary-light dark:border-secondary-dark'"
           >
             <td class="p-2 w-0">
-              <Checkbox v-if="(routes.showCheckboxes == true || routes.destroyRoute || routes.restoreRoute)" 
+              <Checkbox v-if="routes.showCheckboxes == true || routes.destroyRoute || routes.restoreRoute" 
                 class="w-8 h-8 rounded-lg" 
                 :class="item.deleted_at 
                   ? ''
                   : ''"
                 :checked="selectedItems.has(item)" 
+                :disabled="item.inalterable === true" 
                 :value="item.id" 
                 :id="`checkboxItem-${item.id}`" 
                 @click="toggle(item)" 

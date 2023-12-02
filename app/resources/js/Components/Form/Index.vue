@@ -82,15 +82,16 @@
                                             :value="$t(field.title)" 
                                             :required="field.required" 
                                         />
-                        
+
                                         <TextInput 
                                             v-if="field.type == 'input' || field.type == 'date' || field.type == 'email'"
                                             :id="field.name"
                                             :name="field.name"
                                             :type="field.type"
                                             :mask="field.mask"
-                                            class="mt-1 block w-full appearance-none"
+                                            class="mt-1"
                                             v-model="jsForm[field.name]"
+                                            :disabled="field.disabled ? field.disabled : data.inalterable === true"
                                             :required="field.required"
                                             :autocomplete="field.autocomplete"
                                             :autofocus="field.autofocus"
@@ -103,7 +104,8 @@
                                             :type="field.type"
                                             :color="field.color"
                                             :colorFalse="field.colorFalse"
-                                            class="mt-1 block w-full"
+                                            :disabled="field.disabled ? field.disabled : data.inalterable === true"
+                                            class="mt-1"
                                             v-model="jsForm[field.name]"
                                             @keydown.enter.prevent
                                             @click.prevent
@@ -115,7 +117,9 @@
                                             :name="field.name"
                                             :content="field.content"
                                             class="mt-1 block w-full"
+                                            :class="{ 'opacity-25': data.inalterable === true }"
                                             v-model="jsForm[field.name]"
+                                            :disabled="field.disabled ? field.disabled : data.inalterable === true"
                                             :required="field.required"
                                             :autocomplete="field.autocomplete"
                                             :multiple="field.multiple"
@@ -145,7 +149,9 @@
                         <Button 
                             color="primary" 
                             :class="{ 'opacity-25': jsForm.processing }"
-                            :disabled="jsForm.processing">{{ $t('Save') }}
+                            :disabled="data.inalterable === true || jsForm.processing"
+                        >
+                            {{ $t('Save') }}
                         </Button>
         
                         <Transition

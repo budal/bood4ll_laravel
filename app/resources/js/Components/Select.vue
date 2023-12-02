@@ -109,7 +109,7 @@
     <ComboboxAnchor class="relative w-full min-h-[41px] flex bg-zero-white dark:bg-zero-black border border-zero-light dark:border-zero-dark rounded-md focus-within:outline-none focus-within:ring-2 focus-within:ring-primary-light dark:focus-within:ring-primary-dark focus-within:ring-offset-1 focus-within:ring-offset-primary-light dark:focus-within:ring-offset-primary-dark shadow-primary-light/20 dark:shadow-primary-dark/20 shadow-[0_2px_10px] focus-within:shadow-[0_0_0_2px] focus-within:shadow-primary-light dark:focus-within:shadow-primary-dark transition ease-in-out duration-500 disabled:opacity-25">
       <div class="w-full">
         <div class="flex flex-wrap gap-1 items-center my-[6px] ml-2">
-          <div 
+          <div
             v-for="item in showContent" 
             :class= "multiple ? 
               'p-1 flex items-center text-zero-light dark:text-zero-dark rounded-md placeholder:text-xs sm:placeholder:text-sm text-xs sm:text-sm bg-zero-light dark:bg-zero-dark ring-0 border border-zero-light dark:border-zero-dark' : 
@@ -131,6 +131,7 @@
               v-model="searchInput"
               :id="id"
               :name="name"
+              :required="required && showContent.length === 0"
               autocomplete="off"
               class="p-0 w-full bg-transparent text-ellipsis border-0 outline-0 focus:ring-0 placeholder:text-sm placeholder-primary-dark/20 dark:placeholder-primary-dark/20 text-zero-light dark:text-zero-dark" 
             />

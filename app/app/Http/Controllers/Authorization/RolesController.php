@@ -96,7 +96,6 @@ class RolesController extends Controller
                             'name' => "name",
                             'title' => "Name",
                             'required' => true,
-                            'autofocus' => true,
                         ],
                         [
                             'type' => "input",
@@ -346,35 +345,54 @@ class RolesController extends Controller
             ],
             'data' => $role
         ])
-            ->baseRoute('apps.roles.edit', $role)
-            // ->refreshBackdrop();
+        ->baseRoute('apps.roles.edit', $role)
+        // ->refreshBackdrop()
         ;
     }
-
-
-
-
-
     
     public function destroy(Request $request): RedirectResponse
     {
-        $items = $request->all();
-
         try {
-            $usersToDelete = Role::whereIn('id', $items['ids'])->delete();
+            $total = Role::whereIn('id', $request->list)
+                ->where(function ($query) {
+                    $query->where('inalterable', null);
+                    $query->orWhere('inalterable', false);
+                })->delete();
+
+            return back()->with([
+                'toast_type' => "success",
+                'toast_message' => "{0} Nothing to remove.|[1] A role was removed.|[2,*] :total roles were removed.",
+                'toast_count' => $total,
+                'toast_replacements' => ['total' => $total]
+            ]);
         } catch (Throwable $e) {
             report($e);
      
-            return false;
+            return back()->with([
+                'toast_type' => "error",
+                'toast_message' => "Error on remove selected items.",
+            ]);
         }
-        
-        return back()->with('status', 'Users removed succesfully!');
     }
 
-    public function restore(Role $role): RedirectResponse
+    public function restore(Request $request): RedirectResponse
     {
-        $role->restore();
+        try {
+            $total = Role::whereIn('id', $request->list)->restore();
 
-        return Redirect::back()->with('status', 'Role restored.');
+            return back()->with([
+                'toast_type' => "success",
+                'toast_message' => "{0} Nothing to restore.|[1] A role was restored.|[2,*] :total roles were restored.",
+                'toast_count' => $total,
+                'toast_replacements' => ['total' => $total]
+            ]);
+        } catch (Throwable $e) {
+            report($e);
+     
+            return back()->with([
+                'toast_type' => "error",
+                'toast_message' => "Error on restore selected items.",
+            ]);
+        }
     }
 }
