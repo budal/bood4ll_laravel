@@ -108,6 +108,8 @@ class Unit extends Model
         $trash = array_filter($filters, function ($key){ return(strpos($key,'trash') !== false); }, ARRAY_FILTER_USE_KEY);
         $filterTrash = reset($search);
 
+        
+
         $query->when($filterSearch ?? null, function ($query, $search) {
             $query->where(function ($query) use ($search) {
                 $query->where('name', 'ilike', '%'.$search.'%');

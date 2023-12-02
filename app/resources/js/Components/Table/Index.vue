@@ -264,16 +264,12 @@
     @close="closeModal"
   >
     <template #buttons>
-      <div 
-        class="mt-6 flex justify-end"
-      >
         <Button color="secondary" @click="closeModal" start-icon="mdi:cancel-outline">
           {{ $t('Cancel') }}
         </Button>
         <Button :color="modalInfo.buttonColor" @click="submitModal" :start-icon="modalInfo.buttonIcon" class="ml-3" :class="{ 'opacity-25': modalForm.processing }" :disabled="modalForm.processing">
           {{ $t(modalInfo.buttonTitle) }}
         </Button>
-      </div>
     </template>
   </Modal>
 

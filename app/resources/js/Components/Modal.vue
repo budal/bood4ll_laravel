@@ -17,10 +17,11 @@
             title?: string;
             subTitle?: string;
             open?: boolean;
-            maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+            maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | '6xl' | '7xl';
             closeable?: boolean;
         }>(),
         {
+            theme: 'zero',
             title: '',
             subtitle: '',
             open: false,
@@ -44,6 +45,11 @@
             lg: 'sm:max-w-lg',
             xl: 'sm:max-w-xl',
             '2xl': 'sm:max-w-2xl',
+            '3xl': 'sm:max-w-3xl',
+            '4xl': 'sm:max-w-4xl',
+            '5xl': 'sm:max-w-5xl',
+            '6xl': 'sm:max-w-6xl',
+            '7xl': 'sm:max-w-7xl',
         }[props.maxWidth];
     });
 </script>
@@ -53,7 +59,7 @@
         <DialogPortal>
             <DialogOverlay class="backdrop-blur-sm bg-black/20 data-[state=open]:animate-overlayShow data-[state=close]:animate-overlayHide fixed inset-0 z-30" />
             <DialogContent
-                class="data-[state=open]:animate-contentShow data-[state=close]:animate-contentHide fixed top-[50%] left-[50%] max-h-[85vh] w-full max-w-md translate-x-[-50%] translate-y-[-50%] rounded-md p-[20px] shadow-primary-light/20 dark:shadow-primary-dark/20 shadow-[0_2px_10px] focus:outline-none z-[100]"
+                class="data-[state=open]:animate-contentShow data-[state=close]:animate-contentHide fixed top-[50%] left-[50%] max-h-[85vh] w-full max-w-md translate-x-[-50%] translate-y-[-50%] rounded-md p-2 sm:p-[20px] shadow-primary-light/20 dark:shadow-primary-dark/20 shadow-[0_2px_10px] focus:outline-none z-[100]"
                 :class="`${maxWidthClass} bg-${theme}-light-hover dark:bg-${theme}-dark-hover`"
                 @escapeKeyDown="close"
                 @pointerDownOutside="close"
@@ -67,7 +73,11 @@
                     </p>
                     <slot />
                 </DialogDescription>
-                <slot name="buttons" />
+                <div 
+                    class="mt-6 flex justify-end"
+                >
+                    <slot name="buttons" />
+                </div>
                 <DialogClose
                     class="absolute top-[10px] right-[10px] inline-flex h-[25px] w-[25px] appearance-none items-center justify-center rounded-full focus:shadow-[0_0_0_2px] focus:outline-none"
                     :class="`text-${theme}-light dark:text-${theme}-dark hover:bg-${theme}-light-hover dark:hover:bg-${theme}-dark-hover`"

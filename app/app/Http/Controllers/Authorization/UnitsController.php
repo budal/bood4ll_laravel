@@ -62,7 +62,7 @@ class UnitsController extends Controller
                 ],
                 [
                     'type' => 'simple',
-                    'title' => 'Staff',
+                    'title' => 'Local',
                     'field' => 'users_count',
                 ],
                 [
