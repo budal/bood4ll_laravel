@@ -194,7 +194,7 @@ class RolesController extends Controller
                                         'list' => 'checkboxes',
                                         'listCondition' => false,
                                         'modalTitle' => "Are you sure you want to authorize the selected users?|Are you sure you want to authorize the selected users?",
-                                        'modalSubTitle' => "The selected user will have the rights to access the data in this role. Do you want to continue?|The selected user will have the rights to access the data in this role. Do you want to continue?",
+                                        'modalSubTitle' => "The selected user will have the rights to access this role. Do you want to continue?|The selected user will have the rights to access this role. Do you want to continue?",
                                         'buttonTitle' => "Authorize",
                                         'buttonIcon' => "mdi:plus-circle-outline",
                                         'buttonColor' => "success",
@@ -213,7 +213,7 @@ class RolesController extends Controller
                                         'list' => 'checkboxes',
                                         'listCondition' => true,
                                         'modalTitle' => "Are you sure you want to deauthorize the selected users?|Are you sure you want to deauthorize the selected users?",
-                                        'modalSubTitle' => "The selected user will lose the rights to access the data in this role. Do you want to continue?|The selected users will lose the rights to access the data in this role. Do you want to continue?",
+                                        'modalSubTitle' => "The selected user will lose the rights to access this role. Do you want to continue?|The selected users will lose the rights to access this role. Do you want to continue?",
                                         'buttonTitle' => "Deauthorize",
                                         'buttonIcon' => "mdi:minus-circle-outline",
                                         'buttonColor' => "danger",
@@ -425,16 +425,16 @@ class RolesController extends Controller
 
                 return Redirect::back()->with([
                     'toast_type' => 'success',
-                    'toast_message' => "{0} Nothing to activate.|[1] Item activated successfully.|[2,*] :total items successfully activated.",
-                    'toast_count' => $total,
-                    'toast_replacements' => ['total' => $total]
+                    'toast_message' => "{0} Nobody to authorize.|[1] User successfully authorized.|[2,*] :total users successfully authorized.",
+                    'toast_count' => count($request->list),
+                    'toast_replacements' => ['total' => count($request->list)]
                 ]);
             } elseif ($mode == "off") {
                 $total = $role->users()->detach($request->list);
 
                 return Redirect::back()->with([
                     'toast_type' => 'success',
-                    'toast_message' => "{0} Nothing to deactivate.|[1] Item deactivated successfully.|[2,*] :total items successfully deactivated.",
+                    'toast_message' => "{0} Nobody to deauthorize.|[1] User successfully deauthorized.|[2,*] :total users successfully deauthorized.",
                     'toast_count' => $total,
                     'toast_replacements' => ['total' => $total]
                 ]);
