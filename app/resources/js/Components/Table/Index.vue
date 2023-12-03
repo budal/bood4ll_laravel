@@ -203,6 +203,7 @@
 
     toggleForm.submit(method, isValidUrl(route), {
       preserveScroll: true,
+     
       onSuccess: () => {
         Toast()
         clear()
@@ -237,6 +238,8 @@
 
     modalForm.submit(modalInfo.value.method, isValidUrl(modalInfo.value.route), {
       preserveScroll: true,
+      preserveState: false,
+
       onSuccess: () => {
         Toast()
         clear()
@@ -341,7 +344,7 @@
               />
 
               <Toggle 
-                v-if="content.type == 'toggle'" 
+                v-if="content.type == 'toggle'"
                 :id="item.id" 
                 :name="item.name" 
                 :color="content.color"
