@@ -74,15 +74,22 @@ class RolesController extends Controller
     {
         $abilities = Ability::sort("name")->get();
 
-        $items = $role->users()
-            ->filter($request->all('search', 'sorted', 'trashed'))
-            ->paginate(20)
-            ->onEachSide(2)
-            ->appends($request->all('search', 'sorted', 'trashed'))
-            ->through(function($item){
-                $item->id = $item->pivot->role_id;
-                return $item;
-            });
+        if ($request->all) {
+            $items = User::filter($request->all('search', 'sorted', 'trashed'))
+                ->paginate(20)
+                ->onEachSide(2)
+                ->appends($request->all('search', 'sorted', 'trashed'));
+        } else {
+            $items = $role->users()
+                ->filter($request->all('search', 'sorted', 'trashed'))
+                ->paginate(20)
+                ->onEachSide(2)
+                ->appends($request->all('search', 'sorted', 'trashed'))
+                ->through(function($item){
+                    $item->id = $item->pivot->role_id;
+                    return $item;
+                });
+        }
 
         return [
             [
@@ -156,45 +163,44 @@ class RolesController extends Controller
                 'title' => "Authorizations management",
                 'subtitle' => "Define which users will have access to this authorization",
                 'condition' => $role->id <> null,
-                'cols' => 2,
                 'fields' => [
                     [
                         [
                             'type' => "table",
                             'name' => "users",
-                            'span' => 2,
                             'content' => [
                                 'routes' => [
-                                    'destroyRoute' => "apps.roles.destroy",
+                                    'showCheckboxes' => true,
                                 ],
                                 'menu' => [
                                     [
                                         'icon' => "mdi:plus-circle-outline",
-                                        'title' => "Activate abilities",
+                                        'title' => "Authorize",
                                         'route' => [
                                             'route' => "apps.abilities.update",
                                             'attributes' => "on"
                                         ],
                                         'method' => "post",
                                         'list' => 'checkboxes',
-                                        'modalTitle' => "Are you sure you want to activate the selected items?",
-                                        'modalSubTitle' => "The selected items will be activated. Do you want to continue?",
-                                        'buttonTitle' => "Activate selected",
+                                        'modalTitle' => "Are you sure you want to authorize the selected users?|Are you sure you want to authorize the selected users?",
+                                        'modalSubTitle' => "The selected user will have the rights to access the data in this role. Do you want to continue?|The selected user will have the rights to access the data in this role. Do you want to continue?",
+                                        'buttonTitle' => "Authorize",
                                         'buttonIcon' => "mdi:plus-circle-outline",
                                         'buttonColor' => "success",
                                     ],
                                     [
                                         'icon' => "mdi:minus-circle-outline",
-                                        'title' => "Deactivate abilities",
+                                        'title' => "Deauthorize",
                                         'route' => [
                                             'route' => "apps.abilities.update",
                                             'attributes' => "off"
                                         ],
                                         'method' => "post",
                                         'list' => 'checkboxes',
-                                        'modalTitle' => "Are you sure you want to erase the selected items?",
-                                        'modalSubTitle' => "The selected item will be erased from the database. This action can't be undone. Do you want to continue?",
-                                        'buttonTitle' => "Erase selected",
+                                        'listCondition' => false,
+                                        'modalTitle' => "Are you sure you want to deauthorize the selected users?|Are you sure you want to deauthorize the selected users?",
+                                        'modalSubTitle' => "The selected user will lose the rights to access the data in this role. Do you want to continue?|The selected user will have the rights to access the data in this role. Do you want to continue?",
+                                        'buttonTitle' => "Deauthorize",
                                         'buttonIcon' => "mdi:minus-circle-outline",
                                         'buttonColor' => "danger",
                                 
@@ -204,18 +210,24 @@ class RolesController extends Controller
                                     ],
                     
                                     [
-                                        'icon' => "mdi:eye-outline",
-                                        'title' => "Display",
+                                        'icon' => "mdi:format-list-checkbox",
+                                        'title' => "List",
                                         'items' => [
                                             [
-                                                'icon' => "mdi:key-outline",
-                                                'title' => "Authorized",
-                                                'route' => "apps.abilities.update",
+                                                'icon' => "mdi:account-key-outline",
+                                                'title' => "Authorized users",
+                                                'route' => [
+                                                    'route' => "apps.roles.edit",
+                                                    'attributes' => $role->id
+                                                ],
                                             ],
                                             [
-                                                'icon' => "mdi:format-list-checkbox",
-                                                'title' => "All",
-                                                'route' => "apps.abilities.update",
+                                                'icon' => "mdi:account-multiple-outline",
+                                                'title' => "All users",
+                                                'route' => [
+                                                    'route' => "apps.roles.edit",
+                                                    'attributes' => [$role->id, 'all']
+                                                ],
                                             ]
 
                                         ],
@@ -227,6 +239,17 @@ class RolesController extends Controller
                                         'title' => 'Role',
                                         'field' => 'name',
                                         'fields' => ['name', 'email'],
+                                    ],
+                                    [
+                                        'type' => 'toggle',
+                                        'title' => 'Active',
+                                        'field' => 'checked',
+                                        'disableSort' => true,
+                                        'route' => [
+                                            'route' => "apps.abilities.update",
+                                            'attributes' => "toggle",
+                                        ],
+                                        'method' => 'post',
                                     ],
                                 ],
                                 'items' => $items
