@@ -404,9 +404,39 @@ class RolesController extends Controller
         ]);
     }
 
-    public function authorization(Request $request): RedirectResponse
+    public function authorization(Request $request, Role $role, $mode): RedirectResponse
     {
-        dd($request);
+        $user = User::whereIn('id', $request->list)->first();
+
+        try {
+            if ($mode == "toggle") {
+                $user ? $user->roles()->attach($role) : $user->roles()->detach($role);
+
+                return Redirect::back()->with([
+                    'toast_type' => 'success',
+                    'toast_message' => $user 
+                        ? "The ability ':ability' was deactivated."
+                        : "The ability ':ability' was activated." ,
+                    'toast_replacements' => ['ability' => $user->name]
+                ]);
+            } elseif ($mode == "on") {
+                return Redirect::route('apps.abilities.index')->with([
+                    'toast_type' => 'success',
+                    'toast_message' => "{0} Nothing to activate.|[1] Item activated successfully.|[2,*] :total items successfully activated.",
+                    'toast_count' => $ability->total,
+                    'toast_replacements' => ['total' => $ability->total]
+                ]);
+            } elseif ($mode == "off") {
+                return Redirect::route('apps.abilities.index')->with([
+                    'toast_type' => 'success',
+                    'toast_message' => "{0} Nothing to deactivate.|[1] Item deactivated successfully.|[2,*] :total items successfully deactivated.",
+                    'toast_count' => $ability->total,
+                    'toast_replacements' => ['total' => $ability->total]
+                ]);
+            }
+        } catch (Throwable $e) {
+            return Redirect::back()->with('status', "Error on edit selected item.|Error on edit selected items.");
+        }
     }
 
     public function destroy(Request $request): RedirectResponse
