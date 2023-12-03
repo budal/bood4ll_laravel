@@ -92,7 +92,7 @@ class RolesController extends Controller
                 ->onEachSide(2)
                 ->appends($request->all('search', 'sorted', 'trashed'))
                 ->through(function($item){
-                    $item->id = $item->pivot->role_id;
+                    // $item->id = $item->pivot->role_id;
                     $item->checked = true;
                     return $item;
                 });
@@ -184,11 +184,15 @@ class RolesController extends Controller
                                         'icon' => "mdi:plus-circle-outline",
                                         'title' => "Authorize",
                                         'route' => [
-                                            'route' => "apps.abilities.update",
-                                            'attributes' => "on"
+                                            'route' => "apps.roles.authorization",
+                                            'attributes' => [
+                                                $role->id,
+                                                "on",
+                                            ]
                                         ],
                                         'method' => "post",
                                         'list' => 'checkboxes',
+                                        'listCondition' => false,
                                         'modalTitle' => "Are you sure you want to authorize the selected users?|Are you sure you want to authorize the selected users?",
                                         'modalSubTitle' => "The selected user will have the rights to access the data in this role. Do you want to continue?|The selected user will have the rights to access the data in this role. Do you want to continue?",
                                         'buttonTitle' => "Authorize",
@@ -199,12 +203,15 @@ class RolesController extends Controller
                                         'icon' => "mdi:minus-circle-outline",
                                         'title' => "Deauthorize",
                                         'route' => [
-                                            'route' => "apps.abilities.update",
-                                            'attributes' => "off"
+                                            'route' => "apps.roles.authorization",
+                                            'attributes' => [
+                                                $role->id,
+                                                "off",
+                                            ]
                                         ],
                                         'method' => "post",
                                         'list' => 'checkboxes',
-                                        'listCondition' => false,
+                                        'listCondition' => true,
                                         'modalTitle' => "Are you sure you want to deauthorize the selected users?|Are you sure you want to deauthorize the selected users?",
                                         'modalSubTitle' => "The selected user will lose the rights to access the data in this role. Do you want to continue?|The selected user will have the rights to access the data in this role. Do you want to continue?",
                                         'buttonTitle' => "Deauthorize",
@@ -253,8 +260,11 @@ class RolesController extends Controller
                                         'field' => 'checked',
                                         'disableSort' => true,
                                         'route' => [
-                                            'route' => "apps.abilities.update",
-                                            'attributes' => "toggle",
+                                            'route' => "apps.roles.authorization",
+                                            'attributes' => [
+                                                $role->id,
+                                                "toggle",
+                                            ],
                                         ],
                                         'method' => 'post',
                                         'color' => 'info',
@@ -392,6 +402,11 @@ class RolesController extends Controller
             'toast_message' => "{0} Nothing to edit.|[1] Item edited successfully.|[2,*] :total items successfully edited.",
             'toast_count' => 1,
         ]);
+    }
+
+    public function authorization(Request $request): RedirectResponse
+    {
+        dd($request);
     }
 
     public function destroy(Request $request): RedirectResponse

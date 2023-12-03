@@ -86,6 +86,7 @@ Route::middleware('auth')->group(function () {
                 Route::get('/permissions/roles/edit/{role}/adduser', 'adduser')->name('roles.edit.adduser')->middleware(['password.confirm'])->breadcrumb('Role edition', 'apps.roles.index');
                 Route::get('/permissions/roles/edit/{role}/deleteuser', 'deleteuser')->name('roles.edit.deleteuser')->middleware(['password.confirm']);
                 Route::patch('/permissions/roles/edit/{role}', 'update')->name('roles.update')->middleware(['password.confirm']);
+                Route::post('/permissions/roles/authorization/{role}/{mode?}', 'authorization')->name('roles.authorization')->middleware(['password.confirm']);
                 Route::delete('/permissions/roles/destroy', 'destroy')->name('roles.destroy')->middleware(['password.confirm']);
                 Route::delete('/permissions/roles/forcedestroy', 'forceDestroy')->name('roles.forcedestroy')->middleware(['password.confirm']);
                 Route::post('/permissions/roles/restore', 'restore')->name('roles.restore')->middleware(['password.confirm']);
