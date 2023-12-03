@@ -267,24 +267,33 @@ class RolesController extends Controller
                 'remove_on_change_unit' => $request->remove_on_change_unit,
             ]);
         } catch(Throwable $e) {
+            report($e);
             DB::rollback();
 
-            report($e);
-            return Redirect::back()->with('status', "Error when inserting a new role.");
+            return Redirect::back()->with([
+                'toast_type' => "error",
+                'toast_message' => "Error on save this item.",
+            ]);
         }
         
         try {
             $role->abilities()->sync($request->abilities);
         } catch(\Exception $e) {
+            report($e);
             DB::rollback();
-            dd($e);
 
-            return Redirect::back()->with('status', "Error when syncing abilities to the role.");
+            return Redirect::back()->with([
+                'toast_type' => "error",
+                'toast_message' => "Error when syncing abilities to the role.",
+            ]);
         }
 
         DB::commit();
 
-        return Redirect::route('apps.roles.edit', $role->id)->with('status', 'Role created.');
+        return Redirect::route('apps.roles.edit', $role->id)->with([
+            'toast_type' => "success",
+            'toast_message' => "Item saved.",
+        ]);
     }
     
     public function edit(Request $request, Role $role): Response
@@ -326,6 +335,7 @@ class RolesController extends Controller
                     'remove_on_change_unit' => $request->remove_on_change_unit,
                 ]);
         } catch (\Exception $e) {
+            report($e);
             DB::rollback();
             
             return Redirect::back()->with('status', "Error when editing the role.");
@@ -334,9 +344,13 @@ class RolesController extends Controller
         try {
             $role->abilities()->sync($request->abilities);
         } catch (\Exception $e) {
+            report($e);
             DB::rollback();
 
-            return Redirect::back()->with('status', "Error when syncing abilities to the role.");
+            return Redirect::back()->with([
+                'toast_type' => "error",
+                'toast_message' => "Error when syncing abilities to the role.",
+            ]);
         }
 
         DB::commit();

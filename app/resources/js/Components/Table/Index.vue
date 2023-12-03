@@ -8,9 +8,8 @@
   import Toggle from '@/Components/Toggle.vue';
   import Search from '@/Components/Table/Search.vue';
   import Sort from '@/Components/Table/Sort.vue';
-  import { trans } from 'laravel-vue-i18n';
-  import { toast } from 'vue3-toastify';
-  import { router, useForm, usePage } from '@inertiajs/vue3';
+  import { router, useForm } from '@inertiajs/vue3';
+  import { transChoice } from 'laravel-vue-i18n';
   import { ref, computed, reactive } from 'vue'
 
   const props = withDefaults(
@@ -98,9 +97,9 @@
         list: trashedItems,
         route: props.routes.restoreRoute,
         method: "post",
-        modalTitle: "Are you sure you want to restore the selected items?",
-        modalSubTitle: "The selected item will be restored to the active items. Do you want to continue?",
-        buttonTitle: "Restore selected",
+        modalTitle: "Are you sure you want to restore the selected item?|Are you sure you want to restore the selected items?",
+        modalSubTitle: "The selected item will be restored from the active items. Do you want to continue?|The selected items will be restored from the active items. Do you want to continue?",
+        buttonTitle: "Restore selected|Restore selected",
         buttonIcon: "mdi:backup-restore",
         buttonColor: "warning",
       })
@@ -114,9 +113,9 @@
         list: activeItems,
         route: props.routes.destroyRoute,
         method: "delete",
-        modalTitle: "Are you sure you want to remove the selected items?",
-        modalSubTitle: "The selected items will be removed from the active items. Do you want to continue?",
-        buttonTitle: "Erase selected",
+        modalTitle: "Are you sure you want to remove the selected item?|Are you sure you want to remove the selected items?",
+        modalSubTitle: "The selected item will be removed from the active items. Do you want to continue?|The selected items will be removed from the active items. Do you want to continue?",
+        buttonTitle: "Remove selected|Remove selected",
         buttonIcon: "mdi:delete-sweep-outline",
         buttonColor: "danger",
       })
@@ -131,9 +130,9 @@
         route: props.routes.forceDestroyRoute,
         method: "delete",
         modalTheme: "danger",
-        modalTitle: "Are you sure you want to erase the selected items?",
-        modalSubTitle: "The selected item will be erased from the database. This action can't be undone. Do you want to continue?",
-        buttonTitle: "Erase selected",
+        modalTitle: "Are you sure you want to erase the selected item?|Are you sure you want to erase the selected items?",
+        modalSubTitle: "The selected item will be erased from the active items. Do you want to continue?|The selected items will be erased from the active items. Do you want to continue?",
+        buttonTitle: "Erase selected|Erase selected",
         buttonIcon: "mdi:delete-sweep-outline",
         buttonColor: "danger",
       })
@@ -260,6 +259,7 @@
     :open="confirmingDeletionModal"
     :title="$t(modalInfo.modalTitle)" 
     :subTitle="$t(modalInfo.modalSubTitle)" 
+    :items="modalInfo.list.size" 
     :theme="modalInfo?.modalTheme || 'secondary'"
     @close="closeModal"
   >
@@ -268,7 +268,7 @@
           {{ $t('Cancel') }}
         </Button>
         <Button :color="modalInfo.buttonColor" @click="submitModal" :start-icon="modalInfo.buttonIcon" class="ml-3" :class="{ 'opacity-25': modalForm.processing }" :disabled="modalForm.processing">
-          {{ $t(modalInfo.buttonTitle) }}
+          {{ transChoice(modalInfo.buttonTitle, modalInfo.list.size) }}
         </Button>
     </template>
   </Modal>

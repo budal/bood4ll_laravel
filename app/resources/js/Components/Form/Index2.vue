@@ -5,10 +5,10 @@
     import Select from '@/Components/Select.vue';
     import Table from '@/Components/Table/Index.vue';
     import TextInput from '@/Components/TextInput.vue';
-    import Toast from '@/Components/Toast.vue';
     import Toggle from '@/Components/Toggle.vue';
-    import { useForm } from '@inertiajs/vue3';
-    import Tabs from '../Tabs.vue';
+    import { useForm, usePage } from '@inertiajs/vue3';
+    import { toast } from 'vue3-toastify';
+    import { trans } from 'laravel-vue-i18n';
 
     const props = defineProps<{
         form: any;
@@ -37,10 +37,10 @@
         jsForm.submit(props.routes[formId].method, props.routes[formId].route, {
             preserveScroll: true,
             onSuccess: () => {
-                Toast()
+                toast.success(trans(usePage().props.status as string));
             },
             onError: () => {
-                Toast()
+                toast.error('123');
 
                     // if (jsForm.errors.password) {
                     //     jsForm.reset('password', 'password_confirmation');

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { computed } from 'vue';
+    import { Icon } from '@iconify/vue'
     import {
         DialogClose,
         DialogContent,
@@ -9,13 +9,15 @@
         DialogRoot,
         DialogTitle,
     } from 'radix-vue'
-    import { Icon } from '@iconify/vue'
+    import { transChoice } from 'laravel-vue-i18n';
+    import { computed } from 'vue';
 
     const props = withDefaults(
         defineProps<{
             theme?: 'zero' | 'primary' | 'secondary' | 'danger' | 'success' | 'warning' | 'info' ;
             title?: string;
             subTitle?: string;
+            items?: number;
             open?: boolean;
             maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | '6xl' | '7xl';
             closeable?: boolean;
@@ -24,6 +26,7 @@
             theme: 'zero',
             title: '',
             subtitle: '',
+            items: 0,
             open: false,
             maxWidth: '2xl',
             closeable: true,
@@ -65,11 +68,11 @@
                 @pointerDownOutside="close"
             >
                 <DialogTitle v-if="title" :class="`text-${theme}-light dark:text-${theme}-dark m-0 text-[20px] font-semibold`">
-                    {{ title }}
+                    {{ transChoice(title, items) }}
                 </DialogTitle>
                 <DialogDescription class="mt-[10px] mb-5 text-[15px] leading-normal">
                     <p  v-if="subTitle" :class="`mt-1 text-sm text-${theme}-light/70 dark:text-${theme}-dark/70`">
-                    {{ $t(subTitle) }}
+                    {{ transChoice(subTitle, items) }}
                     </p>
                     <slot />
                 </DialogDescription>

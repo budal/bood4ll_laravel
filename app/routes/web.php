@@ -74,6 +74,7 @@ Route::middleware('auth')->group(function () {
                 Route::get('/users/edit/{user}', 'edit')->name('users.edit')->middleware(['password.confirm'])->breadcrumb('User edition', 'apps.users.index');
                 Route::patch('/users/edit/{user}', 'update')->name('users.update')->middleware(['password.confirm']);
                 Route::delete('/users/destroy', 'destroy')->name('users.destroy')->middleware(['password.confirm']);
+                Route::delete('/users/forcedestroy', 'forceDestroy')->name('users.forcedestroy')->middleware(['password.confirm']);
                 Route::post('/users/restore', 'restore')->name('users.restore')->middleware(['password.confirm']);
             });
 

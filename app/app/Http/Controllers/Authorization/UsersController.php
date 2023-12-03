@@ -27,6 +27,7 @@ class UsersController extends Controller
                 'createRoute' => "apps.users.create",
                 'editRoute' => "apps.users.edit",
                 'destroyRoute' => "apps.users.destroy",
+                'forceDestroyRoute' => "apps.users.forcedestroy",
                 'restoreRoute' => "apps.users.restore",
             ],
             'titles' => [
@@ -153,7 +154,11 @@ class UsersController extends Controller
 
         // $request->user()->save();
 
-        return Redirect::route('apps.users.index')->with('status', 'User created.');
+        return Redirect::route('apps.users.index')->with([
+            'toast_type' => "success",
+            'toast_message' => "Item added.|Items added.",
+            'toast_count' => 1,
+        ]);
     }
     
     public function edit(User $user): Response
@@ -172,8 +177,7 @@ class UsersController extends Controller
 
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        dd($request);
-        
+        // dd($request);
         // $request->user()->fill($request->validated());
 
         // if ($request->user()->isDirty('email')) {
@@ -182,29 +186,70 @@ class UsersController extends Controller
 
         // $request->user()->save();
 
-        // return Redirect::route('profile.edit');
-        return Redirect::back()->with('status', 'User edited.');
+        return Redirect::back()->with([
+            'toast_type' => "success",
+            'toast_message' => "Item edited.|Items edited.",
+            'toast_count' => 1,
+        ]);
     }
 
     public function destroy(Request $request): RedirectResponse
     {
         try {
-            User::whereIn('id', $request->list)->delete();
-            return back()->with('status', 'Items removed succesfully!');
+            $total = User::whereIn('id', $request->list)->delete();
+            return back()->with([
+                'toast_type' => "success",
+                'toast_message' => "{0} Nothing to remove.|[1] An item removed successfully.|[2,*] :total items successfully removed.",
+                'toast_count' => $total,
+                'toast_replacements' => ['total' => $total]
+            ]);
         } catch (Throwable $e) {
             report($e);
-            return back()->with('status', 'Error on remove selected items.');
+            return back()->with([
+                'toast_type' => "error",
+                'toast_message' => "Error on remove selected item.|Error on remove selected items.",
+                'toast_count' => count($request->list),
+            ]);
+        }
+    }
+
+    public function forceDestroy(Request $request): RedirectResponse
+    {
+        try {
+            $total = User::whereIn('id', $request->list)->forceDelete();
+            return back()->with([
+                'toast_type' => "success",
+                'toast_message' => "{0} Nothing to erase.|[1] An item erased successfully.|[2,*] :total items successfully erased.",
+                'toast_count' => $total,
+                'toast_replacements' => ['total' => $total]
+            ]);
+        } catch (Throwable $e) {
+            report($e);
+            return back()->with([
+                'toast_type' => "error",
+                'toast_message' => "Error on erase selected item.|Error on erase selected items.",
+                'toast_count' => count($request->list),
+            ]);
         }
     }
 
     public function restore(Request $request): RedirectResponse
     {
         try {
-            User::whereIn('id', $request->list)->restore();
-            return back()->with('status', 'Items restored succesfully!');
+            $total = User::whereIn('id', $request->list)->restore();
+            return back()->with([
+                'toast_type' => "success",
+                'toast_message' => "{0} Nothing to restore.|[1] An item restored successfully.|[2,*] :total items successfully restored.",
+                'toast_count' => $total,
+                'toast_replacements' => ['total' => $total]
+            ]);
         } catch (Throwable $e) {
             report($e);
-            return back()->with('status', 'Erro ao restaurar os itens selecionados.');
+            return back()->with([
+                'toast_type' => "error",
+                'toast_message' => "Error on restore selected item.|Error on restore selected items.",
+                'toast_count' => count($request->list),
+            ]);
         }
     }
 }
