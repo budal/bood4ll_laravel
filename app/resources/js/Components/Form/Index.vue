@@ -6,9 +6,9 @@
     import Select from '@/Components/Select.vue';
     import Table from '@/Components/Table/Index.vue';
     import TextInput from '@/Components/TextInput.vue';
+    import Tabs from '@/Components/Tabs.vue';
     import Toggle from '@/Components/Toggle.vue';
     import { useForm } from '@inertiajs/vue3';
-    import Tabs from '../Tabs.vue';
 
     const props = defineProps<{
         form: any;
