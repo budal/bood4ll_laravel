@@ -77,6 +77,7 @@ class RolesController extends Controller
         if ($request->all) {
             $items = User::filter($request->all('search', 'sorted', 'trashed'))
                 ->with("roles")
+                ->sort($request->sorted ?? "name")
                 ->paginate(20)
                 ->onEachSide(2)
                 ->appends($request->all('search', 'sorted', 'trashed'))
@@ -88,6 +89,7 @@ class RolesController extends Controller
         } else {
             $items = $role->users()
                 ->filter($request->all('search', 'sorted', 'trashed'))
+                ->sort($request->sorted ?? "name")
                 ->paginate(20)
                 ->onEachSide(2)
                 ->appends($request->all('search', 'sorted', 'trashed'))
