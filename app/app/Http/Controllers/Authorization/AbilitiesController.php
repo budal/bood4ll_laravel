@@ -97,7 +97,7 @@ class AbilitiesController extends Controller
                 [
                     'type' => 'toggle',
                     'title' => 'Active',
-                    'field' => 'id',
+                    'field' => 'checked',
                     'route' => [
                         'route' => "apps.abilities.update",
                         'attributes' => "toggle",

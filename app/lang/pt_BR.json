@@ -18,6 +18,8 @@
   "Select one or more options": "Selecione uma ou mais opções",
   "'Esc' to clear": "'Esc' para limpar",
   "Total": "Total",
+  "Active": "Ativo",
+  "Inactive": "Ativo",
   
   "Current Password": "Senha atual",
   "New Password": "Nova Senha",
@@ -189,9 +191,6 @@
   "There are no abilities to select. Click here to manage them.": "Não há abilitações para selecionar. Clique aqui para gerenciá-las.",
   "The ability ':ability' was activated.": "A abilitação ':ability' foi ativada.",
   "The ability ':ability' was deactivated.": "A abilitação ':ability' foi desativada.",
-  "A total of ':total' abilities were activated.": "Um total de ':total' abilitações foram ativadas.",
-  "A total of ':total' abilities were deactivated.": "Um total de ':total' abilitações foram desativadas.",
-  "Error on activate/inactivate the ability.": "Erro ao ativar/desativar a abilitação.",
   "Define the users who have access to this authorization": "Defina os usuários que terão acesso a essa autorização",
 
   "Units": "Unidades",
