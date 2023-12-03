@@ -213,7 +213,7 @@ class RolesController extends Controller
                                         'list' => 'checkboxes',
                                         'listCondition' => true,
                                         'modalTitle' => "Are you sure you want to deauthorize the selected users?|Are you sure you want to deauthorize the selected users?",
-                                        'modalSubTitle' => "The selected user will lose the rights to access the data in this role. Do you want to continue?|The selected user will have the rights to access the data in this role. Do you want to continue?",
+                                        'modalSubTitle' => "The selected user will lose the rights to access the data in this role. Do you want to continue?|The selected users will lose the rights to access the data in this role. Do you want to continue?",
                                         'buttonTitle' => "Deauthorize",
                                         'buttonIcon' => "mdi:minus-circle-outline",
                                         'buttonColor' => "danger",
@@ -406,32 +406,37 @@ class RolesController extends Controller
 
     public function authorization(Request $request, Role $role, $mode): RedirectResponse
     {
-        $user = User::whereIn('id', $request->list)->first();
+        $hasRole = $role->users()->whereIn('user_id', $request->list)->first();
 
         try {
             if ($mode == "toggle") {
-                $user ? $user->roles()->attach($role) : $user->roles()->detach($role);
+                $user = User::whereIn('id', $request->list)->first();
+                $hasRole ? $role->users()->detach($request->list) : $role->users()->attach($request->list);
 
                 return Redirect::back()->with([
                     'toast_type' => 'success',
-                    'toast_message' => $user 
-                        ? "The ability ':ability' was deactivated."
-                        : "The ability ':ability' was activated." ,
-                    'toast_replacements' => ['ability' => $user->name]
+                    'toast_message' => $hasRole 
+                        ? "The user ':user' has been disabled in the ':role' role."
+                        : "The user ':user' was enabled in the ':role' role." ,
+                    'toast_replacements' => ['user' => $user->name, 'role' => $role->name]
                 ]);
             } elseif ($mode == "on") {
-                return Redirect::route('apps.abilities.index')->with([
+                $total = $role->users()->attach($request->list);
+
+                return Redirect::back()->with([
                     'toast_type' => 'success',
                     'toast_message' => "{0} Nothing to activate.|[1] Item activated successfully.|[2,*] :total items successfully activated.",
-                    'toast_count' => $ability->total,
-                    'toast_replacements' => ['total' => $ability->total]
+                    'toast_count' => $total,
+                    'toast_replacements' => ['total' => $total]
                 ]);
             } elseif ($mode == "off") {
-                return Redirect::route('apps.abilities.index')->with([
+                $total = $role->users()->detach($request->list);
+
+                return Redirect::back()->with([
                     'toast_type' => 'success',
                     'toast_message' => "{0} Nothing to deactivate.|[1] Item deactivated successfully.|[2,*] :total items successfully deactivated.",
-                    'toast_count' => $ability->total,
-                    'toast_replacements' => ['total' => $ability->total]
+                    'toast_count' => $total,
+                    'toast_replacements' => ['total' => $total]
                 ]);
             }
         } catch (Throwable $e) {
