@@ -404,9 +404,9 @@
       <div>
         <nav class="inline-flex gap-[2px]" aria-label="Pagination">
           <Button 
-            v-if="items.prev_page_url" 
+            v-if="items.current_page > items.last_page ? items.last_page_url : items.prev_page_url" 
             type="button"
-            :link="items.prev_page_url" 
+            :link="items.current_page > items.last_page ? items.last_page_url : items.prev_page_url" 
             :srOnly="$t('Previous')" 
             startIcon="mdi:chevron-left" 
             :preserveScroll="true"
