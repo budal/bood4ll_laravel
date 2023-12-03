@@ -369,7 +369,7 @@ class RolesController extends Controller
 
             return back()->with([
                 'toast_type' => "success",
-                'toast_message' => "{0} Nothing to remove.|[1] A role was removed.|[2,*] :total roles were removed.",
+                'toast_message' => "{0} Nothing to remove.|[1] An item removed successfully.|[2,*] :total items successfully removed.",
                 'toast_count' => $total,
                 'toast_replacements' => ['total' => $total]
             ]);
@@ -378,7 +378,8 @@ class RolesController extends Controller
      
             return back()->with([
                 'toast_type' => "error",
-                'toast_message' => "Error on remove selected items.",
+                'toast_message' => "Error on remove selected item.|Error on remove selected items.",
+                'toast_count' => ($request->list),
             ]);
         }
     }
@@ -394,7 +395,7 @@ class RolesController extends Controller
 
             return back()->with([
                 'toast_type' => "success",
-                'toast_message' => "{0} Nothing to remove.|[1] A role was removed.|[2,*] :total roles were removed.",
+                'toast_message' => "{0} Nothing to erase.|[1] An item erased successfully.|[2,*] :total items successfully erased.",
                 'toast_count' => $total,
                 'toast_replacements' => ['total' => $total]
             ]);
@@ -403,7 +404,8 @@ class RolesController extends Controller
      
             return back()->with([
                 'toast_type' => "error",
-                'toast_message' => "Error on remove selected items.",
+                'toast_message' => "Error on erase selected item.|Error on erase selected items.",
+                'toast_count' => ($request->list),
             ]);
         }
     }
@@ -415,7 +417,7 @@ class RolesController extends Controller
 
             return back()->with([
                 'toast_type' => "success",
-                'toast_message' => "{0} Nothing to restore.|[1] A role was restored.|[2,*] :total roles were restored.",
+                'toast_message' => "{0} Nothing to restore.|[1] An item restored successfully.|[2,*] :total items successfully restored.",
                 'toast_count' => $total,
                 'toast_replacements' => ['total' => $total]
             ]);
@@ -424,7 +426,8 @@ class RolesController extends Controller
      
             return back()->with([
                 'toast_type' => "error",
-                'toast_message' => "Error on restore selected items.",
+                'toast_message' => "Error on restore selected item.|Error on restore selected items.",
+                'toast_count' => ($request->list),
             ]);
         }
     }
