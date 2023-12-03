@@ -143,11 +143,17 @@
       
       props.menu.forEach((item: any) => {
         if (item.list == 'checkboxes') {
+          let customList = computed(() => {
+            let items = reactive(new Set())
+            selectedItems.forEach((selected: any) => selected.checked == item.listCondition ? items.add(selected.id) : false )
+            return items
+          })
+
           content.add({
             title: item.title,
             icon: item.icon,
-            disabled: activeItems.value.size === 0,
-            list: activeItems,
+            disabled: customList.value.size === 0,
+            list: customList,
             route: isValidUrl(item.route),
             method: item.method,
             modalTitle: item.modalTitle,
