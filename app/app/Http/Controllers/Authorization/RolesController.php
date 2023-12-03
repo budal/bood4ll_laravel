@@ -76,9 +76,15 @@ class RolesController extends Controller
 
         if ($request->all) {
             $items = User::filter($request->all('search', 'sorted', 'trashed'))
+                ->with("roles")
                 ->paginate(20)
                 ->onEachSide(2)
-                ->appends($request->all('search', 'sorted', 'trashed'));
+                ->appends($request->all('search', 'sorted', 'trashed'))
+                ->through(function($item) use ($role) {
+                    // $item->id = 2;
+                    $item->checked = in_array($role->id, $item->roles->pluck("id")->toArray());
+                    return $item;
+                });
         } else {
             $items = $role->users()
                 ->filter($request->all('search', 'sorted', 'trashed'))
@@ -87,6 +93,7 @@ class RolesController extends Controller
                 ->appends($request->all('search', 'sorted', 'trashed'))
                 ->through(function($item){
                     $item->id = $item->pivot->role_id;
+                    $item->checked = true;
                     return $item;
                 });
         }
@@ -250,6 +257,7 @@ class RolesController extends Controller
                                             'attributes' => "toggle",
                                         ],
                                         'method' => 'post',
+                                        'color' => 'info',
                                     ],
                                 ],
                                 'items' => $items
