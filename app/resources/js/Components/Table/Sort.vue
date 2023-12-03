@@ -44,4 +44,8 @@
     <Icon icon="mdi:chevron-up-circle-outline" v-if="sortBy(sort.field).sortMe == 'asc'" class="h-4 w-4" />
     <Icon icon="mdi:chevron-down-circle-outline" v-if="sortBy(sort.field).sortMe == 'desc'" class="h-4 w-4" />
   </Link>
+  <p v-else class="text-center">
+    {{ $t(sort.title) }}
+  </p>
+
 </template>

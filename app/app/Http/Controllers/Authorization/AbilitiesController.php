@@ -22,9 +22,8 @@ class AbilitiesController extends Controller
         $prefixes = ["apps", "reports"];
         
         $routes = collect(Route::getRoutes())->filter(function ($route) use ($request, $prefixes) {
-            return Str::contains($route->uri, $prefixes) && (
-                $request->search ? Str::contains($route->uri, $request->search) : true
-            );
+            return Str::contains($route->uri, $prefixes) 
+            && ($request->search ? Str::contains($route->uri, $request->search) : true);
         });
 
         $abilities = Ability::filter($request->all('search', 'sorted', 'trashed'))->get();
@@ -42,10 +41,12 @@ class AbilitiesController extends Controller
             return compact('id', 'route', 'command', 'title', 'checked');
         })->values()->toArray();
 
-        usort($items, function($a, $b) {
-            return $a['title'] <=> $b['title'];
+        usort($items, function($a, $b) use ($request) {
+            return ($request->query('sorted') == "title" || !$request->query('sorted')) 
+                ? $a['title'] <=> $b['title']
+                : $b['title'] <=> $a['title'];
         });
-        
+
         return Inertia::render('Default/Index', [
             'title' => "Abilities management",
             'subtitle' => "Define which abilities will be showed in the roles management.",
@@ -98,6 +99,7 @@ class AbilitiesController extends Controller
                     'type' => 'toggle',
                     'title' => 'Active',
                     'field' => 'checked',
+                    'disableSort' => true,
                     'route' => [
                         'route' => "apps.abilities.update",
                         'attributes' => "toggle",
@@ -140,7 +142,7 @@ class AbilitiesController extends Controller
                 ]);
             }
         } catch (Throwable $e) {
-            return Redirect::back()->with('status', "Error on activate/inactivate the ability.");
+            return Redirect::back()->with('status', "Error on edit selected item.|Error on edit selected items.");
         }
     }
 }
