@@ -1,4 +1,5 @@
 <script setup lang="ts">
+    import { isValidUrl } from '@/helpers';
     import { Icon } from '@iconify/vue'
     import { router } from '@inertiajs/vue3';
 
@@ -34,16 +35,6 @@
             method: 'get',
         }
     );
-
-    const isValidUrl = (url: any) => {
-        try { 
-            if (Boolean(new URL(url))) return url; 
-        }
-        catch (e){ 
-            const link = typeof url === 'string' ? { route: url, attributes: [] } : url;
-            return route(link.route, link.attributes); 
-        }
-    }
 
     const onClick = () => {
         if (props.link) {

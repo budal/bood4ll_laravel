@@ -272,7 +272,7 @@ class RolesController extends Controller
 
             return Redirect::back()->with([
                 'toast_type' => "error",
-                'toast_message' => "Error on save this item.",
+                'toast_message' => "Error on add this item.",
             ]);
         }
         
@@ -292,7 +292,8 @@ class RolesController extends Controller
 
         return Redirect::route('apps.roles.edit', $role->id)->with([
             'toast_type' => "success",
-            'toast_message' => "Item saved.",
+            'toast_message' => "{0} Nothing to add.|[1] Item added successfully.|[2,*] :total items successfully added.",
+            'toast_count' => 1,
         ]);
     }
     
@@ -355,7 +356,11 @@ class RolesController extends Controller
 
         DB::commit();
 
-        return Redirect::back()->with('status', 'Role edited.');
+        return Redirect::back()->with([
+            'toast_type' => "success",
+            'toast_message' => "{0} Nothing to edit.|[1] Item edited successfully.|[2,*] :total items successfully edited.",
+            'toast_count' => 1,
+        ]);
     }
 
     public function destroy(Request $request): RedirectResponse
@@ -369,7 +374,7 @@ class RolesController extends Controller
 
             return back()->with([
                 'toast_type' => "success",
-                'toast_message' => "{0} Nothing to remove.|[1] An item removed successfully.|[2,*] :total items successfully removed.",
+                'toast_message' => "{0} Nothing to remove.|[1] Item removed successfully.|[2,*] :total items successfully removed.",
                 'toast_count' => $total,
                 'toast_replacements' => ['total' => $total]
             ]);
@@ -395,7 +400,7 @@ class RolesController extends Controller
 
             return back()->with([
                 'toast_type' => "success",
-                'toast_message' => "{0} Nothing to erase.|[1] An item erased successfully.|[2,*] :total items successfully erased.",
+                'toast_message' => "{0} Nothing to erase.|[1] Item erased successfully.|[2,*] :total items successfully erased.",
                 'toast_count' => $total,
                 'toast_replacements' => ['total' => $total]
             ]);
@@ -417,7 +422,7 @@ class RolesController extends Controller
 
             return back()->with([
                 'toast_type' => "success",
-                'toast_message' => "{0} Nothing to restore.|[1] An item restored successfully.|[2,*] :total items successfully restored.",
+                'toast_message' => "{0} Nothing to restore.|[1] Item restored successfully.|[2,*] :total items successfully restored.",
                 'toast_count' => $total,
                 'toast_replacements' => ['total' => $total]
             ]);

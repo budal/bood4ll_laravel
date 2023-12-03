@@ -1,10 +1,10 @@
 <script setup lang="ts">
+  import { isValidUrl, toast } from '@/helpers';
   import Avatar from '@/Components/Avatar.vue';
   import Button from '@/Components/Button.vue';
   import Checkbox from '@/Components/Checkbox.vue';
   import Dropdown from '@/Components/Dropdown.vue';
   import Modal from '@/Components/Modal.vue';
-  import Toast from '@/Components/Toast.vue';
   import Toggle from '@/Components/Toggle.vue';
   import Search from '@/Components/Table/Search.vue';
   import Sort from '@/Components/Table/Sort.vue';
@@ -171,16 +171,6 @@
     return content
   })
 
-  const isValidUrl = (url: any) => {
-    try { 
-      if (Boolean(new URL(url))) return url; 
-    }
-    catch (e){ 
-      const link = typeof url === 'string' ? { route: url, attributes: [] } : url;
-      return route(link.route, link.attributes); 
-    }
-  }
-
   const action = (item: any) => {
     if (item.list) {
       openModal(item)
@@ -211,13 +201,13 @@
       preserveScroll: true,
      
       onSuccess: () => {
-        Toast()
+        toast()
         clear()
         toggleForm.list = []
         closeModal()
       },
       onError: () => {
-        Toast()
+        toast()
         clear()
         toggleForm.list = []
         closeModal()
@@ -247,13 +237,13 @@
       preserveState: false,
 
       onSuccess: () => {
-        Toast()
+        toast()
         clear()
         modalForm.list = []
         closeModal()
       },
       onError: () => {
-        Toast()
+        toast()
         clear()
         modalForm.list = []
         closeModal()

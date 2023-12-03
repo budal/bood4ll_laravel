@@ -199,7 +199,7 @@ class UsersController extends Controller
             $total = User::whereIn('id', $request->list)->delete();
             return back()->with([
                 'toast_type' => "success",
-                'toast_message' => "{0} Nothing to remove.|[1] An item removed successfully.|[2,*] :total items successfully removed.",
+                'toast_message' => "{0} Nothing to remove.|[1] Item removed successfully.|[2,*] :total items successfully removed.",
                 'toast_count' => $total,
                 'toast_replacements' => ['total' => $total]
             ]);
@@ -219,7 +219,7 @@ class UsersController extends Controller
             $total = User::whereIn('id', $request->list)->forceDelete();
             return back()->with([
                 'toast_type' => "success",
-                'toast_message' => "{0} Nothing to erase.|[1] An item erased successfully.|[2,*] :total items successfully erased.",
+                'toast_message' => "{0} Nothing to erase.|[1] Item erased successfully.|[2,*] :total items successfully erased.",
                 'toast_count' => $total,
                 'toast_replacements' => ['total' => $total]
             ]);
@@ -239,7 +239,7 @@ class UsersController extends Controller
             $total = User::whereIn('id', $request->list)->restore();
             return back()->with([
                 'toast_type' => "success",
-                'toast_message' => "{0} Nothing to restore.|[1] An item restored successfully.|[2,*] :total items successfully restored.",
+                'toast_message' => "{0} Nothing to restore.|[1] Item restored successfully.|[2,*] :total items successfully restored.",
                 'toast_count' => $total,
                 'toast_replacements' => ['total' => $total]
             ]);

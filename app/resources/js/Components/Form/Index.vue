@@ -1,11 +1,11 @@
 <script setup lang="ts">
+    import { toast } from '@/helpers';
     import Button from '@/Components/Button.vue';
     import InputError from '@/Components/InputError.vue';
     import InputLabel from '@/Components/InputLabel.vue';
     import Select from '@/Components/Select.vue';
     import Table from '@/Components/Table/Index.vue';
     import TextInput from '@/Components/TextInput.vue';
-    import Toast from '@/Components/Toast.vue';
     import Toggle from '@/Components/Toggle.vue';
     import { useForm } from '@inertiajs/vue3';
     import Tabs from '../Tabs.vue';
@@ -37,10 +37,10 @@
         jsForm.submit(props.routes[formId].method, props.routes[formId].route, {
             preserveScroll: true,
             onSuccess: () => {
-                Toast()
+                toast()
             },
             onError: () => {
-                Toast()
+                toast()
 
                     // if (jsForm.errors.password) {
                     //     jsForm.reset('password', 'password_confirmation');
