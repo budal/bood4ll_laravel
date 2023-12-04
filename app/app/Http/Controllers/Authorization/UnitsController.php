@@ -21,23 +21,23 @@ class UnitsController extends Controller
     public function index(Request $request): Response
     {
         $units = Unit::filter($request->all('search', 'trashed'))
-            ->when(!$request->search, function ($query) {
+            ->when(!$request->search, function($query) {
                 $query->where("parent_id", "1");
             })
             ->with('childrenRecursive')
-            // ->withCount('children', 'users')
+            ->withCount('children', 'users')
             // ->with('allUsers')
             ->sort($request->sorted ?? "name")
             ->paginate(20)
             ->onEachSide(2)
             ->through(function($item) {
                 $item->parents = $item->getParentsNames();
-                // $item->all_users_count = $item->getAllChildren()->pluck('users_count')->sum();
+                $item->all_users_count = $item->getAllChildren()->pluck('users_count')->sum();
                 return $item;
             })
             ->appends($request->all('search', 'trashed', 'sorted'));
             
-            dd($units[0]->childrenRecursive);
+            // dd($units[0]->childrenRecursive);
 
         return Inertia::render('Default/Index', [
             'title' => "Units management",

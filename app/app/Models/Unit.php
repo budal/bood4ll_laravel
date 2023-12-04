@@ -52,7 +52,7 @@ class Unit extends Model
 
     public function childrenRecursive() 
     {
-        return $this->childrenWithUsersCount()->with('childrenRecursive')->selectRaw("1 as users_nested");
+        return $this->childrenWithUsersCount()->with('childrenRecursive');
     }
 
     public function getAllChildren ()
