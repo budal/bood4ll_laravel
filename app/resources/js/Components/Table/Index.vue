@@ -349,7 +349,7 @@
                 @click="updateFormToogle(content.method, content.route, [item.id])"
               />
             </td>
-            <td v-if="routes.editRoute" class="p-2 text-right">
+            <td v-if="routes.editRoute" class="p-2 w-0 text-right">
               <Button 
                 type="button"
                 :link="route(routes.editRoute, item.id)" 
