@@ -7,7 +7,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\DB;
  
 class Unit extends Model
 {
@@ -44,14 +46,42 @@ class Unit extends Model
         return $this->hasMany(Unit::class, 'parent_id');
     }
 
-    public function childrenRecursive() 
-    {
-        return $this->children()->with('childrenRecursive');
-    }
-
     public function childrenWithUsersCount(): HasMany
     {
-        return $this->hasMany(Unit::class, 'parent_id')->withCount('users');
+        // $aa = $this->HasMany(Unit::class, 'parent_id')->withCount('users', 'children');
+        $aa = $this->HasMany(Unit::class, 'parent_id')->withCount('users', 'children')->selectRaw("1 as users_nested");
+
+        $sections = collect();
+
+        // dd($aa->get());
+
+        // foreach ($this->childrenRecursive as $section) {
+        //     $sections->push($section);
+        //     $sections = $sections->merge($section->getAllChildren());
+        // }
+
+        // return $sections;
+
+
+        return $aa;
+    }
+
+
+
+
+    public function allUsers() 
+    {
+        return $this->get();
+    }
+
+
+
+
+
+
+    public function childrenRecursive() 
+    {
+        return $this->childrenWithUsersCount()->with('childrenRecursive');
     }
 
     public function getAllChildren ()
@@ -74,6 +104,7 @@ class Unit extends Model
     public function parentRecursive() 
     {
         return $this->parent()->with('parentRecursive');
+        // return $this->parent()->->where('parent_id',0)->with('parentRecursive');
     }
         
     public function getParentsNames() 

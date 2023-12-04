@@ -22,10 +22,12 @@ class UnitsController extends Controller
     {
         $units = Unit::filter($request->all('search', 'trashed'))
             ->when(!$request->search, function ($query) {
+                $query->orderBy("id", "parent_id");
                 $query->where("parent_id", "1");
             })
-            // ->with('childrenRecursive')
+            ->with('childrenRecursive')
             ->withCount('children', 'users')
+            // ->with('allUsers')
             ->sort($request->sorted ?? "name")
             ->paginate(20)
             
@@ -37,7 +39,8 @@ class UnitsController extends Controller
                 return $item;
             })
             ->appends($request->all('search', 'trashed', 'sorted'));
-            // dd($units);
+            
+            // dd($units[0]->childrenRecursive);
 
         return Inertia::render('Default/Index', [
             'title' => "Units management",
