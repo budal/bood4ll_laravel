@@ -11,6 +11,7 @@
       name?: string;
       modelValue?: any;
       content: any;
+      selected?: any;
       disableSearch?: boolean;
       required?: boolean;
       multiple?: boolean;
@@ -156,13 +157,13 @@
       <ComboboxViewport class="p-[5px] max-h-60">
         <ComboboxEmpty class="text-xs font-medium text-center">{{ $t('No items to show.') }}</ComboboxEmpty>
         <SelectItems :items="selectItems" />
-        <p v-if="selectItems.length == 0" class="text-xs font-medium text-center">
-          <Link :href="route('apps.abilities.index')">
-            {{ $t('There are no abilities to select. Click here to manage them.') }}
-          </Link>
-        </p>
-
       </ComboboxViewport>
+      
     </ComboboxContent>
   </ComboboxRoot>
+  <!-- <p v-if="selectItems.length == 0" class="text-xs font-medium text-center">
+    <Link :href="route('apps.abilities.index')">
+      {{ $t('There are no abilities to select. Click here to manage them.') }}
+    </Link>
+  </p> -->
 </template>

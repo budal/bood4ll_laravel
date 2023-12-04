@@ -46,33 +46,34 @@ class Unit extends Model
 
     public function childrenRecursive() 
     {
-        return $this->children()->with('childrenRecursive');
+        return $this->children()->with('childrenRecursive')->withCount('users');
     }
 
 
 
-
-    public function get_recursive() 
+    public function allUsers() 
     {
-        // dd($this->withCount('users', 'children')->with('childrenRecursive')->get()->map(function ($a){
-        //     $total = 0;
-            
-        //     if ($a->childrenRecursive) {
-        //         $total += $a->users_count;
+        function add_recursive($parent, $total) {
 
-        //         dd($total);
-        //     }
-
-        //     return $total;
-        // }));
-    
-            return($this->with('childrenRecursive'));
-    
-    
+        }
+        $q = $this->hasMany(Unit::class, 'parent_id')->withCount('users')->with('childrenRecursive')->first();
+        dd($q);
+        
+        return $q;
     }
 
 
 
+    public function productCount()
+    {
+        $sum = 0;
+
+        foreach ($this->children as $child) {
+            $sum += $child->productCount();
+        }
+
+        return $this->users->count() + $sum;
+    }
 
 
     
@@ -88,7 +89,7 @@ class Unit extends Model
         
     public function getParentsNames() 
     {
-        if($this->parent) {
+        if ($this->parent) {
             return $this->parent->getParentsNames(). " > " . $this->name;
         } else {
             return $this->name;

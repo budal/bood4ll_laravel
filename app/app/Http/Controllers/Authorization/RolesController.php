@@ -75,7 +75,7 @@ class RolesController extends Controller
         $abilities = Ability::sort("name")->get();
 
         if ($request->all) {
-            $items = User::filter($request->all('search', 'sorted', 'trashed'))
+            $roles = User::filter($request->all('search', 'sorted', 'trashed'))
                 ->with("roles")
                 ->sort($request->sorted ?? "name")
                 ->paginate(20)
@@ -87,7 +87,7 @@ class RolesController extends Controller
                     return $item;
                 });
         } else {
-            $items = $role->users()
+            $roles = $role->users()
                 ->filter($request->all('search', 'sorted', 'trashed'))
                 ->sort($request->sorted ?? "name")
                 ->paginate(20)
@@ -272,7 +272,7 @@ class RolesController extends Controller
                                         'color' => 'info',
                                     ],
                                 ],
-                                'items' => $items
+                                'items' => $roles
                             ],
                         ],
                     ],

@@ -26,18 +26,19 @@ class UnitsController extends Controller
             })
             ->with('childrenRecursive')
             ->withCount('children', 'users')
-            // ->with('get_recursive')
+            // ->with('productCount')
             // ->withSum('users', 'users')
             ->sort($request->sorted ?? "name")
             ->paginate(20)
             ->onEachSide(2)
             ->through(function($item){
                 $item->parents = $item->getParentsNames();
+                // $item->totalUsers = $item->getTotalUsers();
                 return $item;
             })
             ->appends($request->all('search', 'trashed', 'sorted'));
 
-            // dd($units);
+            // dd($units[0]);
 
         return Inertia::render('Default/Index', [
             'title' => "Units management",
@@ -79,9 +80,9 @@ class UnitsController extends Controller
     {
         $units = Unit::orderBy("parent_id")
             ->select("id", "name", "active")
+            ->with('childrenRecursive')
             ->orderBy("name")
             ->where('parent_id', 0)
-            ->with('childrenRecursive')
             ->get();
 
         $subunits = Unit::where('parent_id', $unit->id)
