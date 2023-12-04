@@ -47,40 +47,12 @@ class Unit extends Model
 
     public function childrenWithUsersCount(): HasMany
     {
-        // $aa = $this->HasMany(Unit::class, 'parent_id')->withCount('users', 'children');
-        $aa = $this->HasMany(Unit::class, 'parent_id')->withCount('users', 'children')->selectRaw("1 as users_nested");
-
-        $sections = collect();
-
-        // dd($aa->get());
-
-        // foreach ($this->childrenRecursive as $section) {
-        //     $sections->push($section);
-        //     $sections = $sections->merge($section->getAllChildren());
-        // }
-
-        // return $sections;
-
-
-        return $aa;
+        return $this->children()->withCount('users', 'children');
     }
-
-
-
-
-    public function allUsers() 
-    {
-        return $this->get();
-    }
-
-
-
-
-
 
     public function childrenRecursive() 
     {
-        return $this->childrenWithUsersCount()->with('childrenRecursive');
+        return $this->childrenWithUsersCount()->with('childrenRecursive')->selectRaw("1 as users_nested");
     }
 
     public function getAllChildren ()
@@ -103,7 +75,6 @@ class Unit extends Model
     public function parentRecursive() 
     {
         return $this->parent()->with('parentRecursive');
-        // return $this->parent()->->where('parent_id',0)->with('parentRecursive');
     }
         
     public function getParentsNames() 

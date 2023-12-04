@@ -25,14 +25,12 @@ class UnitsController extends Controller
                 $query->where("parent_id", "1");
             })
             ->with('childrenRecursive')
-            ->withCount('children', 'users')
+            // ->withCount('children', 'users')
             // ->with('allUsers')
             ->sort($request->sorted ?? "name")
             ->paginate(20)
-            
-
             ->onEachSide(2)
-            ->through(function($item){
+            ->through(function($item) {
                 $item->parents = $item->getParentsNames();
                 // $item->all_users_count = $item->getAllChildren()->pluck('users_count')->sum();
                 return $item;
@@ -94,7 +92,7 @@ class UnitsController extends Controller
             ->withCount('children', 'users')
             ->paginate($perPage = 20, $columns = ['*'], $pageName = 'subunits')
             ->onEachSide(2)
-            ->through(function($item){
+            ->through(function($item) {
                 $item->parents = $item->getParentsNames();
                 $item->all_users_count = $item->getAllChildren()->pluck('users_count')->sum() + $item->users_count;
                 return $item;
