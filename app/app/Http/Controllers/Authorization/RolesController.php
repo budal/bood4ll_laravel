@@ -252,7 +252,7 @@ class RolesController extends Controller
                                 'titles' => [
                                     [
                                         'type' => 'composite',
-                                        'title' => 'Role',
+                                        'title' => 'Name',
                                         'field' => 'name',
                                         'fields' => ['name', 'email'],
                                     ],

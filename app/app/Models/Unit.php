@@ -46,37 +46,26 @@ class Unit extends Model
 
     public function childrenRecursive() 
     {
-        return $this->children()->with('childrenRecursive')->withCount('users');
+        return $this->children()->with('childrenRecursive');
     }
 
-
-
-    public function allUsers() 
+    public function childrenWithUsersCount(): HasMany
     {
-        function add_recursive($parent, $total) {
-
-        }
-        $q = $this->hasMany(Unit::class, 'parent_id')->withCount('users')->with('childrenRecursive')->first();
-        dd($q);
-        
-        return $q;
+        return $this->hasMany(Unit::class, 'parent_id')->withCount('users');
     }
 
-
-
-    public function productCount()
+    public function getAllChildren ()
     {
-        $sum = 0;
+        $sections = collect();
 
-        foreach ($this->children as $child) {
-            $sum += $child->productCount();
+        foreach ($this->childrenWithUsersCount as $section) {
+            $sections->push($section);
+            $sections = $sections->merge($section->getAllChildren());
         }
 
-        return $this->users->count() + $sum;
+        return $sections;
     }
 
-
-    
     public function parent(): BelongsTo
     {
         return $this->belongsTo(Unit::class, 'parent_id');

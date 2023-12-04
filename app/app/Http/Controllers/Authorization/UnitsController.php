@@ -24,21 +24,20 @@ class UnitsController extends Controller
             ->when(!$request->search, function ($query) {
                 $query->where("parent_id", "1");
             })
-            ->with('childrenRecursive')
+            // ->with('childrenRecursive')
             ->withCount('children', 'users')
-            // ->with('productCount')
-            // ->withSum('users', 'users')
             ->sort($request->sorted ?? "name")
             ->paginate(20)
+            
+
             ->onEachSide(2)
             ->through(function($item){
                 $item->parents = $item->getParentsNames();
-                // $item->totalUsers = $item->getTotalUsers();
+                $item->all_users_count = $item->getAllChildren()->pluck('users_count')->sum();
                 return $item;
             })
             ->appends($request->all('search', 'trashed', 'sorted'));
-
-            // dd($units[0]);
+            // dd($units);
 
         return Inertia::render('Default/Index', [
             'title' => "Units management",
@@ -63,13 +62,14 @@ class UnitsController extends Controller
                 ],
                 [
                     'type' => 'simple',
-                    'title' => 'Local',
+                    'title' => 'Local staff',
                     'field' => 'users_count',
                 ],
                 [
                     'type' => 'simple',
-                    'title' => 'Total',
+                    'title' => 'Total staff',
                     'field' => 'all_users_count',
+                    'disableSort' => true,
                 ],
             ],
             'items' => $units
@@ -92,6 +92,11 @@ class UnitsController extends Controller
             ->withCount('children', 'users')
             ->paginate($perPage = 20, $columns = ['*'], $pageName = 'subunits')
             ->onEachSide(2)
+            ->through(function($item){
+                $item->parents = $item->getParentsNames();
+                $item->all_users_count = $item->getAllChildren()->pluck('users_count')->sum() + $item->users_count;
+                return $item;
+            })
             ->appends($request->all('subunits_search', 'subunits_trashed', 'subunits_sorted'));
 
         $staff = $unit->users()
@@ -240,15 +245,15 @@ class UnitsController extends Controller
                                     ],
                                     [
                                         'type' => 'simple',
-                                        'title' => 'Local',
+                                        'title' => 'Local staff',
                                         'field' => 'users_count',
                                     ],
                                     [
                                         'type' => 'simple',
-                                        'title' => 'Total',
+                                        'title' => 'Total staff',
                                         'field' => 'all_users_count',
+                                        'disableSort' => true,
                                     ],
-                    
                                 ],
                                 'items' => $subunits
                             ],
