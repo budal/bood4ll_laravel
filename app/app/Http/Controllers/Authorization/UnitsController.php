@@ -26,18 +26,17 @@ class UnitsController extends Controller
             })
             ->with('childrenRecursive')
             ->withCount('children', 'users')
-            // ->with('allUsers')
             ->sort($request->sorted ?? "name")
             ->paginate(20)
             ->onEachSide(2)
             ->through(function($item) {
                 $item->parents = $item->getParentsNames();
-                $item->all_users_count = $item->getAllChildren()->pluck('users_count')->sum();
+                $item->all_users_count = $item->getAllChildren()->pluck('users_count')->sum() + $item->users_count;
                 return $item;
             })
             ->appends($request->all('search', 'trashed', 'sorted'));
             
-            // dd($units[0]->childrenRecursive);
+            // dd($units[0]);
 
         return Inertia::render('Default/Index', [
             'title' => "Units management",
