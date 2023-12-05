@@ -61,7 +61,6 @@ class User extends Authenticatable
         $query->when($filters['search'] ?? null, function ($query, $search) {
             $query->where(function ($query) use ($search) {
                 $query->where('name', 'ilike', '%'.$search.'%')
-                    ->orWhere('username', 'ilike', '%'.$search.'%')
                     ->orWhere('email', 'ilike', '%'.$search.'%');
             });
         })->when($filters['trashed'] ?? null, function ($query, $trashed) {

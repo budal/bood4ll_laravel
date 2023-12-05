@@ -45,14 +45,17 @@ class UsersController extends Controller
                     'fields' => ['name', 'email']
                 ],    
                 [
-                    'type' => 'simple',
-                    'title' => 'Username',
-                    'field' => 'username'
-                ],    
-                [
-                    'type' => 'simple',
+                    'type' => 'toggle',
                     'title' => 'Active',
-                    'field' => 'active'
+                    'field' => 'active',
+                    'disableSort' => true,
+                    'route' => [
+                        'route' => "apps.abilities.update",
+                        'attributes' => "toggle",
+                    ],
+                    'method' => 'post',
+                    'color' => 'success',
+                    'colorFalse' => 'danger',
                 ]    
             ],
             'items' => User::filter($request->all('search', 'sorted', 'trashed'))

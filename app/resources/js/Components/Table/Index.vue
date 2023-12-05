@@ -291,8 +291,8 @@
       <table class="table-auto w-full text-sm shadow-lg">
         <thead v-if="items.data.length > 0">
           <tr class="bg-zero-light dark:bg-zero-dark p-3 text-zero-light dark:text-zero-dark text-left">
-            <th class="p-2 w-0">
-              <Checkbox v-if="(routes.showCheckboxes == true || routes.destroyRoute || routes.restoreRoute)" name="remember" :checked="selectedAll" @click="toggleAll" class="w-8 h-8 rounded-lg" />
+            <th class="p-1 sm:p-2 w-0">
+              <Checkbox v-if="(routes.showCheckboxes == true || routes.destroyRoute || routes.restoreRoute)" name="remember" :checked="selectedAll" @click="toggleAll" class="w-6 h-6 sm:w-8 sm:h-8 rounded-md sm:rounded-lg" />
             </th>
             <th v-for="sort in titles" class="p-2">
               <Sort :prefix="prefix" :sort="sort" class="justify-center" />
@@ -309,9 +309,9 @@
               ? 'bg-danger-light/20 dark:bg-danger-dark/20 hover:bg-danger-light-hover/20 hover:dark:bg-danger-dark-hover/20 border-danger-light/20 dark:border-danger-dark/20' 
               : 'bg-secondary-light dark:bg-secondary-dark hover:bg-secondary-light-hover hover:dark:bg-secondary-dark-hover border-secondary-light dark:border-secondary-dark'"
           >
-            <td class="p-2 w-0">
+            <td class="p-1 sm:p-2 w-0">
               <Checkbox v-if="routes.showCheckboxes == true || routes.destroyRoute || routes.restoreRoute" 
-                class="w-8 h-8 rounded-lg" 
+                class="w-6 h-6 sm:w-8 sm:h-8 rounded-md sm:rounded-lg" 
                 :class="item.deleted_at 
                   ? ''
                   : ''"
@@ -330,12 +330,12 @@
 
               <template v-if="content.type == 'composite'">
                 <p class="text-sm font-medium text-secondary-light dark:text-secondary-dark text-center">{{ item[content.fields[0]] ?? '-' }}</p>
-                <p class="truncate text-xs leading-5 text-secondary-light dark:text-secondary-dark text-center">{{ item[content.fields[1]] ?? '-' }}</p>
+                <p class="truncate text-xs text-secondary-light dark:text-secondary-dark text-center">{{ item[content.fields[1]] ?? '-' }}</p>
               </template>
 
               <Avatar 
                 v-if="content.type == 'avatar'" 
-                class="w-12 h-12 rounded-full" 
+                class="w-8 h-8 sm:w-12 sm:h-12 rounded-full" 
                 :fallback="item[content.fallback]" 
               />
 
@@ -349,7 +349,7 @@
                 @click="updateFormToogle(content.method, content.route, [item.id])"
               />
             </td>
-            <td v-if="routes.editRoute" class="p-2 w-0 text-right">
+            <td v-if="routes.editRoute" class="sm:p-2 w-0 text-right">
               <Button 
                 type="button"
                 :link="route(routes.editRoute, item.id)" 
