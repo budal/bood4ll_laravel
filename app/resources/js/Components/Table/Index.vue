@@ -99,7 +99,7 @@
         method: "post",
         modalTitle: "Are you sure you want to restore the selected item?|Are you sure you want to restore the selected items?",
         modalSubTitle: "The selected item will be restored to the active items. Do you want to continue?|The selected items will be restored to the active items. Do you want to continue?",
-        buttonTitle: "Restore selected|Restore selected",
+        buttonTitle: "Restore",
         buttonIcon: "mdi:backup-restore",
         buttonColor: "warning",
       })
@@ -115,7 +115,7 @@
         method: "delete",
         modalTitle: "Are you sure you want to remove the selected item?|Are you sure you want to remove the selected items?",
         modalSubTitle: "The selected item will be removed from the active items. Do you want to continue?|The selected items will be removed from the active items. Do you want to continue?",
-        buttonTitle: "Remove selected|Remove selected",
+        buttonTitle: "Remove",
         buttonIcon: "mdi:delete-sweep-outline",
         buttonColor: "danger",
       })
@@ -132,7 +132,7 @@
         modalTheme: "danger",
         modalTitle: "Are you sure you want to erase the selected item?|Are you sure you want to erase the selected items?",
         modalSubTitle: "The selected item will be erased from the database. This action can't be undone. Do you want to continue?|The selected items will be erased from the database. This action can't be undone. Do you want to continue?",
-        buttonTitle: "Erase selected|Erase selected",
+        buttonTitle: "Erase",
         buttonIcon: "mdi:delete-sweep-outline",
         buttonColor: "danger",
       })
@@ -329,8 +329,8 @@
               </p>
 
               <template v-if="content.type == 'composite'">
-                <p class="text-sm font-medium text-secondary-light dark:text-secondary-dark text-center">{{ $t(item[content.fields[0]]) ?? '-' }}</p>
-                <p class="truncate text-xs text-secondary-light dark:text-secondary-dark text-center">{{ $t(item[content.fields[1]]) ?? '-' }}</p>
+                <p class="text-sm font-medium text-secondary-light dark:text-secondary-dark text-center">{{ $t(item[content.fields[0]] ?? '-') }}</p>
+                <p class="truncate text-xs text-secondary-light dark:text-secondary-dark text-center">{{ $t(item[content.fields[1]] ?? '-') }}</p>
               </template>
 
               <Avatar 

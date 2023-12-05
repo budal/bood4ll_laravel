@@ -50,12 +50,10 @@ class UsersController extends Controller
                     'field' => 'active',
                     'disableSort' => true,
                     'route' => [
-                        'route' => "apps.abilities.update",
+                        'route' => "apps.users.activate",
                         'attributes' => "toggle",
                     ],
                     'method' => 'post',
-                    'colorOn' => 'success',
-                    'colorOff' => 'danger',
                 ]    
             ],
             'items' => User::filter($request->all('search', 'sorted', 'trashed'))
@@ -66,7 +64,7 @@ class UsersController extends Controller
         ]);
     }
 
-    public function __form()
+    public function __form(): Array
     {
         $states = [
             [ 
@@ -133,11 +131,12 @@ class UsersController extends Controller
         ];
     }
 
-    public function toggleActivate()
+    public function activate(): RedirectResponse
     {
+        return Redirect::back()->with('status', "Error on edit selected item.|Error on edit selected items.");
     }
 
-    public function create()
+    public function create(): Response
     {
         return Inertia::render('Default/Form', [
             'form' => $this->__form(),

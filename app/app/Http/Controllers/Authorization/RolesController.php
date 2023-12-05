@@ -82,7 +82,6 @@ class RolesController extends Controller
                 ->onEachSide(2)
                 ->appends($request->all('search', 'sorted', 'trashed'))
                 ->through(function($item) use ($role) {
-                    // $item->id = 2;
                     $item->checked = in_array($role->id, $item->roles->pluck("id")->toArray());
                     return $item;
                 });
@@ -94,7 +93,6 @@ class RolesController extends Controller
                 ->onEachSide(2)
                 ->appends($request->all('search', 'sorted', 'trashed'))
                 ->through(function($item){
-                    // $item->id = $item->pivot->role_id;
                     $item->checked = true;
                     return $item;
                 });
@@ -140,7 +138,7 @@ class RolesController extends Controller
                             'type' => "toggle",
                             'name' => "temporary",
                             'title' => "Temporary",
-                            'color' => "info",
+                            'colorOn' => "info",
                         ],
                         [
                             'type' => "date",
@@ -151,19 +149,19 @@ class RolesController extends Controller
                             'type' => "toggle",
                             'name' => "full_access",
                             'title' => "Full access",
-                            'color' => "info",
+                            'colorOn' => "info",
                         ],
                         [
                             'type' => "toggle",
                             'name' => "manage_nested",
                             'title' => "Manage nested data",
-                            'color' => "info",
+                            'colorOn' => "info",
                         ],
                         [
                             'type' => "toggle",
                             'name' => "remove_on_change_unit",
                             'title' => "Remove on transfer",
-                            'color' => "info",
+                            'colorOn' => "info",
                         ],
                     ],
                 ],
@@ -269,7 +267,7 @@ class RolesController extends Controller
                                             ],
                                         ],
                                         'method' => 'post',
-                                        'color' => 'info',
+                                        'colorOn' => 'info',
                                     ],
                                 ],
                                 'items' => $roles
@@ -299,38 +297,43 @@ class RolesController extends Controller
         DB::beginTransaction();
 
         try {
-            $role = Role::firstOrCreate([
-                'name' => $request->name,
-                'description' => $request->description,
-                'active' => $request->active,
-                'temporary' => $request->temporary,
-                'expires' => $request->expires,
-                'full_access' => $request->full_access,
-                'manage_nested' => $request->manage_nested,
-                'remove_on_change_unit' => $request->remove_on_change_unit,
-            ]);
+            $role = new Role;
+
+            $role->name = $request->name;
+            $role->description = $request->description;
+            $role->active = $request->active;
+            $role->temporary = $request->temporary;
+            $role->expires = $request->expires;
+            $role->full_access = $request->full_access;
+            $role->manage_nested = $request->manage_nested;
+            $role->remove_on_change_unit = $request->remove_on_change_unit;
+
+            $role->save();
+
+            try {
+                $role->abilities()->sync($request->abilities);
+            } catch(\Exception $e) {
+                report($e);
+    
+                DB::rollback();
+    
+                return Redirect::back()->with([
+                    'toast_type' => "error",
+                    'toast_message' => "Error when syncing abilities to the role.",
+                ]);
+            }
         } catch(Throwable $e) {
             report($e);
+
             DB::rollback();
 
             return Redirect::back()->with([
                 'toast_type' => "error",
-                'toast_message' => "Error on add this item.",
+                'toast_message' => "Error on add this item.|Error on add the items.",
+                'toast_count' => 1,
             ]);
         }
         
-        try {
-            $role->abilities()->sync($request->abilities);
-        } catch(\Exception $e) {
-            report($e);
-            DB::rollback();
-
-            return Redirect::back()->with([
-                'toast_type' => "error",
-                'toast_message' => "Error when syncing abilities to the role.",
-            ]);
-        }
-
         DB::commit();
 
         return Redirect::route('apps.roles.edit', $role->id)->with([
@@ -359,7 +362,10 @@ class RolesController extends Controller
     public function update(Request $request, Role $role): RedirectResponse
     {
         if ($request->temporary && !$request->expires) {
-            return Redirect::back()->with('status', "Define the expiration date.");
+            return Redirect::back()->with([
+                'toast_type' => "error",
+                'toast_message' => "Define the expiration date.",
+            ]);
         } elseif (!$request->temporary) {
             $request->expires = null;
         }
@@ -367,38 +373,43 @@ class RolesController extends Controller
         DB::beginTransaction();
 
         try {
-            Role::where('id', $role->id)
-                ->update([
-                    'name' => $request->name,
-                    'description' => $request->description,
-                    'active' => $request->active,
-                    'temporary' => $request->temporary,
-                    'expires' => $request->expires,
-                    'full_access' => $request->full_access,
-                    'manage_nested' => $request->manage_nested,
-                    'remove_on_change_unit' => $request->remove_on_change_unit,
+            $role->name = $request->name;
+            $role->description = $request->description;
+            $role->active = $request->active;
+            $role->temporary = $request->temporary;
+            $role->expires = $request->expires;
+            $role->full_access = $request->full_access;
+            $role->manage_nested = $request->manage_nested;
+            $role->remove_on_change_unit = $request->remove_on_change_unit;
+
+            $role->save();
+            
+            try {
+                $role->abilities()->sync($request->abilities);
+            } catch (\Exception $e) {
+                report($e);
+    
+                DB::rollback();
+    
+                return Redirect::back()->with([
+                    'toast_type' => "error",
+                    'toast_message' => "Error when syncing abilities to the role.",
                 ]);
+            }
         } catch (\Exception $e) {
             report($e);
+
             DB::rollback();
             
-            return Redirect::back()->with('status', "Error when editing the role.");
-        }
-        
-        try {
-            $role->abilities()->sync($request->abilities);
-        } catch (\Exception $e) {
-            report($e);
-            DB::rollback();
-
             return Redirect::back()->with([
                 'toast_type' => "error",
-                'toast_message' => "Error when syncing abilities to the role.",
+                'toast_message' => "Error on edit selected item.|Error on edit selected items.",
+                'toast_count' => 1,
             ]);
         }
 
         DB::commit();
-
+        
         return Redirect::back()->with([
             'toast_type' => "success",
             'toast_message' => "{0} Nothing to edit.|[1] Item edited successfully.|[2,*] :total items successfully edited.",
@@ -442,7 +453,13 @@ class RolesController extends Controller
                 ]);
             }
         } catch (Throwable $e) {
-            return Redirect::back()->with('status', "Error on edit selected item.|Error on edit selected items.");
+            report($e);
+
+            return Redirect::back()->with([
+                'toast_type' => "error",
+                'toast_message' => "Error on edit selected item.|Error on edit selected items.",
+                'toast_count' => count($request->list),
+            ]);
         }
     }
 
@@ -467,7 +484,7 @@ class RolesController extends Controller
             return back()->with([
                 'toast_type' => "error",
                 'toast_message' => "Error on remove selected item.|Error on remove selected items.",
-                'toast_count' => ($request->list),
+                'toast_count' => count($request->list),
             ]);
         }
     }

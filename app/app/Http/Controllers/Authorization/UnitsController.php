@@ -75,7 +75,7 @@ class UnitsController extends Controller
         ]);
     }
     
-    public function __form(Request $request, Unit $unit)
+    public function __form(Request $request, Unit $unit): Array
     {
         $units = Unit::orderBy("parent_id")
             ->select("id", "name", "active")
@@ -306,7 +306,7 @@ class UnitsController extends Controller
         ];
     }
 
-    public function create(Request $request, Unit $unit)
+    public function create(Request $request, Unit $unit): Response
     {
         $data['parent_id'] = $request->unit->id ?? '';
         
@@ -346,13 +346,24 @@ class UnitsController extends Controller
                 'geo' => $request->geo,
             ]);
         } catch(\Exception $e) {
+            report($e);
+
             DB::rollback();
-            return Redirect::back()->withInput()->with('status', "Error when inserting a new unit.");
+
+            return Redirect::back()->with([
+                'toast_type' => 'error',
+                'toast_message' => "Error on add this item.|Error on add the items.",
+                'toast_count' => 1,
+            ]);
         }
         
         DB::commit();
 
-        return Redirect::route('apps.units.edit', $unit->id)->with('status', 'Unit created.');
+        return Redirect::back()->with([
+            'toast_type' => "error",
+            'toast_message' => "{0} Nothing to add.|[1] Item added successfully.|[2,*] :total items successfully added.",
+            'toast_count' => 1,
+        ]);
     }
     
     public function edit(Request $request, Unit $unit): Response
@@ -395,14 +406,22 @@ class UnitsController extends Controller
         } catch(\Exception $e) {
             report($e);
 
-            // dd($e);
             DB::rollback();
-            return Redirect::back()->withInput()->with('status', "Error when editing the unit.");
+
+            return Redirect::back()->with([
+                'toast_type' => 'error',
+                'toast_message' => "Error on edit selected item.|Error on edit selected items.",
+                'toast_count' => 1,
+            ]);
         }
         
         DB::commit();
 
-        return Redirect::back()->with('status', 'Unit edited.');
+        return Redirect::back()->with([
+            'toast_type' => "error",
+            'toast_message' => "{0} Nothing to edit.|[1] Item edited successfully.|[2,*] :total items successfully edited.",
+            'toast_count' => 1,
+        ]);
     }
 
     public function destroy(Request $request): RedirectResponse
@@ -414,13 +433,17 @@ class UnitsController extends Controller
         } catch (Throwable $e) {
             report($e);
      
-            return false;
+            return back()->with([
+                'toast_type' => "error",
+                'toast_message' => "Error on remove selected item.|Error on remove selected items.",
+                'toast_count' => count($request->list),
+            ]);
         }
         
         return back()->with('status', 'Items removed succesfully!');
     }
 
-    public function restore(Unit $unit)
+    public function restore(Unit $unit): RedirectResponse
     {
         $unit->restore();
 

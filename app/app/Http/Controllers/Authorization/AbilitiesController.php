@@ -81,7 +81,7 @@ class AbilitiesController extends Controller
                     'listCondition' => false,
                     'modalTitle' => "Are you sure you want to activate the selected item?|Are you sure you want to activate the selected items?",
                     'modalSubTitle' => "The selected item will be activated. Do you want to continue?|The selected items will be activated. Do you want to continue?",
-                    'buttonTitle' => "Activate selected|Activate selected",
+                    'buttonTitle' => "Activate",
                     'buttonIcon' => "mdi:plus-circle-outline",
                     'buttonColor' => "success",
                 ],
@@ -97,7 +97,7 @@ class AbilitiesController extends Controller
                     'listCondition' => true,
                     'modalTitle' => "Are you sure you want to deactivate the selected item?|Are you sure you want to deactivate the selected items?",
                     'modalSubTitle' => "The selected item will be deactivated. Do you want to continue?|The selected items will be deactivated. Do you want to continue?",
-                    'buttonTitle' => "Deactivate selected|Deactivate selected",
+                    'buttonTitle' => "Deactivate",
                     'buttonIcon' => "mdi:minus-circle-outline",
                     'buttonColor' => "danger",
             
@@ -142,14 +142,14 @@ class AbilitiesController extends Controller
                     'toast_replacements' => ['ability' => $ability->name]
                 ]);
             } elseif ($mode == "on") {
-                return Redirect::route('apps.abilities.index')->with([
+                return Redirect::back()->with([
                     'toast_type' => 'success',
                     'toast_message' => "{0} Nothing to activate.|[1] Item activated successfully.|[2,*] :total items successfully activated.",
                     'toast_count' => $ability->total,
                     'toast_replacements' => ['total' => $ability->total]
                 ]);
             } elseif ($mode == "off") {
-                return Redirect::route('apps.abilities.index')->with([
+                return Redirect::back()->with([
                     'toast_type' => 'success',
                     'toast_message' => "{0} Nothing to deactivate.|[1] Item deactivated successfully.|[2,*] :total items successfully deactivated.",
                     'toast_count' => $ability->total,
@@ -157,7 +157,13 @@ class AbilitiesController extends Controller
                 ]);
             }
         } catch (Throwable $e) {
-            return Redirect::back()->with('status', "Error on edit selected item.|Error on edit selected items.");
+            report($e);
+
+            return Redirect::back()->with([
+                'toast_type' => 'error',
+                'toast_message' => "Error on edit selected item.|Error on edit selected items.",
+                'toast_count' => count($request->list),
+            ]);
         }
     }
 }
