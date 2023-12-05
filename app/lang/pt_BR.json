@@ -170,14 +170,16 @@
   "{0} Nobody to deauthorize.|[1] User successfully deauthorized.|[2,*] :total users successfully deauthorized.": "{0} Ninguém para desautorizar.|[1] Usuário desautorizado com sucesso.|[2,*] :total usuários desautorizados com sucesso.",
 
   "Abilities management": "Gerenciar abilitações",
+  "Valid abilities management": "Gerenciar abilitações válidas",
+  "Define which abilities will be showed in the roles management.": "Defina quais abilitações serão exibidas no gerenciamento de funções.",
+  "Invalid abilities management": "Gerenciar abilitações inválidas",
+  "This abilities does not have a specific route to refer to. Please delete them.": "Estas abilitações não possuem uma rota especifica para se referir. Por favor, exclua-as.",
   "Abilities": "Abilitações",
   "Ability": "Abilitação",
-  "Define which abilities will be showed in the roles management.": "Defina quais abilitações serão exibidas no gerenciamento de funções.",
   "Activate abilities": "Ativar abilitações",
   "Deactivate abilities": "Desativar abilitações",
   "The ability ':ability' was activated.": "A abilitação ':ability' foi ativada.",
   "The ability ':ability' was deactivated.": "A abilitação ':ability' foi desativada.",
-  "This abilitation does not have a specific route to refer to. Please delete it.": "Esta abilitação não possui uma rota especifica para se referir. Por favor, exclua-a.",
 
   "Units": "Unidades",
   "Unit": "Unidade",

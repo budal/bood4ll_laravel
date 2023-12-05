@@ -9,14 +9,16 @@
       name?: string;
       colorOn?: 'zero' | 'primary' | 'secondary' | 'danger' | 'success' | 'warning' | 'info';
       colorOff?: 'zero' | 'primary' | 'secondary' | 'danger' | 'success' | 'warning' | 'info';
+      icon?: string;
+      rotate?: boolean;
       modelValue?: any;
-      isUndefined?: boolean;
     }>(),
     {
       colorOn: 'secondary',
       colorOff: 'secondary',
+      icon: 'mdi:thumb-up-outline',
+      rotate: true,
       modelValue: false,
-      isUndefined: false,
     }
   );
 
@@ -25,10 +27,6 @@
   emit('update:modelValue', props.modelValue || false)
 
   const toggleState = ref(props.modelValue || false)
-
-  const colorOn = props.isUndefined === true ? 'warning' : props.colorOn
-  const colorOff = props.isUndefined === true ? 'warning' : props.colorOff
-
 </script>
 
 <template>
@@ -43,9 +41,12 @@
     @keydown.enter.prevent
   >
       <button>
-        <Icon v-if="toggleState === true && isUndefined === false" icon="mdi:thumb-up-outline" class="w-5 h-5"/>
-        <Icon v-if="toggleState === false && isUndefined === false" icon="mdi:thumb-down-outline" class="w-5 h-5"/>
-        <Icon v-if="isUndefined === true" icon="mdi:exclamation-thick" class="w-5 h-5"/>
+        <Icon :icon="icon" 
+          class="w-5 h-5 transition ease-in-out duration-500"
+          :class="{
+            'rotate-180': toggleState === false && rotate === true
+          }"
+        />
       </button>
   </Toggle>
 </template>

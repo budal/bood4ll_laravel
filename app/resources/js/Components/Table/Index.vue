@@ -316,7 +316,7 @@
                   ? ''
                   : ''"
                 :checked="selectedItems.has(item)" 
-                :disabled="item.inalterable === true || item.isUndefined === true" 
+                :disabled="item.inalterable === true" 
                 :value="item.id" 
                 :id="`checkboxItem-${item.id}`" 
                 @click="toggle(item)" 
@@ -345,7 +345,8 @@
                 :name="item.name" 
                 :colorOn="content.colorOn"
                 :colorOff="content.colorOff"
-                :isUndefined="item.isUndefined"
+                :icon="content.icon"
+                :rotate="content.rotate"
                 v-model="item.checked"
                 @click="updateFormToogle(content.method, content.route, [item.id])"
               />

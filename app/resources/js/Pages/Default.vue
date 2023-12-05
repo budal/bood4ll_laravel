@@ -8,10 +8,11 @@
             isModal?: boolean;
             title?: string;
             form: any;
-            routes: any;
+            routes?: any;
             data?: any;
         }>(),
         {
+            routes: [],
             isModal: false,
         }
     );

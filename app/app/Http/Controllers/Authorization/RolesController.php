@@ -281,7 +281,7 @@ class RolesController extends Controller
 
     public function create(Request $request, Role $role): Response
     {
-        return Inertia::render('Default/Form', [
+        return Inertia::render('Default', [
             'form' => $this->__form($request, $role),
             'routes' => [
                 'role' => [
@@ -347,7 +347,7 @@ class RolesController extends Controller
     {
         $role['abilities'] = $role->abilities;
 
-        return Inertia::render('Default/Form', [
+        return Inertia::render('Default', [
             'form' => $this->__form($request, $role),
             'routes' => [
                 'role' => [
@@ -595,7 +595,7 @@ class RolesController extends Controller
     {
         $role['abilities'] = $role->abilities()->get()->map->only('id')->pluck('id');
 
-        return Inertia::modal('Default/Form', [
+        return Inertia::modal('Default', [
             'form' => $this->__formModal($request, $role),
             'isModal' => true,
             'title' => "Define the users who have access to this authorization",

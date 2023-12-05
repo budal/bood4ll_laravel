@@ -104,6 +104,7 @@
                                             :type="field.type"
                                             :colorOn="field.colorOn"
                                             :colorOff="field.colorOff"
+                                            :rotate="field.rotate"
                                             :disabled="field.disabled ? field.disabled : data?.inalterable === true"
                                             class="mt-1"
                                             v-model="jsForm[field.name]"

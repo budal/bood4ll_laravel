@@ -310,7 +310,7 @@ class UnitsController extends Controller
     {
         $data['parent_id'] = $request->unit->id ?? '';
         
-        return Inertia::render('Default/Form', [
+        return Inertia::render('Default', [
             'form' => $this->__form($request, $unit),
             'routes' => [
                 'unit' => [
@@ -368,7 +368,7 @@ class UnitsController extends Controller
     
     public function edit(Request $request, Unit $unit): Response
     {
-        return Inertia::render('Default/Form', [
+        return Inertia::render('Default', [
             'form' => $this->__form($request, $unit),
             'routes' => [
                 'unit' => [
