@@ -198,6 +198,7 @@
   "Deactivate abilities": "Desativar abilitações",
   "The ability ':ability' was activated.": "A abilitação ':ability' foi ativada.",
   "The ability ':ability' was deactivated.": "A abilitação ':ability' foi desativada.",
+  "This abilitation does not have a specific route to refer to. Please delete it.": "Esta abilitação não possui uma rota especifica para se referir. Por favor, exclua-a.",
 
   "Units": "Unidades",
   "Unit": "Unidade",

@@ -21,12 +21,12 @@ class AbilitiesController extends Controller
     {
         $prefixes = ["apps", "reports"];
         
+        $abilities = Ability::filter($request->all('search', 'sorted', 'trashed'))->get();
+        
         $routes = collect(Route::getRoutes())->filter(function ($route) use ($request, $prefixes) {
             return Str::contains($route->uri, $prefixes) 
             && ($request->search ? Str::contains($route->uri, $request->search) : true);
         });
-
-        $abilities = Ability::filter($request->all('search', 'sorted', 'trashed'))->get();
 
         $activatedAbilities = collect($abilities->pluck('name')->toArray());
 
@@ -39,7 +39,21 @@ class AbilitiesController extends Controller
             $checked = $activatedAbilities->contains($id);
 
             return compact('id', 'route', 'command', 'title', 'checked');
-        })->values()->toArray();
+        })->values();
+
+        $zombies = $abilities->pluck('name')->diff(collect($items)->pluck('id'));
+
+        $zombies->map(function ($zombie) use ($items) {
+            $id = $zombie;
+            $route = $zombie;
+            $command = "This abilitation does not have a specific route to refer to. Please delete it.";
+            $title = $zombie;
+            $checked = '-';
+
+            $items->push(compact('id', 'route', 'command', 'title', 'checked'));
+        });
+
+        $items = $items->toArray();
 
         usort($items, function($a, $b) use ($request) {
             return ($request->query('sorted') == "title" || !$request->query('sorted')) 

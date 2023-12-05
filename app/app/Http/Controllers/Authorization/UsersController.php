@@ -133,6 +133,10 @@ class UsersController extends Controller
         ];
     }
 
+    public function toggleActivate()
+    {
+    }
+
     public function create()
     {
         return Inertia::render('Default/Form', [

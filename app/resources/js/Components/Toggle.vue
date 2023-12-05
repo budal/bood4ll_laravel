@@ -37,7 +37,9 @@
     @keydown.enter.prevent
   >
       <button>
-        <Icon :icon="toggleState ? 'mdi:thumb-up-outline' : 'mdi:thumb-down-outline'" class="w-5 h-5"/>
+        <Icon v-if="toggleState === true" icon="mdi:thumb-up-outline" class="w-5 h-5"/>
+        <Icon v-if="toggleState === false" icon="mdi:thumb-down-outline" class="w-5 h-5"/>
+        <Icon v-if="toggleState === '-'" icon="mdi:exclamation-thick" class="w-5 h-5"/>
       </button>
   </Toggle>
 </template>

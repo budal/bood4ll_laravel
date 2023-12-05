@@ -143,9 +143,11 @@
       
       props.menu.forEach((item: any) => {
         if (item.list == 'checkboxes') {
+          console.log(item.listCondition)
+
           let customList = computed(() => {
             let items = reactive(new Set())
-            selectedItems.forEach((selected: any) => selected.checked == item.listCondition ? items.add(selected.id) : false )
+            selectedItems.forEach((selected: any) => selected.checked === item.listCondition ? items.add(selected.id) : false )
             return items
           })
 
