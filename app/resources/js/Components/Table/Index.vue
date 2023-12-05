@@ -143,8 +143,6 @@
       
       props.menu.forEach((item: any) => {
         if (item.list == 'checkboxes') {
-          console.log(item.listCondition)
-
           let customList = computed(() => {
             let items = reactive(new Set())
             selectedItems.forEach((selected: any) => selected.checked === item.listCondition ? items.add(selected.id) : false )
@@ -318,7 +316,7 @@
                   ? ''
                   : ''"
                 :checked="selectedItems.has(item)" 
-                :disabled="item.inalterable === true" 
+                :disabled="item.inalterable === true || item.isUndefined === true" 
                 :value="item.id" 
                 :id="`checkboxItem-${item.id}`" 
                 @click="toggle(item)" 
@@ -331,8 +329,8 @@
               </p>
 
               <template v-if="content.type == 'composite'">
-                <p class="text-sm font-medium text-secondary-light dark:text-secondary-dark text-center">{{ item[content.fields[0]] ?? '-' }}</p>
-                <p class="truncate text-xs text-secondary-light dark:text-secondary-dark text-center">{{ item[content.fields[1]] ?? '-' }}</p>
+                <p class="text-sm font-medium text-secondary-light dark:text-secondary-dark text-center">{{ $t(item[content.fields[0]]) ?? '-' }}</p>
+                <p class="truncate text-xs text-secondary-light dark:text-secondary-dark text-center">{{ $t(item[content.fields[1]]) ?? '-' }}</p>
               </template>
 
               <Avatar 
@@ -345,8 +343,9 @@
                 v-if="content.type == 'toggle'"
                 :id="item.id" 
                 :name="item.name" 
-                :color="content.color"
-                :colorFalse="content.colorFalse"
+                :colorOn="content.colorOn"
+                :colorOff="content.colorOff"
+                :isUndefined="item.isUndefined"
                 v-model="item.checked"
                 @click="updateFormToogle(content.method, content.route, [item.id])"
               />

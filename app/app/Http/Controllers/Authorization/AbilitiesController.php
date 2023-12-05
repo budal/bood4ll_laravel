@@ -48,9 +48,10 @@ class AbilitiesController extends Controller
             $route = $zombie;
             $command = "This abilitation does not have a specific route to refer to. Please delete it.";
             $title = $zombie;
-            $checked = '-';
+            $checked = null;
+            $isUndefined = true;
 
-            $items->push(compact('id', 'route', 'command', 'title', 'checked'));
+            $items->push(compact('id', 'route', 'command', 'title', 'checked', 'isUndefined'));
         });
 
         $items = $items->toArray();
@@ -119,8 +120,8 @@ class AbilitiesController extends Controller
                         'attributes' => "toggle",
                     ],
                     'method' => 'post',
-                    'color' => 'success',
-                    'colorFalse' => 'danger',
+                    'colorOn' => 'success',
+                    'colorOff' => 'danger',
                 ],
             ],
             'items' => ['data' => $items]

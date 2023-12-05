@@ -70,7 +70,6 @@ Route::middleware('auth')->group(function () {
             Route::controller(UsersController::class)->group(function () {
                 Route::get('/users', 'index')->name('users.index')->middleware(['password.confirm', 'verified'])->breadcrumb('Users');
                 Route::get('/users/activate/{user}/{mode?}', 'activate')->name('users.activate')->middleware(['password.confirm']);
-                // Route::get('/users/ttactivate/{user}/{mode?}', 'toggleActivate')->name('users.toggleActivate')->middleware(['password.confirm']);
                 Route::get('/users/create', 'create')->name('users.create')->middleware(['password.confirm'])->breadcrumb('User creation', 'apps.users.index');
                 Route::post('/users/create', 'store')->name('users.store')->middleware(['password.confirm']);
                 Route::get('/users/edit/{user}', 'edit')->name('users.edit')->middleware(['password.confirm'])->breadcrumb('User edition', 'apps.users.index');

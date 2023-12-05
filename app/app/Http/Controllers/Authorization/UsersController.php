@@ -54,8 +54,8 @@ class UsersController extends Controller
                         'attributes' => "toggle",
                     ],
                     'method' => 'post',
-                    'color' => 'success',
-                    'colorFalse' => 'danger',
+                    'colorOn' => 'success',
+                    'colorOff' => 'danger',
                 ]    
             ],
             'items' => User::filter($request->all('search', 'sorted', 'trashed'))
