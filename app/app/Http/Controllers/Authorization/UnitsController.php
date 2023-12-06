@@ -233,7 +233,7 @@ class UnitsController extends Controller
                     [
                         [
                             'type' => "table",
-                            'name' => "users",
+                            'name' => "subunits",
                             'content' => [
                                 'routes' => [
                                     'createRoute' => [

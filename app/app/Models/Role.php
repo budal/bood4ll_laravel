@@ -65,8 +65,7 @@ class Role extends Model
 
         $query->when($filterSearch ?? null, function ($query, $search) {
             $query->where(function ($query) use ($search) {
-                $query->where('name', 'ilike', '%'.$search.'%')
-                    ->orWhere('email', 'ilike', '%'.$search.'%');
+                $query->where('name', 'ilike', '%'.$search.'%');
             });
         })->when($filterTrash ?? null, function ($query, $trashed) {
             if ($trashed === 'both') {

@@ -28,52 +28,64 @@ class RolesController extends Controller
             ->withCount('abilities', 'users')
             ->paginate(20)
             ->onEachSide(2)
-            ->appends($request->all('search', 'sorted', 'trashed'));
+            ->appends(collect($request->query)->toArray());
         
 
 
 
 
 
-
-
-
-            return Inertia::render('Default/Index', [
-            'title' => "Roles management",
-            'subtitle' => "Define roles, grouping abilities to define specific access.",
-            'routes' => [
-                'createRoute' => "apps.roles.create",
-                'editRoute' => "apps.roles.edit",
-                'destroyRoute' => "apps.roles.destroy",
-                'forceDestroyRoute' => "apps.roles.forcedestroy",
-                'restoreRoute' => "apps.roles.restore",
-            ],
-            'menu' => [
+        return Inertia::render('Default', [
+            'form' => [
                 [
-                    'icon' => "mdi:book-cog-outline",
-                    'title' => "Abilities management",
-                    'route' => "apps.abilities.index"
-                ],            
-            ],
-            'titles' => [
-                [
-                    'type' => 'composite',
-                    'title' => 'Role',
-                    'field' => 'name',
-                    'fields' => ['name', 'description'],
+                    'id' => "roles",
+                    'title' => "Roles management",
+                    'subtitle' => "Define roles, grouping abilities to define specific access.",
+                    'fields' => [
+                        [
+                            [
+                                'type' => "table",
+                                'name' => "roles",
+                                'content' => [
+                                    'routes' => [
+                                        'createRoute' => "apps.roles.create",
+                                        'editRoute' => "apps.roles.edit",
+                                        'destroyRoute' => "apps.roles.destroy",
+                                        'forceDestroyRoute' => "apps.roles.forcedestroy",
+                                        'restoreRoute' => "apps.roles.restore",
+                                    ],
+                                    'menu' => [
+                                        [
+                                            'icon' => "mdi:book-cog-outline",
+                                            'title' => "Abilities management",
+                                            'route' => "apps.abilities.index"
+                                        ],            
+                                    ],
+                                    'titles' => [
+                                        [
+                                            'type' => 'composite',
+                                            'title' => 'Role',
+                                            'field' => 'name',
+                                            'fields' => ['name', 'description'],
+                                        ],
+                                        [
+                                            'type' => 'simple',
+                                            'title' => 'Abilities',
+                                            'field' => 'abilities_count',
+                                        ],
+                                        [
+                                            'type' => 'simple',
+                                            'title' => 'Users',
+                                            'field' => 'users_count',
+                                        ],
+                                    ],
+                                    'items' => $items
+                                ],
+                            ],
+                        ],
+                    ]
                 ],
-                [
-                    'type' => 'simple',
-                    'title' => 'Abilities',
-                    'field' => 'abilities_count',
-                ],
-                [
-                    'type' => 'simple',
-                    'title' => 'Users',
-                    'field' => 'users_count',
-                ],
             ],
-            'items' => $items
         ]);
     }
     
@@ -82,23 +94,21 @@ class RolesController extends Controller
         $abilities = Ability::sort("name")->get();
 
         if ($request->all) {
-            $roles = User::filter($request->all('search', 'sorted', 'trashed'))
+            $users = User::filter($request, 'users')
                 ->with("roles")
-                ->sort($request->sorted ?? "name")
                 ->paginate(20)
                 ->onEachSide(2)
-                ->appends($request->all('search', 'sorted', 'trashed'))
+                ->appends(collect($request->query)->toArray())
                 ->through(function($item) use ($role) {
                     $item->checked = in_array($role->id, $item->roles->pluck("id")->toArray());
                     return $item;
                 });
         } else {
-            $roles = $role->users()
-                ->filter($request->all('search', 'sorted', 'trashed'))
-                ->sort($request->sorted ?? "name")
+            $users = $role->users()
+                ->filter($request, 'users')
                 ->paginate(20)
                 ->onEachSide(2)
-                ->appends($request->all('search', 'sorted', 'trashed'))
+                ->appends(collect($request->query)->toArray())
                 ->through(function($item){
                     $item->checked = true;
                     return $item;
@@ -174,6 +184,7 @@ class RolesController extends Controller
                 ],
             ],
             [
+                'id' => "users",
                 'title' => "Authorizations management",
                 'subtitle' => "Define which users will have access to this authorization",
                 'condition' => $role->id <> null,
@@ -277,7 +288,7 @@ class RolesController extends Controller
                                         'colorOn' => 'info',
                                     ],
                                 ],
-                                'items' => $roles
+                                'items' => $users
                             ],
                         ],
                     ],
