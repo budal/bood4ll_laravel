@@ -100,23 +100,23 @@ class UnitsController extends Controller
 
         $subunits = $unit
             ->where('parent_id', $unit->id)
-            ->filter($request, 'subunits_trashed')
+            ->filter($request, 'subunits')
             ->with('childrenRecursive')
             ->withCount('children', 'users')
             ->paginate($perPage = 20, $columns = ['*'], $pageName = 'subunits')
             ->onEachSide(2)
+            ->appends(collect($request->query)->toArray())
             ->through(function($item) {
                 $item->parents = $item->getParentsNames();
                 $item->all_users_count = $item->getAllChildren()->pluck('users_count')->sum() + $item->users_count;
                 return $item;
-            })
-            ->appends($request->all('subunits_search', 'subunits_trashed', 'subunits_sorted'));
+            });
 
         $staff = $unit->users()
             ->where('name', 'ilike', '%'.$request->staff_search.'%')
             ->paginate($perPage = 20, $columns = ['*'], $pageName = 'staff')
             ->onEachSide(2)
-            ->appends($request->all('staff_search'));
+            ->appends(collect($request->query)->toArray());
 
         return [
             [
