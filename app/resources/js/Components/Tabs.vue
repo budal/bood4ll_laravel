@@ -1,5 +1,8 @@
 <script setup lang="ts">
   import { TabsContent, TabsIndicator, TabsList, TabsRoot, TabsTrigger } from 'radix-vue'
+import { onMounted } from 'vue';
+  import { onBeforeMount } from 'vue';
+  import { computed } from 'vue';
   import { ref } from 'vue';
 
   const props = defineProps<{
@@ -11,6 +14,7 @@
   const emit = defineEmits(['update:modelValue']);
   
   console.log(props.modelValue || props.items[0].id)
+  console.log(props.modelValue, props.items[0].id)
 
   emit('update:modelValue', props.modelValue || props.items[0].id)
 
@@ -22,6 +26,12 @@
   }
 // console.log(tab.value)
 
+  const actualTab = computed(() => {
+    console.log(tab.value)
+    
+    return tab.value
+  })
+
   const onChangeTab = (name: string) => {
     tab.value = name
     console.log(tab.value)
@@ -30,9 +40,10 @@
 </script>
 
 <template>
+  {{ 123 }}
   <TabsRoot 
     v-if="tabs === true" 
-    v-model="tab"
+    v-model="actualTab"
     @update:modelValue="onChangeTab"
     class="rounded-xl p-2 sm:p-8 bg-zero-light dark:bg-zero-dark sm:rounded-lg shadow-primary-light/20 dark:shadow-primary-dark/20 shadow-[0_2px_10px]" 
   >
