@@ -41,6 +41,7 @@
       v-for="item in items"
       class="grow bg-zero-light dark:bg-zero-dark rounded-b-md outline-none"
       :value="`${item.id}`"
+      forceMount 
     >
       <section
         v-if="item.condition !== false" 
