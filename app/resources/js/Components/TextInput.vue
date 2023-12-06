@@ -7,7 +7,7 @@
             name: string;
             type?: string;
             mask?: string;
-            modelValue: string;
+            modelValue?: string;
             autocomplete: boolean;
         }>(),{
             type: 'text',

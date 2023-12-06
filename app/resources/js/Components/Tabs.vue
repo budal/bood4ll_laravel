@@ -8,11 +8,23 @@
     modelValue?: string;
   }>();    
 
-  defineEmits(['update:modelValue']);
 
-  let tab = ref(props.modelValue || props.items[0].id)
+  const emit = defineEmits(['update:modelValue']);
+
+  emit('update:modelValue', props.modelValue || props.items[0].id)
+
+  const tab = ref(props.modelValue || props.items[0].id)
   
-  const onChangeTab = (tab: string) => {
+  
+  if (!tab.value) {
+    tab.value = props.modelValue || props.items[0].id
+  }
+console.log(tab.value)
+
+  const onChangeTab = (name: string) => {
+    tab.value = name
+    console.log(tab.value)
+  
   }
 </script>
 
@@ -20,7 +32,7 @@
   <TabsRoot 
     v-if="tabs === true" 
     v-model="tab"
-    @update:modelValue="(tab) => $emit('update:modelValue', tab)"
+    @update:modelValue="onChangeTab"
     class="rounded-xl p-2 sm:p-8 bg-zero-light dark:bg-zero-dark sm:rounded-lg shadow-primary-light/20 dark:shadow-primary-dark/20 shadow-[0_2px_10px]" 
   >
     <TabsList v-if="items.length > 1" class="relative shrink-0 flex border-b border-zero-light dark:border-zero-dark">

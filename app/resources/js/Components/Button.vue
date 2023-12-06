@@ -42,6 +42,7 @@
                 isValidUrl(props.link),
                 {
                     method: props.method,
+                    preserveState: true,
                     preserveScroll: props.preserveScroll,
                 }
             );
