@@ -24,14 +24,21 @@ class RolesController extends Controller
 {
     public function index(Request $request): Response
     {
-        $items = Role::filter($request->all('search', 'sorted', 'trashed'))
-            ->sort($request->sorted ?? "name")
+        $items = Role::filter($request, 'roles')
             ->withCount('abilities', 'users')
             ->paginate(20)
             ->onEachSide(2)
             ->appends($request->all('search', 'sorted', 'trashed'));
         
-        return Inertia::render('Default/Index', [
+
+
+
+
+
+
+
+
+            return Inertia::render('Default/Index', [
             'title' => "Roles management",
             'subtitle' => "Define roles, grouping abilities to define specific access.",
             'routes' => [

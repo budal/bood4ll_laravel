@@ -78,15 +78,6 @@ class UsersController extends Controller
                 ],
             ],
         ]);
-        
-        
-        
-        
-        
-        
-        
-        return Inertia::render('Default/Index', [
-        ]);
     }
 
     public function __form(): Array

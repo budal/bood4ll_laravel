@@ -20,13 +20,12 @@ class UnitsController extends Controller
 {
     public function index(Request $request): Response
     {
-        $units = Unit::filter($request->all('search', 'trashed'))
+        $units = Unit::filter($request, 'units')
             ->when(!$request->search, function($query) {
                 $query->where("parent_id", "1");
             })
             ->with('childrenRecursive')
             ->withCount('children', 'users')
-            ->sort($request->sorted ?? "name")
             ->paginate(20)
             ->onEachSide(2)
             ->through(function($item) {
@@ -34,44 +33,59 @@ class UnitsController extends Controller
                 $item->all_users_count = $item->getAllChildren()->pluck('users_count')->sum() + $item->users_count;
                 return $item;
             })
-            ->appends($request->all('search', 'trashed', 'sorted'));
+            ->appends(collect($request->query)->toArray());
             
-            // dd($units[0]);
+        // dd($units[0]);
 
-        return Inertia::render('Default/Index', [
-            'title' => "Units management",
-            'subtitle' => "Manage the units users are classified in.",
-            'routes' => [
-                'createRoute' => "apps.units.create",
-                'editRoute' => "apps.units.edit",
-                'destroyRoute' => "apps.units.destroy",
-                'restoreRoute' => "apps.units.restore",
+        return Inertia::render('Default', [
+            'form' => [
+                [
+                    'id' => "units",
+                    'title' => "Units management",
+                    'subtitle' => "Manage the units users are classified in.",
+                    'fields' => [
+                        [
+                            [
+                                'type' => "table",
+                                'name' => "units",
+                                'content' => [
+                                    'routes' => [
+                                        'createRoute' => "apps.units.create",
+                                        'editRoute' => "apps.units.edit",
+                                        'destroyRoute' => "apps.units.destroy",
+                                        'restoreRoute' => "apps.units.restore",
+                                    ],
+                                    'titles' => [
+                                        [
+                                            'type' => $request->search ? 'composite' : 'simple',
+                                            'title' => 'Name',
+                                            'field' => 'name',
+                                            'fields' => ['name', 'parents'],
+                                        ],
+                                        [
+                                            'type' => 'simple',
+                                            'title' => 'Subunits',
+                                            'field' => 'children_count',
+                                        ],
+                                        [
+                                            'type' => 'simple',
+                                            'title' => 'Local staff',
+                                            'field' => 'users_count',
+                                        ],
+                                        [
+                                            'type' => 'simple',
+                                            'title' => 'Total staff',
+                                            'field' => 'all_users_count',
+                                            'disableSort' => true,
+                                        ],
+                                    ],
+                                    'items' => $units
+                                ],
+                            ],
+                        ],
+                    ]
+                ],
             ],
-            'titles' => [
-                [
-                    'type' => $request->search ? 'composite' : 'simple',
-                    'title' => 'Name',
-                    'field' => 'name',
-                    'fields' => ['name', 'parents'],
-                ],
-                [
-                    'type' => 'simple',
-                    'title' => 'Subunits',
-                    'field' => 'children_count',
-                ],
-                [
-                    'type' => 'simple',
-                    'title' => 'Local staff',
-                    'field' => 'users_count',
-                ],
-                [
-                    'type' => 'simple',
-                    'title' => 'Total staff',
-                    'field' => 'all_users_count',
-                    'disableSort' => true,
-                ],
-            ],
-            'items' => $units
         ]);
     }
     
@@ -84,9 +98,9 @@ class UnitsController extends Controller
             ->where('parent_id', 0)
             ->get();
 
-        $subunits = Unit::where('parent_id', $unit->id)
-            ->filter($request->all('subunits_search', 'subunits_trashed'))
-            ->sort($request->subunits_sorted ?? "name")
+        $subunits = $unit
+            ->where('parent_id', $unit->id)
+            ->filter($request, 'subunits_trashed')
             ->with('childrenRecursive')
             ->withCount('children', 'users')
             ->paginate($perPage = 20, $columns = ['*'], $pageName = 'subunits')
@@ -100,7 +114,6 @@ class UnitsController extends Controller
 
         $staff = $unit->users()
             ->where('name', 'ilike', '%'.$request->staff_search.'%')
-            ->sort($request->staff_sorted ?? "name")
             ->paginate($perPage = 20, $columns = ['*'], $pageName = 'staff')
             ->onEachSide(2)
             ->appends($request->all('staff_search'));

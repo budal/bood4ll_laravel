@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Http\Request;
 
 class Role extends Model
 {
@@ -34,30 +35,54 @@ class Role extends Model
         return $this->belongsToMany(User::class);
     }
 
-    public function scopeFilter($query, array $filters)
+    public function scopeFilter($query, Request $request, string $prefix = null, string $orderBy = 'name'): void
     {
-        $query->when($filters['search'] ?? null, function ($query, $search) {
+        $filters = collect($request->query)->toArray();
+        
+        $search = array_filter($filters, function ($key) use ($prefix) { 
+            return (strpos($key, $prefix 
+                ? ($prefix . '_' . 'search') 
+                : 'search') !== false
+            );
+        }, ARRAY_FILTER_USE_KEY);
+        $filterSearch = reset($search);
+
+        $trash = array_filter($filters, function ($key) use ($prefix) { 
+            return (strpos($key, $prefix 
+                ? ($prefix . '_' . 'trash') 
+                : 'trash') !== false
+            ); 
+        }, ARRAY_FILTER_USE_KEY);
+        $filterTrash = reset($trash);
+
+        $sort = array_filter($filters, function ($key) use ($prefix) { 
+            return (strpos($key, $prefix 
+                ? ($prefix . '_' . 'sorted') 
+                : 'sorted') !== false
+            ); 
+        }, ARRAY_FILTER_USE_KEY);
+        $filterSort = reset($sort);
+
+        $query->when($filterSearch ?? null, function ($query, $search) {
             $query->where(function ($query) use ($search) {
-                $query->where('name', 'ilike', '%'.$search.'%');
+                $query->where('name', 'ilike', '%'.$search.'%')
+                    ->orWhere('email', 'ilike', '%'.$search.'%');
             });
-        })->when($filters['trashed'] ?? null, function ($query, $trashed) {
+        })->when($filterTrash ?? null, function ($query, $trashed) {
             if ($trashed === 'both') {
                 $query->withTrashed();
             } elseif ($trashed === 'trashed') {
                 $query->onlyTrashed();
             }
+        })->when($filterSort ? $filterSort : $orderBy, function ($query, $sort) {
+            $sort_order = 'ASC';
+
+            if (strncmp($sort, '-', 1) === 0) {
+                $sort_order = 'DESC';
+                $sort = substr($sort, 1);
+            }
+    
+            $query->orderBy($sort, $sort_order);
         });
-    }
-
-    public function scopeSort($query, string $attribute = null): void
-    {
-        $sort_order = 'ASC';
-
-        if (strncmp($attribute, '-', 1) === 0) {
-            $sort_order = 'DESC';
-            $attribute = substr($attribute, 1);
-        }
-
-        $query->orderBy($attribute, $sort_order);
     }
 }
