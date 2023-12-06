@@ -20,47 +20,72 @@ class UsersController extends Controller
 {
     public function index(Request $request): Response
     {
+        $users = User::filter($request, 'users')
+            ->paginate(20)
+            ->onEachSide(2)
+            ->appends($request->all('users_search', 'users_sorted', 'users_trashed'));
+
+        return Inertia::render('Default', [
+            'form' => [
+                [
+                    'id' => "users",
+                    'title' => "Users management",
+                    'subtitle' => "Manage users informations and authorizations.",
+                    'fields' => [
+                        [
+                            [
+                                'type' => "table",
+                                'name' => "users",
+                                'content' => [
+                                    'routes' =>  [
+                                        'createRoute' => "apps.users.create",
+                                        'editRoute' => "apps.users.edit",
+                                        'destroyRoute' => "apps.users.destroy",
+                                        'forceDestroyRoute' => "apps.users.forcedestroy",
+                                        'restoreRoute' => "apps.users.restore",
+                                    ],
+                                    'titles' => [
+                                        [
+                                            'type' => 'avatar',
+                                            'title' => 'Avatar',
+                                            'field' => 'id',
+                                            'fallback' => 'name',
+                                            'disableSort' => true
+                                        ],    
+                                        [
+                                            'type' => 'composite',
+                                            'title' => 'User',
+                                            'field' => 'name',
+                                            'fields' => ['name', 'email']
+                                        ],    
+                                        [
+                                            'type' => 'toggle',
+                                            'title' => 'Active',
+                                            'field' => 'active',
+                                            'disableSort' => true,
+                                            'route' => [
+                                                'route' => "apps.users.activate",
+                                                'attributes' => "toggle",
+                                            ],
+                                            'method' => 'post',
+                                        ]    
+                                    ],
+                                    'items' => $users,
+                                ],
+                            ],
+                        ],
+                    ]
+                ],
+            ],
+        ]);
+        
+        
+        
+        
+        
+        
+        
         return Inertia::render('Default/Index', [
-            'title' => "Users management",
-            'subtitle' => "Manage users informations and authorizations.",
-            'routes' =>  [
-                'createRoute' => "apps.users.create",
-                'editRoute' => "apps.users.edit",
-                'destroyRoute' => "apps.users.destroy",
-                'forceDestroyRoute' => "apps.users.forcedestroy",
-                'restoreRoute' => "apps.users.restore",
-            ],
-            'titles' => [
-                [
-                    'type' => 'avatar',
-                    'title' => 'Avatar',
-                    'field' => 'id',
-                    'fallback' => 'name',
-                    'disableSort' => true
-                ],    
-                [
-                    'type' => 'composite',
-                    'title' => 'User',
-                    'field' => 'name',
-                    'fields' => ['name', 'email']
-                ],    
-                [
-                    'type' => 'toggle',
-                    'title' => 'Active',
-                    'field' => 'active',
-                    'disableSort' => true,
-                    'route' => [
-                        'route' => "apps.users.activate",
-                        'attributes' => "toggle",
-                    ],
-                    'method' => 'post',
-                ]    
-            ],
-            'items' => User::filter($request->all('search', 'sorted', 'trashed'))
-                ->sort($request->sorted ?? "name")
-                ->paginate(20)
-                ->onEachSide(2)
-                ->appends($request->all('search', 'sorted', 'trashed'))
         ]);
     }
 
