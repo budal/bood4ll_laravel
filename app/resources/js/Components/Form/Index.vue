@@ -59,6 +59,7 @@
 </script>
 
 <template>
+    <!-- <Tabs :items="form"> -->
     <Tabs :items="form" :tabs="true">
         <template v-for="mkForm in form" v-slot:[mkForm.id]>
             <form v-if="mkForm.condition !== false" @submit.prevent="sendForm(mkForm.id)" class="space-y-6">

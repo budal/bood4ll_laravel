@@ -1,31 +1,26 @@
 <script setup lang="ts">
   import { TabsContent, TabsIndicator, TabsList, TabsRoot, TabsTrigger } from 'radix-vue'
-  import { computed } from 'vue';
   import { ref } from 'vue';
 
   const props = defineProps<{
     items: any;
-    modelValue?: any;
     tabs?: boolean;
+    modelValue?: string;
   }>();    
 
-  const emit = defineEmits(['update:modelValue']);
+  defineEmits(['update:modelValue']);
 
-  // emit('update:modelValue', props.items[0].id)
-
-  // const defaultTab = computed(() => props.modelValue)
+  let tab = ref(props.modelValue || props.items[0].id)
   
   const onChangeTab = (tab: string) => {
-    // emit('update:modelValue', tab)
-    console.log(tab)
   }
 </script>
 
 <template>
   <TabsRoot 
     v-if="tabs === true" 
-    :default-value="props.items[0].id"
-    @update:modelValue="onChangeTab"
+    v-model="tab"
+    @update:modelValue="(tab) => $emit('update:modelValue', tab)"
     class="overflow-hidden rounded-xl p-2 sm:p-8 bg-zero-light dark:bg-zero-dark sm:rounded-lg shadow-primary-light/20 dark:shadow-primary-dark/20 shadow-[0_2px_10px]" 
   >
     <TabsList class="relative shrink-0 flex border-b border-zero-light dark:border-zero-dark">
