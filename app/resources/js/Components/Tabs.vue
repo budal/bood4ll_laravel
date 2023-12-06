@@ -60,8 +60,7 @@
         v-if="item.condition !== false" 
       >
         <header v-if="item.title || item.subtitle" class="mb-6">
-          <h2 v-if="item.title && items.length <= 1" class="text-lg font-medium text-zero-light dark:text-zero-dark">{{ $t(item.title) }}</h2>
-          <p v-if="item.subtitle" class="text-sm text-zero-light/50 dark:text-zero-dark/50">{{ $t(item.subtitle) }}</p>
+          <p v-if="item.subtitle" class="text-sm text-zero-light/50 dark:text-zero-dark/50 text-center">{{ $t(item.subtitle) }}</p>
         </header>
         <slot :name="`${item.id}`" />
       </section>
