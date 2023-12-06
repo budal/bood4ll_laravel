@@ -8,8 +8,9 @@
     modelValue?: string;
   }>();    
 
-
   const emit = defineEmits(['update:modelValue']);
+  
+  console.log(props.modelValue || props.items[0].id)
 
   emit('update:modelValue', props.modelValue || props.items[0].id)
 
@@ -19,7 +20,7 @@
   if (!tab.value) {
     tab.value = props.modelValue || props.items[0].id
   }
-console.log(tab.value)
+// console.log(tab.value)
 
   const onChangeTab = (name: string) => {
     tab.value = name
@@ -35,7 +36,7 @@ console.log(tab.value)
     @update:modelValue="onChangeTab"
     class="rounded-xl p-2 sm:p-8 bg-zero-light dark:bg-zero-dark sm:rounded-lg shadow-primary-light/20 dark:shadow-primary-dark/20 shadow-[0_2px_10px]" 
   >
-    <TabsList v-if="items.length > 1" class="relative shrink-0 flex border-b border-zero-light dark:border-zero-dark">
+    <TabsList class="relative shrink-0 flex border-b border-zero-light dark:border-zero-dark">
       <TabsIndicator class="absolute px-8 left-0 h-[2px] bottom-0 w-[--radix-tabs-indicator-size] translate-x-[--radix-tabs-indicator-position] rounded-full transition-[width,transform] duration-300">
         <div class="bg-primary-light dark:bg-primary-dark w-full h-full" />
       </TabsIndicator>
