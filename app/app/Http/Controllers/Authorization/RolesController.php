@@ -24,17 +24,12 @@ class RolesController extends Controller
 {
     public function index(Request $request): Response
     {
-        $items = Role::filter($request, 'roles')
+        $roles = Role::filter($request, 'roles')
             ->withCount('abilities', 'users')
             ->paginate(20)
             ->onEachSide(2)
             ->appends(collect($request->query)->toArray());
         
-
-
-
-
-
         return Inertia::render('Default', [
             'form' => [
                 [
@@ -79,7 +74,7 @@ class RolesController extends Controller
                                             'field' => 'users_count',
                                         ],
                                     ],
-                                    'items' => $items
+                                    'items' => $roles
                                 ],
                             ],
                         ],
@@ -559,21 +554,9 @@ class RolesController extends Controller
     {
         $abilities = Ability::sort("name")->get()->map->only(['id', 'name']);
 
-        $users = User::filter($request->all('users_search', 'users_sorted', 'users_trashed'))
-            ->sort($request->sorted ?? "name")
-            ->paginate(5)
+        $users = User::paginate(5)
             ->onEachSide(1)
             ->appends($request->all('users_search', 'users_sorted', 'users_trashed'));
-
-        $items = $role->users()
-            ->filter($request->all('search', 'sorted', 'trashed'))
-            ->paginate(20)
-            ->onEachSide(2)
-            ->appends($request->all('search', 'sorted', 'trashed'))
-            ->through(function($item){
-                $item->id = $item->pivot->role_id;
-                return $item;
-            });
 
         return [
             [
