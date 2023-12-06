@@ -389,7 +389,8 @@ class UnitsController extends Controller
                     'method' => 'patch'
                 ],
             ],
-            'data' => $unit
+            'data' => $unit,
+            // 'tabs' => false,
         ]);
     }
 

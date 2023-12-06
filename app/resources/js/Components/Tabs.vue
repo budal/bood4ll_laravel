@@ -21,10 +21,10 @@
     v-if="tabs === true" 
     v-model="tab"
     @update:modelValue="(tab) => $emit('update:modelValue', tab)"
-    class="overflow-hidden rounded-xl p-2 sm:p-8 bg-zero-light dark:bg-zero-dark sm:rounded-lg shadow-primary-light/20 dark:shadow-primary-dark/20 shadow-[0_2px_10px]" 
+    class="rounded-xl p-2 sm:p-8 bg-zero-light dark:bg-zero-dark sm:rounded-lg shadow-primary-light/20 dark:shadow-primary-dark/20 shadow-[0_2px_10px]" 
   >
-    <TabsList class="relative shrink-0 flex border-b border-zero-light dark:border-zero-dark">
-      <TabsIndicator class="absolute px-8 left-0 h-[3px] bottom-0 w-[--radix-tabs-indicator-size] translate-x-[--radix-tabs-indicator-position] rounded-full transition-[width,transform] duration-300">
+    <TabsList v-if="items.length > 1" class="relative shrink-0 flex border-b border-zero-light dark:border-zero-dark">
+      <TabsIndicator class="absolute px-8 left-0 h-[2px] bottom-0 w-[--radix-tabs-indicator-size] translate-x-[--radix-tabs-indicator-position] rounded-full transition-[width,transform] duration-300">
         <div class="bg-primary-light dark:bg-primary-dark w-full h-full" />
       </TabsIndicator>
       <template v-for="item in items">
@@ -42,12 +42,14 @@
       class="grow bg-zero-light dark:bg-zero-dark rounded-b-md outline-none"
       :value="`${item.id}`"
     >
-      <header v-if="item.title || item.subtitle" class="mb-2">
-        <h2 v-if="item.title" class="text-lg font-medium text-zero-light dark:text-zero-dark">{{ $t(item.title) }}</h2>
-        <p v-if="item.subtitle" class="mt-1 text-sm text-zero-light/50 dark:text-zero-dark/50">{{ $t(item.subtitle) }}</p>
-      </header>
-      <section>
-          <slot :name="`${item.id}`" />
+      <section
+        v-if="item.condition !== false" 
+      >
+        <header v-if="item.title || item.subtitle" class="mb-6">
+          <h2 v-if="item.title && items.length <= 1" class="text-lg font-medium text-zero-light dark:text-zero-dark">{{ $t(item.title) }}</h2>
+          <p v-if="item.subtitle" class="text-sm text-zero-light/50 dark:text-zero-dark/50">{{ $t(item.subtitle) }}</p>
+        </header>
+        <slot :name="`${item.id}`" />
       </section>
     </TabsContent>
   </TabsRoot>
@@ -56,8 +58,12 @@
     <template v-for="item in items">
       <section 
         v-if="item.condition !== false" 
-        class="p-2 rounded-xl p-2 sm:p-8 bg-zero-light dark:bg-zero-dark sm:rounded-lg shadow-primary-light/20 dark:shadow-primary-dark/20 shadow-[0_2px_10px]"
+        class="rounded-xl bg-zero-light dark:bg-zero-dark sm:rounded-lg shadow-primary-light/20 dark:shadow-primary-dark/20 shadow-[0_2px_10px]"
       >
+        <header v-if="item.title || item.subtitle" class="mb-6">
+          <h2 v-if="item.title" class="text-lg font-medium text-zero-light dark:text-zero-dark">{{ $t(item.title) }}</h2>
+          <p v-if="item.subtitle" class="text-sm text-zero-light/50 dark:text-zero-dark/50">{{ $t(item.subtitle) }}</p>
+        </header>
         <slot :name="`${item.id}`" />
       </section>
     </template>

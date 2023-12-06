@@ -10,19 +10,21 @@
             form: any;
             routes?: any;
             data?: any;
+            tabs?: boolean;
         }>(),
         {
-            routes: [],
             isModal: false,
+            routes: [],
+            tabs: true,
         }
     );
 </script>
 
 <template>
     <ModalLayout v-if="isModal" :title="title">
-        <Form :form="form" :routes="routes" :data="data" />
+        <Form :form="form" :routes="routes" :data="data" :tabs="tabs" />
     </ModalLayout>
     <AuthenticatedLayout v-else>
-        <Form :form="form" :routes="routes" :data="data" />
+        <Form :form="form" :routes="routes" :data="data" :tabs="tabs" />
     </AuthenticatedLayout>
 </template>
