@@ -23,7 +23,7 @@ class UsersController extends Controller
         $users = User::filter($request, 'users')
             ->paginate(20)
             ->onEachSide(2)
-            ->appends($request->all('users_search', 'users_sorted', 'users_trashed'));
+            ->appends(collect($request->query)->toArray());
 
         return Inertia::render('Default', [
             'form' => [
