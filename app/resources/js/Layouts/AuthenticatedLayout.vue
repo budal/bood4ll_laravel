@@ -112,7 +112,7 @@ const menuUser = [
 
 <template>
     <div class="relative min-h-screen bg-zero-white dark:bg-zero-black">
-        <nav class="bg-zero-light dark:bg-zero-dark sm:sticky sm:top-0 z-[10]  border-b border-zero-light dark:border-zero-dark">
+        <nav class="bg-zero-light dark:bg-zero-dark sm:sticky sm:top-0 z-[10] border-b border-zero-light dark:border-zero-dark">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between h-16">
                     <div class="flex">
@@ -141,9 +141,7 @@ const menuUser = [
         </div>
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-                <div class="p-2 sm:p-8 bg-zero-light dark:bg-zero-dark sm:rounded-lg shadow-primary-light/20 dark:shadow-primary-dark/20 shadow-[0_2px_10px]">
-                    <slot />
-                </div>
+                <slot />
             </div>
         </div>
     </div>

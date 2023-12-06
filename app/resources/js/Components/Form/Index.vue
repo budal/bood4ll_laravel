@@ -59,19 +59,14 @@
 </script>
 
 <template>
-    <div class="grid grid-cols-1 gap-10">
-        <template v-for="mkForm in form">
+    <Tabs :items="form" :tabs="true">
+        <template v-for="mkForm in form" v-slot:[mkForm.id]>
             <section 
                 v-if="mkForm.condition !== false" 
-                class="p-2 bg-zero-light dark:bg-zero-dark rounded-xl border-2 border-zero-light dark:border-zero-dark shadow-primary-light/20 dark:shadow-primary-dark/20 shadow-[0_2px_10px]"
             >
                 <form @submit.prevent="sendForm(mkForm.id)" class="space-y-6">
                     <div class="flex flex-col">
                         <template v-for="group in mkForm.fields">
-                            <header v-if="mkForm.title || mkForm.subtitle" class="mb-2">
-                                <h2 v-if="mkForm.title" class="text-lg font-medium text-zero-light dark:text-zero-dark">{{ $t(mkForm.title) }}</h2>
-                                <p v-if="mkForm.subtitle" class="mt-1 text-sm text-zero-light/50 dark:text-zero-dark/50">{{ $t(mkForm.subtitle) }}</p>
-                            </header>
                             <div :class="`grid sm:grid-cols-${mkForm.cols} sm:gap-4`">
                                 <template v-for="field in group">
                                     <div :class="`${field.span ? `sm:col-span-${field.span}` : ''}`">
@@ -167,5 +162,5 @@
                 </form>
             </section>
         </template>
-    </div>
+    </Tabs>
 </template>
