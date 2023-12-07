@@ -40,8 +40,14 @@
 
     const onClick = () => {
         if (props.link) {
+            let indexRoute = new URL(window.location.href);
+            const __tab = indexRoute.searchParams.get('__tab')
+
+            const route = new URL(isValidUrl(props.link))
+            __tab ? route.searchParams.set('__tab', __tab) : false
+
             router.visit(
-                isValidUrl(props.link),
+                route,
                 {
                     method: props.method,
                     preserveState: props.preserveState,

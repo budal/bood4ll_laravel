@@ -189,8 +189,6 @@
         const route = new URL(isValidUrl(item.route))
         __tab ? route.searchParams.set('__tab', __tab) : false
 
-        console.log(__tab)
-
         router.visit(
           route,
           {
