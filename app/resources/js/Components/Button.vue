@@ -13,6 +13,7 @@
             transform?: 'uppercase' | 'lowercase' | 'lowercase' | 'capitalize' | 'capitalize' | 'normal-case';
             startIcon?: string;
             endIcon?: string;
+            preserveState?: boolean;
             preserveScroll?: boolean;
             method?: 'get' | 'post' | 'patch' | 'put' | 'delete';
             srOnly?: string;
@@ -31,6 +32,7 @@
             rounded: 'rounded-md',
             textSize: 'text-xs',
             transform: 'uppercase',
+            preserveState: false,
             preserveScroll: false,
             method: 'get',
         }
@@ -42,7 +44,7 @@
                 isValidUrl(props.link),
                 {
                     method: props.method,
-                    // preserveState: true,
+                    preserveState: props.preserveState,
                     preserveScroll: props.preserveScroll,
                 }
             );

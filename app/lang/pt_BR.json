@@ -21,6 +21,7 @@
   "Active": "Ativo",
   "Inactive": "Ativo",
   "List": "Listar",
+  "Main data": "Dados principais",
   
   "Current Password": "Senha atual",
   "New Password": "Nova Senha",
@@ -157,7 +158,7 @@
   "Role edition": "Edição de função",
   "Error when syncing abilities to the role.": "Erro ao sincronizar as abilitações à função.",
   "Error when inserting a new role.": "Erro ao inserir uma nova função.",
-  "Authorizations management": "Gerenciamento de autorizações",
+  "Authorizations": "Autorizações",
   "Define which users will have access to this authorization": "Defina quais usuários terão acesso a essa autorização",
   "There are no abilities to select. Click here to manage them.": "Não há abilitações para selecionar. Clique aqui para gerenciá-las.",
   "Are you sure you want to authorize the selected users?|Are you sure you want to authorize the selected users?": "Você tem certeza que deseja autorizar o usuário selecionado?|Você tem certeza que deseja autorizar os usuários selecionados?",

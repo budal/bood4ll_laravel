@@ -21,9 +21,11 @@
       menu?: any;
       titles: any;
       items: any;
+      tabs?: boolean;
       shortcutKey?: string;
     }>(),
     {
+      tabs: true,
       routes: [],
     }
   );
@@ -97,11 +99,12 @@
         list: trashedItems,
         route: props.routes.restoreRoute,
         method: "post",
+        preserveState: false,
         modalTitle: "Are you sure you want to restore the selected item?|Are you sure you want to restore the selected items?",
         modalSubTitle: "The selected item will be restored to the active items. Do you want to continue?|The selected items will be restored to the active items. Do you want to continue?",
         buttonTitle: "Restore",
         buttonIcon: "mdi:backup-restore",
-        buttonColor: "warning",
+        buttonTheme: "warning",
       })
     }
   
@@ -113,28 +116,31 @@
         list: activeItems,
         route: props.routes.destroyRoute,
         method: "delete",
+        preserveState: false,
         modalTitle: "Are you sure you want to remove the selected item?|Are you sure you want to remove the selected items?",
         modalSubTitle: "The selected item will be removed from the active items. Do you want to continue?|The selected items will be removed from the active items. Do you want to continue?",
         buttonTitle: "Remove",
         buttonIcon: "mdi:delete-sweep-outline",
-        buttonColor: "danger",
+        buttonTheme: "danger",
       })
     }
   
     if (props.routes.forceDestroyRoute && showRestoreItems == 'trashed') {
       content.add({
         title: "Erase",
+        theme: "danger",
         icon: "mdi:delete-forever-outline",
         disabled: trashedItems.value.size === 0,
         list: trashedItems,
         route: props.routes.forceDestroyRoute,
         method: "delete",
+        preserveState: false,
         modalTheme: "danger",
         modalTitle: "Are you sure you want to erase the selected item?|Are you sure you want to erase the selected items?",
         modalSubTitle: "The selected item will be erased from the database. This action can't be undone. Do you want to continue?|The selected items will be erased from the database. This action can't be undone. Do you want to continue?",
         buttonTitle: "Erase",
         buttonIcon: "mdi:delete-sweep-outline",
-        buttonColor: "danger",
+        buttonTheme: "danger",
       })
     }
   
@@ -151,16 +157,18 @@
 
           content.add({
             title: item.title,
+            theme: item.theme,
             icon: item.icon,
             disabled: customList.value.size === 0,
             list: customList,
             route: isValidUrl(item.route),
             method: item.method,
+            preserveState: item.preserveState === true,
             modalTitle: item.modalTitle,
             modalSubTitle: item.modalSubTitle,
             buttonTitle: item.buttonTitle,
             buttonIcon: item.buttonIcon,
-            buttonColor: item.buttonColor,
+            buttonTheme: item.buttonTheme,
           })
         } else {
           content.add(item);
@@ -176,10 +184,13 @@
       openModal(item)
     } else {
       if (item.route) {
+
+        console.log(item.preserveState === true)
         router.visit(
           isValidUrl(item.route),
           {
             method: item.method,
+            preserveState: item.preserveState === true,
             preserveScroll: true,
           }
         );
@@ -234,7 +245,7 @@
 
     modalForm.submit(modalInfo.value.method, isValidUrl(modalInfo.value.route), {
       preserveScroll: true,
-      preserveState: false,
+      preserveState: modalInfo.value.preserveState,
 
       onSuccess: () => {
         toast()
@@ -266,7 +277,14 @@
         <Button color="secondary" @click="closeModal" start-icon="mdi:cancel-outline">
           {{ $t('Cancel') }}
         </Button>
-        <Button :color="modalInfo.buttonColor" @click="submitModal" :start-icon="modalInfo.buttonIcon" class="ml-3" :class="{ 'opacity-25': modalForm.processing }" :disabled="modalForm.processing">
+        <Button 
+          :color="modalInfo.buttonTheme" 
+          @click="submitModal" 
+          :start-icon="modalInfo.buttonIcon" 
+          class="ml-3" 
+          :class="{ 'opacity-25': modalForm.processing }" 
+          :disabled="modalForm.processing"
+        >
           {{ transChoice(modalInfo.buttonTitle, modalInfo.list.size) }}
         </Button>
     </template>

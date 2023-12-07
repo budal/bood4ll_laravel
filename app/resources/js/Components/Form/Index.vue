@@ -134,6 +134,7 @@
                                 :menu="field.content.menu" 
                                 :routes="field.content.routes" 
                                 :items="field.content.items" 
+                                :tabs="tabs" 
                                 :titles="field.content.titles" 
                             />
             

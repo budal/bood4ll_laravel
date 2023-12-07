@@ -1,7 +1,5 @@
 <script setup lang="ts">
   import { TabsContent, TabsIndicator, TabsList, TabsRoot, TabsTrigger } from 'radix-vue'
-import { onMounted } from 'vue';
-  import { onBeforeMount } from 'vue';
   import { computed } from 'vue';
   import { ref } from 'vue';
 
@@ -13,34 +11,25 @@ import { onMounted } from 'vue';
 
   const emit = defineEmits(['update:modelValue']);
   
-  console.log(props.modelValue || props.items[0].id)
-  console.log(props.modelValue, props.items[0].id)
-
   emit('update:modelValue', props.modelValue || props.items[0].id)
 
   const tab = ref(props.modelValue || props.items[0].id)
   
-  
-  if (!tab.value) {
-    tab.value = props.modelValue || props.items[0].id
-  }
-// console.log(tab.value)
+  const actualTab = computed({
+        get() {
+            return tab.value;
+        },
 
-  const actualTab = computed(() => {
-    console.log(tab.value)
-    
-    return tab.value
-  })
+        set(val) {
+            emit('update:modelValue', props.modelValue || props.items[0].id);
+        },
+    });
 
-  const onChangeTab = (name: string) => {
-    tab.value = name
-    console.log(tab.value)
-  
-  }
+
+  const onChangeTab = (name: string) => tab.value = name
 </script>
 
 <template>
-  {{ 123 }}
   <TabsRoot 
     v-if="tabs === true" 
     v-model="actualTab"
@@ -54,7 +43,7 @@ import { onMounted } from 'vue';
       <template v-for="item in items">
         <TabsTrigger
           v-if="item.condition !== false"
-          class="bg-zero-light dark:bg-zero-dark text-zero-light/50 dark:text-zero-dark/50 px-5 h-[45px] flex-1 flex items-center justify-center leading-none select-none hover:text-secondary-light hover:dark:text-secondary-dark data-[state=active]:bg-zero-light-hover data-[state=active]:dark:bg-zero-dark-hover data-[state=active]:text-zero-light data-[state=active]:dark:text-zero-dark outline-none cursor-pointer transition ease-in-out duration-500"
+          class="bg-zero-light dark:bg-zero-dark text-zero-light/50 dark:text-zero-dark/50 px-5 h-[45px] flex-1 flex items-center justify-center leading-none select-none hover:text-secondary-light hover:dark:text-secondary-dark data-[state=active]:bg-zero-light-hover data-[state=active]:dark:bg-zero-dark-hover data-[state=active]:text-zero-light data-[state=active]:dark:text-zero-dark data-[state=active]:font-bold data-[state=active]:uppercase outline-none cursor-pointer transition ease-in-out duration-500"
           :value="`${item.id}`"
         >
           {{ $t(item.title) }}

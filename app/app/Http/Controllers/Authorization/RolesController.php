@@ -113,7 +113,7 @@ class RolesController extends Controller
         return [
             [
                 'id' => "role",
-                'title' => "Roles management",
+                'title' => "Main data",
                 'subtitle' => "Role name, abilities and settings",
                 'cols' => 3,
                 'fields' => [
@@ -180,7 +180,7 @@ class RolesController extends Controller
             ],
             [
                 'id' => "users",
-                'title' => "Authorizations management",
+                'title' => "Authorizations",
                 'subtitle' => "Define which users will have access to this authorization",
                 'condition' => $role->id <> null,
                 'fields' => [
@@ -247,6 +247,7 @@ class RolesController extends Controller
                                                     'route' => "apps.roles.edit",
                                                     'attributes' => $role->id
                                                 ],
+                                                'preserveState' => true,
                                             ],
                                             [
                                                 'icon' => "mdi:account-multiple-outline",
@@ -255,6 +256,7 @@ class RolesController extends Controller
                                                     'route' => "apps.roles.edit",
                                                     'attributes' => [$role->id, 'all']
                                                 ],
+                                                'preserveState' => true,
                                             ]
 
                                         ],

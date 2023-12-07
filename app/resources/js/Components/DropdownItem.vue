@@ -15,10 +15,14 @@
   } from 'radix-vue'
   import { ref } from 'vue';
 
-  defineProps<{
-    prefix?: string;
-    content: any;
-  }>();
+  withDefaults(
+    defineProps<{
+      prefix?: string;
+      content: any;
+    }>(),
+    {}
+  );
+
 
   const emit = defineEmits(['selectItem'])
 
@@ -30,7 +34,7 @@
   <template v-for="item in content">
     <DropdownMenuSub v-if="item.items">
       <DropdownMenuSubTrigger
-        class="group px-[5px] flex pl-[25px] leading-none rounded-[3px] items-center relative select-none text-sm py-3 focus:outline-none cursor-pointer data-[state=open]:bg-zero-light data-[state=open]:dark:bg-zero-dark data-[highlighted]:bg-zero-light data-[highlighted]:dark:bg-zero-dark data-[highlighted]:text-zero-light data-[highlighted]:dark:text-zero-dark data-[highlighted]:data-[state=open]:bg-zero-light data-[highlighted]:data-[state=open]:dark:bg-zero-dark data-[disabled]:text-zero-light/50 data-[disabled]:dark:text-zero-light/50 data-[disabled]:pointer-events-none"
+        :class="`group px-[5px] flex pl-[25px] leading-none items-center relative select-none text-sm py-3 focus:outline-none cursor-pointer bg-${item.theme || 'secondary'}-light bg-${item.theme || 'secondary'}-dark text-${item.theme || 'secondary'}-light text-${item.theme || 'secondary'}-dark data-[state=open]:bg-${item.theme || 'secondary'}-light-hover data-[state=open]:dark:bg-${item.theme || 'secondary'}-dark-hover data-[highlighted]:bg-${item.theme || 'secondary'}-light-hover data-[highlighted]:dark:bg-${item.theme || 'secondary'}-dark-hover data-[highlighted]:text-${item.theme || 'secondary'}-light data-[highlighted]:dark:text-${item.theme || 'secondary'}-dark data-[highlighted]:data-[state=open]:bg-${item.theme || 'secondary'}-light-hover data-[highlighted]:data-[state=open]:dark:bg-${item.theme || 'secondary'}-dark-hover data-[disabled]:bg-${item.theme || 'secondary'}-light/50 data-[disabled]:dark:bg-${item.theme || 'secondary'}-dark/50 data-[disabled]:text-${item.theme || 'secondary'}-light/50 data-[disabled]:dark:text-${item.theme || 'secondary'}-dark/50 data-[disabled]:pointer-events-none transition ease-in-out duration-500`"
       >
         <Icon v-if="item.icon" :icon="item.icon" class="h-5 w-5 mr-1" />
         {{ $t(item.title) }} 
@@ -98,12 +102,12 @@
           :menu="item.title"
           :disabled="item.disabled"
           @select="$emit('selectItem', item)"
-          class="group px-[5px] flex pl-[25px] leading-none rounded-[3px] items-center relative select-none text-sm py-3 focus:outline-none cursor-pointer data-[state=open]:bg-zero-light data-[state=open]:dark:bg-zero-dark data-[highlighted]:bg-zero-light data-[highlighted]:dark:bg-zero-dark data-[highlighted]:text-zero-light data-[highlighted]:dark:text-zero-dark data-[highlighted]:data-[state=open]:bg-zero-light data-[highlighted]:data-[state=open]:dark:bg-zero-dark data-[disabled]:text-zero-light/50 data-[disabled]:dark:text-zero-dark/50 data-[disabled]:pointer-events-none"
+          :class="`group px-[5px] flex pl-[25px] leading-none items-center relative select-none text-sm py-3 focus:outline-none cursor-pointer bg-${item.theme || 'secondary'}-light bg-${item.theme || 'secondary'}-dark text-${item.theme || 'secondary'}-light text-${item.theme || 'secondary'}-dark data-[state=open]:bg-${item.theme || 'secondary'}-light-hover data-[state=open]:dark:bg-${item.theme || 'secondary'}-dark-hover data-[highlighted]:bg-${item.theme || 'secondary'}-light-hover data-[highlighted]:dark:bg-${item.theme || 'secondary'}-dark-hover data-[highlighted]:text-${item.theme || 'secondary'}-light data-[highlighted]:dark:text-${item.theme || 'secondary'}-dark data-[highlighted]:data-[state=open]:bg-${item.theme || 'secondary'}-light-hover data-[highlighted]:data-[state=open]:dark:bg-${item.theme || 'secondary'}-dark-hover data-[disabled]:bg-${item.theme || 'secondary'}-light/50 data-[disabled]:dark:bg-${item.theme || 'secondary'}-dark/50 data-[disabled]:text-${item.theme || 'secondary'}-light/50 data-[disabled]:dark:text-${item.theme || 'secondary'}-dark/50 data-[disabled]:pointer-events-none transition ease-in-out duration-500`"
         >
           <Icon v-if="item.icon" :icon="item.icon" class="h-5 w-5 mr-1" />
           {{ $t(item.title) }} 
           {{ item.list ? `(${item.list.size})` : null }}
-          <div v-if="item.shortcut" class="ml-auto mr-2 pl-[20px] text-zero-light dark:text-zero-dark group-data-[highlighted]:text-zero-light/70 group-data-[highlighted]:dark:text-zero-dark/70 group-data-[disabled]:text-zero-light/50 group-data-[disabled]:dark:text-zero-dark/50" >
+          <div v-if="item.shortcut" class="ml-auto mr-2 pl-[20px] text-zero-light text-zero-light text-zero-light dark:text-zero-dark group-data-[highlighted]:text-zero-light/70 group-data-[highlighted]:dark:text-zero-dark/70 group-data-[disabled]:text-zero-light/50 group-data-[disabled]:dark:text-zero-dark/50" >
             {{ item.shortcut }}
           </div> 
         </DropdownMenuItem>
