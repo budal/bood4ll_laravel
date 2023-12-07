@@ -115,7 +115,7 @@ class UnitsController extends Controller
             });
 
         $staff = $unit->users()
-            ->where('name', 'ilike', '%'.$request->staff_search.'%')
+            ->filter($request, 'staff')
             ->paginate($perPage = 20, $columns = ['*'], $pageName = 'staff')
             ->onEachSide(2)
             ->appends(collect($request->query)->toArray());
@@ -306,6 +306,13 @@ class UnitsController extends Controller
                                     ],
                                 ],
                                 'titles' => [
+                                    [
+                                        'type' => 'avatar',
+                                        'title' => 'Avatar',
+                                        'field' => 'id',
+                                        'fallback' => 'name',
+                                        'disableSort' => true
+                                    ],    
                                     [
                                         'type' => 'simple',
                                         'title' => 'Name',
