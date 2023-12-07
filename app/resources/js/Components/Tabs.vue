@@ -1,38 +1,30 @@
 <script setup lang="ts">
   import { TabsContent, TabsIndicator, TabsList, TabsRoot, TabsTrigger } from 'radix-vue'
-  import { computed } from 'vue';
   import { ref } from 'vue';
 
   const props = defineProps<{
     items: any;
     tabs?: boolean;
-    modelValue?: string;
   }>();    
 
-  const emit = defineEmits(['update:modelValue']);
+  const activeTab = new URL(window.location.href);
+
+  const __tab = activeTab.searchParams.get('__tab')
+
+  const tab = ref(__tab || props.items[0].id)
   
-  emit('update:modelValue', props.modelValue || props.items[0].id)
-
-  const tab = ref(props.modelValue || props.items[0].id)
-  
-  const actualTab = computed({
-        get() {
-            return tab.value;
-        },
-
-        set(val) {
-            emit('update:modelValue', props.modelValue || props.items[0].id);
-        },
-    });
-
-
-  const onChangeTab = (name: string) => tab.value = name
+  const onChangeTab = (name: string) => {
+    window.history.pushState(null, "", '?__tab=' + name);
+  }
 </script>
 
 <template>
+  <KeepAlive>
+    
+  </KeepAlive>
   <TabsRoot 
     v-if="tabs === true" 
-    v-model="actualTab"
+    v-model="tab"
     @update:modelValue="onChangeTab"
     class="rounded-xl p-2 sm:p-8 bg-zero-light dark:bg-zero-dark sm:rounded-lg shadow-primary-light/20 dark:shadow-primary-dark/20 shadow-[0_2px_10px]" 
   >
@@ -71,7 +63,7 @@
     <template v-for="item in items">
       <section 
         v-if="item.condition !== false" 
-        class="rounded-xl bg-zero-light dark:bg-zero-dark sm:rounded-lg shadow-primary-light/20 dark:shadow-primary-dark/20 shadow-[0_2px_10px]"
+        class="rounded-xl p-2 sm:p-8 bg-zero-light dark:bg-zero-dark sm:rounded-lg shadow-primary-light/20 dark:shadow-primary-dark/20 shadow-[0_2px_10px]"
       >
         <header v-if="item.title || item.subtitle" class="mb-6">
           <h2 v-if="item.title" class="text-lg font-medium text-zero-light dark:text-zero-dark">{{ $t(item.title) }}</h2>

@@ -247,7 +247,6 @@ class RolesController extends Controller
                                                     'route' => "apps.roles.edit",
                                                     'attributes' => $role->id
                                                 ],
-                                                'preserveState' => true,
                                             ],
                                             [
                                                 'icon' => "mdi:account-multiple-outline",
@@ -256,7 +255,6 @@ class RolesController extends Controller
                                                     'route' => "apps.roles.edit",
                                                     'attributes' => [$role->id, 'all']
                                                 ],
-                                                'preserveState' => true,
                                             ]
 
                                         ],

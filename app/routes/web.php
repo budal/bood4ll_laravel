@@ -88,7 +88,7 @@ Route::middleware('auth')->group(function () {
                     Route::post('/permissions/roles/create', 'store')->name('store');
                     Route::get('/permissions/roles/edit/{role}/{all?}', 'edit')->name('edit')->breadcrumb('Role edition', 'apps.roles.index');
                     Route::patch('/permissions/roles/edit/{role}', 'update')->name('update');
-                    Route::post('/permissions/roles/authorization/{role}/{mode?}', 'authorization')->name('authorization');
+                    Route::post('/permissions/roles/authorization/{role}/{mode?}/{__tab?}', 'authorization')->name('authorization');
                     Route::delete('/permissions/roles/destroy', 'destroy')->name('destroy');
                     Route::delete('/permissions/roles/forcedestroy', 'forceDestroy')->name('forcedestroy');
                     Route::post('/permissions/roles/restore', 'restore')->name('restore');

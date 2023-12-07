@@ -99,7 +99,6 @@
         list: trashedItems,
         route: props.routes.restoreRoute,
         method: "post",
-        preserveState: false,
         modalTitle: "Are you sure you want to restore the selected item?|Are you sure you want to restore the selected items?",
         modalSubTitle: "The selected item will be restored to the active items. Do you want to continue?|The selected items will be restored to the active items. Do you want to continue?",
         buttonTitle: "Restore",
@@ -116,7 +115,6 @@
         list: activeItems,
         route: props.routes.destroyRoute,
         method: "delete",
-        preserveState: false,
         modalTitle: "Are you sure you want to remove the selected item?|Are you sure you want to remove the selected items?",
         modalSubTitle: "The selected item will be removed from the active items. Do you want to continue?|The selected items will be removed from the active items. Do you want to continue?",
         buttonTitle: "Remove",
@@ -134,7 +132,6 @@
         list: trashedItems,
         route: props.routes.forceDestroyRoute,
         method: "delete",
-        preserveState: false,
         modalTheme: "danger",
         modalTitle: "Are you sure you want to erase the selected item?|Are you sure you want to erase the selected items?",
         modalSubTitle: "The selected item will be erased from the database. This action can't be undone. Do you want to continue?|The selected items will be erased from the database. This action can't be undone. Do you want to continue?",
@@ -184,10 +181,16 @@
       openModal(item)
     } else {
       if (item.route) {
+        let indexRoute = new URL(window.location.href);
+        const __tab = indexRoute.searchParams.get('__tab')
 
-        console.log(item.preserveState === true)
+        const route = new URL(isValidUrl(item.route))
+        __tab ? route.searchParams.set('__tab', __tab) : false
+
+        console.log(__tab)
+
         router.visit(
-          isValidUrl(item.route),
+          route,
           {
             method: item.method,
             preserveState: item.preserveState === true,
