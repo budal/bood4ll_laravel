@@ -42,7 +42,9 @@
     modalInfo.value = null;
   }
   
-  let selectAll = (items: any) => items.forEach((item: unknown) => selectedItems.add(item))
+  let selectAll = (items: any) => items.forEach((item: any) => {
+      selectedItems.add(item)
+  })
 
   let toggle = (item: any) => (selectedItems.has(item)) ? selectedItems.delete(item) : selectedItems.add(item)
 

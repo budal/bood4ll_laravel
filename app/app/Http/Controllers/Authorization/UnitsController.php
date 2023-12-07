@@ -99,7 +99,9 @@ class UnitsController extends Controller
             ->get();
 
         $subunits = $unit
-            ->where('parent_id', $unit->id)
+            ->when(!$request->search, function($query) use ($unit) {
+                $query->where("parent_id", $unit->id);
+            })
             ->filter($request, 'subunits')
             ->with('childrenRecursive')
             ->withCount('children', 'users')
