@@ -36,8 +36,8 @@
   
   "Filters": "Filtros",
   "Only active": "Apenas ativos",
-  "Only trashed": "Apenas excluídos",
-  "Active and trashed": "Ativos e excluídos",
+  "Only trashed": "Apenas removidos",
+  "Active and trashed": "Ativos e removidos",
 
   "Content": "Conteúdo",
   "Nickname": "Apelido",
@@ -148,7 +148,7 @@
   "Roles": "Funções",
   "Role": "Função",
   "Roles management": "Gerenciamento de funções",
-  "Define roles, grouping abilities to define specific access.": "Defina funções, agrupando habilidades para definir acessos específicos.",
+  "Define roles, grouping abilities to define specific access.": "Defina funções, agrupando abilitações para definir acessos específicos.",
   "Role name, abilities and settings": "Nome da função, abilitações e configurações",
   "Authorize": "Autorizar",
   "Deauthorize": "Desautorizar",
