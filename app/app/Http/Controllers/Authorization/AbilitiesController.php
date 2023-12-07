@@ -68,7 +68,7 @@ class AbilitiesController extends Controller
             'form' => [
                 [
                     'id' => "validAbilities",
-                    'title' => "Valid abilities management",
+                    'title' => "Valid abilities",
                     'subtitle' => "Define which abilities will be showed in the roles management.",
                     'fields' => [
                         [
@@ -143,7 +143,7 @@ class AbilitiesController extends Controller
                 ],
                 [
                     'id' => "invalidAbilities",
-                    'title' => "Invalid abilities management",
+                    'title' => "Invalid abilities",
                     'subtitle' => "This abilities does not have a specific route to refer to. Please delete them.",
                     'condition' => count($invalidAbilities) > 0,
                     'fields' => [

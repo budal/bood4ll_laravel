@@ -41,8 +41,8 @@ class UnitsController extends Controller
             'form' => [
                 [
                     'id' => "units",
-                    'title' => "Units management",
-                    'subtitle' => "Manage the units users are classified in.",
+                    'title' => "Units",
+                    'subtitle' => "Management of units registered in the system.",
                     'fields' => [
                         [
                             [
@@ -121,8 +121,8 @@ class UnitsController extends Controller
         return [
             [
                 'id' => "unit",
-                'title' => "Unit management",
-                'subtitle' => "Manage unit's info.",
+                'title' => "Main data",
+                'subtitle' => "Unit data management.",
                 'cols' => 4,
                 'fields' => [
                     [
@@ -226,8 +226,8 @@ class UnitsController extends Controller
             ],
             [
                 'id' => "subunits",
-                'title' => "Subunits management",
-                'subtitle' => "Manage unit's subunits",
+                'title' => "Subunits",
+                'subtitle' => "Management of subunits of this unit.",
                 'condition' => $unit->id <> null,
                 'fields' => [
                     [
@@ -275,8 +275,8 @@ class UnitsController extends Controller
             ],
             [
                 'id' => "staff",
-                'title' => "Staff management",
-                'subtitle' => "Manage unit's staff",
+                'title' => "Staff",
+                'subtitle' => "Staff management of this unit.",
                 'condition' => $unit->id <> null,
                 'cols' => 2,
                 'fields' => [
