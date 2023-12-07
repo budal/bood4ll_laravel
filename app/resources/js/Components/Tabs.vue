@@ -19,9 +19,6 @@
 </script>
 
 <template>
-  <KeepAlive>
-    
-  </KeepAlive>
   <TabsRoot 
     v-if="tabs === true" 
     v-model="tab"
