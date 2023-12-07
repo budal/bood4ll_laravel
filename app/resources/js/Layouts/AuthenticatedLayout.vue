@@ -4,6 +4,8 @@ import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import Breadcrumbs from '@/Components/Breadcrumbs.vue';
 import NavUser from '@/Components/NavUser.vue';
 import Avatar from '@/Components/Avatar.vue';
+import Bullet from '@/Components/Bullet.vue'
+import GoToUp from '@/Components/GoToUp.vue'
 import TailwindIndicator from '@/Components/TailwindIndicator.vue';
 import ToggleTheme from '@/Components/ToggleTheme.vue';
 import NavMenu from '@/Components/NavMenu.vue';
@@ -129,7 +131,9 @@ const menuUser = [
                         <ToggleTheme />
                         <NavUser :content="menuUser">
                             <template #trigger>
-                                <Avatar :fallback="$page.props.auth.user.name" />
+                                <Bullet>
+                                    <Avatar :fallback="$page.props.auth.user.name" />
+                                </Bullet>
                             </template>
                         </NavUser>
                     </div>
@@ -147,4 +151,5 @@ const menuUser = [
     </div>
     <Modal />
     <TailwindIndicator />
+    <GoToUp />
 </template>

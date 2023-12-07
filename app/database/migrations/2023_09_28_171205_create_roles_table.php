@@ -16,8 +16,8 @@ return new class extends Migration {
             $table->string('description', 255)->nullable();
             $table->boolean('inalterable')->default(false);
             $table->boolean('active')->default(true);
-            $table->boolean('temporary')->default(false);
-            $table->date('expires')->nullable();
+            $table->boolean('remove_on_expire')->default(false);
+            $table->date('expires_at')->nullable();
             $table->boolean('full_access')->default(false);
             $table->boolean('manage_nested')->default(false);
             $table->boolean('remove_on_change_unit')->default(true);

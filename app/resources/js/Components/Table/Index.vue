@@ -390,7 +390,7 @@
       </table>
     </div>
   </div>
-  <div v-if="items.total > 0" class="flex sticky bottom-0 justify-between rounded-xl backdrop-blur-sm mt-5 bg-zero-light/30 dark:bg-zero-dark/30">
+  <div v-if="items.total > 0" class="flex py-1 sticky bottom-0 justify-between rounded-xl backdrop-blur-sm mt-5 bg-zero-light/30 dark:bg-zero-dark/30">
     <div class="w-full flex flex-row sm:hidden">
       <div class="basis-1/3 text-left">
         <Button 

@@ -148,14 +148,14 @@ class RolesController extends Controller
                         ],
                         [
                             'type' => "toggle",
-                            'name' => "temporary",
-                            'title' => "Temporary",
+                            'name' => "remove_on_expire",
+                            'title' => "Remove on expire",
                             'colorOn' => "info",
                         ],
                         [
                             'type' => "date",
-                            'name' => "expires",
-                            'title' => "Expires in",
+                            'name' => "expires_at",
+                            'title' => "Expires at",
                         ],
                         [
                             'type' => "toggle",
@@ -315,8 +315,8 @@ class RolesController extends Controller
             $role->name = $request->name;
             $role->description = $request->description;
             $role->active = $request->active;
-            $role->temporary = $request->temporary;
-            $role->expires = $request->expires;
+            $role->remove_on_expire = $request->remove_on_expire;
+            $role->expires_at = $request->expires_at;
             $role->full_access = $request->full_access;
             $role->manage_nested = $request->manage_nested;
             $role->remove_on_change_unit = $request->remove_on_change_unit;
@@ -374,13 +374,13 @@ class RolesController extends Controller
 
     public function update(Request $request, Role $role): RedirectResponse
     {
-        if ($request->temporary && !$request->expires) {
+        if ($request->remove_on_expire && !$request->expires_at) {
             return Redirect::back()->with([
                 'toast_type' => "error",
                 'toast_message' => "Define the expiration date.",
             ]);
-        } elseif (!$request->temporary) {
-            $request->expires = null;
+        } elseif (!$request->remove_on_expire) {
+            $request->expires_at = null;
         }
         
         DB::beginTransaction();
@@ -389,8 +389,8 @@ class RolesController extends Controller
             $role->name = $request->name;
             $role->description = $request->description;
             $role->active = $request->active;
-            $role->temporary = $request->temporary;
-            $role->expires = $request->expires;
+            $role->remove_on_expire = $request->remove_on_expire;
+            $role->expires_at = $request->expires_at;
             $role->full_access = $request->full_access;
             $role->manage_nested = $request->manage_nested;
             $role->remove_on_change_unit = $request->remove_on_change_unit;
