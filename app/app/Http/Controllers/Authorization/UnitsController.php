@@ -287,7 +287,6 @@ class UnitsController extends Controller
                             'type' => "table",
                             'name' => "users",
                             'span' => 2,
-                            'shortcutKey' => "a",
                             'content' => [
                                 'routes' => [
                                     'editRoute' => "apps.users.edit",

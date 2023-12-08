@@ -13,7 +13,6 @@ const isValidUrl = (url: any) => {
   }
 }
 
-
 const toast = () => {
   if (usePage().props.toast_message) {
     toasty(

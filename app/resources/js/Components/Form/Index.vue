@@ -10,12 +10,18 @@
     import Toggle from '@/Components/Toggle.vue';
     import { useForm } from '@inertiajs/vue3';
 
-    const props = defineProps<{
-        form: any;
-        routes: any;
-        data?: any;
-        shortcutKey?: string;
-    }>();    
+    const props = withDefaults(
+        defineProps<{
+            form: any;
+            routes: any;
+            data?: any;
+            shortcutKey?: string;
+            tabs?: boolean;
+        }>(),
+        {
+            tabs: true,
+        }
+    );
 
     interface FormItems {
         [key: string]: string;
@@ -59,8 +65,7 @@
 </script>
 
 <template>
-    <!-- <Tabs :items="form"> -->
-    <Tabs :items="form" :tabs="true">
+    <Tabs :items="form" :tabs="tabs">
         <template v-for="mkForm in form" v-slot:[mkForm.id]>
             <form v-if="mkForm.condition !== false" @submit.prevent="sendForm(mkForm.id)" class="space-y-6">
                 <div v-for="group in mkForm.fields" :class="`grid sm:grid-cols-${mkForm.cols} sm:gap-4`">

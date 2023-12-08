@@ -8,8 +8,8 @@ import { ZiggyVue } from '../../vendor/tightenco/ziggy/dist/vue.m';
 import { i18nVue } from 'laravel-vue-i18n'
 import Vue3Toasity, { type ToastContainerOptions } from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
+// @ts-expect-error
 import { modal } from '/vendor/emargareten/inertia-modal'
-
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
@@ -30,6 +30,10 @@ createInertiaApp({
                 style: {
                     opacity: '0.9',
                     userSelect: 'initial',
+                },
+                toastStyle: {
+                    fontSize: '14px',
+                    fontFamily: 'Figtree',
                 },
             } as ToastContainerOptions)
             .use(i18nVue, { 

@@ -6,14 +6,12 @@
     import Bullet from '@/Components/Bullet.vue'
     import ScrollToTop from '@/Components/ScrollToTop.vue'
     import TailwindIndicator from '@/Components/TailwindIndicator.vue';
-    import Toast from '@/Components/Toast.vue';
     import ToggleTheme from '@/Components/ToggleTheme.vue';
     import NavMenu from '@/Components/NavMenu.vue';
+    // @ts-expect-error
     import { Modal } from '/vendor/emargareten/inertia-modal'
-    import { transChoice } from 'laravel-vue-i18n';
-    import { Link, usePage } from '@inertiajs/vue3';
-import { ReplacementsInterface } from 'laravel-vue-i18n/interfaces/replacements';
-
+    import { Link } from '@inertiajs/vue3';
+    
     const apps = [
         {
             title: "Users",
@@ -155,17 +153,4 @@ import { ReplacementsInterface } from 'laravel-vue-i18n/interfaces/replacements'
     <Modal />
     <TailwindIndicator />
     <ScrollToTop />
-    <Toast 
-        :title="transChoice(
-            (usePage().props.toast_message || '') as string, 
-            (usePage().props.toast_count || 0) as number,
-            (usePage().props.toast_replacements || []) as ReplacementsInterface
-        )" 
-        :content="transChoice(
-            (usePage().props.toast_message || '') as string, 
-            (usePage().props.toast_count || 0) as number,
-            (usePage().props.toast_replacements || []) as ReplacementsInterface
-        )" 
-        :type= "(usePage().props.toast_type)"
-    />
 </template>

@@ -567,7 +567,6 @@ class RolesController extends Controller
                             'type' => "table",
                             'name' => "users",
                             'span' => 2,
-                            'shortcutKey' => "a",
                             'content' => [
                                 'menu' => [
                                     [

@@ -8,7 +8,7 @@
   import Toggle from '@/Components/Toggle.vue';
   import Search from '@/Components/Table/Search.vue';
   import Sort from '@/Components/Table/Sort.vue';
-  import { router, useForm } from '@inertiajs/vue3';
+  import { router, useForm, usePage } from '@inertiajs/vue3';
   import { transChoice } from 'laravel-vue-i18n';
   import { ref, computed, reactive } from 'vue'
 
@@ -29,7 +29,6 @@
       routes: [],
     }
   );
-
   // checkboxes
   let indexRoute = new URL(window.location.href);
 
