@@ -23,7 +23,6 @@
     {}
   );
 
-
   const emit = defineEmits(['selectItem'])
 
   const radioRef = ref('active')

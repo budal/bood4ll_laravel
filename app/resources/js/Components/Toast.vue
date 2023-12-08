@@ -21,6 +21,10 @@
     
     const open = ref(false)
 
+    if (props.content) {
+        console.log(props.content)
+    }
+
     const toast = () => {
         open.value = false
         window.clearTimeout(timerRef.value)
