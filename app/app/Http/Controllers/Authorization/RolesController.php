@@ -22,6 +22,9 @@ use App\Http\Requests\RolesRequest;
 
 class RolesController extends Controller
 {
+    public $title = "Roles management";
+    public $description = "Define roles, grouping abilities to define specific access.";
+
     public function index(Request $request): Response
     {
         $roles = Role::filter($request, 'roles')
@@ -34,8 +37,8 @@ class RolesController extends Controller
             'form' => [
                 [
                     'id' => "roles",
-                    'title' => "Roles management",
-                    'subtitle' => "Define roles, grouping abilities to define specific access.",
+                    'title' => $this->title,
+                    'subtitle' => $this->description,
                     'fields' => [
                         [
                             [

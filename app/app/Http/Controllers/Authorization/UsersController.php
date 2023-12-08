@@ -18,6 +18,9 @@ use App\Http\Requests\ProfileUpdateRequest;
 
 class UsersController extends Controller
 {
+    public $title = "Users management";
+    public $description = "Manage users informations and authorizations.";
+    
     public function index(Request $request): Response
     {
         $users = User::filter($request, 'users')
@@ -29,8 +32,8 @@ class UsersController extends Controller
             'form' => [
                 [
                     'id' => "users",
-                    'title' => "Users management",
-                    'subtitle' => "Manage users informations and authorizations.",
+                    'title' => $this->title,
+                    'subtitle' => $this->description,
                     'fields' => [
                         [
                             [

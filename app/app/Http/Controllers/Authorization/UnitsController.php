@@ -18,6 +18,9 @@ use App\Http\Requests\RolesRequest;
 
 class UnitsController extends Controller
 {
+    public $title = "Units";
+    public $description = "Manage the units registered in the system.";
+
     public function index(Request $request): Response
     {
         $units = Unit::filter($request, 'units')
@@ -41,8 +44,8 @@ class UnitsController extends Controller
             'form' => [
                 [
                     'id' => "units",
-                    'title' => "Units",
-                    'subtitle' => "Management of units registered in the system.",
+                    'title' => $this->title,
+                    'subtitle' => $this->description,
                     'fields' => [
                         [
                             [

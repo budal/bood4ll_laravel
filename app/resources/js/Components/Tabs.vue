@@ -11,7 +11,7 @@
 
   const __tab = activeTab.searchParams.get('__tab')
 
-  const tab = ref(__tab || props.items[0].id)
+  const tab = ref((props.items.some((tab: any) => tab.id === __tab) ? __tab : props.items[0].id) || props.items[0].id)
   
   const onChangeTab = (name: string) => {
     window.history.pushState(null, "", '?__tab=' + name);
