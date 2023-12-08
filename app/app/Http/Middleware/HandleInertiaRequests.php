@@ -40,6 +40,7 @@ class HandleInertiaRequests extends Middleware
             'breadcrumbs' => $request->route()->breadcrumbs()->jsonSerialize(),
             'status' => session('status'),
             'toast_type' => session('toast_type'),
+            'toast_title' => session('toast_title'),
             'toast_message' => session('toast_message'),
             'toast_count' => session('toast_count'),
             'toast_replacements' => session('toast_replacements'),

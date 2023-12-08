@@ -1,37 +1,67 @@
 <script setup lang="ts">
-import { ToastAction, ToastClose, ToastDescription, ToastProvider, ToastRoot, ToastTitle, ToastViewport } from 'radix-vue'
-import { ProgressIndicator, ProgressRoot } from 'radix-vue'
-import { onMounted, ref } from 'vue'
+    import { ToastAction, ToastClose, ToastDescription, ToastProvider, ToastRoot, ToastTitle, ToastViewport } from 'radix-vue'
+    import { ProgressIndicator, ProgressRoot } from 'radix-vue'
+    import { onMounted, ref } from 'vue'
 
-const open = ref(false)
-const eventDateRef = ref(new Date())
-const timerRef = ref(0)
+    const props = withDefaults(
+        defineProps<{
+            title?: string;
+            content?: string;
+            type: any;
+        }>(),
+        {
+            title: '',
+            content: '',
+            type: 'info',
 
-function oneWeekAway() {
-  const now = new Date()
-  const inOneWeek = now.setDate(now.getDate() + 7)
-  return new Date(inOneWeek)
-}
+        }
+    );
 
-function prettyDate(date: Date) {
-  return new Intl.DateTimeFormat('en-US', { dateStyle: 'full', timeStyle: 'short' }).format(date)
-}
+    const emit = defineEmits(['toast'])
+    
+    const open = ref(false)
 
-function handleClick() {
-  open.value = false
-  window.clearTimeout(timerRef.value)
-  timerRef.value = window.setTimeout(() => {
-    eventDateRef.value = oneWeekAway()
-    open.value = true
-  }, 100)
-}
+    const toast = () => {
+        open.value = false
+        window.clearTimeout(timerRef.value)
+        timerRef.value = window.setTimeout(() => {
+            eventDateRef.value = oneWeekAway()
+            open.value = true
+        }, 100)
+    }
 
-const progressValue = ref(10)
 
-onMounted(() => {
-  const timer = setTimeout(() => (progressValue.value = 66), 3000)
-  return () => clearTimeout(timer)
-})
+
+
+    const eventDateRef = ref(new Date())
+    const timerRef = ref(0)
+
+    function oneWeekAway() {
+        const now = new Date()
+        const inOneWeek = now.setDate(now.getDate() + 7)
+        return new Date(inOneWeek)
+    }
+
+    function prettyDate(date: Date) {
+        return new Intl.DateTimeFormat('en-US', { dateStyle: 'full', timeStyle: 'short' }).format(date)
+    }
+
+    function handleClick() {
+        open.value = false
+        window.clearTimeout(timerRef.value)
+        timerRef.value = window.setTimeout(() => {
+            eventDateRef.value = oneWeekAway()
+            open.value = true
+        }, 100)
+    }
+
+    const progressValue = ref(10)
+
+    onMounted(() => {
+        const timer = setTimeout(() => (progressValue.value = 66), 3000)
+        return () => clearTimeout(timer)
+    })
+
 </script>
 
 <template>
