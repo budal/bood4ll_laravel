@@ -384,7 +384,7 @@ class UnitsController extends Controller
         DB::commit();
 
         return Redirect::back()->with([
-            'toast_type' => "error",
+            'toast_type' => "success",
             'toast_message' => "{0} Nothing to add.|[1] Item added successfully.|[2,*] :total items successfully added.",
             'toast_count' => 1,
         ]);
@@ -443,7 +443,7 @@ class UnitsController extends Controller
         DB::commit();
 
         return Redirect::back()->with([
-            'toast_type' => "error",
+            'toast_type' => "success",
             'toast_message' => "{0} Nothing to edit.|[1] Item edited successfully.|[2,*] :total items successfully edited.",
             'toast_count' => 1,
         ]);

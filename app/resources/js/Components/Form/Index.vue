@@ -148,15 +148,6 @@
                     >
                         {{ $t('Save') }}
                     </Button>
-    
-                    <Transition
-                        enter-active-class="transition ease-in-out"
-                        enter-from-class="opacity-0"
-                        leave-active-class="transition ease-in-out"
-                        leave-to-class="opacity-0"
-                    >
-                        <p v-if="jsForm.recentlySuccessful" class="text-sm text-zero-light/50 dark:text-zero-dark/50">{{ $t('Saved.') }}</p>
-                    </Transition>
                 </div>
             </form>
         </template>
