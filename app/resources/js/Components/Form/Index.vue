@@ -10,20 +10,12 @@
     import Toggle from '@/Components/Toggle.vue';
     import { useForm } from '@inertiajs/vue3';
 
-    const props = withDefaults(
-        defineProps<{
-            form: any;
-            routes: any;
-            data?: any;
-            tabs?: boolean;
-            shortcutKey?: string;
-        }>(),
-        {
-        tabs: true,
-        }
-    );
-
-
+    const props = defineProps<{
+        form: any;
+        routes: any;
+        data?: any;
+        shortcutKey?: string;
+    }>();    
 
     interface FormItems {
         [key: string]: string;
@@ -67,7 +59,8 @@
 </script>
 
 <template>
-    <Tabs :items="form" :tabs="tabs">
+    <!-- <Tabs :items="form"> -->
+    <Tabs :items="form" :tabs="true">
         <template v-for="mkForm in form" v-slot:[mkForm.id]>
             <form v-if="mkForm.condition !== false" @submit.prevent="sendForm(mkForm.id)" class="space-y-6">
                 <div v-for="group in mkForm.fields" :class="`grid sm:grid-cols-${mkForm.cols} sm:gap-4`">
@@ -134,7 +127,6 @@
                                 :menu="field.content.menu" 
                                 :routes="field.content.routes" 
                                 :items="field.content.items" 
-                                :tabs="tabs" 
                                 :titles="field.content.titles" 
                             />
             
@@ -149,24 +141,17 @@
                         :class="{ 'opacity-25': jsForm.processing }"
                         :disabled="data?.inalterable === true || jsForm.processing"
                     >
-                        <div class="relative inline-flex">
-                            <span>
-                                {{ $t('Save') }}
-                            </span>
-                            <Transition
-                            class="absolute h-full w-full"
-                                enter-active-class="transition ease-in-out"
-                                enter-from-class="opacity-0"
-                                leave-active-class="transition ease-in-out"
-                                leave-to-class="opacity-0"
-                            >
-                                <svg v-if="jsForm.processing" class="animate-spin h-5 w-5 text-sm" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                </svg>
-                            </Transition>
-                        </div>
+                        {{ $t('Save') }}
                     </Button>
+    
+                    <Transition
+                        enter-active-class="transition ease-in-out"
+                        enter-from-class="opacity-0"
+                        leave-active-class="transition ease-in-out"
+                        leave-to-class="opacity-0"
+                    >
+                        <p v-if="jsForm.recentlySuccessful" class="text-sm text-zero-light/50 dark:text-zero-dark/50">{{ $t('Saved.') }}</p>
+                    </Transition>
                 </div>
             </form>
         </template>

@@ -223,29 +223,29 @@ export default {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
             },
             keyframes: {
-                enterFromRight: {
-                    from: { opacity: 0, transform: 'translateX(200px)' },
-                    to: { opacity: 1, transform: 'translateX(0)' },
+                contentHide: {
+                    from: { opacity: 1, transform: 'translate(-50%, -48%) scale(0.96)' },
+                    to: { opacity: 0, transform: 'translate(-50%, -50%) scale(1)' },
+                },
+                contentShow: {
+                    from: { opacity: 0, transform: 'translate(-50%, -48%) scale(0.96)' },
+                    to: { opacity: 1, transform: 'translate(-50%, -50%) scale(1)' },
                 },
                 enterFromLeft: {
                     from: { opacity: 0, transform: 'translateX(-200px)' },
                     to: { opacity: 1, transform: 'translateX(0)' },
                 },
-                exitToRight: {
-                    from: { opacity: 1, transform: 'translateX(0)' },
-                    to: { opacity: 0, transform: 'translateX(200px)' },
+                enterFromRight: {
+                    from: { opacity: 0, transform: 'translateX(200px)' },
+                    to: { opacity: 1, transform: 'translateX(0)' },
                 },
                 exitToLeft: {
                     from: { opacity: 1, transform: 'translateX(0)' },
                     to: { opacity: 0, transform: 'translateX(-200px)' },
                 },
-                scaleIn: {
-                    from: { opacity: 0, transform: 'rotateX(-10deg) scale(0.9)' },
-                    to: { opacity: 1, transform: 'rotateX(0deg) scale(1)' },
-                },
-                scaleOut: {
-                    from: { opacity: 1, transform: 'rotateX(0deg) scale(1)' },
-                    to: { opacity: 0, transform: 'rotateX(-10deg) scale(0.95)' },
+                exitToRight: {
+                    from: { opacity: 1, transform: 'translateX(0)' },
+                    to: { opacity: 0, transform: 'translateX(200px)' },
                 },
                 fadeIn: {
                     from: { opacity: 0 },
@@ -255,56 +255,71 @@ export default {
                     from: { opacity: 1 },
                     to: { opacity: 0 },
                 },
+                hide: {
+                    from: { opacity: 1 },
+                    to: { opacity: 0 },
+                },
+                overlayHide: {
+                    from: { opacity: 1 },
+                    to: { opacity: 0 },
+                },
+                overlayShow: {
+                    from: { opacity: 0 },
+                    to: { opacity: 1 },
+                },
+                scaleIn: {
+                    from: { opacity: 0, transform: 'rotateX(-10deg) scale(0.9)' },
+                    to: { opacity: 1, transform: 'rotateX(0deg) scale(1)' },
+                },
+                scaleOut: {
+                    from: { opacity: 1, transform: 'rotateX(0deg) scale(1)' },
+                    to: { opacity: 0, transform: 'rotateX(-10deg) scale(0.95)' },
+                },
                 slideDownAndFade: {
                     from: { opacity: 0, transform: 'translateY(-20px)' },
                     to: { opacity: 1, transform: 'translateY(0)' },
                 },
+                slideIn: {
+                    from: { transform: 'translateX(calc(100% + var(--viewport-padding)))' },
+                    to: { transform: 'translateX(0)' },
+                },
                 slideLeftAndFade: {
                     from: { opacity: 0, transform: 'translateX(20px)' },
+                    to: { opacity: 1, transform: 'translateX(0)' },
+                },
+                slideRightAndFade: {
+                    from: { opacity: 0, transform: 'translateX(-20px)' },
                     to: { opacity: 1, transform: 'translateX(0)' },
                 },
                 slideUpAndFade: {
                     from: { opacity: 0, transform: 'translateY(20px)' },
                     to: { opacity: 1, transform: 'translateY(0)' },
                 },
-                slideRightAndFade: {
-                    from: { opacity: 0, transform: 'translateX(-20px)' },
-                    to: { opacity: 1, transform: 'translateX(0)' },
-                },
-                overlayShow: {
-                    from: { opacity: 0 },
-                    to: { opacity: 1 },
-                },
-                contentShow: {
-                    from: { opacity: 0, transform: 'translate(-50%, -48%) scale(0.96)' },
-                    to: { opacity: 1, transform: 'translate(-50%, -50%) scale(1)' },
-                },
-                overlayHide: {
-                    from: { opacity: 1 },
-                    to: { opacity: 0 },
-                },
-                contentHide: {
-                    from: { opacity: 1, transform: 'translate(-50%, -48%) scale(0.96)' },
-                    to: { opacity: 0, transform: 'translate(-50%, -50%) scale(1)' },
+                swipeOut: {
+                    from: { transform: 'translateX(var(--radix-toast-swipe-end-x))' },
+                    to: { transform: 'translateX(calc(100% + var(--viewport-padding)))' },
                 },
             },
             animation: {
-                scaleIn: 'scaleIn 200ms ease',
-                scaleOut: 'scaleOut 200ms ease',
-                fadeIn: 'fadeIn 200ms ease',
-                fadeOut: 'fadeOut 200ms ease',
+                contentHide: 'contentHide 300ms cubic-bezier(0.16, 1, 0.3, 1)',
                 enterFromLeft: 'enterFromLeft 250ms ease',
                 enterFromRight: 'enterFromRight 250ms ease',
                 exitToLeft: 'exitToLeft 250ms ease',
                 exitToRight: 'exitToRight 250ms ease',
-                slideDownAndFade: 'slideDownAndFade 400ms cubic-bezier(0.16, 1, 0.3, 1)',
-                slideLeftAndFade: 'slideLeftAndFade 400ms cubic-bezier(0.16, 1, 0.3, 1)',
-                slideUpAndFade: 'slideUpAndFade 400ms cubic-bezier(0.16, 1, 0.3, 1)',
-                slideRightAndFade: 'slideRightAndFade 400ms cubic-bezier(0.16, 1, 0.3, 1)',
+                fadeIn: 'fadeIn 200ms ease',
+                fadeOut: 'fadeOut 200ms ease',
+                hide: 'hide 100ms ease-in',
                 overlayShow: 'overlayShow 300ms cubic-bezier(0.16, 1, 0.3, 1)',
                 contentShow: 'contentShow 300ms cubic-bezier(0.16, 1, 0.3, 1)',
                 overlayHide: 'overlayHide 300ms cubic-bezier(0.16, 1, 0.3, 1)',
-                contentHide: 'contentHide 300ms cubic-bezier(0.16, 1, 0.3, 1)',
+                scaleIn: 'scaleIn 200ms ease',
+                scaleOut: 'scaleOut 200ms ease',
+                slideIn: 'slideIn 150ms cubic-bezier(0.16, 1, 0.3, 1)',
+                slideDownAndFade: 'slideDownAndFade 400ms cubic-bezier(0.16, 1, 0.3, 1)',
+                slideLeftAndFade: 'slideLeftAndFade 400ms cubic-bezier(0.16, 1, 0.3, 1)',
+                slideRightAndFade: 'slideRightAndFade 400ms cubic-bezier(0.16, 1, 0.3, 1)',
+                slideUpAndFade: 'slideUpAndFade 400ms cubic-bezier(0.16, 1, 0.3, 1)',
+                swipeOut: 'swipeOut 100ms ease-out',
             },
         },
     },
