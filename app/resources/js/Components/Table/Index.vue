@@ -5,7 +5,6 @@
   import Checkbox from '@/Components/Checkbox.vue';
   import Dropdown from '@/Components/Dropdown.vue';
   import Modal from '@/Components/Modal.vue';
-  import Toast from '@/Components/Toast.vue';
   import Toggle from '@/Components/Toggle.vue';
   import Search from '@/Components/Table/Search.vue';
   import Sort from '@/Components/Table/Sort.vue';
@@ -268,7 +267,6 @@
 </script>
 
 <template>
-  <Toast />
   <Modal 
     v-if="modalInfo"
     :open="confirmingDeletionModal"
