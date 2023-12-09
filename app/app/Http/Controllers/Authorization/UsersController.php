@@ -21,7 +21,7 @@ class UsersController extends Controller
     public $title = "Users management";
     public $description = "Manage users informations and authorizations.";
     
-    public function index(Request $request): Response
+    public function index(Request $request, $mode = null): Response
     {
         $users = User::filter($request, 'users')
             ->paginate(20)
@@ -47,6 +47,20 @@ class UsersController extends Controller
                                         'forceDestroyRoute' => "apps.users.forcedestroy",
                                         'restoreRoute' => "apps.users.restore",
                                     ],
+                                    'menu' => [
+                                        [
+                                            'title' => "-",
+                                        ],
+                                        [
+                                            'icon' => "mdi:book-cog-outline",
+                                            'title' => "Log as another user",
+                                            'route' => [
+                                                "route" => "apps.users.logas",
+                                                "attributes" => "logAs"
+                                            ],
+                                            'condition' => $mode !== 'logAs',
+                                        ],            
+                                    ],
                                     'titles' => [
                                         [
                                             'type' => 'avatar',
@@ -65,6 +79,7 @@ class UsersController extends Controller
                                             'type' => 'button',
                                             'title' => 'Login as',
                                             'theme' => 'warning',
+                                            'condition' => $mode === 'logAs',
                                             'icon' => 'mdi:login',
                                             'disableSort' => true,
                                             'preserveScroll' => true,

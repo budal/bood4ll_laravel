@@ -169,7 +169,7 @@
             buttonTheme: item.buttonTheme,
           })
         } else {
-          content.add(item);
+          item.condition !== false ? content.add(item) : false;
         }
       })
     }
@@ -315,7 +315,7 @@
               <Checkbox v-if="(routes.showCheckboxes == true || routes.destroyRoute || routes.restoreRoute)" name="remember" :checked="selectedAll" @click="toggleAll" class="w-6 h-6 sm:w-8 sm:h-8 rounded-md sm:rounded-lg" />
             </th>
             <th v-for="sort in titles" class="p-2">
-              <Sort :prefix="prefix" :sort="sort" class="justify-center" />
+              <Sort v-if="sort.condition !== false" :prefix="prefix" :sort="sort" class="justify-center" />
             </th>
             <th v-if="routes.editRoute" class="p-2"></th>
           </tr>
@@ -343,24 +343,28 @@
               />
             </td>
             <td v-for="content in titles" class="p-1 text-center">
-
-              <p v-if="content.type == 'simple'" class="truncate text-sm leading-5 text-secondary-light dark:text-secondary-dark text-center">
+              <p 
+                v-if="content.type == 'simple'" 
+                class="truncate text-sm leading-5 text-secondary-light dark:text-secondary-dark text-center"
+              >
                 {{ item[content.field] ?? '-' }}
               </p>
 
-              <template v-if="content.type == 'composite'">
+              <template 
+                v-if="content.type == 'composite' && content.condition !== false"
+              >
                 <p class="text-sm font-medium text-secondary-light dark:text-secondary-dark text-center">{{ $t(item[content.fields[0]] ?? '-') }}</p>
                 <p class="truncate text-xs text-secondary-light dark:text-secondary-dark text-center">{{ $t(item[content.fields[1]] ?? '-') }}</p>
               </template>
 
               <Avatar 
-                v-if="content.type == 'avatar'" 
+                v-if="content.type == 'avatar' && content.condition !== false" 
                 class="w-8 h-8 sm:w-12 sm:h-12 rounded-full" 
                 :fallback="item[content.fallback]" 
               />
 
               <Toggle 
-                v-if="content.type == 'toggle'"
+                v-if="content.type == 'toggle' && content.condition !== false"
                 :id="item.id" 
                 :name="item.name" 
                 :colorOn="content.colorOn"
@@ -372,9 +376,9 @@
               />
 
               <Button 
-                v-if="content.type == 'button'"
+                v-if="content.type == 'button' && content.condition !== false"
                 :id="item.id" 
-                :name="item.name" 
+                :name="item.name"
                 type="button"
                 :color="content.theme"
                 :link="route(content.route, item.id)" 
