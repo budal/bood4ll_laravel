@@ -75,6 +75,7 @@ Route::middleware('auth')->group(function () {
                     Route::post('/users/create', 'store')->name('store');
                     Route::get('/users/edit/{user}', 'edit')->name('edit')->breadcrumb('User edition', 'apps.users.index');
                     Route::patch('/users/edit/{user}', 'update')->name('update');
+                    Route::post('/users/loginas/{user}', 'loginAs')->name('loginas');
                     Route::delete('/users/destroy', 'destroy')->name('destroy');
                     Route::delete('/users/forcedestroy', 'forceDestroy')->name('forcedestroy');
                     Route::post('/users/restore', 'restore')->name('restore');

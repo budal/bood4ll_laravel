@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { isValidUrl } from '@/helpers';
+    import { isValidUrl, toast } from '@/helpers';
     import { Icon } from '@iconify/vue'
     import { router } from '@inertiajs/vue3';
 
@@ -19,7 +19,6 @@
             srOnly?: string;
             title?: string;
             menu?: object;
-            url?: string;
             link?: {
                 route: string | [];
                 attributes: [];
@@ -52,6 +51,7 @@
                     method: props.method,
                     preserveState: props.preserveState,
                     preserveScroll: props.preserveScroll,
+                    onSuccess: () => toast()
                 }
             );
         }

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { toast } from '@/helpers';
+    import { isValidUrl, toast } from '@/helpers';
     import Button from '@/Components/Button.vue';
     import InputError from '@/Components/InputError.vue';
     import InputLabel from '@/Components/InputLabel.vue';
@@ -107,7 +107,24 @@
                                 @keydown.enter.prevent
                                 @click.prevent
                             />
-    
+
+                            <Button 
+                                v-if="field.type == 'button'"
+                                :id="field.name"
+                                :name="field.name"
+                                :type="field.type"
+                                :color="field.color"
+                                :link="field.route" 
+                                :title="field.name" 
+                                :startIcon="field.icon" 
+                                :preserveScroll="field.preserveScroll"
+                                :disabled="field.disabled ? field.disabled : data?.inalterable === true"
+                                class="mt-1"
+                                v-model="jsForm[field.name]"
+                                @keydown.enter.prevent
+                                @click.prevent
+                            />
+
                             <Select 
                                 v-if="field.type == 'select'" 
                                 :id="field.name"

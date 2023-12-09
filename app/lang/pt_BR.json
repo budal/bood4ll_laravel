@@ -137,6 +137,8 @@
   
   "Users": "Usuários",
   "User": "Usuário",
+  "Login as": "Logar como",
+  "Logged as ':user'.": "Logado como ':user'.",
   "Username": "Nome de usuário",
   "Manage users informations and authorizations.": "Gerencie as informações dos usuários e suas autorizações.",
   "Users management": "Gerenciamento de usuários",

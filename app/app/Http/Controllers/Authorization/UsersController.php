@@ -62,16 +62,15 @@ class UsersController extends Controller
                                             'fields' => ['name', 'email']
                                         ],    
                                         [
-                                            'type' => 'toggle',
-                                            'title' => 'Active',
-                                            'field' => 'active',
+                                            'type' => 'button',
+                                            'title' => 'Login as',
+                                            'theme' => 'warning',
+                                            'icon' => 'mdi:login',
                                             'disableSort' => true,
-                                            'route' => [
-                                                'route' => "apps.users.activate",
-                                                'attributes' => "toggle",
-                                            ],
+                                            'preserveScroll' => true,
+                                            'route' => "apps.users.loginas",
                                             'method' => 'post',
-                                        ]    
+                                        ],
                                     ],
                                     'items' => $users,
                                 ],
@@ -217,6 +216,18 @@ class UsersController extends Controller
             'toast_count' => 1,
         ]);
     }
+
+    public function loginAs(User $user): RedirectResponse
+    {
+        Auth::loginUsingId($user->id);
+        
+        return Redirect::back()->with([
+            'toast_type' => "warning",
+            'toast_message' => "Logged as ':user'.",
+            'toast_replacements' => ['user' => $user->name]
+        ]);
+    }
+
 
     public function destroy(Request $request): RedirectResponse
     {

@@ -370,6 +370,18 @@
                 v-model="item.checked"
                 @click="updateFormToogle(content.method, content.route, [item.id])"
               />
+
+              <Button 
+                v-if="content.type == 'button'"
+                :id="item.id" 
+                :name="item.name" 
+                type="button"
+                :color="content.theme"
+                :link="route(content.route, item.id)" 
+                :method="content.method" 
+                :startIcon="content.icon" 
+                :preserveScroll="content.preserveScroll"
+              />
             </td>
             <td v-if="routes.editRoute" class="sm:p-2 w-0 text-right">
               <Button 
