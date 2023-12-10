@@ -67,12 +67,12 @@ class RolesController extends Controller
                                             'fields' => ['name', 'description'],
                                         ],
                                         [
-                                            'type' => 'simple',
+                                            'type' => 'text',
                                             'title' => 'Abilities',
                                             'field' => 'abilities_count',
                                         ],
                                         [
-                                            'type' => 'simple',
+                                            'type' => 'text',
                                             'title' => 'Users',
                                             'field' => 'users_count',
                                         ],
@@ -270,6 +270,18 @@ class RolesController extends Controller
                                         'field' => 'name',
                                         'fields' => ['name', 'email'],
                                     ],
+                                    [
+                                        'type' => 'composite',
+                                        'title' => 'Unit',
+                                        'field' => 'unit',
+                                        'fields' => ['primary', 'temporary']
+                                    ],
+                                    [
+                                        'type' => 'text',
+                                        'title' => 'Assignments',
+                                        'field' => 'assignments',
+                                    ],
+
                                     [
                                         'type' => 'toggle',
                                         'title' => 'Active',
@@ -580,7 +592,7 @@ class RolesController extends Controller
                                 ],
                                 'titles' => [
                                     [
-                                        'type' => 'simple',
+                                        'type' => 'text',
                                         'title' => 'Name',
                                         'field' => 'name',
                                     ],

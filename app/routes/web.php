@@ -70,16 +70,17 @@ Route::middleware('auth')->group(function () {
             Route::controller(UsersController::class)->group(function () {
                 Route::name('users.')->middleware(['password.confirm', 'verified'])->group(function () {
                     Route::get('/users', 'index')->name('index')->breadcrumb('Users');
-                    Route::get('/users/{mode?}', 'index')->name('logas')->breadcrumb('Log as another user', 'apps.users.index');
+                    Route::get('/users/logas/{mode?}', 'index')->name('logas')->breadcrumb('Log as another user', 'apps.users.index');
+                    Route::post('/users/loginas/{user}', 'changeUser')->name('loginas');
                     Route::post('/users/activate/{user}/{mode?}', 'activate')->name('activate');
                     Route::get('/users/create', 'create')->name('create')->breadcrumb('User creation', 'apps.users.index');
                     Route::post('/users/create', 'store')->name('store');
                     Route::get('/users/edit/{user}', 'edit')->name('edit')->breadcrumb('User edition', 'apps.users.index');
                     Route::patch('/users/edit/{user}', 'update')->name('update');
-                    Route::post('/users/loginas/{user}', 'loginAs')->name('loginas');
                     Route::delete('/users/destroy', 'destroy')->name('destroy');
                     Route::delete('/users/forcedestroy', 'forceDestroy')->name('forcedestroy');
                     Route::post('/users/restore', 'restore')->name('restore');
+                    // Route::post('/users/restore', 'restore')->name('restore')->middleware('can:action');
                 });
             });
 

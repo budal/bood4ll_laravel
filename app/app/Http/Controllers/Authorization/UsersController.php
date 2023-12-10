@@ -23,10 +23,33 @@ class UsersController extends Controller
     
     public function index(Request $request, $mode = null): Response
     {
+        // $user = Auth::user();
+        // dd($user);
+        
         $users = User::filter($request, 'users')
-            ->paginate(20)
+            ->select("users.*", "units.name as unit")
+            // ->selectRaw("1 as unit")
+
+            ->leftJoin('unit_user', 'unit_user.user_id', '=', 'users.id')
+            ->leftJoin('units', 'unit_user.unit_id', '=', 'units.id')
+
+
+        
+            // ->with("units", "roles")
+            ->paginate(100)
             ->onEachSide(2)
-            ->appends(collect($request->query)->toArray());
+            ->appends(collect($request->query)->toArray())
+            // ->transform(fn ($user) => [
+            //     'id' => $user->id,
+            //     'name' => $user->name,
+            //     'email' => $user->email,
+            //     'owner' => $user->owner,
+            //     'photo' => $user->photo_path ? URL::route('image', ['path' => $user->photo_path, 'w' => 40, 'h' => 40, 'fit' => 'crop']) : null,
+            //     'deleted_at' => $user->deleted_at,
+            // ])
+            ;
+
+        // dd($users[0]);
 
         return Inertia::render('Default', [
             'form' => [
@@ -59,7 +82,7 @@ class UsersController extends Controller
                                                 "attributes" => "logAs"
                                             ],
                                             'condition' => $mode !== 'logAs',
-                                        ],            
+                                        ],        
                                     ],
                                     'titles' => [
                                         [
@@ -68,13 +91,32 @@ class UsersController extends Controller
                                             'field' => 'id',
                                             'fallback' => 'name',
                                             'disableSort' => true
-                                        ],    
+                                        ],
                                         [
                                             'type' => 'composite',
                                             'title' => 'User',
                                             'field' => 'name',
                                             'fields' => ['name', 'email']
-                                        ],    
+                                        ],
+                                        [
+                                            'type' => 'composite',
+                                            'title' => 'Unit',
+                                            'class' => 'sm:hidden',
+                                            'field' => 'unit',
+                                            'fields' => ['primary', 'temporary']
+                                        ],
+                                        [
+                                            'type' => 'text',
+                                            'title' => 'Roles',
+                                            'class' => 'sm:hidden',
+                                            'field' => 'roles',
+                                        ],
+                                        [
+                                            'type' => 'text',
+                                            'title' => 'Assignments',
+                                            'class' => 'sm:hidden',
+                                            'field' => 'assignments',
+                                        ],
                                         [
                                             'type' => 'button',
                                             'title' => 'Login as',
@@ -169,6 +211,17 @@ class UsersController extends Controller
         return Redirect::back()->with('status', "Error on edit selected item.|Error on edit selected items.");
     }
 
+    public function changeUser(User $user): RedirectResponse
+    {
+        Auth::loginUsingId($user->id, true);
+        
+        return Redirect::back()->with([
+            'toast_type' => "warning",
+            'toast_message' => "Logged as ':user'.",
+            'toast_replacements' => ['user' => $user->name]
+        ]);
+    }
+
     public function create(): Response
     {
         return Inertia::render('Default', [
@@ -231,18 +284,6 @@ class UsersController extends Controller
             'toast_count' => 1,
         ]);
     }
-
-    public function loginAs(User $user): RedirectResponse
-    {
-        Auth::loginUsingId($user->id);
-        
-        return Redirect::back()->with([
-            'toast_type' => "warning",
-            'toast_message' => "Logged as ':user'.",
-            'toast_replacements' => ['user' => $user->name]
-        ]);
-    }
-
 
     public function destroy(Request $request): RedirectResponse
     {

@@ -60,23 +60,23 @@ class UnitsController extends Controller
                                     ],
                                     'titles' => [
                                         [
-                                            'type' => $request->search ? 'composite' : 'simple',
+                                            'type' => $request->search ? 'composite' : 'text',
                                             'title' => 'Name',
                                             'field' => 'name',
                                             'fields' => ['name', 'parents'],
                                         ],
                                         [
-                                            'type' => 'simple',
+                                            'type' => 'text',
                                             'title' => 'Subunits',
                                             'field' => 'children_count',
                                         ],
                                         [
-                                            'type' => 'simple',
+                                            'type' => 'text',
                                             'title' => 'Local staff',
                                             'field' => 'users_count',
                                         ],
                                         [
-                                            'type' => 'simple',
+                                            'type' => 'text',
                                             'title' => 'Total staff',
                                             'field' => 'all_users_count',
                                             'disableSort' => true,
@@ -251,22 +251,22 @@ class UnitsController extends Controller
                                 ],
                                 'titles' => [
                                     [
-                                        'type' => 'simple',
+                                        'type' => 'text',
                                         'title' => 'Unit',
                                         'field' => 'name',
                                     ],
                                     [
-                                        'type' => 'simple',
+                                        'type' => 'text',
                                         'title' => 'Subunits',
                                         'field' => 'children_count',
                                     ],
                                     [
-                                        'type' => 'simple',
+                                        'type' => 'text',
                                         'title' => 'Local staff',
                                         'field' => 'users_count',
                                     ],
                                     [
-                                        'type' => 'simple',
+                                        'type' => 'text',
                                         'title' => 'Total staff',
                                         'field' => 'all_users_count',
                                         'disableSort' => true,
@@ -316,10 +316,21 @@ class UnitsController extends Controller
                                         'disableSort' => true
                                     ],    
                                     [
-                                        'type' => 'simple',
+                                        'type' => 'text',
                                         'title' => 'Name',
                                         'field' => 'name',
                                     ],
+                                    [
+                                        'type' => 'text',
+                                        'title' => 'Roles',
+                                        'field' => 'roles',
+                                    ],
+                                    [
+                                        'type' => 'text',
+                                        'title' => 'Assignments',
+                                        'field' => 'assignments',
+                                    ],
+
                                 ],
                                 'items' => $staff
                             ],

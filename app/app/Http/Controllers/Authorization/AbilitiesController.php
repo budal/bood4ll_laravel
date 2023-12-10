@@ -176,7 +176,7 @@ class AbilitiesController extends Controller
                                     ],
                                     'titles' => [
                                         [
-                                            'type' => 'simple',
+                                            'type' => 'text',
                                             'title' => 'Ability',
                                             'field' => 'title',
                                         ],

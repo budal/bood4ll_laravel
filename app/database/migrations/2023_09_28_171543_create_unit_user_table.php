@@ -16,6 +16,8 @@ return new class extends Migration {
             $table->uuid('user_id');
             $table->foreign('unit_id')->references('id')->on('units')->onDelete('CASCADE');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('CASCADE');
+            $table->boolean('primary')->default(true);
+            $table->boolean('temporary')->default(false);
             $table->timestamps();
             $table->softDeletes();
         });

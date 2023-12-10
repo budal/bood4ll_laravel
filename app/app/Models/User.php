@@ -47,16 +47,32 @@ class User extends Authenticatable
         return $this->belongsToMany(Unit::class);
     }
     
+    public function unitsPrimary()
+    {
+        return $this->belongsToMany(Unit::class)->where('primary', true)
+        ;
+    }
+    
     public function roles(): BelongsToMany
     {
         return $this->belongsToMany(Role::class);
     }
     
+    public function abilities()
+    {
+        return $this->roles->map->abilities->flatten()->pluck('name');
+    }
+
     public function resolveRouteBinding($value, $field = null)
     {
         return $this->where($field ?? 'id', $value)->withTrashed()->firstOrFail();
     }
 
+    public function getRolesAttribute()
+    {
+        return $this->name;
+    }
+    
     public function scopeFilter($query, Request $request, string $prefix = null, string $orderBy = 'name'): void
     {
         $filters = collect($request->query)->toArray();
@@ -96,7 +112,7 @@ class User extends Authenticatable
             } elseif ($trashed === 'trashed') {
                 $query->onlyTrashed();
             }
-        })->when($filterSort ? $filterSort : $orderBy, function ($query, $sort) {
+        })->when($filterSort ? $filterSort : $orderBy, function ($query, $sort) use ($prefix) {
             $sort_order = 'ASC';
 
             if (strncmp($sort, '-', 1) === 0) {
@@ -105,6 +121,8 @@ class User extends Authenticatable
             }
     
             $query->orderBy($sort, $sort_order);
+            // $query->orderBy($prefix ? "$prefix.$sort" : $sort, $sort_order);
+
         });
     }
 

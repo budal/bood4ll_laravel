@@ -344,7 +344,7 @@
             </td>
             <td v-for="content in titles" class="p-1 text-center">
               <p 
-                v-if="content.type == 'simple'" 
+                v-if="content.type == 'text'" 
                 class="truncate text-sm leading-5 text-secondary-light dark:text-secondary-dark text-center"
               >
                 {{ item[content.field] ?? '-' }}
