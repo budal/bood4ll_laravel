@@ -325,12 +325,6 @@ class UnitsController extends Controller
                                         'title' => 'Roles',
                                         'field' => 'roles',
                                     ],
-                                    [
-                                        'type' => 'text',
-                                        'title' => 'Assignments',
-                                        'field' => 'assignments',
-                                    ],
-
                                 ],
                                 'items' => $staff
                             ],

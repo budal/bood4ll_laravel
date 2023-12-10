@@ -68,10 +68,10 @@ class User extends Authenticatable
         return $this->where($field ?? 'id', $value)->withTrashed()->firstOrFail();
     }
 
-    public function getRolesAttribute()
-    {
-        return $this->name;
-    }
+    // public function getRolesAttribute()
+    // {
+    //     return $this->name;
+    // }
     
     public function scopeFilter($query, Request $request, string $prefix = null, string $orderBy = 'name'): void
     {

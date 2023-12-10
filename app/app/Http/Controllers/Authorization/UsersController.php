@@ -35,7 +35,7 @@ class UsersController extends Controller
 
 
         
-            // ->with("units", "roles")
+            ->withCount("roles")
             ->paginate(100)
             ->onEachSide(2)
             ->appends(collect($request->query)->toArray())
@@ -109,13 +109,7 @@ class UsersController extends Controller
                                             'type' => 'text',
                                             'title' => 'Roles',
                                             'class' => 'sm:hidden',
-                                            'field' => 'roles',
-                                        ],
-                                        [
-                                            'type' => 'text',
-                                            'title' => 'Assignments',
-                                            'class' => 'sm:hidden',
-                                            'field' => 'assignments',
+                                            'field' => 'roles_count',
                                         ],
                                         [
                                             'type' => 'button',

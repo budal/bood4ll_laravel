@@ -277,12 +277,6 @@ class RolesController extends Controller
                                         'fields' => ['primary', 'temporary']
                                     ],
                                     [
-                                        'type' => 'text',
-                                        'title' => 'Assignments',
-                                        'field' => 'assignments',
-                                    ],
-
-                                    [
                                         'type' => 'toggle',
                                         'title' => 'Active',
                                         'field' => 'checked',
