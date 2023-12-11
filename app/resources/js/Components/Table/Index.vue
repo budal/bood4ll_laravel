@@ -351,6 +351,22 @@
               </p>
 
               <template 
+                v-if="content.type == 'array' && content.condition !== false"
+              >
+                <p 
+                  v-for="subitem in item[content.field]" 
+                  class="text-sm text-secondary-light dark:text-secondary-dark text-center">
+                  <template v-for="option in subitem">
+                    {{ option }}
+
+                  </template>
+                  <!-- {{ $t(subitem['name'] ?? '-') }} -->
+                  {{ subitem }}
+                </p>
+                <!-- <p class="truncate text-xs text-secondary-light dark:text-secondary-dark text-center">{{ $t(item[content.fields[1]] ?? '-') }}</p> -->
+              </template>
+
+              <template 
                 v-if="content.type == 'composite' && content.condition !== false"
               >
                 <p class="text-sm font-medium text-secondary-light dark:text-secondary-dark text-center">{{ $t(item[content.fields[0]] ?? '-') }}</p>

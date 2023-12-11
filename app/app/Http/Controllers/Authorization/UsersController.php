@@ -44,11 +44,19 @@ class UsersController extends Controller
 
             // ->groupBy('users.id', 'users.name')
 
-            ->with('units')
+            ->with('unitsClassified', 'unitsWorking')
             ->withCount('roles')
             ->paginate(100)
             ->onEachSide(2)
             ->appends(collect($request->query)->toArray())
+
+            // ->through(function ($item) {
+            //     $item->parents = $item->getParentsNames();
+            //     $item->all_users_count = $item->getAllChildren()->pluck('users_count')->sum() + $item->users_count;
+
+            //     return $item;
+            // });
+
             // ->transform(fn ($user) => [
             //     'id' => $user->id,
             //     'name' => $user->name,
@@ -59,7 +67,7 @@ class UsersController extends Controller
             // ])
         ;
 
-        dd($users[0]);
+        // dd($users[1]);
 
         return Inertia::render('Default', [
             'form' => [
@@ -109,11 +117,28 @@ class UsersController extends Controller
                                             'fields' => ['name', 'email'],
                                         ],
                                         [
-                                            'type' => 'composite',
+                                            'type' => 'array',
                                             'title' => 'Unit',
                                             'class' => 'sm:hidden',
-                                            'field' => 'units',
-                                            'fields' => ['unit', 'temporary'],
+                                            'field' => 'units_classified',
+                                            'options' => [
+                                                [
+                                                    'field' => 'name',
+                                                    'class' => 'bold',
+                                                ],
+                                            ],
+                                        ],
+                                        [
+                                            'type' => 'array',
+                                            'title' => 'Unit',
+                                            'class' => 'sm:hidden',
+                                            'field' => 'units_working',
+                                            'options' => [
+                                                [
+                                                    'field' => 'name',
+                                                    'class' => 'bold',
+                                                ],
+                                            ],
                                         ],
                                         [
                                             'type' => 'text',

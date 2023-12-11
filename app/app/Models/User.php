@@ -42,14 +42,15 @@ class User extends Authenticatable
         // static::creating(fn(User $user) => $user->uuid = (string) Uuid::uuid4());
     }
 
-    public function units(): BelongsToMany
+    public function unitsClassified(): BelongsToMany
     {
-        return $this->belongsToMany(Unit::class);
+        // return $this->belongsToMany(Unit::class)->select('unit_user.primary', 'unit_user.temporary', 'units.*')->where('primary', true);
+        return $this->belongsToMany(Unit::class)->where('primary', true);
     }
 
-    public function unitsPrimary()
+    public function unitsWorking()
     {
-        return $this->belongsToMany(Unit::class)->where('primary', true)
+        return $this->belongsToMany(Unit::class)->where('primary', false)
         ;
     }
 
@@ -120,7 +121,7 @@ class User extends Authenticatable
                 $sort = substr($sort, 1);
             }
 
-            // $query->orderBy($sort, $sort_order);
+            $query->orderBy($sort, $sort_order);
             // $query->orderBy($prefix ? "$prefix.$sort" : $sort, $sort_order);
         });
     }
