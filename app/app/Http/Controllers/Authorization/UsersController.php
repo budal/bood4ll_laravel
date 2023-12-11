@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Authorization;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ProfileUpdateRequest;
-use App\Models\Unit;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -20,30 +19,7 @@ class UsersController extends Controller
 
     public function index(Request $request, $mode = null): Response
     {
-        // $user = Auth::user();
-        // dd($user);
-
         $users = User::filter($request, 'users')
-            // ->select("users.*", "users.name", "units.name as unit", "unit_user.primary")
-            // ->select("users.*")
-
-            // ->addSelect([
-            //     // Key is the alias, value is the sub-select
-            //     'unit' => User::query()
-            //         // ->leftJoin('unit_user', 'unit_user.user_id', '=', 'users.id')
-            //         ->select('units.name')
-            //         ->where('id', 1)
-            //         // ->latest()
-            //         ->take(1)
-            // ])
-            // ->selectRaw("1 as unit")
-
-            // ->leftJoin('unit_user', 'unit_user.user_id', '=', 'users.id')
-            // ->leftJoin('units', 'unit_user.unit_id', '=', 'units.id')
-            // ->where('unit_user.primary', true)
-
-            // ->groupBy('users.id', 'users.name')
-
             ->with('unitsClassified', 'unitsWorking')
             ->withCount('roles')
             ->paginate(20)
@@ -53,28 +29,14 @@ class UsersController extends Controller
             ->through(function ($item) {
                 $item->unitsClassified->map(function ($item) {
                     $item->name = $item->getParentsNames();
-                    // dd($item);
-                });
-                $item->unitsWorking->map(function ($item) {
-                    $item->name = $item->getParentsNames();
-                    // dd($item);
                 });
 
-                // $item->all_users_count = $item->getAllChildren()->pluck('users_count')->sum() + $item->users_count;
+                $item->unitsWorking->map(function ($item) {
+                    $item->name = $item->getParentsNames();
+                });
 
                 return $item;
             });
-
-        // ->transform(fn ($user) => [
-        //     'id' => $user->id,
-        //     'name' => $user->name,
-        //     'email' => $user->email,
-        //     'owner' => $user->owner,
-        //     'photo' => $user->photo_path ? URL::route('image', ['path' => $user->photo_path, 'w' => 40, 'h' => 40, 'fit' => 'crop']) : null,
-        //     'deleted_at' => $user->deleted_at,
-        // ])
-
-        // dd($users[1]);
 
         return Inertia::render('Default', [
             'form' => [

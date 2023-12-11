@@ -59,7 +59,15 @@ class RolesController extends Controller
                                             'type' => 'composite',
                                             'title' => 'Role',
                                             'field' => 'name',
-                                            'fields' => ['name', 'description'],
+                                            'values' => [
+                                                [
+                                                    'field' => 'name',
+                                                ],
+                                                [
+                                                    'field' => 'description',
+                                                    'class' => 'text-xs',
+                                                ],
+                                            ],
                                         ],
                                         [
                                             'type' => 'text',
@@ -88,23 +96,40 @@ class RolesController extends Controller
 
         if ($request->all) {
             $users = User::filter($request, 'users')
-                ->with('roles')
+                ->with('unitsClassified', 'unitsWorking')
                 ->paginate(20)
                 ->onEachSide(2)
                 ->appends(collect($request->query)->toArray())
                 ->through(function ($item) use ($role) {
                     $item->checked = in_array($role->id, $item->roles->pluck('id')->toArray());
 
+                    $item->unitsClassified->map(function ($item) {
+                        $item->name = $item->getParentsNames();
+                    });
+
+                    $item->unitsWorking->map(function ($item) {
+                        $item->name = $item->getParentsNames();
+                    });
+
                     return $item;
                 });
         } else {
             $users = $role->users()
                 ->filter($request, 'users')
+                ->with('unitsClassified', 'unitsWorking')
                 ->paginate(20)
                 ->onEachSide(2)
                 ->appends(collect($request->query)->toArray())
                 ->through(function ($item) {
                     $item->checked = true;
+
+                    $item->unitsClassified->map(function ($item) {
+                        $item->name = $item->getParentsNames();
+                    });
+
+                    $item->unitsWorking->map(function ($item) {
+                        $item->name = $item->getParentsNames();
+                    });
 
                     return $item;
                 });
@@ -261,15 +286,39 @@ class RolesController extends Controller
                                 'titles' => [
                                     [
                                         'type' => 'composite',
-                                        'title' => 'Name',
-                                        'field' => 'name',
-                                        'fields' => ['name', 'email'],
+                                            'title' => 'User',
+                                            'field' => 'name',
+                                            'values' => [
+                                                [
+                                                    'field' => 'name',
+                                                ],
+                                                [
+                                                    'field' => 'email',
+                                                    'class' => 'text-xs',
+                                                ],
+                                            ],
                                     ],
                                     [
                                         'type' => 'composite',
-                                        'title' => 'Unit',
-                                        'field' => 'unit',
-                                        'fields' => ['primary', 'temporary'],
+                                        'title' => 'Classified',
+                                        'class' => 'collapse',
+                                        'field' => 'units_classified',
+                                        'options' => [
+                                            [
+                                                'field' => 'name',
+                                            ],
+                                        ],
+                                    ],
+                                    [
+                                        'type' => 'composite',
+                                        'title' => 'Working',
+                                        'class' => 'collapse',
+                                        'field' => 'units_working',
+                                        'options' => [
+                                            [
+                                                'field' => 'name',
+                                            ],
+                                        ],
                                     ],
                                     [
                                         'type' => 'toggle',

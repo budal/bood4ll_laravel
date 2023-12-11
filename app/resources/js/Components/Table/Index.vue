@@ -380,7 +380,7 @@
                       </p>
                     </template>
                   </template>
-                  <p v-if="item[content.field].length == 0">-</p>
+                  <p v-if="item[content.field]?.length == 0">-</p>
                 </template>
   
                 <Avatar 
