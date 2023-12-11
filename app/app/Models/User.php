@@ -2,23 +2,23 @@
 
 namespace App\Models;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Http\Request;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\HasApiTokens;
 use Ramsey\Uuid\Uuid;
 
 class User extends Authenticatable
 {
-    use HasUUids, HasApiTokens, HasFactory, Notifiable, SoftDeletes;
+    use HasUUids;
+    use HasApiTokens;
+    use HasFactory;
+    use Notifiable;
+    use SoftDeletes;
 
     protected $fillable = [
         'name',
@@ -46,18 +46,18 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Unit::class);
     }
-    
+
     public function unitsPrimary()
     {
         return $this->belongsToMany(Unit::class)->where('primary', true)
         ;
     }
-    
+
     public function roles(): BelongsToMany
     {
         return $this->belongsToMany(Role::class);
     }
-    
+
     public function abilities()
     {
         return $this->roles->map->abilities->flatten()->pluck('name');
@@ -72,32 +72,32 @@ class User extends Authenticatable
     // {
     //     return $this->name;
     // }
-    
+
     public function scopeFilter($query, Request $request, string $prefix = null, string $orderBy = 'name'): void
     {
         $filters = collect($request->query)->toArray();
-        
-        $search = array_filter($filters, function ($key) use ($prefix) { 
-            return (strpos($key, $prefix 
-                ? ($prefix . '_' . 'search') 
+
+        $search = array_filter($filters, function ($key) use ($prefix) {
+            return strpos($key, $prefix
+                ? ($prefix.'_search')
                 : 'search') !== false
-            );
+            ;
         }, ARRAY_FILTER_USE_KEY);
         $filterSearch = reset($search);
 
-        $trash = array_filter($filters, function ($key) use ($prefix) { 
-            return (strpos($key, $prefix 
-                ? ($prefix . '_' . 'trash') 
+        $trash = array_filter($filters, function ($key) use ($prefix) {
+            return strpos($key, $prefix
+                ? ($prefix.'_trash')
                 : 'trash') !== false
-            ); 
+            ;
         }, ARRAY_FILTER_USE_KEY);
         $filterTrash = reset($trash);
 
-        $sort = array_filter($filters, function ($key) use ($prefix) { 
-            return (strpos($key, $prefix 
-                ? ($prefix . '_' . 'sorted') 
+        $sort = array_filter($filters, function ($key) use ($prefix) {
+            return strpos($key, $prefix
+                ? ($prefix.'_sorted')
                 : 'sorted') !== false
-            ); 
+            ;
         }, ARRAY_FILTER_USE_KEY);
         $filterSort = reset($sort);
 
@@ -112,17 +112,16 @@ class User extends Authenticatable
             } elseif ($trashed === 'trashed') {
                 $query->onlyTrashed();
             }
-        })->when($filterSort ? $filterSort : $orderBy, function ($query, $sort) use ($prefix) {
+        })->when($filterSort ? $filterSort : $orderBy, function ($query, $sort) {
             $sort_order = 'ASC';
 
             if (strncmp($sort, '-', 1) === 0) {
                 $sort_order = 'DESC';
                 $sort = substr($sort, 1);
             }
-    
+
             $query->orderBy($sort, $sort_order);
             // $query->orderBy($prefix ? "$prefix.$sort" : $sort, $sort_order);
-
         });
     }
 

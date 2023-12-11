@@ -2,11 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Ability extends Model
 {
@@ -37,7 +35,7 @@ class Ability extends Model
                 $this->total = 0;
                 foreach ($list as $name) {
                     if (Ability::updateOrCreate(['name' => $name])) {
-                        $this->total++;
+                        ++$this->total;
                     }
                 }
             } elseif ($mode === 'off') {

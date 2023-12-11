@@ -3,60 +3,56 @@
 namespace App\Http\Controllers\Authorization;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\Unit;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Inertia\Response;
 
-use App\Models\Unit;
-
-use App\Http\Requests\RolesRequest;
-
 class UnitsController extends Controller
 {
-    public $title = "Units";
-    public $description = "Manage the units registered in the system.";
+    public $title = 'Units';
+    public $description = 'Manage the units registered in the system.';
 
     public function index(Request $request): Response
     {
         $units = Unit::filter($request, 'units')
-            ->when(!$request->search, function($query) {
-                $query->where("parent_id", "1");
+            ->when(!$request->search, function ($query) {
+                $query->where('parent_id', '1');
             })
             ->with('childrenRecursive')
             ->withCount('children', 'users')
             ->paginate(20)
             ->onEachSide(2)
-            ->through(function($item) {
+            ->through(function ($item) {
                 $item->parents = $item->getParentsNames();
                 $item->all_users_count = $item->getAllChildren()->pluck('users_count')->sum() + $item->users_count;
+
                 return $item;
             })
             ->appends(collect($request->query)->toArray());
-            
+
         // dd($units[0]);
 
         return Inertia::render('Default', [
             'form' => [
                 [
-                    'id' => "units",
+                    'id' => 'units',
                     'title' => $this->title,
                     'subtitle' => $this->description,
                     'fields' => [
                         [
                             [
-                                'type' => "table",
-                                'name' => "units",
+                                'type' => 'table',
+                                'name' => 'units',
                                 'content' => [
                                     'routes' => [
-                                        'createRoute' => "apps.units.create",
-                                        'editRoute' => "apps.units.edit",
-                                        'destroyRoute' => "apps.units.destroy",
-                                        'restoreRoute' => "apps.units.restore",
+                                        'createRoute' => 'apps.units.create',
+                                        'editRoute' => 'apps.units.edit',
+                                        'destroyRoute' => 'apps.units.destroy',
+                                        'restoreRoute' => 'apps.units.restore',
                                     ],
                                     'titles' => [
                                         [
@@ -82,28 +78,28 @@ class UnitsController extends Controller
                                             'disableSort' => true,
                                         ],
                                     ],
-                                    'items' => $units
+                                    'items' => $units,
                                 ],
                             ],
                         ],
-                    ]
+                    ],
                 ],
             ],
         ]);
     }
-    
-    public function __form(Request $request, Unit $unit): Array
+
+    public function __form(Request $request, Unit $unit): array
     {
-        $units = Unit::orderBy("parent_id")
-            ->select("id", "name", "active")
+        $units = Unit::orderBy('parent_id')
+            ->select('id', 'name', 'active')
             ->with('childrenRecursive')
-            ->orderBy("name")
+            ->orderBy('name')
             ->where('parent_id', 0)
             ->get();
 
         $subunits = $unit
-            ->when(!$request->search, function($query) use ($unit) {
-                $query->where("parent_id", $unit->id);
+            ->when(!$request->search, function ($query) use ($unit) {
+                $query->where('parent_id', $unit->id);
             })
             ->filter($request, 'subunits')
             ->with('childrenRecursive')
@@ -111,9 +107,10 @@ class UnitsController extends Controller
             ->paginate($perPage = 20, $columns = ['*'], $pageName = 'subunits')
             ->onEachSide(2)
             ->appends(collect($request->query)->toArray())
-            ->through(function($item) {
+            ->through(function ($item) {
                 $item->parents = $item->getParentsNames();
                 $item->all_users_count = $item->getAllChildren()->pluck('users_count')->sum() + $item->users_count;
+
                 return $item;
             });
 
@@ -125,129 +122,129 @@ class UnitsController extends Controller
 
         return [
             [
-                'id' => "unit",
-                'title' => "Main data",
-                'subtitle' => "Unit data management.",
+                'id' => 'unit',
+                'title' => 'Main data',
+                'subtitle' => 'Unit data management.',
                 'cols' => 4,
                 'fields' => [
                     [
                         [
-                            'type' => "input",
-                            'name' => "name",
-                            'title' => "Name",
+                            'type' => 'input',
+                            'name' => 'name',
+                            'title' => 'Name',
                             'span' => 2,
                             'required' => true,
                         ],
                         [
-                            'type' => "select",
-                            'name' => "parent_id",
-                            'title' => "Unidade pai",
+                            'type' => 'select',
+                            'name' => 'parent_id',
+                            'title' => 'Unidade pai',
                             'span' => 2,
                             'content' => $units,
                             'required' => true,
                         ],
                         [
-                            'type' => "input",
-                            'name' => "nickname",
-                            'title' => "Nickname",
+                            'type' => 'input',
+                            'name' => 'nickname',
+                            'title' => 'Nickname',
                             'required' => true,
                         ],
                         [
-                            'type' => "date",
-                            'name' => "founded",
-                            'title' => "Founded",
+                            'type' => 'date',
+                            'name' => 'founded',
+                            'title' => 'Founded',
                             'required' => true,
                         ],
                         [
-                            'type' => "toggle",
-                            'name' => "active",
-                            'title' => "Active",
-                            'colorOn' => "success",
-                            'colorOff' => "danger",
+                            'type' => 'toggle',
+                            'name' => 'active',
+                            'title' => 'Active',
+                            'colorOn' => 'success',
+                            'colorOff' => 'danger',
                         ],
                         [
-                            'type' => "date",
-                            'name' => "expires",
-                            'title' => "Expires in",
+                            'type' => 'date',
+                            'name' => 'expires',
+                            'title' => 'Expires in',
                         ],
                         [
-                            'type' => "input",
-                            'name' => "cellphone",
-                            'mask' => "(##) #####-####",
-                            'title' => "Cell phone",
+                            'type' => 'input',
+                            'name' => 'cellphone',
+                            'mask' => '(##) #####-####',
+                            'title' => 'Cell phone',
                         ],
                         [
-                            'type' => "input",
-                            'name' => "landline",
-                            'mask' => "(##) ####-####",
-                            'title' => "Land line",
+                            'type' => 'input',
+                            'name' => 'landline',
+                            'mask' => '(##) ####-####',
+                            'title' => 'Land line',
                         ],
                         [
-                            'type' => "email",
-                            'name' => "email",
-                            'title' => "Email",
+                            'type' => 'email',
+                            'name' => 'email',
+                            'title' => 'Email',
                             'span' => 2,
                         ],
                         [
-                            'type' => "input",
-                            'name' => "country",
-                            'title' => "Country",
+                            'type' => 'input',
+                            'name' => 'country',
+                            'title' => 'Country',
                         ],
                         [
-                            'type' => "input",
-                            'name' => "state",
-                            'title' => "State",
+                            'type' => 'input',
+                            'name' => 'state',
+                            'title' => 'State',
                         ],
                         [
-                            'type' => "input",
-                            'name' => "city",
-                            'title' => "City",
+                            'type' => 'input',
+                            'name' => 'city',
+                            'title' => 'City',
                         ],
                         [
-                            'type' => "input",
-                            'name' => "postcode",
-                            'mask' => "#####-###",
-                            'title' => "Post code",
+                            'type' => 'input',
+                            'name' => 'postcode',
+                            'mask' => '#####-###',
+                            'title' => 'Post code',
                         ],
                         [
-                            'type' => "input",
-                            'name' => "address",
-                            'title' => "Address",
+                            'type' => 'input',
+                            'name' => 'address',
+                            'title' => 'Address',
                             'span' => 3,
                         ],
                         [
-                            'type' => "input",
-                            'name' => "complement",
-                            'title' => "Complement",
+                            'type' => 'input',
+                            'name' => 'complement',
+                            'title' => 'Complement',
                         ],
                         [
-                            'type' => "input",
-                            'name' => "geo",
-                            'title' => "Geographic coordinates",
+                            'type' => 'input',
+                            'name' => 'geo',
+                            'title' => 'Geographic coordinates',
                             'span' => 4,
                         ],
                         ],
                 ],
             ],
             [
-                'id' => "subunits",
-                'title' => "Subunits",
-                'subtitle' => "Management of subunits of this unit.",
-                'condition' => $unit->id <> null,
+                'id' => 'subunits',
+                'title' => 'Subunits',
+                'subtitle' => 'Management of subunits of this unit.',
+                'condition' => $unit->id != null,
                 'fields' => [
                     [
                         [
-                            'type' => "table",
-                            'name' => "subunits",
+                            'type' => 'table',
+                            'name' => 'subunits',
                             'content' => [
                                 'routes' => [
                                     'createRoute' => [
-                                        'route' => "apps.units.create",
-                                        'attributes' => $unit->id
+                                        'route' => 'apps.units.create',
+                                        'attributes' => $unit->id,
                                     ],
-                                    'editRoute' => "apps.units.edit",
-                                    'destroyRoute' => "apps.units.destroy",
-                                    'restoreRoute' => "apps.units.restore",
+                                    'editRoute' => 'apps.units.edit',
+                                    'destroyRoute' => 'apps.units.destroy',
+                                    'restoreRoute' => 'apps.units.restore',
                                 ],
                                 'titles' => [
                                     [
@@ -272,37 +269,37 @@ class UnitsController extends Controller
                                         'disableSort' => true,
                                     ],
                                 ],
-                                'items' => $subunits
+                                'items' => $subunits,
                             ],
                         ],
                     ],
-                ]
+                ],
             ],
             [
-                'id' => "staff",
-                'title' => "Staff",
-                'subtitle' => "Staff management of this unit.",
-                'condition' => $unit->id <> null,
+                'id' => 'staff',
+                'title' => 'Staff',
+                'subtitle' => 'Staff management of this unit.',
+                'condition' => $unit->id != null,
                 'cols' => 2,
                 'fields' => [
                     [
                         [
-                            'type' => "table",
-                            'name' => "users",
+                            'type' => 'table',
+                            'name' => 'users',
                             'span' => 2,
                             'content' => [
                                 'routes' => [
-                                    'editRoute' => "apps.users.edit",
-                                    'destroyRoute' => "apps.units.destroy",
-                                    'restoreRoute' => "apps.units.restore",
+                                    'editRoute' => 'apps.users.edit',
+                                    'destroyRoute' => 'apps.units.destroy',
+                                    'restoreRoute' => 'apps.units.restore',
                                 ],
                                 'menu' => [
                                     [
-                                        'icon' => "mdi:plus",
-                                        'title' => "Unit creation",
+                                        'icon' => 'mdi:plus',
+                                        'title' => 'Unit creation',
                                         'route' => [
-                                            "apps.units.create",
-                                            ['id' => $unit->id]
+                                            'apps.units.create',
+                                            ['id' => $unit->id],
                                         ],
                                         'modal' => true,
                                     ],
@@ -313,8 +310,8 @@ class UnitsController extends Controller
                                         'title' => 'Avatar',
                                         'field' => 'id',
                                         'fallback' => 'name',
-                                        'disableSort' => true
-                                    ],    
+                                        'disableSort' => true,
+                                    ],
                                     [
                                         'type' => 'text',
                                         'title' => 'Name',
@@ -326,11 +323,11 @@ class UnitsController extends Controller
                                         'field' => 'roles',
                                     ],
                                 ],
-                                'items' => $staff
+                                'items' => $staff,
                             ],
                         ],
                     ],
-                ]
+                ],
             ],
         ];
     }
@@ -338,16 +335,16 @@ class UnitsController extends Controller
     public function create(Request $request, Unit $unit): Response
     {
         $data['parent_id'] = $request->unit->id ?? '';
-        
+
         return Inertia::render('Default', [
             'form' => $this->__form($request, $unit),
             'routes' => [
                 'unit' => [
                     'route' => route('apps.units.store'),
-                    'method' => 'post'
+                    'method' => 'post',
                 ],
             ],
-            'data' => $data
+            'data' => $data,
         ]);
     }
 
@@ -374,27 +371,27 @@ class UnitsController extends Controller
                 'postcode' => $request->postcode,
                 'geo' => $request->geo,
             ]);
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             report($e);
 
             DB::rollback();
 
             return Redirect::back()->with([
                 'toast_type' => 'error',
-                'toast_message' => "Error on add this item.|Error on add the items.",
+                'toast_message' => 'Error on add this item.|Error on add the items.',
                 'toast_count' => 1,
             ]);
         }
-        
+
         DB::commit();
 
         return Redirect::back()->with([
-            'toast_type' => "success",
-            'toast_message' => "{0} Nothing to add.|[1] Item added successfully.|[2,*] :total items successfully added.",
+            'toast_type' => 'success',
+            'toast_message' => '{0} Nothing to add.|[1] Item added successfully.|[2,*] :total items successfully added.',
             'toast_count' => 1,
         ]);
     }
-    
+
     public function edit(Request $request, Unit $unit): Response
     {
         return Inertia::render('Default', [
@@ -402,7 +399,7 @@ class UnitsController extends Controller
             'routes' => [
                 'unit' => [
                     'route' => route('apps.units.update', $unit->id),
-                    'method' => 'patch'
+                    'method' => 'patch',
                 ],
             ],
             'data' => $unit,
@@ -433,23 +430,23 @@ class UnitsController extends Controller
                 'postcode' => $request->postcode,
                 'geo' => $request->geo,
             ]);
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             report($e);
 
             DB::rollback();
 
             return Redirect::back()->with([
                 'toast_type' => 'error',
-                'toast_message' => "Error on edit selected item.|Error on edit selected items.",
+                'toast_message' => 'Error on edit selected item.|Error on edit selected items.',
                 'toast_count' => 1,
             ]);
         }
-        
+
         DB::commit();
 
         return Redirect::back()->with([
-            'toast_type' => "success",
-            'toast_message' => "{0} Nothing to edit.|[1] Item edited successfully.|[2,*] :total items successfully edited.",
+            'toast_type' => 'success',
+            'toast_message' => '{0} Nothing to edit.|[1] Item edited successfully.|[2,*] :total items successfully edited.',
             'toast_count' => 1,
         ]);
     }
@@ -462,14 +459,14 @@ class UnitsController extends Controller
             $usersToDelete = Unit::whereIn('id', $items['ids'])->delete();
         } catch (Throwable $e) {
             report($e);
-     
+
             return back()->with([
-                'toast_type' => "error",
-                'toast_message' => "Error on remove selected item.|Error on remove selected items.",
+                'toast_type' => 'error',
+                'toast_message' => 'Error on remove selected item.|Error on remove selected items.',
                 'toast_count' => count($request->list),
             ]);
         }
-        
+
         return back()->with('status', 'Items removed succesfully!');
     }
 

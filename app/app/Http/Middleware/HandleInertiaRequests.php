@@ -45,7 +45,7 @@ class HandleInertiaRequests extends Middleware
             'toast_count' => session('toast_count'),
             'toast_replacements' => session('toast_replacements'),
             'ziggy' => fn () => [
-                ...(new Ziggy)->toArray(),
+                ...(new Ziggy())->toArray(),
                 'location' => $request->url(),
             ],
         ];

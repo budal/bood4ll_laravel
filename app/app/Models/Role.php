@@ -2,17 +2,16 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
 
 class Role extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
+    use SoftDeletes;
 
     protected $fillable = [
         'name',
@@ -38,28 +37,28 @@ class Role extends Model
     public function scopeFilter($query, Request $request, string $prefix = null, string $orderBy = 'name'): void
     {
         $filters = collect($request->query)->toArray();
-        
-        $search = array_filter($filters, function ($key) use ($prefix) { 
-            return (strpos($key, $prefix 
-                ? ($prefix . '_' . 'search') 
+
+        $search = array_filter($filters, function ($key) use ($prefix) {
+            return strpos($key, $prefix
+                ? ($prefix.'_search')
                 : 'search') !== false
-            );
+            ;
         }, ARRAY_FILTER_USE_KEY);
         $filterSearch = reset($search);
 
-        $trash = array_filter($filters, function ($key) use ($prefix) { 
-            return (strpos($key, $prefix 
-                ? ($prefix . '_' . 'trash') 
+        $trash = array_filter($filters, function ($key) use ($prefix) {
+            return strpos($key, $prefix
+                ? ($prefix.'_trash')
                 : 'trash') !== false
-            ); 
+            ;
         }, ARRAY_FILTER_USE_KEY);
         $filterTrash = reset($trash);
 
-        $sort = array_filter($filters, function ($key) use ($prefix) { 
-            return (strpos($key, $prefix 
-                ? ($prefix . '_' . 'sorted') 
+        $sort = array_filter($filters, function ($key) use ($prefix) {
+            return strpos($key, $prefix
+                ? ($prefix.'_sorted')
                 : 'sorted') !== false
-            ); 
+            ;
         }, ARRAY_FILTER_USE_KEY);
         $filterSort = reset($sort);
 
@@ -80,7 +79,7 @@ class Role extends Model
                 $sort_order = 'DESC';
                 $sort = substr($sort, 1);
             }
-    
+
             $query->orderBy($sort, $sort_order);
         });
     }

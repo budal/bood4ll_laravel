@@ -4,7 +4,6 @@ use Illuminate\Support\Facades\Facade;
 use Illuminate\Support\ServiceProvider;
 
 return [
-
     /*
     |--------------------------------------------------------------------------
     | Application Name
@@ -141,7 +140,7 @@ return [
 
     'maintenance' => [
         'driver' => 'cache',
-        'store'  => 'redis',
+        'store' => 'redis',
     ],
 
     /*
@@ -184,5 +183,4 @@ return [
     'aliases' => Facade::defaultAliases()->merge([
         // 'Example' => App\Facades\Example::class,
     ])->toArray(),
-
 ];
