@@ -13,6 +13,7 @@ use Inertia\Inertia;
 use Inertia\Response;
 
 use App\Models\User;
+use App\Models\Unit;
 
 use App\Http\Requests\ProfileUpdateRequest;
 
@@ -27,23 +28,24 @@ class UsersController extends Controller
         // dd($user);
         
         $users = User::filter($request, 'users')
-            // ->select("users.id", "users.name", "units.name as unit")
+            ->select("users.*", "users.name", "units.name as unit", "unit_user.primary")
             // ->select("users.*")
 
-            ->addSelect([
-                // Key is the alias, value is the sub-select
-                'unit' => '1' 
-                // Post::query()
-                //     // You can use eloquent methods here
-                //     ->select('created_at')
-                //     ->whereColumn('user_id', 'users.id')
-                //     ->latest()
-                //     ->take(1)
-            ])
+            // ->addSelect([
+            //     // Key is the alias, value is the sub-select
+            //     'unit' => User::query()
+            //         // ->leftJoin('unit_user', 'unit_user.user_id', '=', 'users.id')
+            //         ->select('units.name')
+            //         ->where('id', 1)
+            //         // ->latest()
+            //         ->take(1)
+            // ])
             // ->selectRaw("1 as unit")
 
-            // ->leftJoin('unit_user', 'unit_user.user_id', '=', 'users.id')
-            // ->leftJoin('units', 'unit_user.unit_id', '=', 'units.id')
+            
+            ->leftJoin('unit_user', 'unit_user.user_id', '=', 'users.id')
+            ->leftJoin('units', 'unit_user.unit_id', '=', 'units.id')
+            // ->where('unit_user.primary', true)
 
             // ->groupBy('users.id', 'users.name')
         
@@ -61,7 +63,7 @@ class UsersController extends Controller
             // ])
             ;
 
-        // dd($users[0]);
+        dd($users[0]);
 
         return Inertia::render('Default', [
             'form' => [
