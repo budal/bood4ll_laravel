@@ -120,7 +120,7 @@ class User extends Authenticatable
                 $sort = substr($sort, 1);
             }
 
-            $query->orderBy($sort, $sort_order);
+            // $query->orderBy($sort, $sort_order);
             // $query->orderBy($prefix ? "$prefix.$sort" : $sort, $sort_order);
         });
     }

@@ -339,7 +339,7 @@ class RolesController extends Controller
                     'toast_message' => 'Error when syncing abilities to the role.',
                 ]);
             }
-        } catch (Throwable $e) {
+        } catch (\Throwable $e) {
             report($e);
 
             DB::rollback();
@@ -384,7 +384,7 @@ class RolesController extends Controller
                 'toast_message' => 'Define the expiration date.',
             ]);
         } elseif (!$request->remove_on_expire) {
-            $request->expires_at = null;
+            // $request->expires_at = null;
         }
 
         DB::beginTransaction();
@@ -469,7 +469,7 @@ class RolesController extends Controller
                     'toast_replacements' => ['total' => $total],
                 ]);
             }
-        } catch (Throwable $e) {
+        } catch (\Throwable $e) {
             report($e);
 
             return Redirect::back()->with([
@@ -495,7 +495,7 @@ class RolesController extends Controller
                 'toast_count' => $total,
                 'toast_replacements' => ['total' => $total],
             ]);
-        } catch (Throwable $e) {
+        } catch (\Throwable $e) {
             report($e);
 
             return back()->with([
@@ -521,7 +521,7 @@ class RolesController extends Controller
                 'toast_count' => $total,
                 'toast_replacements' => ['total' => $total],
             ]);
-        } catch (Throwable $e) {
+        } catch (\Throwable $e) {
             report($e);
 
             return back()->with([
@@ -543,7 +543,7 @@ class RolesController extends Controller
                 'toast_count' => $total,
                 'toast_replacements' => ['total' => $total],
             ]);
-        } catch (Throwable $e) {
+        } catch (\Throwable $e) {
             report($e);
 
             return back()->with([

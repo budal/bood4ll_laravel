@@ -44,7 +44,8 @@ class UsersController extends Controller
 
             // ->groupBy('users.id', 'users.name')
 
-            ->withCount('units', 'roles')
+            ->with('units')
+            ->withCount('roles')
             ->paginate(100)
             ->onEachSide(2)
             ->appends(collect($request->query)->toArray())
@@ -58,7 +59,7 @@ class UsersController extends Controller
             // ])
         ;
 
-        // dd($users[0]);
+        dd($users[0]);
 
         return Inertia::render('Default', [
             'form' => [
@@ -111,7 +112,7 @@ class UsersController extends Controller
                                             'type' => 'composite',
                                             'title' => 'Unit',
                                             'class' => 'sm:hidden',
-                                            'field' => 'unit',
+                                            'field' => 'units',
                                             'fields' => ['unit', 'temporary'],
                                         ],
                                         [
@@ -299,7 +300,7 @@ class UsersController extends Controller
                 'toast_count' => $total,
                 'toast_replacements' => ['total' => $total],
             ]);
-        } catch (Throwable $e) {
+        } catch (\Throwable $e) {
             report($e);
 
             return back()->with([
@@ -321,7 +322,7 @@ class UsersController extends Controller
                 'toast_count' => $total,
                 'toast_replacements' => ['total' => $total],
             ]);
-        } catch (Throwable $e) {
+        } catch (\Throwable $e) {
             report($e);
 
             return back()->with([
@@ -343,7 +344,7 @@ class UsersController extends Controller
                 'toast_count' => $total,
                 'toast_replacements' => ['total' => $total],
             ]);
-        } catch (Throwable $e) {
+        } catch (\Throwable $e) {
             report($e);
 
             return back()->with([

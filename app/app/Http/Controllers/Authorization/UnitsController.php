@@ -457,7 +457,7 @@ class UnitsController extends Controller
 
         try {
             $usersToDelete = Unit::whereIn('id', $items['ids'])->delete();
-        } catch (Throwable $e) {
+        } catch (\Throwable $e) {
             report($e);
 
             return back()->with([
