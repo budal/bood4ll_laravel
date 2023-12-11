@@ -353,17 +353,18 @@
               <template 
                 v-if="content.type == 'array' && content.condition !== false"
               >
-                <p 
+                <template 
                   v-for="subitem in item[content.field]" 
                   class="text-sm text-secondary-light dark:text-secondary-dark text-center">
-                  <template v-for="option in subitem">
-                    {{ option }}
-
+                  <template v-for="option in content.options">
+                    <p 
+                      class="truncate text-secondary-light dark:text-secondary-dark text-center"
+                      :class="option.class"
+                    >
+                      {{ $t(subitem[option.field] ?? '-') }}
+                    </p>
                   </template>
-                  <!-- {{ $t(subitem['name'] ?? '-') }} -->
-                  {{ subitem }}
-                </p>
-                <!-- <p class="truncate text-xs text-secondary-light dark:text-secondary-dark text-center">{{ $t(item[content.fields[1]] ?? '-') }}</p> -->
+                </template>
               </template>
 
               <template 

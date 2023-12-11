@@ -50,12 +50,12 @@ class UsersController extends Controller
             ->onEachSide(2)
             ->appends(collect($request->query)->toArray())
 
-            // ->through(function ($item) {
-            //     $item->parents = $item->getParentsNames();
-            //     $item->all_users_count = $item->getAllChildren()->pluck('users_count')->sum() + $item->users_count;
+            ->through(function ($item) {
+                // $item->parents = $item->getParentsNames();
+                // $item->all_users_count = $item->getAllChildren()->pluck('users_count')->sum() + $item->users_count;
 
-            //     return $item;
-            // });
+                return $item;
+            });
 
             // ->transform(fn ($user) => [
             //     'id' => $user->id,
@@ -118,19 +118,18 @@ class UsersController extends Controller
                                         ],
                                         [
                                             'type' => 'array',
-                                            'title' => 'Unit',
+                                            'title' => 'Classified',
                                             'class' => 'sm:hidden',
                                             'field' => 'units_classified',
                                             'options' => [
                                                 [
                                                     'field' => 'name',
-                                                    'class' => 'bold',
                                                 ],
                                             ],
                                         ],
                                         [
                                             'type' => 'array',
-                                            'title' => 'Unit',
+                                            'title' => 'Working',
                                             'class' => 'sm:hidden',
                                             'field' => 'units_working',
                                             'options' => [
