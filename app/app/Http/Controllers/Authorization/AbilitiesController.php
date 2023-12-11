@@ -115,7 +115,15 @@ class AbilitiesController extends Controller
                                             'type' => 'composite',
                                             'title' => 'Ability',
                                             'field' => 'title',
-                                            'fields' => ['title', 'command'],
+                                            'values' => [
+                                                [
+                                                    'field' => 'title',
+                                                ],
+                                                [
+                                                    'field' => 'command',
+                                                    'class' => 'text-xs',
+                                                ],
+                                            ],
                                         ],
                                         [
                                             'type' => 'toggle',
