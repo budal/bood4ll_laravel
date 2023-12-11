@@ -7,6 +7,8 @@
     tabs?: boolean;
   }>();    
 
+  const emit = defineEmits(['changeTab'])
+
   const activeTab = new URL(window.location.href);
 
   const __tab = activeTab.searchParams.get('__tab')
@@ -14,7 +16,8 @@
   const tab = ref((props.items.some((tab: any) => tab.id === __tab) ? __tab : props.items[0].id) || props.items[0].id)
   
   const onChangeTab = (name: string) => {
-    window.history.pushState(null, "", '?__tab=' + name);
+    history.pushState(Object.assign(history.state, {'__tab': name}), "", '?__tab=' + name);
+    emit('changeTab', name)
   }
 </script>
 

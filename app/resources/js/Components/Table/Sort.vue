@@ -1,18 +1,47 @@
 <script setup lang="ts">
   import { Icon } from '@iconify/vue'
   import { Link } from '@inertiajs/vue3';
+  import { computed, watch } from 'vue';
 
   const props = defineProps<{
     prefix?: string | null;
     sort: any;
   }>();
 
-  const sortedFieldName = props.prefix ? `${props.prefix}_sorted` : "sorted"
+  const __tab1 = computed(() => history.state.__tab)
+    
+    watch(
+      () => __tab1.value,
+      () => console.log(1)
+    )
 
+
+    console.log(history.state);
+
+    // console.log("History.state after pushState: ", history.state.__tab);
+
+    // console.log(window.history)
+
+
+    window.addEventListener("popstate", (event) => {
+        console.log(event.state);
+    });
+
+    // window.addEventListener('popstate', () => console.log(window.location.href));
+
+
+  const sortedFieldName = props.prefix ? `${props.prefix}_sorted` : "sorted"
+  const sortedByFieldName = props.prefix ? `${props.prefix}_sortedby` : "sortedby"
+  
+  let route = new URL(window.location.href);
+  const __tab = route.searchParams.get('__tab') || null
+  
   const sortBy = (column: any) => {
     let url = new URL(window.location.href);
     let sortOrder = null;
     let sortValue = url.searchParams.get(sortedFieldName)
+
+    url.searchParams.set('__tab', history.state.__tab)
 
     if (sortValue == column) {
       url.searchParams.set(sortedFieldName, "-" + column)
@@ -23,7 +52,7 @@
     } else {
       url.searchParams.set(sortedFieldName, column)
     }
-    
+
     return {
       url: url.href,
       sortMe: sortOrder,

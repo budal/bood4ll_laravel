@@ -276,26 +276,36 @@
     @close="closeModal"
   >
     <template #buttons>
-        <Button color="secondary" @click="closeModal" start-icon="mdi:cancel-outline">
-          {{ $t('Cancel') }}
-        </Button>
-        <Button 
-          :color="modalInfo.buttonTheme" 
-          @click="submitModal" 
-          :start-icon="modalInfo.buttonIcon" 
-          class="ml-3" 
-          :class="{ 'opacity-25': modalForm.processing }" 
-          :disabled="modalForm.processing"
-        >
-          {{ transChoice(modalInfo.buttonTitle, modalInfo.list.size) }}
-        </Button>
+      <Button color="secondary" @click="closeModal" start-icon="mdi:cancel-outline">
+        {{ $t('Cancel') }}
+      </Button>
+      <Button 
+        :color="modalInfo.buttonTheme" 
+        @click="submitModal" 
+        :start-icon="modalInfo.buttonIcon" 
+        class="ml-3" 
+        :class="{ 'opacity-25': modalForm.processing }" 
+        :disabled="modalForm.processing"
+      >
+        {{ transChoice(modalInfo.buttonTitle, modalInfo.list.size) }}
+      </Button>
     </template>
   </Modal>
 
   <div class="flex sticky top-0 sm:top-[95px] justify-between rounded-xl backdrop-blur-sm pt-1 mb-2 bg-zero-light/30 dark:bg-zero-dark/30">
     <div class="flex gap-2 w-full">
-      <Dropdown v-if="menuItems" :prefix="prefix" :content="menuItems" @select="(item) => action(item)" />
-      <Search :prefix="prefix" :id="id" :name="name" :shortcutKey="shortcutKey" class="flex-1" />
+      <Dropdown 
+        v-if="menuItems" 
+        :prefix="prefix" 
+        :content="menuItems" 
+        @select="(item) => action(item)" 
+      />
+      <Search 
+        :prefix="prefix" 
+        :id="id" :name="name" 
+        :shortcutKey="shortcutKey" 
+        class="flex-1" 
+      />
       <Button 
         v-if="routes.createRoute" 
         type="button"
@@ -312,14 +322,28 @@
         <thead v-if="items.data.length > 0">
           <tr class="bg-zero-light dark:bg-zero-dark p-3 text-zero-light dark:text-zero-dark text-left">
             <th class="p-1 sm:p-2 w-0">
-              <Checkbox v-if="(routes.showCheckboxes == true || routes.destroyRoute || routes.restoreRoute)" name="remember" :checked="selectedAll" @click="toggleAll" class="w-6 h-6 sm:w-8 sm:h-8 rounded-md sm:rounded-lg" />
+              <Checkbox 
+                v-if="(routes.showCheckboxes == true || routes.destroyRoute || routes.restoreRoute)" 
+                name="remember" 
+                :checked="selectedAll" 
+                @click="toggleAll" 
+                class="w-6 h-6 sm:w-8 sm:h-8 rounded-md sm:rounded-lg" 
+              />
             </th>
             <template v-for="title in titles" >
               <th class="p-2" :class="title.class">
-                <Sort v-if="title.condition !== false" :prefix="prefix" :sort="title" class="justify-center" />
+                <Sort 
+                  v-if="title.condition !== false" 
+                  :prefix="prefix" 
+                  :sort="title" 
+                  class="justify-center" 
+                />
               </th>
             </template>
-            <th v-if="routes.editRoute" class="p-2"></th>
+            <th 
+              v-if="routes.editRoute" 
+              class="p-2">
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -332,7 +356,8 @@
               : 'bg-secondary-light dark:bg-secondary-dark hover:bg-secondary-light-hover hover:dark:bg-secondary-dark-hover border-secondary-light dark:border-secondary-dark'"
           >
             <td class="p-1 sm:p-2 w-0">
-              <Checkbox v-if="routes.showCheckboxes == true || routes.destroyRoute || routes.restoreRoute" 
+              <Checkbox 
+                v-if="routes.showCheckboxes == true || routes.destroyRoute || routes.restoreRoute" 
                 class="w-6 h-6 sm:w-8 sm:h-8 rounded-md sm:rounded-lg" 
                 :class="item.deleted_at 
                   ? ''
@@ -345,7 +370,10 @@
               />
             </td>
             <template v-for="content in titles" >
-              <td class="p-1 text-center" :class="content.class">
+              <td 
+                class="p-1 text-center" 
+                :class="content.class"
+              >
                 <p 
                   v-if="content.type == 'text'" 
                   class="truncate text-sm leading-5 text-secondary-light dark:text-secondary-dark text-center"
@@ -432,7 +460,10 @@
       </table>
     </div>
   </div>
-  <div v-if="items.total > 0" class="flex py-1 sticky bottom-0 justify-between rounded-xl backdrop-blur-sm mt-5 bg-zero-light/30 dark:bg-zero-dark/30">
+  <div 
+    v-if="items.total > 0" 
+    class="flex py-1 sticky bottom-0 justify-between rounded-xl backdrop-blur-sm mt-5 bg-zero-light/30 dark:bg-zero-dark/30"
+  >
     <div class="w-full flex flex-row sm:hidden">
       <div class="basis-1/3 text-left">
         <Button 
@@ -443,7 +474,10 @@
           :preserveScroll="true"
         />
       </div>
-      <div v-if="items.from !== null" class="basis-1/3 text-center">
+      <div 
+        v-if="items.from !== null" 
+        class="basis-1/3 text-center"
+      >
         <span 
           aria-current="page" 
           class="relative inline-flex rounded-md bg-zero-light dark:bg-zero-dark px-4 py-1 text-sm font-semibold text-zero-light dark:text-zero-dark"
@@ -462,7 +496,10 @@
     </div>
     <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
       <div>
-        <p v-if="items.from !== null" class="hidden lg:block text-xs text-secondary-light dark:text-secondary-dark">
+        <p 
+          v-if="items.from !== null" 
+          class="hidden lg:block text-xs text-secondary-light dark:text-secondary-dark"
+        >
           {{ $t('Showing :from to :to of :total results', { from: items.from, to: items.to, total: items.total }) }}
         </p>
       </div>
@@ -476,7 +513,10 @@
             startIcon="mdi:chevron-left" 
             :preserveScroll="true"
           />
-          <template v-if="items.from !== null" v-for="item in items.links">
+          <template 
+            v-if="items.from !== null" 
+            v-for="item in items.links"
+          >
             <Button 
               v-if="item.label > 0 && item.label != items.current_page || item.label == items.current_page"
               type="button"
