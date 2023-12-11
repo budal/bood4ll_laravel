@@ -46,12 +46,20 @@ class UsersController extends Controller
 
             ->with('unitsClassified', 'unitsWorking')
             ->withCount('roles')
-            ->paginate(100)
+            ->paginate(20)
             ->onEachSide(2)
             ->appends(collect($request->query)->toArray())
 
             ->through(function ($item) {
-                // $item->parents = $item->getParentsNames();
+                $item->unitsClassified->map(function ($item) {
+                    $item->name = $item->getParentsNames();
+                    // dd($item);
+                });
+                $item->unitsWorking->map(function ($item) {
+                    $item->name = $item->getParentsNames();
+                    // dd($item);
+                });
+
                 // $item->all_users_count = $item->getAllChildren()->pluck('users_count')->sum() + $item->users_count;
 
                 return $item;
@@ -126,7 +134,7 @@ class UsersController extends Controller
                                         [
                                             'type' => 'composite',
                                             'title' => 'Classified',
-                                            'class' => 'sm:hidden',
+                                            'class' => 'collapse',
                                             'field' => 'units_classified',
                                             'options' => [
                                                 [
@@ -137,7 +145,7 @@ class UsersController extends Controller
                                         [
                                             'type' => 'composite',
                                             'title' => 'Working',
-                                            'class' => 'sm:hidden',
+                                            'class' => 'collapse',
                                             'field' => 'units_working',
                                             'options' => [
                                                 [
@@ -148,7 +156,7 @@ class UsersController extends Controller
                                         [
                                             'type' => 'text',
                                             'title' => 'Roles',
-                                            'class' => 'sm:hidden',
+                                            'class' => 'collapse',
                                             'field' => 'roles_count',
                                         ],
                                         [

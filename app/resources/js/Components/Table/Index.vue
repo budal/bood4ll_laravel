@@ -314,9 +314,11 @@
             <th class="p-1 sm:p-2 w-0">
               <Checkbox v-if="(routes.showCheckboxes == true || routes.destroyRoute || routes.restoreRoute)" name="remember" :checked="selectedAll" @click="toggleAll" class="w-6 h-6 sm:w-8 sm:h-8 rounded-md sm:rounded-lg" />
             </th>
-            <th v-for="sort in titles" class="p-2">
-              <Sort v-if="sort.condition !== false" :prefix="prefix" :sort="sort" class="justify-center" />
-            </th>
+            <template v-for="title in titles" >
+              <th class="p-2" :class="title.class">
+                <Sort v-if="title.condition !== false" :prefix="prefix" :sort="title" class="justify-center" />
+              </th>
+            </template>
             <th v-if="routes.editRoute" class="p-2"></th>
           </tr>
         </thead>
@@ -342,74 +344,76 @@
                 @click="toggle(item)" 
               />
             </td>
-            <td v-for="content in titles" class="p-1 text-center">
-              <p 
-                v-if="content.type == 'text'" 
-                class="truncate text-sm leading-5 text-secondary-light dark:text-secondary-dark text-center"
-              >
-                {{ item[content.field] ?? '-' }}
-              </p>
-
-              <template 
-                v-if="content.type == 'composite' && content.condition !== false"
-              >
-                <template 
-                  v-if="content.values"
-                  v-for="subitem in content.values" 
+            <template v-for="content in titles" >
+              <td class="p-1 text-center" :class="content.class">
+                <p 
+                  v-if="content.type == 'text'" 
+                  class="truncate text-sm leading-5 text-secondary-light dark:text-secondary-dark text-center"
                 >
-                  <p 
-                    class="truncate text-secondary-light dark:text-secondary-dark text-center"
-                    :class="subitem.class"
+                  {{ item[content.field] ?? '-' }}
+                </p>
+  
+                <template 
+                  v-if="content.type == 'composite' && content.condition !== false"
+                >
+                  <template 
+                    v-if="content.values"
+                    v-for="subitem in content.values" 
                   >
-                    {{ $t(item[subitem.field] ?? '-') }}
-                  </p>
-                </template>
-                <template 
-                  v-if="item[content.field]"
-                  v-for="subitem in item[content.field]" 
-                >
-                  <template v-for="option in content.options">
                     <p 
                       class="truncate text-secondary-light dark:text-secondary-dark text-center"
-                      :class="option.class"
+                      :class="subitem.class"
                     >
-                      {{ subitem[option.field] ? $t(subitem[option.field]) : '-' }}
+                      {{ $t(item[subitem.field] ?? '-') }}
                     </p>
                   </template>
+                  <template 
+                    v-if="item[content.field]"
+                    v-for="subitem in item[content.field]" 
+                  >
+                    <template v-for="option in content.options">
+                      <p 
+                        class="truncate text-secondary-light dark:text-secondary-dark text-center"
+                        :class="option.class"
+                      >
+                        {{ subitem[option.field] ? $t(subitem[option.field]) : '-' }}
+                      </p>
+                    </template>
+                  </template>
+                  <p v-if="item[content.field].length == 0">-</p>
                 </template>
-                <p v-if="item[content.field].length == 0">-</p>
-              </template>
-
-              <Avatar 
-                v-if="content.type == 'avatar' && content.condition !== false" 
-                class="w-8 h-8 sm:w-12 sm:h-12 rounded-full" 
-                :fallback="item[content.fallback]" 
-              />
-
-              <Toggle 
-                v-if="content.type == 'toggle' && content.condition !== false"
-                :id="item.id" 
-                :name="item.name" 
-                :colorOn="content.colorOn"
-                :colorOff="content.colorOff"
-                :icon="content.icon"
-                :rotate="content.rotate"
-                v-model="item.checked"
-                @click="updateFormToogle(content.method, content.route, [item.id])"
-              />
-
-              <Button 
-                v-if="content.type == 'button' && content.condition !== false"
-                :id="item.id" 
-                :name="item.name"
-                type="button"
-                :color="content.theme"
-                :link="route(content.route, item.id)" 
-                :method="content.method" 
-                :startIcon="content.icon" 
-                :preserveScroll="content.preserveScroll"
-              />
-            </td>
+  
+                <Avatar 
+                  v-if="content.type == 'avatar' && content.condition !== false" 
+                  class="w-8 h-8 sm:w-12 sm:h-12 rounded-full" 
+                  :fallback="item[content.fallback]" 
+                />
+  
+                <Toggle 
+                  v-if="content.type == 'toggle' && content.condition !== false"
+                  :id="item.id" 
+                  :name="item.name" 
+                  :colorOn="content.colorOn"
+                  :colorOff="content.colorOff"
+                  :icon="content.icon"
+                  :rotate="content.rotate"
+                  v-model="item.checked"
+                  @click="updateFormToogle(content.method, content.route, [item.id])"
+                />
+  
+                <Button 
+                  v-if="content.type == 'button' && content.condition !== false"
+                  :id="item.id" 
+                  :name="item.name"
+                  type="button"
+                  :color="content.theme"
+                  :link="route(content.route, item.id)" 
+                  :method="content.method" 
+                  :startIcon="content.icon" 
+                  :preserveScroll="content.preserveScroll"
+                />
+              </td>
+            </template>
             <td v-if="routes.editRoute" class="sm:p-2 w-0 text-right">
               <Button 
                 type="button"
