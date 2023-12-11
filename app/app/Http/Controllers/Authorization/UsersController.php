@@ -27,13 +27,25 @@ class UsersController extends Controller
         // dd($user);
         
         $users = User::filter($request, 'users')
-            ->select("users.*", "units.name as unit")
+            // ->select("users.id", "users.name", "units.name as unit")
+            // ->select("users.*")
+
+            ->addSelect([
+                // Key is the alias, value is the sub-select
+                'unit' => '1' 
+                // Post::query()
+                //     // You can use eloquent methods here
+                //     ->select('created_at')
+                //     ->whereColumn('user_id', 'users.id')
+                //     ->latest()
+                //     ->take(1)
+            ])
             // ->selectRaw("1 as unit")
 
-            ->leftJoin('unit_user', 'unit_user.user_id', '=', 'users.id')
-            ->leftJoin('units', 'unit_user.unit_id', '=', 'units.id')
+            // ->leftJoin('unit_user', 'unit_user.user_id', '=', 'users.id')
+            // ->leftJoin('units', 'unit_user.unit_id', '=', 'units.id')
 
-
+            // ->groupBy('users.id', 'users.name')
         
             ->withCount("roles")
             ->paginate(100)
@@ -103,7 +115,7 @@ class UsersController extends Controller
                                             'title' => 'Unit',
                                             'class' => 'sm:hidden',
                                             'field' => 'unit',
-                                            'fields' => ['primary', 'temporary']
+                                            'fields' => ['unit', 'temporary']
                                         ],
                                         [
                                             'type' => 'text',
