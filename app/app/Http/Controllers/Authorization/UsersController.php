@@ -57,15 +57,14 @@ class UsersController extends Controller
                 return $item;
             });
 
-            // ->transform(fn ($user) => [
-            //     'id' => $user->id,
-            //     'name' => $user->name,
-            //     'email' => $user->email,
-            //     'owner' => $user->owner,
-            //     'photo' => $user->photo_path ? URL::route('image', ['path' => $user->photo_path, 'w' => 40, 'h' => 40, 'fit' => 'crop']) : null,
-            //     'deleted_at' => $user->deleted_at,
-            // ])
-        ;
+        // ->transform(fn ($user) => [
+        //     'id' => $user->id,
+        //     'name' => $user->name,
+        //     'email' => $user->email,
+        //     'owner' => $user->owner,
+        //     'photo' => $user->photo_path ? URL::route('image', ['path' => $user->photo_path, 'w' => 40, 'h' => 40, 'fit' => 'crop']) : null,
+        //     'deleted_at' => $user->deleted_at,
+        // ])
 
         // dd($users[1]);
 
@@ -114,10 +113,18 @@ class UsersController extends Controller
                                             'type' => 'composite',
                                             'title' => 'User',
                                             'field' => 'name',
-                                            'fields' => ['name', 'email'],
+                                            'values' => [
+                                                [
+                                                    'field' => 'name',
+                                                ],
+                                                [
+                                                    'field' => 'email',
+                                                    'class' => 'text-xs',
+                                                ],
+                                            ],
                                         ],
                                         [
-                                            'type' => 'array',
+                                            'type' => 'composite',
                                             'title' => 'Classified',
                                             'class' => 'sm:hidden',
                                             'field' => 'units_classified',
@@ -128,14 +135,13 @@ class UsersController extends Controller
                                             ],
                                         ],
                                         [
-                                            'type' => 'array',
+                                            'type' => 'composite',
                                             'title' => 'Working',
                                             'class' => 'sm:hidden',
                                             'field' => 'units_working',
                                             'options' => [
                                                 [
                                                     'field' => 'name',
-                                                    'class' => 'bold',
                                                 ],
                                             ],
                                         ],
