@@ -78,6 +78,11 @@ class Unit extends Model
         return $this->parent()->with('parentRecursive');
     }
 
+    public function allParentsNames()
+    {
+        return $this->belongsToMany(Unit::class, 'parent', 'unit_id', 'parent_id')->select('parent', 'name');
+    }
+
     public function getParentsNames()
     {
         if ($this->parent) {
