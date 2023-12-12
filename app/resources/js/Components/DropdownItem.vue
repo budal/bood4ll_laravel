@@ -195,7 +195,7 @@ const checkRef = ref(true);
                     {{ item.list ? `(${item.list.size})` : null }}
                     <div
                         v-if="item.shortcut"
-                        class="ml-auto mr-2 pl-[20px] text-zero-light text-zero-light text-zero-light dark:text-zero-dark group-data-[highlighted]:text-zero-light/70 group-data-[highlighted]:dark:text-zero-dark/70 group-data-[disabled]:text-zero-light/50 group-data-[disabled]:dark:text-zero-dark/50"
+                        class="ml-auto mr-2 pl-[20px] text-zero-light dark:text-zero-dark group-data-[highlighted]:text-zero-light/70 group-data-[highlighted]:dark:text-zero-dark/70 group-data-[disabled]:text-zero-light/50 group-data-[disabled]:dark:text-zero-dark/50"
                     >
                         {{ item.shortcut }}
                     </div>

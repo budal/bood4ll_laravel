@@ -184,7 +184,7 @@ const selectItems = props.disableSearch
         </ComboboxAnchor>
 
         <ComboboxContent
-            class="absolute z-[4] w-full mt-1 min-w-[160px] bg-white overflow-hidden bg-zero-white dark:bg-zero-black text-zero-light dark:text-zero-dark rounded-md border border-zero-light dark:border-zero-dark rounded-full focus:outline-none focus:ring-2 focus:ring-primary-light dark:focus:ring-primary-dark focus:ring-offset-1 focus:ring-offset-primary-light dark:focus:ring-offset-primary-dark"
+            class="absolute z-[4] w-full mt-1 min-w-[160px] overflow-hidden bg-zero-white dark:bg-zero-black text-zero-light dark:text-zero-dark rounded-md border border-zero-light dark:border-zero-dark focus:outline-none focus:ring-2 focus:ring-primary-light dark:focus:ring-primary-dark focus:ring-offset-1 focus:ring-offset-primary-light dark:focus:ring-offset-primary-dark"
             @escapeKeyDown="onEscape"
             @pointerDownOutside="onEscape"
             @closeAutoFocus="onEscape"

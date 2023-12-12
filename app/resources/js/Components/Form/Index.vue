@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { isValidUrl, toast } from "@/helpers";
+import { toast } from "@/helpers";
 import Button from "@/Components/Button.vue";
 import InputError from "@/Components/InputError.vue";
 import InputLabel from "@/Components/InputLabel.vue";

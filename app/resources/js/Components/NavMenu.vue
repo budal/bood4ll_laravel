@@ -34,7 +34,7 @@ const routeCurrent = window.location.href;
                     <template v-if="item.links">
                         <NavigationMenuItem>
                             <NavigationMenuTrigger
-                                class="group flex select-none items-center justify-between gap-[2px] mx-3 py-[23px] font-medium leading-none outline-none border-b-2 border-transparent text-sm font-medium block select-none text-sm font-medium transition ease-in-out duration-500"
+                                class="group flex items-center justify-between gap-[2px] mx-3 py-[23px] leading-none outline-none border-b-2 border-transparent select-none text-sm font-medium transition ease-in-out duration-500"
                                 :class="
                                     routeCurrent.includes(item.route)
                                         ? 'border-warning-light dark:border-warning-dark focus:border-info-light dark:focus:border-info-dark text-zero-light dark:text-zero-dark'
@@ -49,7 +49,7 @@ const routeCurrent = window.location.href;
                                 />
                             </NavigationMenuTrigger>
                             <NavigationMenuContent
-                                class="z-[30] top-0 data-[motion=from-start]:animate-enterFromLeft data-[motion=from-end]:animate-enterFromRight data-[motion=to-start]:animate-exitToLeft data-[motion=to-end]:animate-exitToRight absolute top-0 left-0 w-full sm:w-auto"
+                                class="z-[30] data-[motion=from-start]:animate-enterFromLeft data-[motion=from-end]:animate-enterFromRight data-[motion=to-start]:animate-exitToLeft data-[motion=to-end]:animate-exitToRight absolute top-0 left-0 w-full sm:w-auto"
                             >
                                 <div
                                     class="container mx-auto grid gap-2 p-2 bg-zero-light-hover dark:bg-zero-dark-hover w-screen max-w-xl md:max-w-3xl lg:max-w-5xl sm:grid-flow-row sm:grid-cols-2 lg:grid-cols-3"
