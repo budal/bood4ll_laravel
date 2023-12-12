@@ -9,39 +9,15 @@ const props = defineProps<{
     sort: any;
 }>();
 
-const __tab1 = computed(() => history.state.__tab);
-
-// watch(
-//   () => __tab1.value,
-//   () => console.log(1)
-// )
-
-console.log(props.tab);
-
-// console.log("History.state after pushState: ", history.state.__tab);
-
-// console.log(window.history)
-
-// window.addEventListener("popstate", (event) => {
-//     console.log(event.state);
-// });
-
-// window.addEventListener('popstate', () => console.log(window.location.href));
-
 const sortedFieldName = props.prefix ? `${props.prefix}_sorted` : "sorted";
 const sortedByFieldName = props.prefix
     ? `${props.prefix}_sortedby`
     : "sortedby";
 
-let route = new URL(window.location.href);
-const __tab = route.searchParams.get("__tab") || null;
-
 const sortBy = (column: any) => {
     let url = new URL(window.location.href);
     let sortOrder = null;
     let sortValue = url.searchParams.get(sortedFieldName);
-
-    url.searchParams.set("__tab", history.state.__tab);
 
     if (sortValue == column) {
         url.searchParams.set(sortedFieldName, "-" + column);
