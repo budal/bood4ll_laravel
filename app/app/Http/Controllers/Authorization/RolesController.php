@@ -422,6 +422,7 @@ class RolesController extends Controller
                 ],
             ],
             'data' => $role,
+            // 'tabs' => false,
         ]);
     }
 

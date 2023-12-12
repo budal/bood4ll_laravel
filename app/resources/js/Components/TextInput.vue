@@ -1,31 +1,32 @@
 <script setup lang="ts">
-    import { onMounted, ref } from 'vue';
-    import { vMaska } from "maska"
+import { onMounted, ref } from "vue";
+import { vMaska } from "maska";
 
-    withDefaults(
-        defineProps<{
-            name: string;
-            type?: string;
-            mask?: string;
-            modelValue?: string;
-            autocomplete: boolean;
-        }>(),{
-            type: 'text',
-            autocomplete: false,
-        }
-    );
+withDefaults(
+    defineProps<{
+        name: string;
+        type?: string;
+        mask?: string;
+        modelValue?: string;
+        autocomplete: boolean;
+    }>(),
+    {
+        type: "text",
+        autocomplete: false,
+    },
+);
 
-    defineEmits(['update:modelValue']);
+defineEmits(["update:modelValue"]);
 
-    const input = ref<HTMLInputElement | null>(null);
+const input = ref<HTMLInputElement | null>(null);
 
-    onMounted(() => {
-        if (input.value?.hasAttribute('autofocus')) {
-            input.value?.focus();
-        }
-    });
+onMounted(() => {
+    if (input.value?.hasAttribute("autofocus")) {
+        input.value?.focus();
+    }
+});
 
-    defineExpose({ focus: () => input.value?.focus() });
+defineExpose({ focus: () => input.value?.focus() });
 </script>
 
 <template>
@@ -36,7 +37,12 @@
         :data-maska="mask"
         :value="modelValue"
         :autocomplete="autocomplete ? name : 'off'"
-        @input="$emit('update:modelValue', ($event.target as HTMLInputElement).value)"
+        @input="
+            $emit(
+                'update:modelValue',
+                ($event.target as HTMLInputElement).value,
+            )
+        "
         ref="input"
     />
 </template>

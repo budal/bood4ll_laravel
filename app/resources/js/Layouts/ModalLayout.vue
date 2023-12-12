@@ -1,24 +1,25 @@
 <script setup lang="ts">
-    import Modal from '@/Components/Modal.vue'
-    import { useDark } from "@vueuse/core"
-    import { useModal } from "/vendor/emargareten/inertia-modal"
+import Modal from "@/Components/Modal.vue";
+import { useDark } from "@vueuse/core";
+// @ts-expect-error
+import { useModal } from "/vendor/emargareten/inertia-modal";
 
-    withDefaults(
-        defineProps<{
-            title?: string;
-        }>(),
-        {
-            title: '',
-        }
-    );
-    const isDark = useDark();
-    const { show, close, redirect } = useModal()
+withDefaults(
+    defineProps<{
+        title?: string;
+    }>(),
+    {
+        title: "",
+    },
+);
+const isDark = useDark();
+const { show, close, redirect } = useModal();
 </script>
 
 <template>
-    <Modal 
-        :open="show" 
-        :title="$t(title)" 
+    <Modal
+        :open="show"
+        :title="$t(title)"
         @close="redirect({ preserveScroll: true })"
     >
         <div class="max-w-7xl mx-auto">

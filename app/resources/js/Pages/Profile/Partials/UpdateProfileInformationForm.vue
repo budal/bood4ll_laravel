@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import Button from '@/Components/Button.vue';
-import TextInput from '@/Components/TextInput.vue';
-import { Link, useForm, usePage } from '@inertiajs/vue3';
+import InputError from "@/Components/InputError.vue";
+import InputLabel from "@/Components/InputLabel.vue";
+import Button from "@/Components/Button.vue";
+import TextInput from "@/Components/TextInput.vue";
+import { Link, useForm, usePage } from "@inertiajs/vue3";
 
 defineProps<{
     mustVerifyEmail?: Boolean;
@@ -21,14 +21,23 @@ const form = useForm({
 <template>
     <section>
         <header>
-            <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">{{ $t('Profile Information') }}</h2>
+            <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
+                {{ $t("Profile Information") }}
+            </h2>
 
             <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                {{ $t("Update your account's profile information and email address.") }}
+                {{
+                    $t(
+                        "Update your account's profile information and email address.",
+                    )
+                }}
             </p>
         </header>
 
-        <form @submit.prevent="form.patch(route('profile.update'))" class="mt-6 space-y-6">
+        <form
+            @submit.prevent="form.patch(route('profile.update'))"
+            class="mt-6 space-y-6"
+        >
             <div>
                 <InputLabel for="name" :value="$t('Name')" />
 
@@ -62,14 +71,16 @@ const form = useForm({
 
             <div v-if="mustVerifyEmail && user.email_verified_at === null">
                 <p class="text-sm mt-2 text-gray-800 dark:text-gray-200">
-                    {{ $t('Your email address is unverified.') }}
+                    {{ $t("Your email address is unverified.") }}
                     <Link
                         :href="route('verification.send')"
                         method="post"
                         as="button"
                         class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800"
                     >
-                        {{ $t('Click here to re-send the verification email.') }}
+                        {{
+                            $t("Click here to re-send the verification email.")
+                        }}
                     </Link>
                 </p>
 
@@ -77,12 +88,18 @@ const form = useForm({
                     v-show="status === 'verification-link-sent'"
                     class="mt-2 font-medium text-sm text-green-600 dark:text-green-400"
                 >
-                    {{ $t('A new verification link has been sent to your email address.') }}
+                    {{
+                        $t(
+                            "A new verification link has been sent to your email address.",
+                        )
+                    }}
                 </div>
             </div>
 
             <div class="flex items-center gap-4">
-                <Button color="primary" :disabled="form.processing">{{ $t('Save') }}</Button>
+                <Button color="primary" :disabled="form.processing">{{
+                    $t("Save")
+                }}</Button>
 
                 <Transition
                     enter-active-class="transition ease-in-out"
@@ -90,7 +107,12 @@ const form = useForm({
                     leave-active-class="transition ease-in-out"
                     leave-to-class="opacity-0"
                 >
-                    <p v-if="form.recentlySuccessful" class="text-sm text-gray-600 dark:text-gray-400">{{ $t('Saved.') }}</p>
+                    <p
+                        v-if="form.recentlySuccessful"
+                        class="text-sm text-gray-600 dark:text-gray-400"
+                    >
+                        {{ $t("Saved.") }}
+                    </p>
                 </Transition>
             </div>
         </form>

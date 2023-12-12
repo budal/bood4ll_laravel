@@ -1,22 +1,22 @@
 <script setup lang="ts">
-import GuestLayout from '@/Layouts/GuestLayout.vue';
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import Button from '@/Components/Button.vue';
-import TextInput from '@/Components/TextInput.vue';
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import GuestLayout from "@/Layouts/GuestLayout.vue";
+import InputError from "@/Components/InputError.vue";
+import InputLabel from "@/Components/InputLabel.vue";
+import Button from "@/Components/Button.vue";
+import TextInput from "@/Components/TextInput.vue";
+import { Head, Link, useForm } from "@inertiajs/vue3";
 
 const form = useForm({
-    name: '',
-    email: '',
-    password: '',
-    password_confirmation: '',
+    name: "",
+    email: "",
+    password: "",
+    password_confirmation: "",
 });
 
 const submit = () => {
-    form.post(route('register'), {
+    form.post(route("register"), {
         onFinish: () => {
-            form.reset('password', 'password_confirmation');
+            form.reset("password", "password_confirmation");
         },
     });
 };
@@ -74,7 +74,10 @@ const submit = () => {
             </div>
 
             <div class="mt-4">
-                <InputLabel for="password_confirmation" :value="$t('Confirm Password')" />
+                <InputLabel
+                    for="password_confirmation"
+                    :value="$t('Confirm Password')"
+                />
 
                 <TextInput
                     id="password_confirmation"
@@ -85,7 +88,10 @@ const submit = () => {
                     autocomplete="new-password"
                 />
 
-                <InputError class="mt-2" :message="form.errors.password_confirmation" />
+                <InputError
+                    class="mt-2"
+                    :message="form.errors.password_confirmation"
+                />
             </div>
 
             <div class="flex items-center justify-end mt-4">
@@ -93,11 +99,16 @@ const submit = () => {
                     :href="route('login')"
                     class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800"
                 >
-                    {{ $t('Already registered?') }}
+                    {{ $t("Already registered?") }}
                 </Link>
 
-                <Button color="primary" class="ml-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                    {{ $t('Register') }}
+                <Button
+                    color="primary"
+                    class="ml-4"
+                    :class="{ 'opacity-25': form.processing }"
+                    :disabled="form.processing"
+                >
+                    {{ $t("Register") }}
                 </Button>
             </div>
         </form>

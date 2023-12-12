@@ -1,17 +1,17 @@
 <script setup lang="ts">
-import GuestLayout from '@/Layouts/GuestLayout.vue';
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import Button from '@/Components/Button.vue';
-import TextInput from '@/Components/TextInput.vue';
-import { Head, useForm } from '@inertiajs/vue3';
+import GuestLayout from "@/Layouts/GuestLayout.vue";
+import InputError from "@/Components/InputError.vue";
+import InputLabel from "@/Components/InputLabel.vue";
+import Button from "@/Components/Button.vue";
+import TextInput from "@/Components/TextInput.vue";
+import { Head, useForm } from "@inertiajs/vue3";
 
 const form = useForm({
-    password: '',
+    password: "",
 });
 
 const submit = () => {
-    form.post(route('password.confirm'), {
+    form.post(route("password.confirm"), {
         onFinish: () => {
             form.reset();
         },
@@ -24,7 +24,11 @@ const submit = () => {
         <Head :title="$t('Confirm Password')" />
 
         <div class="mb-4 text-sm text-gray-600 dark:text-gray-400">
-            {{ $t('This is a secure area of the application. Please confirm your password before continuing.') }}
+            {{
+                $t(
+                    "This is a secure area of the application. Please confirm your password before continuing.",
+                )
+            }}
         </div>
 
         <form @submit.prevent="submit">
@@ -43,8 +47,13 @@ const submit = () => {
             </div>
 
             <div class="flex justify-end mt-4">
-                <Button color="primary" class="ml-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                    {{ $t('Confirm') }}
+                <Button
+                    color="primary"
+                    class="ml-4"
+                    :class="{ 'opacity-25': form.processing }"
+                    :disabled="form.processing"
+                >
+                    {{ $t("Confirm") }}
                 </Button>
             </div>
         </form>

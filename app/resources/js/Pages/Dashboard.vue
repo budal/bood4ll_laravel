@@ -1,9 +1,7 @@
 <script setup lang="ts">
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 </script>
 
 <template>
-    <AuthenticatedLayout>
-        You're logged in!
-    </AuthenticatedLayout>
+    <AuthenticatedLayout> You're logged in! </AuthenticatedLayout>
 </template>

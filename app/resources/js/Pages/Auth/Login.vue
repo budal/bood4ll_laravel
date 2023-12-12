@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import Checkbox from '@/Components/Checkbox.vue';
-import GuestLayout from '@/Layouts/GuestLayout.vue';
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import Button from '@/Components/Button.vue';
-import TextInput from '@/Components/TextInput.vue';
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import Checkbox from "@/Components/Checkbox.vue";
+import GuestLayout from "@/Layouts/GuestLayout.vue";
+import InputError from "@/Components/InputError.vue";
+import InputLabel from "@/Components/InputLabel.vue";
+import Button from "@/Components/Button.vue";
+import TextInput from "@/Components/TextInput.vue";
+import { Head, Link, useForm } from "@inertiajs/vue3";
 
 defineProps<{
     canResetPassword?: boolean;
@@ -14,15 +14,15 @@ defineProps<{
 }>();
 
 const form = useForm({
-    email: '',
-    password: '',
+    email: "",
+    password: "",
     remember: false,
 });
 
 const submit = () => {
-    form.post(route('login'), {
+    form.post(route("login"), {
         onFinish: () => {
-            form.reset('password');
+            form.reset("password");
         },
     });
 };
@@ -71,29 +71,37 @@ const submit = () => {
             <div class="block mt-4">
                 <label class="flex items-center">
                     <Checkbox name="remember" v-model:checked="form.remember" />
-                    <span class="ml-2 text-sm text-gray-600 dark:text-gray-400">{{ $t('Remember me') }}</span>
+                    <span
+                        class="ml-2 text-sm text-gray-600 dark:text-gray-400"
+                        >{{ $t("Remember me") }}</span
+                    >
                 </label>
             </div>
-            
+
             <div class="flex items-center justify-end mt-4">
                 <Link
                     v-if="canRegister"
                     :href="route('register')"
                     class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800"
-                    >
-                    {{ $t('Not registered?') }}
+                >
+                    {{ $t("Not registered?") }}
                 </Link>
-            
+
                 <Link
                     v-if="canResetPassword"
                     :href="route('password.request')"
                     class="ml-4 underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800"
                 >
-                    {{ $t('Forgot your password?') }}
+                    {{ $t("Forgot your password?") }}
                 </Link>
 
-                <Button color="primary" class="ml-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                    {{ $t('Log in') }}
+                <Button
+                    color="primary"
+                    class="ml-4"
+                    :class="{ 'opacity-25': form.processing }"
+                    :disabled="form.processing"
+                >
+                    {{ $t("Log in") }}
                 </Button>
             </div>
         </form>
