@@ -63,9 +63,6 @@ class UsersController extends Controller
                                     ],
                                     'menu' => [
                                         [
-                                            'title' => '-',
-                                        ],
-                                        [
                                             'icon' => 'mdi:book-cog-outline',
                                             'title' => 'Log as another user',
                                             'route' => [
