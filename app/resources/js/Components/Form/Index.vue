@@ -70,7 +70,7 @@ let tab = ref("");
 
 const changeTab = (item: any) => {
     tab.value = item || null;
-    console.log(tab.value);
+    // console.log(tab.value);
 };
 </script>
 
