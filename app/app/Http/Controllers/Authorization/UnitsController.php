@@ -116,6 +116,7 @@ class UnitsController extends Controller
 
         $staff = $unit->users()
             ->filter($request, 'staff')
+            ->withCount('roles')
             ->paginate($perPage = 20, $columns = ['*'], $pageName = 'staff')
             ->onEachSide(2)
             ->appends(collect($request->query)->toArray());
@@ -313,14 +314,23 @@ class UnitsController extends Controller
                                         'disableSort' => true,
                                     ],
                                     [
-                                        'type' => 'text',
-                                        'title' => 'Name',
+                                        'type' => 'composite',
+                                        'title' => 'User',
                                         'field' => 'name',
+                                        'values' => [
+                                            [
+                                                'field' => 'name',
+                                            ],
+                                            [
+                                                'field' => 'email',
+                                                'class' => 'text-xs',
+                                            ],
+                                        ],
                                     ],
                                     [
                                         'type' => 'text',
                                         'title' => 'Roles',
-                                        'field' => 'roles',
+                                        'field' => 'roles_count',
                                     ],
                                 ],
                                 'items' => $staff,

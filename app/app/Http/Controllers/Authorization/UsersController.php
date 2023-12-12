@@ -36,7 +36,11 @@ class UsersController extends Controller
                 });
 
                 return $item;
-            });
+            })
+            // ->sortBy('unitsClassified.name')
+        ;
+
+        // dd($users[0]);
 
         return Inertia::render('Default', [
             'form' => [
