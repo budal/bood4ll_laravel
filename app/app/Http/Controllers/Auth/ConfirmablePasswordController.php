@@ -13,17 +13,41 @@ use Inertia\Response;
 
 class ConfirmablePasswordController extends Controller
 {
-    /**
-     * Show the confirm password view.
-     */
     public function show(): Response
     {
-        return Inertia::render('Auth/ConfirmPassword');
+        return Inertia::render('Default', [
+            'isGuest' => true,
+            'tabs' => false,
+            'title' => 'Confirm Password',
+            'form' => [
+                [
+                    'id' => 'confirmablePassword',
+                    'subtitle' => 'This is a secure area of the application. Please confirm your password before continuing.',
+                    'fields' => [
+                        [
+                            [
+                                'type' => 'password',
+                                'name' => 'password',
+                                'title' => 'Password',
+                                'required' => true,
+                                'autofocus' => true,
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+            'routes' => [
+                'confirmablePassword' => [
+                    'route' => route('password.confirm'),
+                    'method' => 'post',
+                    'buttonTitle' => 'Confirm',
+                    'buttonClass' => 'justify-end',
+                    'reset' => true,
+                ],
+            ],
+        ]);
     }
 
-    /**
-     * Confirm the user's password.
-     */
     public function store(Request $request): RedirectResponse
     {
         if (!Auth::guard('web')->validate([

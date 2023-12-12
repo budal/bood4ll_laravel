@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import ModalLayout from "@/Layouts/ModalLayout.vue";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
+import GuestLayout from "@/Layouts/GuestLayout.vue";
 import Form from "@/Components/Form/Index.vue";
+import { Head, usePage } from "@inertiajs/vue3";
 
 withDefaults(
     defineProps<{
+        isGuest?: boolean;
         isModal?: boolean;
         title?: string;
         form: any;
@@ -13,6 +16,7 @@ withDefaults(
         tabs?: boolean;
     }>(),
     {
+        isGuest: false,
         isModal: false,
         routes: [],
         tabs: true,
@@ -21,7 +25,11 @@ withDefaults(
 </script>
 
 <template>
-    <ModalLayout v-if="isModal" :title="title">
+    <GuestLayout v-if="isGuest === true" :title="title">
+        <Head :title="$t(title || (usePage().props.appName as string))" />
+        <Form :form="form" :routes="routes" :data="data" :tabs="tabs" />
+    </GuestLayout>
+    <ModalLayout v-else-if="isModal === true" :title="title">
         <Form :form="form" :routes="routes" :data="data" :tabs="tabs" />
     </ModalLayout>
     <AuthenticatedLayout v-else>

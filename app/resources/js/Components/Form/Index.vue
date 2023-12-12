@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { toast } from "@/helpers";
 import Button from "@/Components/Button.vue";
+import Checkbox from "@/Components/Checkbox.vue";
 import InputError from "@/Components/InputError.vue";
 import InputLabel from "@/Components/InputLabel.vue";
 import Select from "@/Components/Select.vue";
@@ -61,7 +62,11 @@ const sendForm = (formId: string) => {
             // }
         },
         onFinish: () => {
-            // jsForm.reset('password', 'password_confirmation');
+            props.routes[formId].reset === true
+                ? props.routes[formId].fieldsToReset
+                    ? jsForm.reset(...props.routes[formId].fieldsToReset)
+                    : jsForm.reset()
+                : false;
         },
     });
 };
@@ -92,16 +97,35 @@ const changeTab = (item: any) => {
                             }`"
                         >
                             <InputLabel
-                                v-if="field.title"
+                                v-if="field.title && field.type != 'checkbox'"
                                 as="span"
                                 :for="field.name"
                                 :value="$t(field.title)"
                                 :required="field.required"
                             />
 
+                            <label
+                                v-if="field.type == 'checkbox'"
+                                class="flex items-center"
+                            >
+                                <Checkbox
+                                    name="remember"
+                                    :checked="
+                                        jsForm[field.name] == 'true'
+                                            ? true
+                                            : false
+                                    "
+                                />
+                                <span
+                                    class="ml-2 text-sm text-gray-600 dark:text-gray-400"
+                                    >{{ $t("Remember me") }}</span
+                                >
+                            </label>
+
                             <TextInput
                                 v-if="
                                     field.type == 'input' ||
+                                    field.type == 'password' ||
                                     field.type == 'date' ||
                                     field.type == 'email'
                                 "
@@ -205,7 +229,10 @@ const changeTab = (item: any) => {
 
                 <div
                     v-if="props.routes[mkForm.id]"
-                    class="flex items-center gap-4"
+                    class="flex gap-4"
+                    :class="
+                        props.routes[mkForm.id].buttonClass || 'justify-start'
+                    "
                 >
                     <Button
                         color="primary"
@@ -214,7 +241,7 @@ const changeTab = (item: any) => {
                             data?.inalterable === true || jsForm.processing
                         "
                     >
-                        {{ $t("Save") }}
+                        {{ $t(props.routes[mkForm.id].buttonTitle || "Save") }}
                     </Button>
                 </div>
             </form>

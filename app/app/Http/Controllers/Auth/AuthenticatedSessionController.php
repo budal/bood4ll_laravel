@@ -14,21 +14,77 @@ use Inertia\Response;
 
 class AuthenticatedSessionController extends Controller
 {
-    /**
-     * Display the login view.
-     */
     public function create(): Response
     {
-        return Inertia::render('Auth/Login', [
-            'canRegister' => Route::has('register'),
-            'canResetPassword' => Route::has('password.request'),
-            'status' => session('status'),
+        // return Inertia::render('Auth/Login', [
+        //     'canRegister' => Route::has('register'),
+        //     'canResetPassword' => Route::has('password.request'),
+        //     'status' => session('status'),
+        // ]);
+
+        return Inertia::render('Default', [
+            'isGuest' => true,
+            'tabs' => false,
+            'title' => 'Log in',
+            'form' => [
+                [
+                    'id' => 'loginScreen',
+                    'fields' => [
+                        [
+                            [
+                                'type' => 'email',
+                                'name' => 'email',
+                                'title' => 'Email',
+                                'required' => true,
+                                'autofocus' => true,
+                                'autocomplete' => true,
+                            ],
+                            [
+                                'type' => 'password',
+                                'name' => 'password',
+                                'title' => 'Password',
+                                'required' => true,
+                            ],
+                            [
+                                'type' => 'checkbox',
+                                'name' => 'remember',
+                                'title' => 'Remember me',
+                            ],
+                            [
+                                'type' => 'links',
+                                'values' => [
+                                    [
+                                        'title' => 'Not registered?',
+                                        'route' => 'register',
+                                        'condition' => Route::has('register'),
+                                    ],
+                                    [
+                                        'title' => 'Forgot your password?',
+                                        'route' => 'password.request',
+                                        'condition' => Route::has('password.request'),
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+            'routes' => [
+                'loginScreen' => [
+                    'route' => route('login'),
+                    'method' => 'post',
+                    'buttonTitle' => 'Log in',
+                    'buttonClass' => 'justify-end',
+                    'reset' => true,
+                    'fieldsToReset' => ['password'],
+                ],
+            ],
+            'data' => [
+                'remember' => false,
+            ],
         ]);
     }
 
-    /**
-     * Handle an incoming authentication request.
-     */
     public function store(LoginRequest $request): RedirectResponse
     {
         $request->authenticate();
@@ -38,9 +94,6 @@ class AuthenticatedSessionController extends Controller
         return redirect()->intended(RouteServiceProvider::HOME);
     }
 
-    /**
-     * Destroy an authenticated session.
-     */
     public function destroy(Request $request): RedirectResponse
     {
         Auth::guard('web')->logout();
