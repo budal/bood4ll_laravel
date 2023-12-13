@@ -21,14 +21,13 @@ class UnitsController extends Controller
     {
         $units = Unit::filter($request, 'units')
             ->when(!$request->search, function ($query) {
-                $query->where('parent_id', '0');
+                $query->where('parent_id', null);
             })
             ->with('childrenRecursive')
             ->withCount('children', 'users')
             ->paginate(20)
             ->onEachSide(2)
             ->through(function ($item) {
-                $item->parents = $item->getParentsNames();
                 $item->all_users_count = $item->getAllChildren()->pluck('users_count')->sum() + $item->users_count;
 
                 return $item;
@@ -65,10 +64,9 @@ class UnitsController extends Controller
                                     ],
                                     'titles' => [
                                         [
-                                            'type' => $request->search ? 'composite' : 'text',
+                                            'type' => 'text',
                                             'title' => 'Name',
-                                            'field' => 'name',
-                                            'fields' => ['name', 'parents'],
+                                            'field' => 'shortpath',
                                         ],
                                         [
                                             'type' => 'text',
@@ -117,7 +115,6 @@ class UnitsController extends Controller
             ->onEachSide(2)
             ->appends(collect($request->query)->toArray())
             ->through(function ($item) {
-                $item->parents = $item->getParentsNames();
                 $item->all_users_count = $item->getAllChildren()->pluck('users_count')->sum() + $item->users_count;
 
                 return $item;
@@ -260,7 +257,7 @@ class UnitsController extends Controller
                                     [
                                         'type' => 'text',
                                         'title' => 'Unit',
-                                        'field' => 'name',
+                                        'field' => 'shortpath',
                                     ],
                                     [
                                         'type' => 'text',
@@ -476,7 +473,6 @@ class UnitsController extends Controller
             foreach ($units as $unit) {
                 $unit = Unit::where('id', $unit->id)->first();
 
-                // $unit->nickname = $unit->name;
                 $unit->fullpath = $unit->getParentsNames();
                 $unit->shortpath = $unit->getParentsNicknames();
 

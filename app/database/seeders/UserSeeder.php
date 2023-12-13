@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Database\Eloquent\Factories\Sequence;
 
 class UserSeeder extends Seeder
 {
@@ -13,6 +12,16 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
+        function classify($unit, $userId)
+        {
+            if ($unit->users()->where('name', 'ilike', '%comando%')->count() === 0) {
+                $unit->users()->attach($userId);
+            } else {
+                $otherUnit = \App\Models\Unit::where('name', 'not ilike', '%comando%')->inRandomOrder()->first();
+                $otherUnit->users()->attach($userId);
+            }
+        }
+
         \App\Models\User::factory()->create([
             'name' => 'Thiago Philipe Budal',
             'username' => 'budal.thiago',
@@ -24,6 +33,8 @@ class UserSeeder extends Seeder
             $unit = \App\Models\Unit::inRandomOrder()->first();
 
             $unit->users()->attach($user->id);
-    })->create();
+
+            // classify($unit, $user->id);
+        })->create();
     }
 }

@@ -14,8 +14,9 @@ return new class() extends Migration {
             $table->id();
             $table->string('name', 255);
             $table->string('nickname', 100);
-            $table->text('shortpath');
-            $table->text('fullpath');
+            $table->text('shortpath')->nullable();
+            $table->text('fullpath')->nullable();
+            $table->integer('order')->default(1);
             $table->date('founded')->nullable();
             $table->unsignedBigInteger('parent_id')->nullable();
             $table->boolean('active')->default(true);

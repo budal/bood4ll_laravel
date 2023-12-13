@@ -38,7 +38,7 @@ const sortBy = (column: any) => {
 
 <template>
     <Link
-        v-if="sort.disableSort != true"
+        v-if="sort.disableSort != true && typeof sort.options?.length != 'number'"
         :href="sortBy(sort.field).url"
         class="group focus:outline-none flex gap-1 items-center"
         preserve-scroll
@@ -59,7 +59,7 @@ const sortBy = (column: any) => {
             class="h-4 w-4"
         />
     </Link>
-    <p v-else class="text-center">
+    <p v-else class="text-center cursor-not-allowed">
         {{ $t(sort.title) }}
     </p>
 </template>

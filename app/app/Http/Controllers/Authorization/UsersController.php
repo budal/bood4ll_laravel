@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -20,28 +21,56 @@ class UsersController extends Controller
     public function index(Request $request, $mode = null): Response
     {
         $users = User::filter($request, 'users')
-            // ->where('users.id', '9acb6259-970f-4c1e-b986-c5fb1fdb69d4')
-
-            // ->addSelect(['unit_classified' => User::from('users as users_classified')
-            //     ->selectRaw('units.shortpath')
-            //     ->leftjoin('unit_user', 'user_id', '=', 'users_classified.id')
-            //     ->leftjoin('units', 'units.id', '=', 'unit_user.unit_id')
-            //     ->where('unit_user.primary', '=', true)
-            //     ->take(1),
-            // ])
-
-            // ->leftJoin('translations', function ($join) use ($language) {
-            //     $join->on('questions.id', '=', 'translations.question_id')
-            //          ->andOn('translations.id', '=', $language->id);
-            //     })
-
             ->with('unitsClassified', 'unitsWorking')
             ->withCount('roles')
             ->paginate(20)
             ->onEachSide(2)
             ->appends(collect($request->query)->toArray());
 
-        // dd($users);
+        // $usersAll = User::filter($request, 'users')
+        //     // ->where('users.id', '9acb6259-970f-4c1e-b986-c5fb1fdb69d4')
+
+        //     // ->where('users.id', '9ab675fd-9daa-4e72-a91b-fd0fcf974433')
+        //     // ->select('users.*', 'unit_user.primary')
+        //     ->select('users.id', 'users.name', 'users.email')
+        //     ->selectSub(function ($query) {
+        //         $query->from('users as users_classified')
+        //         ->selectRaw("string_agg('id:' || units.id || ',' || 'name:' || units.shortpath, ';' ORDER BY units.shortpath)")
+
+        //         ->leftjoin('unit_user', 'user_id', '=', 'users_classified.id')
+        //         ->leftjoin('units', 'units.id', '=', 'unit_user.unit_id')
+
+        //         ->where('unit_user.primary', '=', true)
+        //         ->whereColumn('users_classified.id', 'users.id')
+        //         ->take(1)
+        //         ;
+        //     }, 'unit_classified')
+
+        //     ->leftjoin('unit_user', 'user_id', '=', 'users.id')
+        //     ->leftjoin('units', 'units.id', '=', 'unit_user.unit_id')
+
+        //     // ->with('unitsClassified', 'unitsWorking')
+
+        //     ->withCount('roles')
+        //     // ->groupBy('users.id', 'users.name', 'users.email')
+        //     // ->paginate(20)
+        //     // ->onEachSide(2)
+
+        //     // ->get()
+
+        //     // ->appends(collect($request->query)->toArray())
+        // ;
+
+        // $users = DB::connection('pgsql')
+        //     ->query()
+        //     ->fromSub($usersAll, 'users')
+        //     ->select('id', 'name', 'email', 'unit_classified')
+        //     ->groupBy('id', 'name', 'email', 'unit_classified')
+        //     ->paginate(20)
+        //     ->onEachSide(2)
+        //     // ->appends(collect($request->query)->toArray())
+        //     // ->get()
+        // ;
 
         return Inertia::render('Default', [
             'form' => [

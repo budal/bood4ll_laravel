@@ -19,19 +19,18 @@ class UserFactory extends Factory
     {
         return [
             'name' => fake()->name(),
-            'username' => fake()->userName() . Str::random(3),
+            'username' => fake()->userName().Str::random(3),
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
             'active' => fake()->boolean(),
-            'confirmed' => fake()->boolean(),
             'birthday' => fake()->date(),
-            'naturalness' => fake()->city() . "," . fake()->stateAbbr(),
+            'naturalness' => fake()->city().','.fake()->stateAbbr(),
             'cellphone' => fake()->cellphoneNumber(),
             'landline' => fake()->landlineNumber(),
             'address' => fake()->address(),
             'country' => fake()->countryCode(),
-            'geo' => fake()->latitude() . "," . fake()->longitude(),
+            'geo' => fake()->latitude().','.fake()->longitude(),
             'postcode' => fake()->postcode(),
             'gerenal_record' => fake()->unique()->bothify('#.###.###-#'),
             'individual_registration' => fake()->bothify('###.###.###-##'),
