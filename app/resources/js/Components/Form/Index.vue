@@ -46,6 +46,8 @@ const jsForm = useForm(formItems);
 
 const sendForm = (formId: string) => {
     // console.log(jsForm.data());
+    // return false;
+
     jsForm.submit(props.routes[formId].method, props.routes[formId].route, {
         preserveScroll: true,
         onSuccess: () => {
@@ -106,7 +108,11 @@ const changeTab = (item: any) => {
                             }`"
                         >
                             <InputLabel
-                                v-if="field.title && field.type != 'checkbox'"
+                                v-if="
+                                    field.title &&
+                                    field.type != 'checkbox' &&
+                                    field.type != 'hidden'
+                                "
                                 as="span"
                                 :for="field.name"
                                 :value="$t(field.title)"
@@ -139,12 +145,23 @@ const changeTab = (item: any) => {
                                     <Link
                                         v-if="link.condition !== false"
                                         :href="isValidUrl(link.route)"
+                                        :method="link.method || 'get'"
                                         class="focus:outline-none border-b-2 border-transparent hover:border-zero-dark dark:hover:border-zero-white focus:border-zero-dark dark:focus:border-zero-white transition ease-in-out duration-500"
+                                        as="button"
+                                        type="button"
                                     >
                                         {{ $t(link.title) }}
                                     </Link>
                                 </template>
                             </div>
+
+                            <input
+                                v-if="field.type == 'hidden'"
+                                :id="field.name"
+                                :name="field.name"
+                                :type="field.type"
+                                v-model="jsForm[field.name]"
+                            />
 
                             <TextInput
                                 v-if="

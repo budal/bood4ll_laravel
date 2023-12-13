@@ -49,7 +49,7 @@ Route::post('/email/verification-notification', function (Request $request) {
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard')->breadcrumb('Dashboard');
+})->middleware(['auth'])->name('dashboard')->breadcrumb('Dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit')->breadcrumb('Profile');
@@ -63,57 +63,55 @@ Route::middleware('auth')->group(function () {
     Route::get('/settings', [ProfileController::class, 'edit'])->name('settings')->breadcrumb('Settings');
 
     Route::prefix('apps')->name('apps.')->group(function () {
-        Route::middleware('verified')->group(function () {
-            Route::controller(UsersController::class)->group(function () {
-                Route::name('users.')->middleware(['password.confirm', 'verified'])->group(function () {
-                    Route::get('/users', 'index')->name('index')->breadcrumb('Users');
-                    Route::get('/users/logas/{mode?}', 'index')->name('logas')->breadcrumb('Log as another user', 'apps.users.index');
-                    Route::post('/users/loginas/{user}', 'changeUser')->name('loginas');
-                    Route::post('/users/activate/{user}/{mode?}', 'activate')->name('activate');
-                    Route::get('/users/create', 'create')->name('create')->breadcrumb('User creation', 'apps.users.index');
-                    Route::post('/users/create', 'store')->name('store');
-                    Route::get('/users/edit/{user}', 'edit')->name('edit')->breadcrumb('User edition', 'apps.users.index');
-                    Route::patch('/users/edit/{user}', 'update')->name('update');
-                    Route::delete('/users/destroy', 'destroy')->name('destroy');
-                    Route::delete('/users/forcedestroy', 'forceDestroy')->name('forcedestroy');
-                    Route::post('/users/restore', 'restore')->name('restore');
-                    // Route::post('/users/restore', 'restore')->name('restore')->middleware('can:action');
-                });
+        Route::controller(UsersController::class)->group(function () {
+            Route::name('users.')->middleware('verified', 'password.confirm')->group(function () {
+                Route::get('/users', 'index')->name('index')->breadcrumb('Users');
+                Route::get('/users/logas/{mode?}', 'index')->name('logas')->breadcrumb('Log as another user', 'apps.users.index');
+                Route::post('/users/loginas/{user}', 'changeUser')->name('loginas');
+                Route::post('/users/activate/{user}/{mode?}', 'activate')->name('activate');
+                Route::get('/users/create', 'create')->name('create')->breadcrumb('User creation', 'apps.users.index');
+                Route::post('/users/create', 'store')->name('store');
+                Route::get('/users/edit/{user}', 'edit')->name('edit')->breadcrumb('User edition', 'apps.users.index');
+                Route::patch('/users/edit/{user}', 'update')->name('update');
+                Route::delete('/users/destroy', 'destroy')->name('destroy');
+                Route::delete('/users/forcedestroy', 'forceDestroy')->name('forcedestroy');
+                Route::post('/users/restore', 'restore')->name('restore');
+                // Route::post('/users/restore', 'restore')->name('restore')->middleware('can:action');
             });
+        });
 
-            Route::controller(RolesController::class)->group(function () {
-                Route::name('roles.')->middleware(['password.confirm', 'verified'])->group(function () {
-                    Route::get('/permissions/roles', 'index')->name('index')->breadcrumb('Roles');
-                    Route::get('/permissions/roles/create', 'create')->name('create')->breadcrumb('Role creation', 'apps.roles.index');
-                    Route::post('/permissions/roles/create', 'store')->name('store');
-                    Route::get('/permissions/roles/edit/{role}/{all?}', 'edit')->name('edit')->breadcrumb('Role edition', 'apps.roles.index');
-                    Route::patch('/permissions/roles/edit/{role}', 'update')->name('update');
-                    Route::post('/permissions/roles/authorization/{role}/{mode?}/{__tab?}', 'authorization')->name('authorization');
-                    Route::delete('/permissions/roles/destroy', 'destroy')->name('destroy');
-                    Route::delete('/permissions/roles/forcedestroy', 'forceDestroy')->name('forcedestroy');
-                    Route::post('/permissions/roles/restore', 'restore')->name('restore');
-                    Route::get('/permissions/roles/adduser/{role}', 'adduser')->name('edit.adduser')->breadcrumb('Role edition', 'apps.roles.index');
-                    Route::get('/permissions/roles/deleteuser/{role}', 'deleteuser')->name('edit.deleteuser');
-                });
+        Route::controller(RolesController::class)->group(function () {
+            Route::name('roles.')->middleware('verified', 'password.confirm')->group(function () {
+                Route::get('/permissions/roles', 'index')->name('index')->breadcrumb('Roles');
+                Route::get('/permissions/roles/create', 'create')->name('create')->breadcrumb('Role creation', 'apps.roles.index');
+                Route::post('/permissions/roles/create', 'store')->name('store');
+                Route::get('/permissions/roles/edit/{role}/{all?}', 'edit')->name('edit')->breadcrumb('Role edition', 'apps.roles.index');
+                Route::patch('/permissions/roles/edit/{role}', 'update')->name('update');
+                Route::post('/permissions/roles/authorization/{role}/{mode?}/{__tab?}', 'authorization')->name('authorization');
+                Route::delete('/permissions/roles/destroy', 'destroy')->name('destroy');
+                Route::delete('/permissions/roles/forcedestroy', 'forceDestroy')->name('forcedestroy');
+                Route::post('/permissions/roles/restore', 'restore')->name('restore');
+                Route::get('/permissions/roles/adduser/{role}', 'adduser')->name('edit.adduser')->breadcrumb('Role edition', 'apps.roles.index');
+                Route::get('/permissions/roles/deleteuser/{role}', 'deleteuser')->name('edit.deleteuser');
             });
+        });
 
-            Route::controller(AbilitiesController::class)->group(function () {
-                Route::name('abilities.')->middleware(['password.confirm', 'verified'])->group(function () {
-                    Route::get('/permissions/roles/abilities', 'index')->name('index')->breadcrumb('Abilities', 'apps.roles.index');
-                    Route::post('/permissions/roles/abilities/update/{mode?}', 'update')->name('update');
-                });
+        Route::controller(AbilitiesController::class)->group(function () {
+            Route::name('abilities.')->middleware('verified', 'password.confirm')->group(function () {
+                Route::get('/permissions/roles/abilities', 'index')->name('index')->breadcrumb('Abilities', 'apps.roles.index');
+                Route::post('/permissions/roles/abilities/update/{mode?}', 'update')->name('update');
             });
+        });
 
-            Route::controller(UnitsController::class)->group(function () {
-                Route::name('units.')->middleware(['password.confirm', 'verified'])->group(function () {
-                    Route::get('/units', 'index')->name('index')->breadcrumb('Units');
-                    Route::get('/units/create/{unit?}', 'create')->name('create')->breadcrumb('Unit creation', 'apps.units.index');
-                    Route::post('/units/create', 'store')->name('store');
-                    Route::get('/units/edit/{unit}', 'edit')->name('edit')->breadcrumb('Unit edition', 'apps.units.index');
-                    Route::patch('/units/edit/{unit}', 'update')->name('update');
-                    Route::delete('/units/destroy', 'destroy')->name('destroy');
-                    Route::post('/units/restore/{unit}', 'restore')->name('restore');
-                });
+        Route::controller(UnitsController::class)->group(function () {
+            Route::name('units.')->middleware('verified', 'password.confirm')->group(function () {
+                Route::get('/units', 'index')->name('index')->breadcrumb('Units');
+                Route::get('/units/create/{unit?}', 'create')->name('create')->breadcrumb('Unit creation', 'apps.units.index');
+                Route::post('/units/create', 'store')->name('store');
+                Route::get('/units/edit/{unit}', 'edit')->name('edit')->breadcrumb('Unit edition', 'apps.units.index');
+                Route::patch('/units/edit/{unit}', 'update')->name('update');
+                Route::delete('/units/destroy', 'destroy')->name('destroy');
+                Route::post('/units/restore/{unit}', 'restore')->name('restore');
             });
         });
     });
