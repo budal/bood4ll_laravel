@@ -14,6 +14,7 @@ withDefaults(
         routes?: any;
         data?: any;
         tabs?: boolean;
+        status?: string;
     }>(),
     {
         isGuest: false,
@@ -27,7 +28,13 @@ withDefaults(
 <template>
     <GuestLayout v-if="isGuest === true" :title="title">
         <Head :title="$t(title || (usePage().props.appName as string))" />
-        <Form :form="form" :routes="routes" :data="data" :tabs="tabs" />
+        <Form
+            :form="form"
+            :routes="routes"
+            :data="data"
+            :status="status"
+            :tabs="tabs"
+        />
     </GuestLayout>
     <ModalLayout v-else-if="isModal === true" :title="title">
         <Form :form="form" :routes="routes" :data="data" :tabs="tabs" />

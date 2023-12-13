@@ -12,21 +12,42 @@ use Inertia\Response;
 
 class PasswordResetLinkController extends Controller
 {
-    /**
-     * Display the password reset link request view.
-     */
     public function create(): Response
     {
-        return Inertia::render('Auth/ForgotPassword', [
+        return Inertia::render('Default', [
+            'isGuest' => true,
+            'tabs' => false,
+            'title' => 'Forgot your password?',
             'status' => session('status'),
+            'form' => [
+                [
+                    'id' => 'forgotPassword',
+                    'subtitle' => 'Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.',
+                    'fields' => [
+                        [
+                            [
+                                'type' => 'email',
+                                'name' => 'email',
+                                'title' => 'Email',
+                                'required' => true,
+                                'autofocus' => true,
+                                'autocomplete' => true,
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+            'routes' => [
+                'forgotPassword' => [
+                    'route' => route('password.email'),
+                    'method' => 'post',
+                    'buttonTitle' => 'Email Password Reset Link',
+                    'buttonClass' => 'justify-end',
+                ],
+            ],
         ]);
     }
 
-    /**
-     * Handle an incoming password reset link request.
-     *
-     * @throws \Illuminate\Validation\ValidationException
-     */
     public function store(Request $request): RedirectResponse
     {
         $request->validate([

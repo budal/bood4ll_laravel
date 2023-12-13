@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { toast } from "@/helpers";
+import { isValidUrl, toast } from "@/helpers";
 import Button from "@/Components/Button.vue";
 import Checkbox from "@/Components/Checkbox.vue";
 import InputError from "@/Components/InputError.vue";
@@ -9,7 +9,7 @@ import Table from "@/Components/Table/Index.vue";
 import TextInput from "@/Components/TextInput.vue";
 import Tabs from "@/Components/Tabs.vue";
 import Toggle from "@/Components/Toggle.vue";
-import { useForm } from "@inertiajs/vue3";
+import { Link, useForm } from "@inertiajs/vue3";
 import { ref } from "vue";
 
 const props = withDefaults(
@@ -19,6 +19,7 @@ const props = withDefaults(
         data?: any;
         shortcutKey?: string;
         tabs?: boolean;
+        status?: string | null;
     }>(),
     {
         tabs: true,
@@ -79,6 +80,13 @@ const changeTab = (item: any) => {
 </script>
 
 <template>
+    <div
+        v-if="status"
+        class="mb-4 rounded-md font-medium bg-success-light dark:bg-success-dark text-sm text-center text-success-light dark:text-success-dark"
+    >
+        {{ status }}
+    </div>
+
     <Tabs :items="form" :tabs="tabs" @change-tab="changeTab">
         <template v-for="mkForm in form" v-slot:[mkForm.id]>
             <form
@@ -117,10 +125,25 @@ const changeTab = (item: any) => {
                                     "
                                 />
                                 <span
-                                    class="ml-2 text-sm text-gray-600 dark:text-gray-400"
+                                    class="ml-2 text-sm text-zero-light dark:text-zero-dark"
                                     >{{ $t("Remember me") }}</span
                                 >
                             </label>
+
+                            <div
+                                v-if="field.type == 'links'"
+                                class="flex justify-between underline text-sm text-zero-light dark:text-zero-dark"
+                            >
+                                <template v-for="link in field.values">
+                                    <Link
+                                        v-if="link.condition === true"
+                                        :href="isValidUrl(link.route)"
+                                        class="focus:outline-none border-b-2 border-transparent hover:border-zero-dark dark:hover:border-zero-white focus:border-zero-dark dark:focus:border-zero-white transition ease-in-out duration-500"
+                                    >
+                                        {{ $t(link.title) }}
+                                    </Link>
+                                </template>
+                            </div>
 
                             <TextInput
                                 v-if="
