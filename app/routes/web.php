@@ -67,12 +67,12 @@ Route::middleware('auth')->group(function () {
             Route::name('users.')->middleware('verified', 'password.confirm')->group(function () {
                 Route::get('/users', 'index')->name('index')->breadcrumb('Users');
                 Route::get('/users/logas/{mode?}', 'index')->name('logas')->breadcrumb('Log as another user', 'apps.users.index');
-                Route::post('/users/loginas/{user}', 'changeUser')->name('loginas');
-                Route::post('/users/activate/{user}/{mode?}', 'activate')->name('activate');
+                Route::post('/users/loginas/{user}', 'changeUser')->name('loginas')->whereUuid('user');
+                Route::post('/users/activate/{user}/{mode?}', 'activate')->name('activate')->whereUuid('user');
                 Route::get('/users/create', 'create')->name('create')->breadcrumb('User creation', 'apps.users.index');
                 Route::post('/users/create', 'store')->name('store');
-                Route::get('/users/edit/{user}', 'edit')->name('edit')->breadcrumb('User edition', 'apps.users.index');
-                Route::patch('/users/edit/{user}', 'update')->name('update');
+                Route::get('/users/edit/{user}', 'edit')->name('edit')->whereUuid('user')->breadcrumb('User edition', 'apps.users.index');
+                Route::patch('/users/edit/{user}', 'update')->name('update')->whereUuid('user');
                 Route::delete('/users/destroy', 'destroy')->name('destroy');
                 Route::delete('/users/forcedestroy', 'forceDestroy')->name('forcedestroy');
                 Route::post('/users/restore', 'restore')->name('restore');
@@ -99,7 +99,7 @@ Route::middleware('auth')->group(function () {
         Route::controller(AbilitiesController::class)->group(function () {
             Route::name('abilities.')->middleware('verified', 'password.confirm')->group(function () {
                 Route::get('/permissions/roles/abilities', 'index')->name('index')->breadcrumb('Abilities', 'apps.roles.index');
-                Route::post('/permissions/roles/abilities/update/{mode?}', 'update')->name('update');
+                Route::post('/permissions/roles/abilities/update/{mode?}', 'update')->name('update')->whereIn('mode', ['toggle', 'on', 'off']);
             });
         });
 
