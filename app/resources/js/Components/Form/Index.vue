@@ -45,6 +45,7 @@ props.form.forEach((forms: any) => {
 const jsForm = useForm(formItems);
 
 const sendForm = (formId: string) => {
+    // console.log(jsForm.data());
     jsForm.submit(props.routes[formId].method, props.routes[formId].route, {
         preserveScroll: true,
         onSuccess: () => {
@@ -136,7 +137,7 @@ const changeTab = (item: any) => {
                             >
                                 <template v-for="link in field.values">
                                     <Link
-                                        v-if="link.condition === true"
+                                        v-if="link.condition !== false"
                                         :href="isValidUrl(link.route)"
                                         class="focus:outline-none border-b-2 border-transparent hover:border-zero-dark dark:hover:border-zero-white focus:border-zero-dark dark:focus:border-zero-white transition ease-in-out duration-500"
                                     >
@@ -148,6 +149,7 @@ const changeTab = (item: any) => {
                             <TextInput
                                 v-if="
                                     field.type == 'input' ||
+                                    field.type == 'text' ||
                                     field.type == 'password' ||
                                     field.type == 'date' ||
                                     field.type == 'email'

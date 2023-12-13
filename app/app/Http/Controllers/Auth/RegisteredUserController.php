@@ -16,19 +16,72 @@ use Inertia\Response;
 
 class RegisteredUserController extends Controller
 {
-    /**
-     * Display the registration view.
-     */
     public function create(): Response
     {
-        return Inertia::render('Auth/Register');
+        return Inertia::render('Default', [
+            'isGuest' => true,
+            'tabs' => false,
+            'title' => 'Register',
+            'status' => session('status'),
+            'form' => [
+                [
+                    'id' => 'registerUser',
+                    'fields' => [
+                        [
+                            [
+                                'type' => 'text',
+                                'name' => 'name',
+                                'title' => 'Name',
+                                'required' => true,
+                                'autofocus' => true,
+                                'autocomplete' => true,
+                            ],
+                            [
+                                'type' => 'email',
+                                'name' => 'email',
+                                'title' => 'Email',
+                                'required' => true,
+                                'autocomplete' => true,
+                            ],
+                            [
+                                'type' => 'password',
+                                'name' => 'password',
+                                'title' => 'Password',
+                                'required' => true,
+                            ],
+                            [
+                                'type' => 'password',
+                                'id' => 'password_confirmation',
+                                'name' => 'password_confirmation',
+                                'title' => 'Confirm Password',
+                                'required' => true,
+                            ],
+                            [
+                                'type' => 'links',
+                                'values' => [
+                                    [
+                                        'title' => 'Already registered?',
+                                        'route' => 'login',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+            'routes' => [
+                'registerUser' => [
+                    'route' => route('register'),
+                    'method' => 'post',
+                    'buttonTitle' => 'Register',
+                    'buttonClass' => 'justify-end',
+                    'reset' => true,
+                    'fieldsToReset' => ['password', 'password_confirmation'],
+                ],
+            ],
+        ]);
     }
 
-    /**
-     * Handle an incoming registration request.
-     *
-     * @throws \Illuminate\Validation\ValidationException
-     */
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
