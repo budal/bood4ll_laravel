@@ -3,8 +3,8 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
 use Illuminate\Database\Eloquent\Factories\Sequence;
+use Illuminate\Database\Seeder;
 
 class UnitSeeder extends Seeder
 {
@@ -16,24 +16,24 @@ class UnitSeeder extends Seeder
         \App\Models\Unit::factory()->create([
             'name' => '[ root ]',
             'nickname' => '[ root ]',
-            'parent_id' => 0
+            'parent_id' => 0,
         ]);
 
         \App\Models\Unit::factory(6)
             ->sequence(fn (Sequence $sequence) => [
-                'name' => ($sequence->index + 1) . " CRPM",
-                'nickname' => ($sequence->index + 1) . " CRPM",
-                'parent_id' => 1
+                'name' => ($sequence->index + 1).' CRPM',
+                'nickname' => ($sequence->index + 1).' CRPM',
+                'parent_id' => 1,
             ])->create();
-        
+
         \App\Models\Unit::factory(30)
             ->sequence(fn (Sequence $sequence) => [
-                'name' => ($sequence->index + 1) . " BPM",
-                'nickname' => ($sequence->index + 1) . " BPM",
+                'name' => ($sequence->index + 1).' BPM',
+                'nickname' => ($sequence->index + 1).' BPM',
                 'parent_id' => \App\Models\Unit::where('parent_id', 1)
                     ->inRandomOrder()
                     ->first()
-                    ->id
+                    ->id,
             ])->afterCreating(function (\App\Models\Unit $unit) {
                 \App\Models\Unit::factory(8)
                 ->state(new Sequence(
@@ -49,10 +49,10 @@ class UnitSeeder extends Seeder
 
                 \App\Models\Unit::factory(rand(3, 6))
                 ->sequence(fn (Sequence $sequence) => [
-                    'name' => ($sequence->index + 1) . " Cia",
-                    'parent_id' => $unit->id
+                    'name' => ($sequence->index + 1).' Cia',
+                    'nickname' => ($sequence->index + 1).' Cia',
+                    'parent_id' => $unit->id,
                 ])->create();
             })->create();
-
     }
 }

@@ -45,14 +45,18 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function unitsClassified(): BelongsToMany
     {
-        // return $this->belongsToMany(Unit::class)->select('unit_user.primary', 'unit_user.temporary', 'units.*')->where('primary', true);
-        return $this->belongsToMany(Unit::class)->where('primary', true);
+        return $this->belongsToMany(Unit::class)
+            ->where('primary', true)
+            ->select('shortpath as name')
+            ->orderBy('shortpath');
     }
 
     public function unitsWorking()
     {
-        return $this->belongsToMany(Unit::class)->where('primary', false)
-        ;
+        return $this->belongsToMany(Unit::class)
+            ->where('primary', false)
+            ->select('shortpath as name')
+            ->orderBy('shortpath');
     }
 
     public function roles(): BelongsToMany
@@ -70,12 +74,7 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->where($field ?? 'id', $value)->withTrashed()->firstOrFail();
     }
 
-    // public function getRolesAttribute()
-    // {
-    //     return $this->name;
-    // }
-
-    public function scopeFilter($query, Request $request, string $prefix = null, string $orderBy = 'name'): void
+    public function scopeFilter($query, Request $request, string $prefix = null, string $orderBy = 'users.name'): void
     {
         $filters = collect($request->query)->toArray();
 

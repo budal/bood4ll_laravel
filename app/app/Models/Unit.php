@@ -88,7 +88,16 @@ class Unit extends Model
         if ($this->parent) {
             return $this->parent->getParentsNames().' > '.$this->name;
         } else {
-            // return $this->name;
+            return $this->name;
+        }
+    }
+
+    public function getParentsNicknames()
+    {
+        if ($this->parent) {
+            return $this->parent->getParentsNames().' > '.$this->nickname;
+        } else {
+            return $this->nickname;
         }
     }
 

@@ -73,6 +73,12 @@
   "{0} Nothing to edit.|[1] Item edited successfully.|[2,*] :total items successfully edited.": "{0} Nada a editar.|[1] Item editado com sucesso.|[2,*] :total itens editados com sucesso.",
   "Error on edit selected item.|Error on edit selected items.": "Erro ao editar o item selecionado.|Erro ao editar os itens selecionados.",
 
+  "Refresh": "Atualizar",
+  "Are you sure you want to refresh the selected item?|Are you sure you want to refresh the selected items?": "Você tem certeza que deseja atualizar o item selecionado?|Você tem certeza que deseja atualizar os itens selecionados?",
+  "The selected item will be refreshed. Do you want to continue?|The selected items will be refreshed. Do you want to continue?": "O item selecionado será atualizado. Você deseja continuar?|Os itens selecionados serão atualizados. Você deseja continuar?",
+  "{0} Nothing to refresh.|[1] Item refreshed successfully.|[2,*] :total items successfully refreshed.": "{0} Nada a atualizar.|[1] Item atualizado com sucesso.|[2,*] :total itens atualizados com sucesso.",
+  "Error on refresh selected item.|Error on edit selected items.": "Erro ao atualizar o item selecionado.|Erro ao atualizar os itens selecionados.",
+
   "Activate": "Ativar",
   "Are you sure you want to activate the selected item?|Are you sure you want to activate the selected items?": "Você tem certeza que deseja ativar o item selecionado?|Você tem certeza que deseja ativar os itens selecionados?",
   "The selected item will be activated. Do you want to continue?|The selected items will be activated. Do you want to continue?": "O item selecionado será ativado. Você deseja continuar?|Os itens selecionados serão ativados. Você deseja continuar?",
@@ -198,6 +204,7 @@
   "Unit edition": "Edição de unidades",
   "Local staff": "Efetivo local",
   "Total staff": "Efetivo total",
+  "Refresh units hierarchy": "Atualizar hierarquia das unidades",
   
  
 

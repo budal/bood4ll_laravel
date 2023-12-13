@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Unit;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
@@ -20,7 +21,7 @@ class UnitsController extends Controller
     {
         $units = Unit::filter($request, 'units')
             ->when(!$request->search, function ($query) {
-                $query->where('parent_id', '1');
+                $query->where('parent_id', '0');
             })
             ->with('childrenRecursive')
             ->withCount('children', 'users')
@@ -53,6 +54,14 @@ class UnitsController extends Controller
                                         'editRoute' => 'apps.units.edit',
                                         'destroyRoute' => 'apps.units.destroy',
                                         'restoreRoute' => 'apps.units.restore',
+                                    ],
+                                    'menu' => [
+                                        [
+                                            'icon' => 'mdi:source-branch-refresh',
+                                            'title' => 'Refresh units hierarchy',
+                                            'route' => 'apps.units.hierarchy',
+                                            'method' => 'post',
+                                        ],
                                     ],
                                     'titles' => [
                                         [
@@ -457,6 +466,27 @@ class UnitsController extends Controller
         return Redirect::back()->with([
             'toast_type' => 'success',
             'toast_message' => '{0} Nothing to edit.|[1] Item edited successfully.|[2,*] :total items successfully edited.',
+            'toast_count' => 1,
+        ]);
+    }
+
+    public function hierarchy(): RedirectResponse
+    {
+        DB::table('units')->orderBy('id')->chunk(100, function (Collection $units) {
+            foreach ($units as $unit) {
+                $unit = Unit::where('id', $unit->id)->first();
+
+                // $unit->nickname = $unit->name;
+                $unit->fullpath = $unit->getParentsNames();
+                $unit->shortpath = $unit->getParentsNicknames();
+
+                $unit->save();
+            }
+        });
+
+        return Redirect::back()->with([
+            'toast_type' => 'success',
+            'toast_message' => '{0} Nothing to refresh.|[1] Item refreshed successfully.|[2,*] :total items successfully refreshed.',
             'toast_count' => 1,
         ]);
     }

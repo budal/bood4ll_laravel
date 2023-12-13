@@ -20,27 +20,28 @@ class UsersController extends Controller
     public function index(Request $request, $mode = null): Response
     {
         $users = User::filter($request, 'users')
+            // ->where('users.id', '9acb6259-970f-4c1e-b986-c5fb1fdb69d4')
+
+            // ->addSelect(['unit_classified' => User::from('users as users_classified')
+            //     ->selectRaw('units.shortpath')
+            //     ->leftjoin('unit_user', 'user_id', '=', 'users_classified.id')
+            //     ->leftjoin('units', 'units.id', '=', 'unit_user.unit_id')
+            //     ->where('unit_user.primary', '=', true)
+            //     ->take(1),
+            // ])
+
+            // ->leftJoin('translations', function ($join) use ($language) {
+            //     $join->on('questions.id', '=', 'translations.question_id')
+            //          ->andOn('translations.id', '=', $language->id);
+            //     })
+
             ->with('unitsClassified', 'unitsWorking')
             ->withCount('roles')
             ->paginate(20)
             ->onEachSide(2)
-            ->appends(collect($request->query)->toArray())
+            ->appends(collect($request->query)->toArray());
 
-            ->through(function ($item) {
-                $item->unitsClassified->map(function ($item) {
-                    $item->name = $item->getParentsNames();
-                });
-
-                $item->unitsWorking->map(function ($item) {
-                    $item->name = $item->getParentsNames();
-                });
-
-                return $item;
-            })
-            // ->sortBy('unitsClassified.name')
-        ;
-
-        // dd($users[0]);
+        // dd($users);
 
         return Inertia::render('Default', [
             'form' => [
@@ -62,6 +63,9 @@ class UsersController extends Controller
                                         'restoreRoute' => 'apps.users.restore',
                                     ],
                                     'menu' => [
+                                        [
+                                            'title' => '-',
+                                        ],
                                         [
                                             'icon' => 'mdi:book-cog-outline',
                                             'title' => 'Log as another user',
