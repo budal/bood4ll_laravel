@@ -44,7 +44,7 @@ class Unit extends Base
 
     public function childrenWithUsersCount(): HasMany
     {
-        return $this->children()->withCount('users', 'children');
+        return $this->children()->withCount('users');
     }
 
     public function childrenRecursive()

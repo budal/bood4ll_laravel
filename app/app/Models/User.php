@@ -69,55 +69,9 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->roles->map->abilities->flatten()->pluck('name');
     }
 
-    public function scopeFilter($query, Request $request, string $prefix = null, string $orderBy = 'users.name'): void
+    public function scopeFilter($query, Request $request, string $prefix = null, string $orderBy = 'name'): void
     {
-        $filters = collect($request->query)->toArray();
-
-        $search = array_filter($filters, function ($key) use ($prefix) {
-            return strpos($key, $prefix
-                ? ($prefix.'_search')
-                : 'search') !== false
-            ;
-        }, ARRAY_FILTER_USE_KEY);
-        $filterSearch = reset($search);
-
-        $trash = array_filter($filters, function ($key) use ($prefix) {
-            return strpos($key, $prefix
-                ? ($prefix.'_trash')
-                : 'trash') !== false
-            ;
-        }, ARRAY_FILTER_USE_KEY);
-        $filterTrash = reset($trash);
-
-        $sort = array_filter($filters, function ($key) use ($prefix) {
-            return strpos($key, $prefix
-                ? ($prefix.'_sorted')
-                : 'sorted') !== false
-            ;
-        }, ARRAY_FILTER_USE_KEY);
-        $filterSort = reset($sort);
-
-        $query->when($filterSearch ?? null, function ($query, $search) {
-            $query->where(function ($query) use ($search) {
-                $query->where('users.name', 'ilike', '%'.$search.'%')
-                    ->orWhere('users.email', 'ilike', '%'.$search.'%');
-            });
-        })->when($filterTrash ?? null, function ($query, $trashed) {
-            if ($trashed === 'both') {
-                $query->withTrashed();
-            } elseif ($trashed === 'trashed') {
-                $query->onlyTrashed();
-            }
-        })->when($filterSort ? $filterSort : $orderBy, function ($query, $sort) {
-            $sort_order = 'ASC';
-
-            if (strncmp($sort, '-', 1) === 0) {
-                $sort_order = 'DESC';
-                $sort = substr($sort, 1);
-            }
-
-            $query->orderBy($sort, $sort_order);
-            // $query->orderBy($prefix ? "$prefix.$sort" : $sort, $sort_order);
-        });
+        $base = new Base();
+        $base->scopeFilter($query, $request, $prefix, $orderBy);
     }
 }
