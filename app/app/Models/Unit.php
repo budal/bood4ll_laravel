@@ -34,7 +34,7 @@ class Unit extends Base
 
     public function users(): BelongsToMany
     {
-        return $this->belongsToMany(User::class);
+        return $this->belongsToMany(User::class)->where('primary', true);
     }
 
     public function children(): HasMany

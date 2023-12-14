@@ -37,17 +37,17 @@ class Base extends Model
 
         $tableName = $query->getModel()->getTable();
 
-        $searchItems = explode(',', $orderBy);
+        $orderByItems = explode(',', $orderBy);
 
-        $query->when($filterSearch ?? null, function ($query, $search) use ($tableName) {
-            $query->where(function ($query) use ($search, $tableName) {
-                $query->where("$tableName.name", 'ilike', '%'.$search.'%');
-
-                // if ($key == 0) {
-                //     $query->where("$tableName.$searchItem", 'ilike', '%'.$search.'%');
-                // } else {
-                //     $query->orWhere("$tableName.$searchItem", 'ilike', '%'.$search.'%');
-                // }
+        $query->when($filterSearch ?? null, function ($query, $search) use ($tableName, $orderByItems) {
+            $query->where(function ($query) use ($search, $tableName, $orderByItems) {
+                foreach ($orderByItems as $key => $item) {
+                    if ($key == 0) {
+                        $query->where("$tableName.$item", 'ilike', '%'.$search.'%');
+                    } else {
+                        $query->orWhere("$tableName.$item", 'ilike', '%'.$search.'%');
+                    }
+                }
             });
         })->when($filterTrash ?? null, function ($query, $trashed) {
             if ($trashed === 'both') {
