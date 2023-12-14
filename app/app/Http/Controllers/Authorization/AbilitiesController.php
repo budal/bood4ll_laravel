@@ -24,7 +24,7 @@ class AbilitiesController extends Controller
             ;
         });
 
-        $abilitiesInDB = Ability::filter($request->all('abilities_search'))->get()->pluck('name');
+        $abilitiesInDB = Ability::filter($request, 'abilites')->get()->pluck('name');
 
         $validAbilities = $routes->map(function ($route) use ($abilitiesInDB) {
             $actionSegments = explode('\\', $route->action['controller']);

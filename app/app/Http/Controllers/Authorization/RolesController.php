@@ -92,7 +92,7 @@ class RolesController extends Controller
 
     public function __form(Request $request, Role $role): array
     {
-        $abilities = Ability::sort('name')->get();
+        $abilities = Ability::orderBy('name')->get();
 
         if ($request->all) {
             $users = User::filter($request, 'users')
@@ -419,32 +419,31 @@ class RolesController extends Controller
                 'role' => [
                     'route' => route('apps.roles.edit', $role->id),
                     'method' => 'patch',
+                    'reset' => true,
+                    'fieldsToReset' => ['expires_at'],
                 ],
             ],
             'data' => $role,
-            // 'tabs' => false,
         ]);
     }
 
     public function update(Request $request, Role $role): RedirectResponse
     {
-        if ($request->remove_on_expire && !$request->expires_at) {
-            return Redirect::back()->with([
-                'toast_type' => 'error',
-                'toast_message' => 'Define the expiration date.',
-            ]);
-        } elseif (!$request->remove_on_expire) {
-            // $request->expires_at = null;
-        }
-
         DB::beginTransaction();
 
         try {
+            if ($request->remove_on_expire && !$request->expires_at) {
+                return Redirect::back()->with([
+                    'toast_type' => 'error',
+                    'toast_message' => 'Define the expiration date.',
+                ]);
+            }
+
             $role->name = $request->name;
             $role->description = $request->description;
             $role->active = $request->active;
-            $role->remove_on_expire = $request->remove_on_expire;
-            $role->expires_at = $request->expires_at;
+            $role->remove_on_expire = $request->remove_on_expire ? $request->remove_on_expire : false;
+            $role->expires_at = $request->remove_on_expire ? $request->expires_at : null;
             $role->full_access = $request->full_access;
             $role->manage_nested = $request->manage_nested;
             $role->remove_on_change_unit = $request->remove_on_change_unit;

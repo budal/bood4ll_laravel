@@ -19,10 +19,13 @@ class UnitsController extends Controller
 
     public function index(Request $request): Response
     {
-        $units = Unit::filter($request, 'units')
-            ->when(!$request->search, function ($query) {
-                $query->where('parent_id', null);
+        // dd(Unit::getTable());
+
+        $units = Unit::filter($request, 'units', 'parent_unit.name,parent_unit.order')
+            ->when(!$request->units_search, function ($query) {
+                $query->where('units.parent_id', null);
             })
+            ->leftJoin('units as parent_unit', 'units.parent_id', '=', 'parent_unit.id')
             ->with('childrenRecursive')
             ->withCount('children', 'users')
             ->paginate(20)
@@ -106,9 +109,9 @@ class UnitsController extends Controller
 
         $subunits = $unit
             ->when(!$request->search, function ($query) use ($unit) {
-                $query->where('parent_id', $unit->id);
+                $query->where('units.parent_id', $unit->id);
             })
-            ->filter($request, 'subunits')
+            ->filter($request, 'subunits', 'order')
             ->with('childrenRecursive')
             ->withCount('children', 'users')
             ->paginate($perPage = 20, $columns = ['*'], $pageName = 'subunits')

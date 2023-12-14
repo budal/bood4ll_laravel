@@ -69,11 +69,6 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->roles->map->abilities->flatten()->pluck('name');
     }
 
-    public function resolveRouteBinding($value, $field = null)
-    {
-        return $this->where($field ?? 'id', $value)->withTrashed()->firstOrFail();
-    }
-
     public function scopeFilter($query, Request $request, string $prefix = null, string $orderBy = 'users.name'): void
     {
         $filters = collect($request->query)->toArray();
@@ -124,12 +119,5 @@ class User extends Authenticatable implements MustVerifyEmail
             $query->orderBy($sort, $sort_order);
             // $query->orderBy($prefix ? "$prefix.$sort" : $sort, $sort_order);
         });
-    }
-
-    public function appendRequest($query, Request $request, string $prefix = null): void
-    {
-        $query->appends(
-            $request->all('users_search', 'users_sorted', 'users_trashed')
-        );
     }
 }

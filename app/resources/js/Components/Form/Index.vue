@@ -56,6 +56,8 @@ const sendForm = (formId: string) => {
         onError: () => {
             toast();
 
+            console.log(jsForm.errors);
+
             // if (jsForm.errors.password) {
             //     jsForm.reset('password', 'password_confirmation');
             //     passwordInput.value?.focus();
