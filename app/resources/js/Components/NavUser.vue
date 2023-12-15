@@ -141,7 +141,7 @@ const toggleState = ref(false);
                         value="Logout"
                         class="px-[5px] relative pl-[25px] text-sm py-3 text-zero-light dark:text-zero-dark hover:bg-zero-light dark:hover:bg-zero-dark focus:outline-none focus:bg-zero-light dark:focus:bg-zero-dark transition duration-150 ease-in-out"
                     >
-                        {{ $t("Log Out") }}
+                        {{ $t("Log out") }}
                     </DropdownMenuItem>
                 </Link>
                 <DropdownMenuArrow

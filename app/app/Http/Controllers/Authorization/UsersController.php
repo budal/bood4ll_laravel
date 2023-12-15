@@ -78,8 +78,6 @@ class UsersController extends Controller
         // ;
 
         return Inertia::render('Default', [
-            'status' => $request->session()->has('previousUser') ? 'You are managing information as a different user than you are logged in to. Be cautious.' : null,
-            'statusTheme' => 'danger',
             'form' => [
                 [
                     'id' => 'users',

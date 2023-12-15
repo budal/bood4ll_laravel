@@ -30,7 +30,7 @@ class EmailVerificationPromptController extends Controller
                                             'type' => 'links',
                                             'values' => [
                                                 [
-                                                    'title' => 'Log Out',
+                                                    'title' => 'Log out',
                                                     'route' => 'logout',
                                                     'method' => 'post',
                                                 ],

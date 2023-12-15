@@ -335,7 +335,7 @@ const submitModal = () => {
     </Modal>
 
     <div
-        class="flex sticky top-0 sm:top-[95px] justify-between rounded-xl backdrop-blur-sm pt-1 mb-2 bg-zero-light/30 dark:bg-zero-dark/30"
+        class="flex sticky top-0 sm:top-[110px] justify-between rounded-xl backdrop-blur-sm pt-1 mb-2 bg-zero-light/30 dark:bg-zero-dark/30"
     >
         <div class="flex gap-2 w-full">
             <Dropdown

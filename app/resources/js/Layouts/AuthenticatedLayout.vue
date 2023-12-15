@@ -4,7 +4,6 @@ import Breadcrumbs from "@/Components/Breadcrumbs.vue";
 import NavUser from "@/Components/NavUser.vue";
 import Avatar from "@/Components/Avatar.vue";
 import Bullet from "@/Components/Bullet.vue";
-import PreviousUser from "@/Components/PreviousUser.vue";
 import ScrollToTop from "@/Components/ScrollToTop.vue";
 import TailwindIndicator from "@/Components/TailwindIndicator.vue";
 import ToggleTheme from "@/Components/ToggleTheme.vue";
@@ -120,6 +119,22 @@ const menuUser = [
         <nav
             class="bg-zero-light dark:bg-zero-dark sm:sticky sm:top-0 z-[10] border-b border-zero-light dark:border-zero-dark"
         >
+            <div
+                v-if="$page.props.auth.previousUser === true"
+                :class="`font-medium bg-danger-light dark:bg-danger-dark text-xs text-center text-danger-light dark:text-danger-dark`"
+            >
+                {{
+                    $t(
+                        "You are managing information as a different user than you are logged in to. Be cautious.",
+                    )
+                }}
+                <Link
+                    :href="route('apps.users.return_to_my_user')"
+                    as="button"
+                    method="post"
+                    >[ {{ $t("Log out") }} ]
+                </Link>
+            </div>
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between h-16">
                     <div class="flex">
@@ -151,10 +166,10 @@ const menuUser = [
                     </div>
                 </div>
             </div>
-        </nav>
-        <div class="sm:sticky sm:top-[65px] z-[5]">
             <Breadcrumbs />
-        </div>
+        </nav>
+        <!-- <div class="sm:sticky sm:top-[65px] z-[5]"> -->
+        <!-- </div> -->
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
                 <slot />
@@ -163,6 +178,5 @@ const menuUser = [
     </div>
     <Modal />
     <TailwindIndicator />
-    <PreviousUser />
     <ScrollToTop />
 </template>
