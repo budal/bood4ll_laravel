@@ -20,7 +20,7 @@ class UserPolicy
         return null;
     }
 
-    public function edit(User $user, User $userToEdit): bool
+    public function allow(User $user, User $userToEdit): bool
     {
         if (!$user->hasFullAccess()) {
             return $user->id === $userToEdit->id;

@@ -298,7 +298,7 @@ class UsersController extends Controller
 
     public function edit(User $user): Response
     {
-        $this->authorize('edit', $user);
+        $this->authorize('allow', $user);
 
         return Inertia::render('Default', [
             'form' => $this->__form(),
