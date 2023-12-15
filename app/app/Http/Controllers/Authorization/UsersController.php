@@ -27,6 +27,7 @@ class UsersController extends Controller
             $units = $request->user()->units()->get()->flatten()->pluck('id');
         }
 
+        // dd($units);
         $users = User::filter($request, 'users', [
             'where' => [
                 'name',
@@ -34,7 +35,7 @@ class UsersController extends Controller
             ],
             ])->join('unit_user', 'unit_user.user_id', '=', 'users.id')
 
-            ->whereIn('unit_user.unit_id', $units)
+            // ->whereIn('unit_user.unit_id', $units)
             ->with('unitsClassified', 'unitsWorking')
             ->withCount('roles')
             ->paginate(20)

@@ -25,9 +25,9 @@ class UserPolicy
         return $user->canManageNested() ? true : false;
     }
 
-    public function create(User $user): bool
+    public function units(User $user): bool
     {
-        dd($user->roles);
+        dd($user->hasFullAccess());
 
         // request()->route()->getName()
         // return $user->id === $post->user_id;

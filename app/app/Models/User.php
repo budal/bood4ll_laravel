@@ -61,40 +61,25 @@ class User extends Authenticatable implements MustVerifyEmail
     public function abilities()
     {
         return $this->roles()
-            ->where('active', true)
-            ->where(function ($query) {
-                $query->where('lock_on_expire', false);
-                $query->orWhere(function ($query) {
-                    $query->where('lock_on_expire', true);
-                    $query->where('expires_at', '>=', 'now()');
-                });
-            })
-            ->get()
-            ->map->abilities->flatten()->pluck('name');
+            ->select('roles.id', 'roles.name', 'abilities.name AS ability', 'roles.superadmin', 'roles.full_access', 'roles.lock_on_expire', 'roles.expires_at')
+            ->leftjoin('ability_role', 'ability_role.role_id', '=', 'roles.id')
+            ->leftjoin('abilities', 'abilities.id', '=', 'ability_role.ability_id')
+            ->where('active', true);
     }
 
     public function isSuperAdmin()
     {
-        return $this->roles()
-            ->where('active', true)
-            ->where('superadmin', true)
-            ->first() ? true : false;
+        return $this->abilities()->pluck('superadmin')->contains(true);
     }
 
     public function hasFullAccess()
     {
-        return $this->roles()
-            ->where('full_access', true)
-            ->get()->map->abilities->flatten()->pluck('name')
-            ->contains(\Route::currentRouteName());
+        return $this->abilities()->where('full_access', true)->pluck('ability')->contains(\Route::currentRouteName());
     }
 
     public function canManageNested()
     {
-        return $this->roles()
-            ->where('manage_nested', true)
-            ->get()->map->abilities->flatten()->pluck('name')
-            ->contains(\Route::currentRouteName());
+        return $this->abilities()->where('manage_nested', true)->pluck('ability')->contains(\Route::currentRouteName());
     }
 
     public function unitsClassified(): BelongsToMany

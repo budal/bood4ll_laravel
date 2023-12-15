@@ -22,7 +22,7 @@ class AuthServiceProvider extends ServiceProvider
                 return true;
             }
 
-            if ($user->abilities()->contains($ability)) {
+            if ($user->abilities()->pluck('ability')->contains($ability)) {
                 return true;
             }
         });
