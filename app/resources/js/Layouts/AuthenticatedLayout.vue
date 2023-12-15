@@ -125,7 +125,7 @@ const menuUser = [
             >
                 {{
                     $t(
-                        "You are managing information as a different user than you are logged in to. Be cautious.",
+                        "You are managing information as a different account than you are logged in to. Be cautious.",
                     )
                 }}
                 <Link
