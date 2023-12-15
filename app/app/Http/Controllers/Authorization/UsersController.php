@@ -28,6 +28,10 @@ class UsersController extends Controller
             ])->join('unit_user', 'unit_user.user_id', '=', 'users.id')
 
             ->when(!$request->user()->isSuperAdmin(), function ($query) use ($request) {
+                if (!$request->user()->hasFullAccess()) {
+                    $query->where('unit_user.user_id', $request->user()->id);
+                }
+
                 if ($request->user()->canManageNested()) {
                     $units = $request->user()->units()->get()->flatten()->pluck('id')->union(
                         $request->user()->units()->get()->map->getAllChildren()->flatten()->pluck('id')
@@ -294,6 +298,8 @@ class UsersController extends Controller
 
     public function edit(User $user): Response
     {
+        $this->authorize('edit', $user);
+
         return Inertia::render('Default', [
             'form' => $this->__form(),
             'routes' => [

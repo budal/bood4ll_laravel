@@ -20,6 +20,23 @@ class UserPolicy
         return null;
     }
 
+    public function edit(User $user, User $userToEdit): bool
+    {
+        if (!$user->hasFullAccess()) {
+            return $user->id === $userToEdit->id;
+        } else {
+            if (!$user->canManageNested()) {
+                $allowedUnits = $user->units->pluck('id');
+            } else {
+                $allowedUnits = $user->units()->get()->flatten()->pluck('id')->union(
+                    $user->units()->get()->map->getAllChildren()->flatten()->pluck('id')
+                );
+            }
+
+            return $allowedUnits->intersect($userToEdit->units->pluck('id'))->count() > 0;
+        }
+    }
+
     public function canManageNested(User $user): bool
     {
         return $user->canManageNested() ? true : false;
