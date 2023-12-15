@@ -66,29 +66,25 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function abilities()
     {
-        dd($this->roles()
-        ->where('remove_on_expire', false)
-        ->orWhere(function ($query) {
-            $query->where('remove_on_expire', true);
-            $query->where('expires_at', '>=', 'now()');
-        })
-        ->get()
-        ->map->abilities->flatten()->pluck('name')
-        );
-
         return $this->roles()
-        ->where('remove_on_expire', false)
-        ->orWhere(function ($query) {
-            $query->where('remove_on_expire', true);
-            $query->where('expires_at', '>=', 'now()');
-        })
-        ->get()
-        ->map->abilities->flatten()->pluck('name');
+            ->where('active', true)
+            ->where(function ($query) {
+                $query->where('lock_on_expire', false);
+                $query->orWhere(function ($query) {
+                    $query->where('lock_on_expire', true);
+                    $query->where('expires_at', '>=', 'now()');
+                });
+            })
+            ->get()
+            ->map->abilities->flatten()->pluck('name');
     }
 
     public function isSuperAdmin(User $user)
     {
-        return $user->roles()->where('name', '::SUPERADMIN::')->first() ? true : false;
+        return $user->roles()
+            ->where('active', true)
+            ->where('full_access', true)
+            ->first() ? true : false;
     }
 
     public function scopeFilter($query, Request $request, string $prefix = null, array $options = []): void

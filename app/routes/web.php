@@ -68,7 +68,7 @@ Route::middleware('auth')->group(function () {
                 Route::get('/users', 'index')->name('index')->breadcrumb('Users')->middleware('can:apps.users.index');
                 Route::get('/users/logas/{mode?}', 'index')->name('logas')->breadcrumb('Log as another user', 'apps.users.index')->middleware('can:apps.users.logas');
                 Route::post('/users/loginas/{user}', 'changeUser')->name('loginas')->whereUuid('user')->middleware('can:apps.users.loginas');
-                Route::post('/users/returnToMyUser', 'returnToMyUser')->name('return_to_my_user')->whereUuid('user')->middleware('can:apps.users.loginas');
+                Route::post('/users/returnToMyUser', 'returnToMyUser')->name('return_to_my_user')->whereUuid('user');
                 Route::post('/users/activate/{user}/{mode?}', 'activate')->name('activate')->whereUuid('user')->middleware('can:apps.users.activate');
                 Route::get('/users/create', 'create')->name('create')->breadcrumb('User creation', 'apps.users.index')->middleware('can:apps.users.create');
                 Route::post('/users/create', 'store')->name('store')->middleware('can:apps.users.store');

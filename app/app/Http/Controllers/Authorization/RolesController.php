@@ -173,8 +173,8 @@ class RolesController extends Controller
                         ],
                         [
                             'type' => 'toggle',
-                            'name' => 'remove_on_expire',
-                            'title' => 'Remove on expire',
+                            'name' => 'lock_on_expire',
+                            'title' => 'Lock on expire',
                             'colorOn' => 'info',
                         ],
                         [
@@ -368,7 +368,7 @@ class RolesController extends Controller
             $role->name = $request->name;
             $role->description = $request->description;
             $role->active = $request->active;
-            $role->remove_on_expire = $request->remove_on_expire;
+            $role->lock_on_expire = $request->lock_on_expire;
             $role->expires_at = $request->expires_at;
             $role->full_access = $request->full_access;
             $role->manage_nested = $request->manage_nested;
@@ -432,7 +432,7 @@ class RolesController extends Controller
         DB::beginTransaction();
 
         try {
-            if ($request->remove_on_expire && !$request->expires_at) {
+            if ($request->lock_on_expire && !$request->expires_at) {
                 return Redirect::back()->with([
                     'toast_type' => 'error',
                     'toast_message' => 'Define the expiration date.',
@@ -442,8 +442,8 @@ class RolesController extends Controller
             $role->name = $request->name;
             $role->description = $request->description;
             $role->active = $request->active;
-            $role->remove_on_expire = $request->remove_on_expire ? $request->remove_on_expire : false;
-            $role->expires_at = $request->remove_on_expire ? $request->expires_at : null;
+            $role->lock_on_expire = $request->lock_on_expire ? $request->lock_on_expire : false;
+            $role->expires_at = $request->lock_on_expire ? $request->expires_at : null;
             $role->full_access = $request->full_access;
             $role->manage_nested = $request->manage_nested;
             $role->remove_on_change_unit = $request->remove_on_change_unit;

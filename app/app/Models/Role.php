@@ -15,7 +15,7 @@ class Role extends Base
         'name',
         'description',
         'active',
-        'remove_on_expire',
+        'lock_on_expire',
         'expires_at',
         'full_access',
         'manage_nested',
