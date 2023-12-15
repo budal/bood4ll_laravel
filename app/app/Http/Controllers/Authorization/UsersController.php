@@ -4,12 +4,10 @@ namespace App\Http\Controllers\Authorization;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ProfileUpdateRequest;
-use App\Models\Unit;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -21,15 +19,6 @@ class UsersController extends Controller
 
     public function index(Request $request, $mode = null): Response
     {
-        if ($request->user()->can('canManageNested', User::class)) {
-            $units = $request->user()->units()->get()->flatten()->pluck('id')->union(
-                $request->user()->units()->get()->map->getAllChildren()->flatten()->pluck('id')
-            );
-        } else {
-            $units = $request->user()->units()->get()->flatten()->pluck('id');
-        }
-
-        // dd($units);
         $users = User::filter($request, 'users', [
             'where' => [
                 'name',
@@ -37,58 +26,25 @@ class UsersController extends Controller
             ],
             ])->join('unit_user', 'unit_user.user_id', '=', 'users.id')
 
+            ->when(!$request->user()->isSuperAdmin(), function ($query) use ($request) {
+                if ($request->user()->canManageNested()) {
+                    $units = $request->user()->units()->get()->flatten()->pluck('id')->union(
+                        $request->user()->units()->get()->map->getAllChildren()->flatten()->pluck('id')
+                    );
+
+                    $query->whereIn('unit_user.unit_id', $units);
+                } else {
+                    $units = $request->user()->units()->get()->flatten()->pluck('id');
+
+                    $query->whereIn('unit_user.unit_id', $units);
+                }
+            })
             ->where('unit_user.primary', true)
-            ->whereIn('unit_user.unit_id', $units)
             ->with('unitsClassified', 'unitsWorking')
             ->withCount('roles')
             ->paginate(20)
             ->onEachSide(2)
             ->appends(collect($request->query)->toArray());
-
-        // $usersAll = User::filter($request, 'users')
-        //     // ->where('users.id', '9acb6259-970f-4c1e-b986-c5fb1fdb69d4')
-
-        //     // ->where('users.id', '9ab675fd-9daa-4e72-a91b-fd0fcf974433')
-        //     // ->select('users.*', 'unit_user.primary')
-        //     ->select('users.id', 'users.name', 'users.email')
-        //     ->selectSub(function ($query) {
-        //         $query->from('users as users_classified')
-        //         ->selectRaw("string_agg('id:' || units.id || ',' || 'name:' || units.shortpath, ';' ORDER BY units.shortpath)")
-
-        //         ->leftjoin('unit_user', 'user_id', '=', 'users_classified.id')
-        //         ->leftjoin('units', 'units.id', '=', 'unit_user.unit_id')
-
-        //         ->where('unit_user.primary', '=', true)
-        //         ->whereColumn('users_classified.id', 'users.id')
-        //         ->take(1)
-        //         ;
-        //     }, 'unit_classified')
-
-        //     ->leftjoin('unit_user', 'user_id', '=', 'users.id')
-        //     ->leftjoin('units', 'units.id', '=', 'unit_user.unit_id')
-
-        //     // ->with('unitsClassified', 'unitsWorking')
-
-        //     ->withCount('roles')
-        //     // ->groupBy('users.id', 'users.name', 'users.email')
-        //     // ->paginate(20)
-        //     // ->onEachSide(2)
-
-        //     // ->get()
-
-        //     // ->appends(collect($request->query)->toArray())
-        // ;
-
-        // $users = DB::connection('pgsql')
-        //     ->query()
-        //     ->fromSub($usersAll, 'users')
-        //     ->select('id', 'name', 'email', 'unit_classified')
-        //     ->groupBy('id', 'name', 'email', 'unit_classified')
-        //     ->paginate(20)
-        //     ->onEachSide(2)
-        //     // ->appends(collect($request->query)->toArray())
-        //     // ->get()
-        // ;
 
         return Inertia::render('Default', [
             'form' => [

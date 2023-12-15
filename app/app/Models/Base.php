@@ -72,6 +72,10 @@ class Base extends Model
         });
     }
 
+    public function scopeUnitFilter($value, $field = null)
+    {
+    }
+
     public function resolveRouteBinding($value, $field = null)
     {
         return $this->where($field ?? 'id', $value)->withTrashed()->firstOrFail();
