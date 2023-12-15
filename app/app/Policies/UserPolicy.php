@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Models\Unit;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Http\RedirectResponse;
@@ -22,7 +23,11 @@ class UserPolicy
 
     public function units(User $user): bool
     {
-        dd($user->hasFullAccess(), $user->canManageNested());
+        if ($user->canManageNested()) {
+            dd(Unit::whereIn('id', $user->units()->get()->pluck('id'))->with('childrenRecursive')->get());
+        } else {
+            dd($user->units()->get());
+        }
 
         // request()->route()->getName()
         // return $user->id === $post->user_id;
