@@ -117,7 +117,7 @@ const menuUser = [
 <template>
     <div class="relative min-h-screen bg-zero-white dark:bg-zero-black">
         <nav
-            class="bg-zero-light dark:bg-zero-dark sm:sticky sm:top-0 z-[10] border-b border-zero-light dark:border-zero-dark"
+            class="bg-zero-light dark:bg-zero-dark sm:sticky sm:top-0 z-[10]"
         >
             <div
                 v-if="$page.props.auth.previousUser === true"

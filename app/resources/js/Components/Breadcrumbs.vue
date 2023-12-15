@@ -25,7 +25,7 @@ const breadcrumbs = computed(() =>
 
     <header
         v-if="breadcrumbs.length > 0"
-        class="bg-zero-light dark:bg-zero-dark shadow-primary-light/20 dark:shadow-primary-dark/20 shadow-[0_2px_10px]"
+        class="bg-zero-light dark:bg-zero-dark shadow-primary-light/20 dark:shadow-primary-dark/20 shadow-[0_2px_10px] border-t border-zero-light dark:border-zero-dark"
     >
         <div class="flex gap-4 max-w-7xl mx-auto py-1 px-4 sm:px-6 lg:px-8">
             <h2

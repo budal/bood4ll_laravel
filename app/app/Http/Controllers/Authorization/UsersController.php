@@ -9,6 +9,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -96,20 +97,6 @@ class UsersController extends Controller
                                         'forceDestroyRoute' => 'apps.users.forcedestroy',
                                         'restoreRoute' => 'apps.users.restore',
                                     ],
-                                    'menu' => [
-                                        [
-                                            'title' => '-',
-                                        ],
-                                        [
-                                            'icon' => 'mdi:book-cog-outline',
-                                            'title' => 'Log as another user',
-                                            'route' => [
-                                                'route' => 'apps.users.logas',
-                                                'attributes' => 'logAs',
-                                            ],
-                                            'condition' => $mode !== 'logAs',
-                                        ],
-                                    ],
                                     'titles' => [
                                         [
                                             'type' => 'avatar',
@@ -164,7 +151,7 @@ class UsersController extends Controller
                                             'type' => 'button',
                                             'title' => 'Login as',
                                             'theme' => 'warning',
-                                            'condition' => $mode === 'logAs',
+                                            'condition' => $request->user()->isSuperAdmin(),
                                             'icon' => 'mdi:login',
                                             'disableSort' => true,
                                             'preserveScroll' => true,
@@ -290,8 +277,12 @@ class UsersController extends Controller
         ]);
     }
 
-    public function create(): Response
+    public function create(Request $request): Response
     {
+        // Gate::authorize($request->route()->getName());
+
+        dd($request->user()->can('create', User::class));
+
         return Inertia::render('Default', [
             'form' => $this->__form(),
             'routes' => [

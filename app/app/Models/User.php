@@ -79,9 +79,9 @@ class User extends Authenticatable implements MustVerifyEmail
             ->map->abilities->flatten()->pluck('name');
     }
 
-    public function isSuperAdmin(User $user)
+    public function isSuperAdmin()
     {
-        return $user->roles()
+        return $this->roles()
             ->where('active', true)
             ->where('superadmin', true)
             ->first() ? true : false;
