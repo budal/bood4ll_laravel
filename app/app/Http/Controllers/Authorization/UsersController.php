@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Authorization;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\Unit;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -20,17 +21,20 @@ class UsersController extends Controller
 
     public function index(Request $request, $mode = null): Response
     {
+        if ($request->user()->can('canManageNested', User::class)) {
+            $units = Unit::whereIn('id', $request->user()->units()->get()->pluck('id'))->with('childrenRecursive')->get()->map->getAllChildren()->flatten()->pluck('id');
+        } else {
+            $units = $request->user()->units()->get()->flatten()->pluck('id');
+        }
+
         $users = User::filter($request, 'users', [
             'where' => [
                 'name',
                 'email',
             ],
-            ])
+            ])->join('unit_user', 'unit_user.user_id', '=', 'users.id')
 
-            // ->when($request->user()->can('create', User::class), function ($query) {
-            //     $query->where()
-            // })
-
+            ->whereIn('unit_user.unit_id', $units)
             ->with('unitsClassified', 'unitsWorking')
             ->withCount('roles')
             ->paginate(20)

@@ -23,7 +23,7 @@ class UnitsController extends Controller
             ->when(!$request->units_search, function ($query) {
                 $query->where('units.parent_id', null);
             })
-            ->with('childrenRecursive')
+            ->with('childrenWithUsersCount')
             ->withCount('children', 'users')
             ->paginate(20)
             ->onEachSide(2)
@@ -110,7 +110,7 @@ class UnitsController extends Controller
             })
             ->filter($request, 'subunits', ['order' => ['parent_unit.name', 'parent_unit.order']])
             ->leftJoin('units as parent_unit', 'units.parent_id', '=', 'parent_unit.id')
-            ->with('childrenRecursive')
+            ->with('childrenWithUsersCount')
             ->withCount('children', 'users')
             ->paginate($perPage = 20, $columns = ['*'], $pageName = 'subunits')
             ->onEachSide(2)

@@ -42,14 +42,14 @@ class Unit extends Base
         return $this->hasMany(Unit::class, 'parent_id');
     }
 
-    public function childrenWithUsersCount(): HasMany
-    {
-        return $this->children()->withCount('users');
-    }
-
     public function childrenRecursive()
     {
-        return $this->childrenWithUsersCount()->with('childrenRecursive');
+        return $this->children()->with('childrenRecursive');
+    }
+
+    public function childrenWithUsersCount(): HasMany
+    {
+        return $this->children()->withCount('users')->with('childrenWithUsersCount');
     }
 
     public function getAllChildren()
