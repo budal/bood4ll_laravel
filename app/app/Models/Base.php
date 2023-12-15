@@ -7,9 +7,15 @@ use Illuminate\Http\Request;
 
 class Base extends Model
 {
-    public function scopeFilter($query, Request $request, string $prefix = null, string $orderBy = 'name'): void
+    public function scopeFilter($query, Request $request, string $prefix = null, array $options = []): void
     {
         $filters = collect($request->query)->toArray();
+
+        $tableName = $query->getModel()->getTable();
+
+        $where = array_key_exists('where', $options) ? $options['where'] : ['name'];
+
+        $order = array_key_exists('order', $options) ? $options['order'] : ['name'];
 
         $search = array_filter($filters, function ($key) use ($prefix) {
             return strpos($key, $prefix
@@ -35,13 +41,9 @@ class Base extends Model
         }, ARRAY_FILTER_USE_KEY);
         $filterSort = reset($sort);
 
-        $tableName = $query->getModel()->getTable();
-
-        $orderByItems = explode(',', $orderBy);
-
-        $query->when($filterSearch ?? null, function ($query, $search) use ($tableName, $orderByItems) {
-            $query->where(function ($query) use ($search, $tableName, $orderByItems) {
-                foreach ($orderByItems as $key => $item) {
+        $query->when($filterSearch ?? null, function ($query, $search) use ($tableName, $where) {
+            $query->where(function ($query) use ($search, $tableName, $where) {
+                foreach ($where as $key => $item) {
                     if ($key == 0) {
                         $query->where("$tableName.$item", 'ilike', '%'.$search.'%');
                     } else {
@@ -55,18 +57,17 @@ class Base extends Model
             } elseif ($trashed === 'trashed') {
                 $query->onlyTrashed();
             }
-        })->when($filterSort ? $filterSort : $orderBy, function ($query, $sort) {
-            $sort_order = 'ASC';
+        })
+        ->when($filterSort ? [$filterSort] : $order, function ($query, $sortItems) {
+            foreach ($sortItems as $sort) {
+                $sort_order = 'ASC';
 
-            if (strncmp($sort, '-', 1) === 0) {
-                $sort_order = 'DESC';
-                $sort = substr($sort, 1);
-            }
+                if (strncmp($sort, '-', 1) === 0) {
+                    $sort_order = 'DESC';
+                    $sort = substr($sort, 1);
+                }
 
-            $sortItems = explode(',', $sort);
-
-            foreach ($sortItems as $sortItem) {
-                $query->orderBy($sortItem, $sort_order);
+                $query->orderBy($sort, $sort_order);
             }
         });
     }

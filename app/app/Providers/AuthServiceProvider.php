@@ -25,6 +25,8 @@ class AuthServiceProvider extends ServiceProvider
         // dd(Route::currentRouteName());
 
         Gate::before(function (User $user, $ability) {
+            dd($user->abilities()->contains($ability));
+
             if ($user->abilities()->contains($ability)) {
                 return true;
             }

@@ -69,9 +69,9 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->roles->map->abilities->flatten()->pluck('name');
     }
 
-    public function scopeFilter($query, Request $request, string $prefix = null, string $orderBy = 'name'): void
+    public function scopeFilter($query, Request $request, string $prefix = null, array $options = []): void
     {
         $base = new Base();
-        $base->scopeFilter($query, $request, $prefix, $orderBy);
+        $base->scopeFilter($query, $request, $prefix, $options);
     }
 }

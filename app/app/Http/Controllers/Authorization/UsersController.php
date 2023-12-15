@@ -20,7 +20,12 @@ class UsersController extends Controller
 
     public function index(Request $request, $mode = null): Response
     {
-        $users = User::filter($request, 'users', 'name,email')
+        $users = User::filter($request, 'users', [
+            'where' => [
+                'name',
+                'email',
+            ],
+        ])
             ->with('unitsClassified', 'unitsWorking')
             ->withCount('roles')
             ->paginate(20)
