@@ -290,7 +290,7 @@ class UsersController extends Controller
         $request->session()->forget('previousUser');
 
         return Redirect::back()->with([
-            'toast_type' => 'warning',
+            'toast_type' => 'info',
             'toast_message' => "Logged as ':user'.",
             'toast_replacements' => ['user' => $previousUser['name']],
         ]);
