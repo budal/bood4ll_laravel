@@ -22,7 +22,9 @@ class UsersController extends Controller
     public function index(Request $request, $mode = null): Response
     {
         if ($request->user()->can('canManageNested', User::class)) {
-            $units = Unit::whereIn('id', $request->user()->units()->get()->pluck('id'))->with('childrenRecursive')->get()->map->getAllChildren()->flatten()->pluck('id');
+            $units = $request->user()->units()->get()->flatten()->pluck('id')->union(
+                $request->user()->units()->get()->map->getAllChildren()->flatten()->pluck('id')
+            );
         } else {
             $units = $request->user()->units()->get()->flatten()->pluck('id');
         }
@@ -35,7 +37,8 @@ class UsersController extends Controller
             ],
             ])->join('unit_user', 'unit_user.user_id', '=', 'users.id')
 
-            // ->whereIn('unit_user.unit_id', $units)
+            ->where('unit_user.primary', true)
+            ->whereIn('unit_user.unit_id', $units)
             ->with('unitsClassified', 'unitsWorking')
             ->withCount('roles')
             ->paginate(20)
@@ -288,8 +291,6 @@ class UsersController extends Controller
 
     public function create(Request $request): Response
     {
-        dd($request->user()->can('units', User::class));
-
         return Inertia::render('Default', [
             'form' => $this->__form(),
             'routes' => [
