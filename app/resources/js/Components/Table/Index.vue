@@ -403,7 +403,7 @@ const submitModal = () => {
                                 />
                             </th>
                         </template>
-                        <th v-if="routes.editRoute" class="p-2"></th>
+                        <th v-if="routes.editRoute && (routes.editRoute.condition == true || typeof routes.editRoute.condition == 'undefined')" class="p-2"></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -534,7 +534,7 @@ const submitModal = () => {
                             </td>
                         </template>
                         <td
-                            v-if="routes.editRoute"
+                            v-if="routes.editRoute && (routes.editRoute.condition == true || typeof routes.editRoute.condition == 'undefined')"
                             class="sm:p-2 w-0 text-right"
                         >
                             <Button
