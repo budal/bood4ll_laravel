@@ -15,8 +15,9 @@ class RoleSeeder extends Seeder
         \App\Models\Role::factory()->create([
             'name' => '::SUPERADMIN::',
             'description' => 'Superadmin role',
-            'active' => true,
+            'inalterable' => true,
             'superadmin' => true,
+            'active' => true,
         ]);
     }
 }
