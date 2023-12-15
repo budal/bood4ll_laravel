@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Database\Eloquent\Factories\Sequence;
 
 class RoleSeeder extends Seeder
 {
@@ -17,7 +16,7 @@ class RoleSeeder extends Seeder
             'name' => '::SUPERADMIN::',
             'description' => 'Superadmin role',
             'active' => true,
-            'full_access' => true,
+            'superadmin' => true,
         ]);
     }
 }

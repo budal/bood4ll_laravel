@@ -83,7 +83,7 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $user->roles()
             ->where('active', true)
-            ->where('full_access', true)
+            ->where('superadmin', true)
             ->first() ? true : false;
     }
 

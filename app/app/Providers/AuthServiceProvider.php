@@ -33,7 +33,7 @@ class AuthServiceProvider extends ServiceProvider
                 return true;
             }
 
-            if ($user->abilities($user)->contains($ability)) {
+            if ($user->abilities()->contains($ability)) {
                 return true;
             }
 
