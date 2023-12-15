@@ -557,7 +557,12 @@ const submitModal = () => {
                                     :name="item.name"
                                     type="button"
                                     :color="content.theme"
-                                    :link="route(content.route, item.id)"
+                                    :link="
+                                        formatRouteWithID(
+                                            content.route,
+                                            item.id,
+                                        )
+                                    "
                                     :method="content.method"
                                     :startIcon="content.icon"
                                     :preserveScroll="content.preserveScroll"
