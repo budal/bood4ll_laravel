@@ -59,11 +59,23 @@ class UsersController extends Controller
                                 'name' => 'users',
                                 'content' => [
                                     'routes' => [
-                                        'createRoute' => 'apps.users.create',
+                                        'createRoute' => [
+                                                'route' => 'apps.users.create',
+                                                'condition' => true,
+                                            ],
                                         'editRoute' => 'apps.users.edit',
-                                        'destroyRoute' => 'apps.users.destroy',
-                                        'forceDestroyRoute' => 'apps.users.forcedestroy',
-                                        'restoreRoute' => 'apps.users.restore',
+                                        'destroyRoute' => [
+                                            'route' => 'apps.users.destroy',
+                                            'condition' => false,
+                                        ],
+                                        'forceDestroyRoute' => [
+                                            'route' => 'apps.users.forcedestroy',
+                                            'condition' => false,
+                                        ],
+                                        'restoreRoute' => [
+                                            'route' => 'apps.users.restore',
+                                            'condition' => false,
+                                        ],
                                     ],
                                     'titles' => [
                                         [

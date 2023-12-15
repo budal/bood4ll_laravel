@@ -117,8 +117,9 @@ let menuItems = computed(() => {
     }
 
     if (
-        props.routes.restoreRoute &&
-        (showRestoreItems == "trashed" || showRestoreItems == "both")
+        props.routes.restoreRoute 
+        && (showRestoreItems == "trashed" || showRestoreItems == "both")
+        && (props.routes.restoreRoute.condition == true || typeof props.routes.restoreRoute.condition == 'undefined')
     ) {
         content.add({
             title: "Restore",
@@ -137,7 +138,11 @@ let menuItems = computed(() => {
         });
     }
 
-    if (props.routes.destroyRoute && showRestoreItems != "trashed") {
+    if (
+        props.routes.destroyRoute 
+        && showRestoreItems != "trashed" 
+        && (props.routes.destroyRoute.condition == true || typeof props.routes.destroyRoute.condition == 'undefined')
+    ) {
         content.add({
             title: "Remove",
             icon: "mdi:delete-outline",
@@ -155,7 +160,11 @@ let menuItems = computed(() => {
         });
     }
 
-    if (props.routes.forceDestroyRoute && showRestoreItems == "trashed") {
+    if (
+        props.routes.forceDestroyRoute 
+        && showRestoreItems == "trashed"
+        && (props.routes.forceDestroyRoute.condition == true || typeof props.routes.forceDestroyRoute.condition == 'undefined')
+    ) {
         content.add({
             title: "Erase",
             theme: "danger",
@@ -352,7 +361,7 @@ const submitModal = () => {
                 class="flex-1"
             />
             <Button
-                v-if="routes.createRoute"
+                v-if="routes.createRoute && (routes.createRoute.condition == true || typeof routes.createRoute.condition == 'undefined')"
                 type="button"
                 color="success"
                 :link="routes.createRoute"
@@ -373,9 +382,9 @@ const submitModal = () => {
                         <th class="p-1 sm:p-2 w-0">
                             <Checkbox
                                 v-if="
-                                    routes.showCheckboxes == true ||
-                                    routes.destroyRoute ||
-                                    routes.restoreRoute
+                                    routes.showCheckboxes == true 
+                                    || routes.destroyRoute && (routes.destroyRoute.condition == true || typeof routes.destroyRoute.condition == 'undefined')
+                                    || routes.restoreRoute && (routes.restoreRoute.condition == true || typeof routes.restoreRoute.condition == 'undefined')
                                 "
                                 name="remember"
                                 :checked="selectedAll"
@@ -411,9 +420,9 @@ const submitModal = () => {
                         <td class="p-1 sm:p-2 w-0">
                             <Checkbox
                                 v-if="
-                                    routes.showCheckboxes == true ||
-                                    routes.destroyRoute ||
-                                    routes.restoreRoute
+                                    routes.showCheckboxes == true
+                                    || routes.destroyRoute && (routes.destroyRoute.condition == true || typeof routes.destroyRoute.condition == 'undefined')
+                                    || routes.restoreRoute && (routes.restoreRoute.condition == true || typeof routes.restoreRoute.condition == 'undefined')
                                 "
                                 class="w-6 h-6 sm:w-8 sm:h-8 rounded-md sm:rounded-lg"
                                 :class="item.deleted_at ? '' : ''"
