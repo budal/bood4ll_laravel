@@ -65,18 +65,18 @@ Route::middleware('auth')->group(function () {
     Route::prefix('apps')->name('apps.')->group(function () {
         Route::controller(UsersController::class)->group(function () {
             Route::name('users.')->middleware('verified', 'password.confirm')->group(function () {
-                Route::get('/users', 'index')->name('index')->breadcrumb('Users');
-                Route::get('/users/logas/{mode?}', 'index')->name('logas')->breadcrumb('Log as another user', 'apps.users.index');
-                Route::post('/users/loginas/{user}', 'changeUser')->name('loginas')->whereUuid('user');
-                Route::post('/users/returnToMyUser', 'returnToMyUser')->name('return_to_my_user')->whereUuid('user');
-                Route::post('/users/activate/{user}/{mode?}', 'activate')->name('activate')->whereUuid('user');
-                Route::get('/users/create', 'create')->name('create')->breadcrumb('User creation', 'apps.users.index');
-                Route::post('/users/create', 'store')->name('store');
-                Route::get('/users/edit/{user}', 'edit')->name('edit')->whereUuid('user')->breadcrumb('User edition', 'apps.users.index');
-                Route::patch('/users/edit/{user}', 'update')->name('update')->whereUuid('user');
-                Route::delete('/users/destroy', 'destroy')->name('destroy');
-                Route::delete('/users/forcedestroy', 'forceDestroy')->name('forcedestroy');
-                Route::post('/users/restore', 'restore')->name('restore');
+                Route::get('/users', 'index')->name('index')->breadcrumb('Users')->middleware('can:apps.users.index');
+                Route::get('/users/logas/{mode?}', 'index')->name('logas')->breadcrumb('Log as another user', 'apps.users.index')->middleware('can:apps.users.logas');
+                Route::post('/users/loginas/{user}', 'changeUser')->name('loginas')->whereUuid('user')->middleware('can:apps.users.loginas');
+                Route::post('/users/returnToMyUser', 'returnToMyUser')->name('return_to_my_user')->whereUuid('user')->middleware('can:apps.users.loginas');
+                Route::post('/users/activate/{user}/{mode?}', 'activate')->name('activate')->whereUuid('user')->middleware('can:apps.users.activate');
+                Route::get('/users/create', 'create')->name('create')->breadcrumb('User creation', 'apps.users.index')->middleware('can:apps.users.create');
+                Route::post('/users/create', 'store')->name('store')->middleware('can:apps.users.store');
+                Route::get('/users/edit/{user}', 'edit')->name('edit')->whereUuid('user')->breadcrumb('User edition', 'apps.users.index')->middleware('can:apps.users.edit');
+                Route::patch('/users/edit/{user}', 'update')->name('update')->whereUuid('user')->middleware('can:apps.users.update');
+                Route::delete('/users/destroy', 'destroy')->name('destroy')->middleware('can:apps.users.destroy');
+                Route::delete('/users/forcedestroy', 'forceDestroy')->name('forcedestroy')->middleware('can:apps.users.forcedestroy');
+                Route::post('/users/restore', 'restore')->name('restore')->middleware('can:apps.users.restore');
                 // Route::post('/users/restore', 'restore')->name('restore')->middleware('can:action');
             });
         });

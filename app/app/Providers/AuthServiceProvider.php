@@ -3,9 +3,9 @@
 namespace App\Providers;
 
 use App\Models\User;
+use App\Policies\UserPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Route;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -15,6 +15,7 @@ class AuthServiceProvider extends ServiceProvider
      * @var array<class-string, class-string>
      */
     protected $policies = [
+        User::class => UserPolicy::class,
     ];
 
     /**
@@ -22,14 +23,21 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // dd(Route::currentRouteName());
+        Gate::guessPolicyNamesUsing(function (string $modelClass) {
+            // dd($modelClass);
+            // Return the name of the policy class for the given model...
+        });
 
         Gate::before(function (User $user, $ability) {
-            dd($user->abilities()->contains($ability));
-
-            if ($user->abilities()->contains($ability)) {
+            if ($user->isSuperAdmin($user)) {
                 return true;
             }
+
+            if ($user->abilities($user)->contains($ability)) {
+                return true;
+            }
+
+            return false;
         });
     }
 }

@@ -258,9 +258,6 @@ class UsersController extends Controller
 
     public function changeUser(Request $request, User $user): RedirectResponse
     {
-        // $data = $request->session()->all();
-        // dd($data);
-
         $request->session()->put('previousUser', [
             'id' => Auth::user()->id,
             'name' => Auth::user()->name,
@@ -268,7 +265,7 @@ class UsersController extends Controller
 
         Auth::loginUsingId($user->id, true);
 
-        return Redirect::back()->with([
+        return Redirect::route('dashboard')->with([
             'toast_type' => 'warning',
             'toast_message' => "Logged as ':user'.",
             'toast_replacements' => ['user' => $user->name],
@@ -278,7 +275,6 @@ class UsersController extends Controller
     public function returnToMyUser(Request $request): RedirectResponse
     {
         $previousUser = $request->session()->all()['previousUser'];
-        // dd($previousUser);
 
         $request->session()->put('previousUser', [
             'id' => Auth::user()->id,
