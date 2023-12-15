@@ -15,6 +15,7 @@ withDefaults(
         data?: any;
         tabs?: boolean;
         status?: string;
+        statusTheme?: string | null;
     }>(),
     {
         isGuest: false,
@@ -32,14 +33,29 @@ withDefaults(
             :form="form"
             :routes="routes"
             :data="data"
-            :status="status"
             :tabs="tabs"
+            :status="status"
+            :statusTheme="statusTheme"
         />
     </GuestLayout>
     <ModalLayout v-else-if="isModal === true" :title="title">
-        <Form :form="form" :routes="routes" :data="data" :tabs="tabs" />
+        <Form
+            :form="form"
+            :routes="routes"
+            :data="data"
+            :tabs="tabs"
+            :status="status"
+            :statusTheme="statusTheme"
+        />
     </ModalLayout>
     <AuthenticatedLayout v-else>
-        <Form :form="form" :routes="routes" :data="data" :tabs="tabs" />
+        <Form
+            :form="form"
+            :routes="routes"
+            :data="data"
+            :tabs="tabs"
+            :status="status"
+            :statusTheme="statusTheme"
+        />
     </AuthenticatedLayout>
 </template>

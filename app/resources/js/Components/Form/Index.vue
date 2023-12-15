@@ -20,9 +20,11 @@ const props = withDefaults(
         shortcutKey?: string;
         tabs?: boolean;
         status?: string | null;
+        statusTheme?: string | null;
     }>(),
     {
         tabs: true,
+        statusTheme: "info",
     },
 );
 
@@ -87,9 +89,9 @@ const changeTab = (item: any) => {
 <template>
     <div
         v-if="status"
-        class="mb-4 rounded-md font-medium bg-success-light dark:bg-success-dark text-sm text-center text-success-light dark:text-success-dark"
+        :class="`mb-4 rounded-md font-medium bg-${statusTheme}-light dark:bg-${statusTheme}-dark text-sm text-center text-${statusTheme}-light dark:text-${statusTheme}-dark`"
     >
-        {{ status }}
+        {{ $t(status) }}
     </div>
 
     <Tabs :items="form" :tabs="tabs" @change-tab="changeTab">

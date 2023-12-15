@@ -68,6 +68,7 @@ Route::middleware('auth')->group(function () {
                 Route::get('/users', 'index')->name('index')->breadcrumb('Users');
                 Route::get('/users/logas/{mode?}', 'index')->name('logas')->breadcrumb('Log as another user', 'apps.users.index');
                 Route::post('/users/loginas/{user}', 'changeUser')->name('loginas')->whereUuid('user');
+                Route::post('/users/returnToMyUser', 'returnToMyUser')->name('return_to_my_user')->whereUuid('user');
                 Route::post('/users/activate/{user}/{mode?}', 'activate')->name('activate')->whereUuid('user');
                 Route::get('/users/create', 'create')->name('create')->breadcrumb('User creation', 'apps.users.index');
                 Route::post('/users/create', 'store')->name('store');

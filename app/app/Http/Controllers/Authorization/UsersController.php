@@ -78,6 +78,8 @@ class UsersController extends Controller
         // ;
 
         return Inertia::render('Default', [
+            'status' => $request->session()->has('previousUser') ? 'You are managing information as a different user than you are logged in to. Be cautious.' : null,
+            'statusTheme' => 'danger',
             'form' => [
                 [
                     'id' => 'users',
@@ -254,14 +256,43 @@ class UsersController extends Controller
         return Redirect::back()->with('status', 'Error on edit selected item.|Error on edit selected items.');
     }
 
-    public function changeUser(User $user): RedirectResponse
+    public function changeUser(Request $request, User $user): RedirectResponse
     {
+        // $data = $request->session()->all();
+        // dd($data);
+
+        $request->session()->put('previousUser', [
+            'id' => Auth::user()->id,
+            'name' => Auth::user()->name,
+        ]);
+
         Auth::loginUsingId($user->id, true);
 
         return Redirect::back()->with([
             'toast_type' => 'warning',
             'toast_message' => "Logged as ':user'.",
             'toast_replacements' => ['user' => $user->name],
+        ]);
+    }
+
+    public function returnToMyUser(Request $request): RedirectResponse
+    {
+        $previousUser = $request->session()->all()['previousUser'];
+        // dd($previousUser);
+
+        $request->session()->put('previousUser', [
+            'id' => Auth::user()->id,
+            'name' => Auth::user()->name,
+        ]);
+
+        Auth::loginUsingId($previousUser['id'], true);
+
+        $request->session()->forget('previousUser');
+
+        return Redirect::back()->with([
+            'toast_type' => 'warning',
+            'toast_message' => "Logged as ':user'.",
+            'toast_replacements' => ['user' => $previousUser['name']],
         ]);
     }
 

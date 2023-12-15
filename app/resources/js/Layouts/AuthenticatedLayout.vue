@@ -4,6 +4,7 @@ import Breadcrumbs from "@/Components/Breadcrumbs.vue";
 import NavUser from "@/Components/NavUser.vue";
 import Avatar from "@/Components/Avatar.vue";
 import Bullet from "@/Components/Bullet.vue";
+import PreviousUser from "@/Components/PreviousUser.vue";
 import ScrollToTop from "@/Components/ScrollToTop.vue";
 import TailwindIndicator from "@/Components/TailwindIndicator.vue";
 import ToggleTheme from "@/Components/ToggleTheme.vue";
@@ -162,5 +163,6 @@ const menuUser = [
     </div>
     <Modal />
     <TailwindIndicator />
+    <PreviousUser />
     <ScrollToTop />
 </template>

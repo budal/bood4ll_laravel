@@ -36,6 +36,7 @@ class HandleInertiaRequests extends Middleware
             'appName' => config('app.name'),
             'auth' => [
                 'user' => $request->user(),
+                'previousUser' => $request->session()->has('previousUser') ? true : false,
             ],
             'breadcrumbs' => $request->route()->breadcrumbs()->jsonSerialize(),
             'status' => session('status'),
