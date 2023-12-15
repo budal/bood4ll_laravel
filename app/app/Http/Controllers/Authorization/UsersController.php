@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -61,20 +62,20 @@ class UsersController extends Controller
                                     'routes' => [
                                         'createRoute' => [
                                                 'route' => 'apps.users.create',
-                                                'condition' => true,
+                                                'condition' => Gate::allows('apps.users.create'),
                                             ],
                                         'editRoute' => 'apps.users.edit',
                                         'destroyRoute' => [
                                             'route' => 'apps.users.destroy',
-                                            'condition' => false,
+                                            'condition' => Gate::allows('apps.users.destroy'),
                                         ],
                                         'forceDestroyRoute' => [
                                             'route' => 'apps.users.forcedestroy',
-                                            'condition' => false,
+                                            'condition' => Gate::allows('apps.users.forcedestroy'),
                                         ],
                                         'restoreRoute' => [
                                             'route' => 'apps.users.restore',
-                                            'condition' => false,
+                                            'condition' => Gate::allows('apps.users.restore'),
                                         ],
                                     ],
                                     'titles' => [
