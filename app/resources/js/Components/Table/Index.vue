@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { isValidUrl, toast } from "@/helpers";
+import { isValidUrl, formatRouteWithID, toast } from "@/helpers";
 import Avatar from "@/Components/Avatar.vue";
 import Button from "@/Components/Button.vue";
 import Checkbox from "@/Components/Checkbox.vue";
@@ -117,9 +117,10 @@ let menuItems = computed(() => {
     }
 
     if (
-        props.routes.restoreRoute 
-        && (showRestoreItems == "trashed" || showRestoreItems == "both")
-        && (props.routes.restoreRoute.condition == true || typeof props.routes.restoreRoute.condition == 'undefined')
+        props.routes.restoreRoute &&
+        (showRestoreItems == "trashed" || showRestoreItems == "both") &&
+        (props.routes.restoreRoute.condition == true ||
+            typeof props.routes.restoreRoute.condition == "undefined")
     ) {
         content.add({
             title: "Restore",
@@ -139,9 +140,10 @@ let menuItems = computed(() => {
     }
 
     if (
-        props.routes.destroyRoute 
-        && showRestoreItems != "trashed" 
-        && (props.routes.destroyRoute.condition == true || typeof props.routes.destroyRoute.condition == 'undefined')
+        props.routes.destroyRoute &&
+        showRestoreItems != "trashed" &&
+        (props.routes.destroyRoute.condition == true ||
+            typeof props.routes.destroyRoute.condition == "undefined")
     ) {
         content.add({
             title: "Remove",
@@ -161,9 +163,10 @@ let menuItems = computed(() => {
     }
 
     if (
-        props.routes.forceDestroyRoute 
-        && showRestoreItems == "trashed"
-        && (props.routes.forceDestroyRoute.condition == true || typeof props.routes.forceDestroyRoute.condition == 'undefined')
+        props.routes.forceDestroyRoute &&
+        showRestoreItems == "trashed" &&
+        (props.routes.forceDestroyRoute.condition == true ||
+            typeof props.routes.forceDestroyRoute.condition == "undefined")
     ) {
         content.add({
             title: "Erase",
@@ -361,7 +364,11 @@ const submitModal = () => {
                 class="flex-1"
             />
             <Button
-                v-if="routes.createRoute && (routes.createRoute.condition == true || typeof routes.createRoute.condition == 'undefined')"
+                v-if="
+                    routes.createRoute &&
+                    (routes.createRoute.condition == true ||
+                        typeof routes.createRoute.condition == 'undefined')
+                "
                 type="button"
                 color="success"
                 :link="routes.createRoute"
@@ -382,9 +389,17 @@ const submitModal = () => {
                         <th class="p-1 sm:p-2 w-0">
                             <Checkbox
                                 v-if="
-                                    routes.showCheckboxes == true 
-                                    || routes.destroyRoute && (routes.destroyRoute.condition == true || typeof routes.destroyRoute.condition == 'undefined')
-                                    || routes.restoreRoute && (routes.restoreRoute.condition == true || typeof routes.restoreRoute.condition == 'undefined')
+                                    routes.showCheckboxes == true ||
+                                    (routes.destroyRoute &&
+                                        (routes.destroyRoute.condition ==
+                                            true ||
+                                            typeof routes.destroyRoute
+                                                .condition == 'undefined')) ||
+                                    (routes.restoreRoute &&
+                                        (routes.restoreRoute.condition ==
+                                            true ||
+                                            typeof routes.restoreRoute
+                                                .condition == 'undefined'))
                                 "
                                 name="remember"
                                 :checked="selectedAll"
@@ -403,7 +418,15 @@ const submitModal = () => {
                                 />
                             </th>
                         </template>
-                        <th v-if="routes.editRoute && (routes.editRoute.condition == true || typeof routes.editRoute.condition == 'undefined')" class="p-2"></th>
+                        <th
+                            v-if="
+                                routes.editRoute &&
+                                (routes.editRoute.condition == true ||
+                                    typeof routes.editRoute.condition ==
+                                        'undefined')
+                            "
+                            class="p-2"
+                        ></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -420,9 +443,17 @@ const submitModal = () => {
                         <td class="p-1 sm:p-2 w-0">
                             <Checkbox
                                 v-if="
-                                    routes.showCheckboxes == true
-                                    || routes.destroyRoute && (routes.destroyRoute.condition == true || typeof routes.destroyRoute.condition == 'undefined')
-                                    || routes.restoreRoute && (routes.restoreRoute.condition == true || typeof routes.restoreRoute.condition == 'undefined')
+                                    routes.showCheckboxes == true ||
+                                    (routes.destroyRoute &&
+                                        (routes.destroyRoute.condition ==
+                                            true ||
+                                            typeof routes.destroyRoute
+                                                .condition == 'undefined')) ||
+                                    (routes.restoreRoute &&
+                                        (routes.restoreRoute.condition ==
+                                            true ||
+                                            typeof routes.restoreRoute
+                                                .condition == 'undefined'))
                                 "
                                 class="w-6 h-6 sm:w-8 sm:h-8 rounded-md sm:rounded-lg"
                                 :class="item.deleted_at ? '' : ''"
@@ -534,12 +565,19 @@ const submitModal = () => {
                             </td>
                         </template>
                         <td
-                            v-if="routes.editRoute && (routes.editRoute.condition == true || typeof routes.editRoute.condition == 'undefined')"
+                            v-if="
+                                routes.editRoute &&
+                                (routes.editRoute.condition == true ||
+                                    typeof routes.editRoute.condition ==
+                                        'undefined')
+                            "
                             class="sm:p-2 w-0 text-right"
                         >
                             <Button
                                 type="button"
-                                :link="route(routes.editRoute, item.id)"
+                                :link="
+                                    formatRouteWithID(routes.editRoute, item.id)
+                                "
                                 :srOnly="$t('Edit')"
                                 startIcon="mdi:chevron-right"
                             />

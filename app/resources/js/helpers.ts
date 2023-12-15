@@ -13,6 +13,15 @@ const isValidUrl = (url: any) => {
   }
 }
 
+const formatRouteWithID = (url: any, id: any) => isValidUrl(
+  typeof url == 'string'
+    ? route(url, id)
+    : {
+      route: url.route,
+      attributes: url.attributes ? [id, ...url.attributes] : [id],
+    },
+)
+
 const toast = () => {
   if (usePage().props.toast_message) {
     toasty(
@@ -28,4 +37,4 @@ const toast = () => {
   }
 }
 
-export { isValidUrl, toast }
+export { isValidUrl, formatRouteWithID, toast }

@@ -61,10 +61,13 @@ class UsersController extends Controller
                                 'content' => [
                                     'routes' => [
                                         'createRoute' => [
-                                                'route' => 'apps.users.create',
-                                                'condition' => Gate::allows('apps.users.create'),
-                                            ],
-                                        'editRoute' => 'apps.users.edit',
+                                            'route' => 'apps.users.create',
+                                            'condition' => Gate::allows('apps.users.create'),
+                                        ],
+                                        'editRoute' => [
+                                            'route' => 'apps.users.edit',
+                                            'condition' => Gate::allows('apps.users.edit'),
+                                        ],
                                         'destroyRoute' => [
                                             'route' => 'apps.users.destroy',
                                             'condition' => Gate::allows('apps.users.destroy'),
