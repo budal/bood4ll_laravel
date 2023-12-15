@@ -43,22 +43,6 @@ class User extends Authenticatable implements MustVerifyEmail
         // static::creating(fn(User $user) => $user->uuid = (string) Uuid::uuid4());
     }
 
-    public function unitsClassified(): BelongsToMany
-    {
-        return $this->belongsToMany(Unit::class)
-            ->where('primary', true)
-            ->select('shortpath as name')
-            ->orderBy('shortpath');
-    }
-
-    public function unitsWorking()
-    {
-        return $this->belongsToMany(Unit::class)
-            ->where('primary', false)
-            ->select('shortpath as name')
-            ->orderBy('shortpath');
-    }
-
     public function roles(): BelongsToMany
     {
         return $this->belongsToMany(Role::class);
@@ -85,6 +69,38 @@ class User extends Authenticatable implements MustVerifyEmail
             ->where('active', true)
             ->where('superadmin', true)
             ->first() ? true : false;
+    }
+
+    public function hasFullAccess()
+    {
+        return $this->roles()
+            ->where('full_access', true)
+            ->get()->map->abilities->flatten()->pluck('name')
+            ->contains(\Route::currentRouteName());
+    }
+
+    public function canManageNested()
+    {
+        return $this->roles()
+            ->where('manage_nested', true)
+            ->get()->map->abilities->flatten()->pluck('name')
+            ->contains(\Route::currentRouteName());
+    }
+
+    public function unitsClassified(): BelongsToMany
+    {
+        return $this->belongsToMany(Unit::class)
+            ->where('primary', true)
+            ->select('shortpath as name')
+            ->orderBy('shortpath');
+    }
+
+    public function unitsWorking()
+    {
+        return $this->belongsToMany(Unit::class)
+            ->where('primary', false)
+            ->select('shortpath as name')
+            ->orderBy('shortpath');
     }
 
     public function scopeFilter($query, Request $request, string $prefix = null, array $options = []): void

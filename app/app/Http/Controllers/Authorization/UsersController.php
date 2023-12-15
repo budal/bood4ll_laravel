@@ -9,7 +9,6 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -26,7 +25,12 @@ class UsersController extends Controller
                 'name',
                 'email',
             ],
-        ])
+            ])
+
+            // ->when($request->user()->can('create', User::class), function ($query) {
+            //     $query->where()
+            // })
+
             ->with('unitsClassified', 'unitsWorking')
             ->withCount('roles')
             ->paginate(20)
@@ -155,7 +159,7 @@ class UsersController extends Controller
                                             'icon' => 'mdi:login',
                                             'disableSort' => true,
                                             'preserveScroll' => true,
-                                            'route' => 'apps.users.loginas',
+                                            'route' => 'apps.users.change_user',
                                             'method' => 'post',
                                         ],
                                     ],
@@ -279,9 +283,7 @@ class UsersController extends Controller
 
     public function create(Request $request): Response
     {
-        // Gate::authorize($request->route()->getName());
-
-        dd($request->user()->can('create', User::class));
+        dd($request->user()->can('units', User::class));
 
         return Inertia::render('Default', [
             'form' => $this->__form(),

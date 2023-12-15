@@ -17,17 +17,14 @@ class AuthServiceProvider extends ServiceProvider
         //     dd($modelClass);
         // });
 
-        // dd(\Request::route()->getName());
-        // Gate::before(function (User $user, $ability) {
-        //     if ($user->isSuperAdmin($user)) {
-        //         return true;
-        //     }
+        Gate::before(function (User $user, $ability) {
+            if ($user->isSuperAdmin($user)) {
+                return true;
+            }
 
-        //     if ($user->abilities()->contains($ability)) {
-        //         return true;
-        //     }
-
-        //     return false;
-        // });
+            if ($user->abilities()->contains($ability)) {
+                return true;
+            }
+        });
     }
 }
