@@ -139,7 +139,7 @@ class UsersController extends Controller
                                             'type' => 'button',
                                             'title' => 'Login as',
                                             'theme' => 'warning',
-                                            'condition' => $request->user()->isSuperAdmin(),
+                                            'condition' => Gate::allows('apps.users.change_user') && !$request->session()->has('previousUser'),
                                             'icon' => 'mdi:login',
                                             'disableSort' => true,
                                             'preserveScroll' => true,
@@ -231,18 +231,25 @@ class UsersController extends Controller
 
     public function changeUser(Request $request, User $user): RedirectResponse
     {
-        $request->session()->put('previousUser', [
-            'id' => Auth::user()->id,
-            'name' => Auth::user()->name,
-        ]);
+        if (!$request->session()->has('previousUser')) {
+            $request->session()->put('previousUser', [
+                'id' => Auth::user()->id,
+                'name' => Auth::user()->name,
+            ]);
 
-        Auth::loginUsingId($user->id, true);
+            Auth::loginUsingId($user->id, true);
 
-        return Redirect::route('dashboard')->with([
-            'toast_type' => 'warning',
-            'toast_message' => "Logged as ':user'.",
-            'toast_replacements' => ['user' => $user->name],
-        ]);
+            return Redirect::route('dashboard')->with([
+                'toast_type' => 'warning',
+                'toast_message' => "Logged as ':user'.",
+                'toast_replacements' => ['user' => $user->name],
+            ]);
+        } else {
+            return Redirect::back()->with([
+                'toast_type' => 'error',
+                'toast_message' => 'This action is unauthorized.',
+            ]);
+        }
     }
 
     public function returnToMyUser(Request $request): RedirectResponse
@@ -298,7 +305,8 @@ class UsersController extends Controller
 
     public function edit(User $user): Response
     {
-        $this->authorize('allow', $user);
+        $this->authorize('fullAccess', $user);
+        $this->authorize('allowedUnits', $user);
 
         return Inertia::render('Default', [
             'form' => $this->__form(),
