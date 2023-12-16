@@ -231,6 +231,9 @@ class UsersController extends Controller
 
     public function changeUser(Request $request, User $user): RedirectResponse
     {
+        $this->authorize('fullAccess', $user);
+        $this->authorize('allowedUnits', $user);
+
         if (!$request->session()->has('previousUser')) {
             $request->session()->put('previousUser', [
                 'id' => Auth::user()->id,
