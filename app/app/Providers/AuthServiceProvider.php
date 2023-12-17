@@ -13,9 +13,7 @@ class AuthServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        // Gate::guessPolicyNamesUsing(function (string $modelClass) {
-        //     dd($modelClass);
-        // });
+        // Gate::guessPolicyNamesUsing(function (string $modelClass) {});
 
         Gate::before(function (User $user, $ability) {
             if ($user->isSuperAdmin($user)) {

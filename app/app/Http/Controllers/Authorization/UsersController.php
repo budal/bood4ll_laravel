@@ -25,24 +25,14 @@ class UsersController extends Controller
                 'name',
                 'email',
             ],
-            ])->join('unit_user', 'unit_user.user_id', '=', 'users.id')
-
+            ])
+            ->join('unit_user', 'unit_user.user_id', '=', 'users.id')
             ->when(!$request->user()->isSuperAdmin(), function ($query) use ($request) {
                 if (!$request->user()->hasFullAccess()) {
                     $query->where('unit_user.user_id', $request->user()->id);
                 }
 
-                if ($request->user()->canManageNested()) {
-                    $units = $request->user()->units()->get()->flatten()->pluck('id')->union(
-                        $request->user()->units()->get()->map->getAllChildren()->flatten()->pluck('id')
-                    );
-
-                    $query->whereIn('unit_user.unit_id', $units);
-                } else {
-                    $units = $request->user()->units()->get()->flatten()->pluck('id');
-
-                    $query->whereIn('unit_user.unit_id', $units);
-                }
+                $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
             })
             ->where('unit_user.primary', true)
             ->with('unitsClassified', 'unitsWorking')

@@ -23,6 +23,19 @@ class RolesController extends Controller
     public function index(Request $request): Response
     {
         $roles = Role::filter($request, 'roles')
+            ->leftjoin('role_user', 'role_user.role_id', '=', 'roles.id')
+            ->leftjoin('unit_user', 'unit_user.user_id', '=', 'role_user.user_id')
+            ->select('roles.id', 'roles.name')
+            ->groupBy('roles.id', 'roles.name')
+            ->when(!$request->user()->isSuperAdmin(), function ($query) use ($request) {
+                $query->whereIn('roles.id', $request->user()->roles->pluck('id'));
+
+                if (!$request->user()->hasFullAccess()) {
+                    $query->where('unit_user.user_id', $request->user()->id);
+                }
+
+                $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
+            })
             ->withCount('abilities', 'users')
             ->paginate(20)
             ->onEachSide(2)
@@ -360,6 +373,8 @@ class RolesController extends Controller
 
     public function store(RolesRequest $request): RedirectResponse
     {
+        $abilities = collect($request->abilities)->pluck('id');
+
         DB::beginTransaction();
 
         try {
@@ -377,7 +392,7 @@ class RolesController extends Controller
             $role->save();
 
             try {
-                $role->abilities()->sync($request->abilities);
+                $role->abilities()->sync($abilities);
             } catch (\Exception $e) {
                 report($e);
 
@@ -430,7 +445,6 @@ class RolesController extends Controller
     public function update(Request $request, Role $role): RedirectResponse
     {
         $abilities = collect($request->abilities)->pluck('id');
-        // dd($abilities);
 
         DB::beginTransaction();
 

@@ -72,14 +72,19 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->abilities()->pluck('superadmin')->contains(true);
     }
 
+    public function isManager()
+    {
+        return $this->abilities()->pluck('manager')->contains(true);
+    }
+
     public function hasFullAccess()
     {
-        return $this->abilities()->where('full_access', true)->pluck('ability')->contains(\Route::currentRouteName());
+        return $this->abilities()->where('full_access', true)->pluck('ability')->contains(\Route::currentRouteName()) ? true : false;
     }
 
     public function canManageNested()
     {
-        return $this->abilities()->where('manage_nested', true)->pluck('ability')->contains(\Route::currentRouteName());
+        return $this->abilities()->where('manage_nested', true)->pluck('ability')->contains(\Route::currentRouteName()) ? true : false;
     }
 
     public function unitsClassified(): BelongsToMany
@@ -102,5 +107,16 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         $base = new Base();
         $base->scopeFilter($query, $request, $prefix, $options);
+    }
+
+    public function scopeUnitsIds()
+    {
+        if ($this->canManageNested() === true) {
+            return $this->units()->get()->flatten()->pluck('id')->union(
+                $this->units()->get()->map->getAllChildren()->flatten()->pluck('id')
+            );
+        } else {
+            return $this->units()->get()->flatten()->pluck('id');
+        }
     }
 }

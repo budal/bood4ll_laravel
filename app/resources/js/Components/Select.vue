@@ -30,6 +30,7 @@ const props = withDefaults(
         selected?: any;
         disableSearch?: boolean;
         required?: boolean;
+        autocomplete?: boolean;
         multiple?: boolean;
     }>(),
     {
@@ -52,7 +53,10 @@ const filteredPeople = computed(() =>
           }),
 );
 
-const selectedIds = props.modelValue.map((item: any) => item.id);
+const selectedIds =
+    props.modelValue.length > 0
+        ? props.modelValue.map((item: any) => item.id)
+        : [];
 
 const selectedContent = props.content.filter((item: any) => {
     return selectedIds.includes(item.id);
@@ -125,6 +129,7 @@ watch(
                             :id="id"
                             :name="name"
                             placeholder="Fruits..."
+                            :autocomplete="autocomplete ? name : 'off'"
                             :required="required && selectedContent.length === 0"
                             class="p-0 w-full bg-transparent text-ellipsis border-0 outline-0 focus:ring-0 placeholder:text-sm placeholder-primary-dark/20 dark:placeholder-primary-dark/20 text-zero-light dark:text-zero-dark"
                             @keydown.enter.prevent

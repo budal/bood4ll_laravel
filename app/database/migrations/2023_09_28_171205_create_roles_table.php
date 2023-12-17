@@ -16,6 +16,7 @@ return new class() extends Migration {
             $table->string('description', 255)->nullable();
             $table->boolean('inalterable')->default(false);
             $table->boolean('superadmin')->default(false);
+            $table->boolean('manager')->default(false);
             $table->boolean('active')->default(true);
             $table->boolean('lock_on_expire')->default(false);
             $table->date('expires_at')->nullable();
