@@ -19,25 +19,22 @@ class Base extends Model
 
         $search = array_filter($filters, function ($key) use ($prefix) {
             return strpos($key, $prefix
-                ? ($prefix.'_search')
-                : 'search') !== false
-            ;
+                ? ($prefix . '_search')
+                : 'search') !== false;
         }, ARRAY_FILTER_USE_KEY);
         $filterSearch = reset($search);
 
         $trash = array_filter($filters, function ($key) use ($prefix) {
             return strpos($key, $prefix
-                ? ($prefix.'_trash')
-                : 'trash') !== false
-            ;
+                ? ($prefix . '_trash')
+                : 'trash') !== false;
         }, ARRAY_FILTER_USE_KEY);
         $filterTrash = reset($trash);
 
         $sort = array_filter($filters, function ($key) use ($prefix) {
             return strpos($key, $prefix
-                ? ($prefix.'_sorted')
-                : 'sorted') !== false
-            ;
+                ? ($prefix . '_sorted')
+                : 'sorted') !== false;
         }, ARRAY_FILTER_USE_KEY);
         $filterSort = reset($sort);
 
@@ -45,9 +42,9 @@ class Base extends Model
             $query->where(function ($query) use ($search, $tableName, $where) {
                 foreach ($where as $key => $item) {
                     if ($key == 0) {
-                        $query->where("$tableName.$item", 'ilike', '%'.$search.'%');
+                        $query->where("$tableName.$item", 'ilike', '%' . $search . '%');
                     } else {
-                        $query->orWhere("$tableName.$item", 'ilike', '%'.$search.'%');
+                        $query->orWhere("$tableName.$item", 'ilike', '%' . $search . '%');
                     }
                 }
             });
@@ -58,22 +55,18 @@ class Base extends Model
                 $query->onlyTrashed();
             }
         })
-        ->when($filterSort ? [$filterSort] : $order, function ($query, $sortItems) {
-            foreach ($sortItems as $sort) {
-                $sort_order = 'ASC';
+            ->when($filterSort ? [$filterSort] : $order, function ($query, $sortItems) {
+                foreach ($sortItems as $sort) {
+                    $sort_order = 'ASC';
 
-                if (strncmp($sort, '-', 1) === 0) {
-                    $sort_order = 'DESC';
-                    $sort = substr($sort, 1);
+                    if (strncmp($sort, '-', 1) === 0) {
+                        $sort_order = 'DESC';
+                        $sort = substr($sort, 1);
+                    }
+
+                    $query->orderBy($sort, $sort_order);
                 }
-
-                $query->orderBy($sort, $sort_order);
-            }
-        });
-    }
-
-    public function scopeUnitFilter($value, $field = null)
-    {
+            });
     }
 
     public function resolveRouteBinding($value, $field = null)
