@@ -112,46 +112,45 @@ class RolesController extends Controller
             ->orderBy('name')
             ->get();
 
-        if ($request->all) {
-            $users = User::filter($request, 'users')
-                ->with('unitsClassified', 'unitsWorking')
-                ->paginate(20)
-                ->onEachSide(2)
-                ->appends(collect($request->query)->toArray())
-                ->through(function ($item) use ($role) {
-                    $item->checked = in_array($role->id, $item->roles->pluck('id')->toArray());
+        $source = $request->all ? User::with('units') : $role->users();
 
-                    $item->unitsClassified->map(function ($item) {
-                        $item->name = $item->getParentsNames();
-                    });
+        $users = $source
+            ->filter($request, 'users')
+            ->when(!$request->user()->isSuperAdmin(), function ($query) use ($request) {
+                // $query->join('role_user', 'role_user.user_id', '=', 'users.id');
+                // $query->join('role_user', 'role_user.role_id', '=', 'roles.id');
+                // $query->whereIn('roles.id', $request->user()->roles->pluck('id'));
 
-                    $item->unitsWorking->map(function ($item) {
-                        $item->name = $item->getParentsNames();
-                    });
+                // ////// $request
 
-                    return $item;
+                $query->when(!$request->all, function ($query) use ($request) {
+                    $query->join('unit_user', 'unit_user.user_id', '=', 'users.id');
+
+                    if (!$request->user()->hasFullAccess()) {
+                        $query->where('unit_user.user_id', $request->user()->id);
+                    }
                 });
-        } else {
-            $users = $role->users()
-                ->filter($request, 'users')
-                ->with('unitsClassified', 'unitsWorking')
-                ->paginate(20)
-                ->onEachSide(2)
-                ->appends(collect($request->query)->toArray())
-                ->through(function ($item) {
-                    $item->checked = true;
+                $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
+            })
+            ->with('roles', 'unitsClassified', 'unitsWorking')
+            ->paginate(20)
+            ->onEachSide(2)
+            ->appends(collect($request->query)->toArray())
+            ->through(function ($item) use ($role) {
+                $item->checked = in_array($role->id, $item->roles->pluck('id')->toArray());
 
-                    $item->unitsClassified->map(function ($item) {
-                        $item->name = $item->getParentsNames();
-                    });
-
-                    $item->unitsWorking->map(function ($item) {
-                        $item->name = $item->getParentsNames();
-                    });
-
-                    return $item;
+                $item->unitsClassified->map(function ($item) {
+                    $item->name = $item->getParentsNames();
                 });
-        }
+
+                $item->unitsWorking->map(function ($item) {
+                    $item->name = $item->getParentsNames();
+                });
+
+                return $item;
+            });
+
+        // dd($users);
 
         return [
             [
@@ -460,6 +459,13 @@ class RolesController extends Controller
                 return Redirect::back()->with([
                     'toast_type' => 'error',
                     'toast_message' => 'Define the expiration date.',
+                ]);
+            }
+
+            if ($request->manage_nested && !$request->full_access) {
+                return Redirect::back()->with([
+                    'toast_type' => 'error',
+                    'toast_message' => "It's impossible manage nested data whitout full access.",
                 ]);
             }
 

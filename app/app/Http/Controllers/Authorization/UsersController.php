@@ -27,7 +27,7 @@ class UsersController extends Controller
             ],
             ])
             ->when(!$request->user()->isSuperAdmin(), function ($query) use ($request) {
-                $query->leftjoin('unit_user', 'unit_user.user_id', '=', 'users.id');
+                $query->join('unit_user', 'unit_user.user_id', '=', 'users.id');
 
                 if (!$request->user()->hasFullAccess()) {
                     $query->where('unit_user.user_id', $request->user()->id);
