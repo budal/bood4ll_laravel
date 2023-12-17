@@ -15,6 +15,7 @@ return new class() extends Migration {
             $table->string('name', 100);
             $table->string('description', 255)->nullable();
             $table->boolean('inalterable')->default(false);
+            $table->uuid('owner')->nullable();
             $table->boolean('superadmin')->default(false);
             $table->boolean('manager')->default(false);
             $table->boolean('active')->default(true);

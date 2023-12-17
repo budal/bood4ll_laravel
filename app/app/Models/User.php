@@ -61,7 +61,7 @@ class User extends Authenticatable implements MustVerifyEmail
     public function abilities()
     {
         return $this->roles()
-            ->select('roles.id', 'roles.name', 'abilities.name AS ability', 'roles.superadmin', 'roles.full_access', 'roles.lock_on_expire', 'roles.expires_at')
+            ->select('roles.id', 'roles.name', 'abilities.name AS ability', 'roles.superadmin', 'roles.manager', 'roles.full_access', 'roles.lock_on_expire', 'roles.expires_at')
             ->leftjoin('ability_role', 'ability_role.role_id', '=', 'roles.id')
             ->leftjoin('abilities', 'abilities.id', '=', 'ability_role.ability_id')
             ->where('active', true);
@@ -69,12 +69,12 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function isSuperAdmin()
     {
-        return $this->abilities()->pluck('superadmin')->contains(true);
+        return $this->abilities()->pluck('superadmin')->contains(true) ? true : false;
     }
 
     public function isManager()
     {
-        return $this->abilities()->pluck('manager')->contains(true);
+        return $this->abilities()->pluck('manager')->contains(true) ? true : false;
     }
 
     public function hasFullAccess()

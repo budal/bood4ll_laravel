@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ref, watch } from "vue";
 import {
     ComboboxAnchor,
     ComboboxContent,
@@ -19,7 +18,8 @@ import {
     TagsInputRoot,
 } from "radix-vue";
 import { Icon } from "@iconify/vue";
-import { computed } from "vue";
+import { Link } from "@inertiajs/vue3";
+import { ref, watch, computed } from "vue";
 
 const props = withDefaults(
     defineProps<{
@@ -43,7 +43,7 @@ const emit = defineEmits(["update:modelValue"]);
 
 const searchTerm = ref("");
 
-const filteredPeople = computed(() =>
+const filteredContent = computed(() =>
     searchTerm.value === ""
         ? props.content
         : props.content.filter((item: { key: number; name: string }) => {
@@ -62,7 +62,7 @@ const selectedContent = props.content.filter((item: any) => {
     return selectedIds.includes(item.id);
 });
 
-const selectedPeople = ref(selectedContent);
+const selectedItems = ref(selectedContent);
 
 const onEscape = () => {
     searchTerm.value = "";
@@ -84,7 +84,7 @@ watch(
 
 <template>
     <ComboboxRoot
-        v-model="selectedPeople"
+        v-model="selectedItems"
         v-model:search-term="searchTerm"
         :multiple="multiple"
         @update:open="onOpen"
@@ -100,13 +100,13 @@ watch(
             </div> -->
 
             <TagsInputRoot
-                v-slot="{ values: selectedPeople }"
-                :model-value="selectedPeople"
+                v-slot="{ values: selectedItems }"
+                :model-value="selectedItems"
                 delimiter=""
                 class="flex flex-wrap gap-1 items-center my-[6px] ml-2 w-full"
             >
                 <TagsInputItem
-                    v-for="item in selectedPeople"
+                    v-for="item in selectedItems"
                     :key="item"
                     :value="item"
                     class="p-1 flex items-center justify-center gap-2 text-zero-light dark:text-zero-dark rounded-md placeholder:text-xs sm:placeholder:text-sm text-xs sm:text-sm aria-[current=true]:bg-grass9 bg-zero-light dark:bg-zero-dark ring-0 border border-zero-light dark:border-zero-dark"
@@ -158,10 +158,10 @@ watch(
 
                 <ComboboxGroup>
                     <ComboboxItem
-                        v-for="person in filteredPeople"
-                        :key="person.id"
-                        :value="person"
-                        :disabled="person.disabled"
+                        v-for="item in filteredContent"
+                        :key="item.id"
+                        :value="item"
+                        :disabled="item.disabled"
                         class="text-sm p-3 leading-none pr-[35px] pl-[25px] relative select-none data-[disabled]:opacity-25 data-[disabled]:pointer-events-none data-[highlighted]:outline-none data-[highlighted]:bg-zero-light-hover dark:data-[highlighted]:bg-zero-dark-hover cursor-pointer"
                     >
                         <ComboboxItemIndicator
@@ -170,7 +170,7 @@ watch(
                             <Icon icon="radix-icons:check" />
                         </ComboboxItemIndicator>
                         <span>
-                            {{ person.name }}
+                            {{ item.name }}
                         </span>
                     </ComboboxItem>
                 </ComboboxGroup>

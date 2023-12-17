@@ -105,7 +105,12 @@ class RolesController extends Controller
 
     public function __form(Request $request, Role $role): array
     {
-        $abilities = Ability::orderBy('name')->get();
+        $abilities = Ability::when(
+            !$request->user()->isSuperAdmin(), function ($query) use ($request) {
+                $query->whereIn('name', $request->user()->abilities->where('ability', '!=', null)->pluck('ability'));
+            })
+            ->orderBy('name')
+            ->get();
 
         if ($request->all) {
             $users = User::filter($request, 'users')
@@ -153,6 +158,7 @@ class RolesController extends Controller
                 'id' => 'role',
                 'title' => 'Main data',
                 'subtitle' => 'Role name, abilities and settings',
+                'condition' => $request->user()->isSuperAdmin() || $request->user()->isManager() || $role->owner == $request->user()->id,
                 'cols' => 3,
                 'fields' => [
                     [
@@ -382,6 +388,7 @@ class RolesController extends Controller
 
             $role->name = $request->name;
             $role->description = $request->description;
+            $role->owner = $request->user()->id;
             $role->active = $request->active;
             $role->lock_on_expire = $request->lock_on_expire;
             $role->expires_at = $request->expires_at;
