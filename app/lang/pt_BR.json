@@ -49,7 +49,7 @@
   "No items to show.": "Sem itens para exibir.",
   "Showing :from to :to of :total results": "Exibindo :from a :to de :total resultados",
   "Define the expiration date.": "Defina a data de expiração.",
-  "It's impossible manage nested data whitout full access.": "É impossível gerenciar dados aninhados sem acesso completo.",
+  "It is impossible to manage nested data without enabling 'full access'.": "É impossível gerenciar dados aninhados sem ativar o 'acesso completo'.",
   "Manage nested data": "Gerenciar dados aninhados",
   "Remove on transfer": "Remover na transferência",
   "Lock on expire": "Travar ao expirar",

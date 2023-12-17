@@ -106,22 +106,22 @@ class RolesController extends Controller
     public function __form(Request $request, Role $role): array
     {
         $abilities = Ability::when(
-            !$request->user()->isSuperAdmin(), function ($query) use ($request) {
+            !$request->user()->isSuperAdmin(),
+            function ($query) use ($request) {
                 $query->whereIn('name', $request->user()->abilities->where('ability', '!=', null)->pluck('ability'));
-            })
+            }
+        )
             ->orderBy('name')
             ->get();
 
-        $source = $request->all ? User::with('units') : $role->users();
+        $source = $request->all ? new User() : $role->users();
 
         $users = $source
             ->filter($request, 'users')
             ->when(!$request->user()->isSuperAdmin(), function ($query) use ($request) {
-                // $query->join('role_user', 'role_user.user_id', '=', 'users.id');
-                // $query->join('role_user', 'role_user.role_id', '=', 'roles.id');
-                // $query->whereIn('roles.id', $request->user()->roles->pluck('id'));
+                // $query->join('unit_user', 'unit_user.user_id', '=', 'users.id');
 
-                // ////// $request
+                // $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
 
                 $query->when(!$request->all, function ($query) use ($request) {
                     $query->join('unit_user', 'unit_user.user_id', '=', 'users.id');
@@ -129,28 +129,19 @@ class RolesController extends Controller
                     if (!$request->user()->hasFullAccess()) {
                         $query->where('unit_user.user_id', $request->user()->id);
                     }
+
+                    $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
                 });
-                $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
             })
-            ->with('roles', 'unitsClassified', 'unitsWorking')
+            ->with('unitsClassified', 'unitsWorking')
             ->paginate(20)
             ->onEachSide(2)
             ->appends(collect($request->query)->toArray())
             ->through(function ($item) use ($role) {
                 $item->checked = in_array($role->id, $item->roles->pluck('id')->toArray());
 
-                $item->unitsClassified->map(function ($item) {
-                    $item->name = $item->getParentsNames();
-                });
-
-                $item->unitsWorking->map(function ($item) {
-                    $item->name = $item->getParentsNames();
-                });
-
                 return $item;
             });
-
-        // dd($users);
 
         return [
             [
@@ -304,17 +295,17 @@ class RolesController extends Controller
                                 'titles' => [
                                     [
                                         'type' => 'composite',
-                                            'title' => 'User',
-                                            'field' => 'name',
-                                            'values' => [
-                                                [
-                                                    'field' => 'name',
-                                                ],
-                                                [
-                                                    'field' => 'email',
-                                                    'class' => 'text-xs',
-                                                ],
+                                        'title' => 'User',
+                                        'field' => 'name',
+                                        'values' => [
+                                            [
+                                                'field' => 'name',
                                             ],
+                                            [
+                                                'field' => 'email',
+                                                'class' => 'text-xs',
+                                            ],
+                                        ],
                                     ],
                                     [
                                         'type' => 'composite',
@@ -465,7 +456,7 @@ class RolesController extends Controller
             if ($request->manage_nested && !$request->full_access) {
                 return Redirect::back()->with([
                     'toast_type' => 'error',
-                    'toast_message' => "It's impossible manage nested data whitout full access.",
+                    'toast_message' => "It is impossible to manage nested data without enabling 'full access'.",
                 ]);
             }
 
@@ -690,8 +681,8 @@ class RolesController extends Controller
             ],
             'data' => $role,
         ])
-        ->baseRoute('apps.roles.edit', $role)
-        // ->refreshBackdrop()
+            ->baseRoute('apps.roles.edit', $role)
+            // ->refreshBackdrop()
         ;
     }
 }
