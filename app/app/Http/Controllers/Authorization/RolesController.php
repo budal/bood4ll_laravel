@@ -429,6 +429,9 @@ class RolesController extends Controller
 
     public function update(Request $request, Role $role): RedirectResponse
     {
+        $abilities = collect($request->abilities)->pluck('id');
+        // dd($abilities);
+
         DB::beginTransaction();
 
         try {
@@ -451,7 +454,7 @@ class RolesController extends Controller
             $role->save();
 
             try {
-                $role->abilities()->sync($request->abilities);
+                $role->abilities()->sync($abilities);
             } catch (\Exception $e) {
                 report($e);
 

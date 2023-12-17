@@ -159,34 +159,6 @@ class UsersController extends Controller
 
     public function __form(): array
     {
-        $states = [
-            [
-                'id' => 'PR',
-                'title' => 'Paraná',
-                'disabled' => false,
-            ],
-            [
-                'id' => 'SP',
-                'title' => 'São Paulo',
-                'disabled' => false,
-            ],
-            [
-                'id' => 'RJ',
-                'title' => 'Rio de Janeiro',
-                'disabled' => false,
-            ],
-            [
-                'id' => 'PI',
-                'title' => 'Piauí',
-                'disabled' => true,
-            ],
-            [
-                'id' => 'SE',
-                'title' => 'Sergipe',
-                'disabled' => false,
-            ],
-        ];
-
         return [
             [
                 'id' => 'profile',
@@ -211,12 +183,6 @@ class UsersController extends Controller
                             'type' => 'input',
                             'name' => 'username',
                             'title' => 'Username',
-                        ],
-                        [
-                            'type' => 'select',
-                            'content' => $states,
-                            'name' => 'state_birth',
-                            'title' => 'State',
                         ],
                     ],
                 ],

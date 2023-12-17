@@ -1,17 +1,25 @@
 <script setup lang="ts">
-import SelectItems from "@/Components/SelectItems.vue";
-import { Icon } from "@iconify/vue";
+import { ref, watch } from "vue";
 import {
     ComboboxAnchor,
     ComboboxContent,
     ComboboxEmpty,
+    ComboboxGroup,
     ComboboxInput,
+    ComboboxItem,
+    ComboboxItemIndicator,
+    ComboboxLabel,
     ComboboxRoot,
     ComboboxTrigger,
     ComboboxViewport,
+    TagsInputInput,
+    TagsInputItem,
+    TagsInputItemDelete,
+    TagsInputItemText,
+    TagsInputRoot,
 } from "radix-vue";
-import { Link } from "@inertiajs/vue3";
-import { ref, computed } from "vue";
+import { Icon } from "@iconify/vue";
+import { computed } from "vue";
 
 const props = withDefaults(
     defineProps<{
@@ -32,174 +40,136 @@ const props = withDefaults(
 
 const emit = defineEmits(["update:modelValue"]);
 
-const searchInput = ref("");
+const searchTerm = ref("");
 
-const getListId = (data: any) => {
-    if (typeof data === "object" || data instanceof Object)
-        return data
-            .map((d: any) =>
-                d.children_recursive
-                    ? [d.id, ...getFlatList(d.children_recursive)]
-                    : [d.id],
-            )
-            .flat();
-    else if (data === "") return props.multiple === true ? [] : null;
-    else return props.multiple === true ? [data] : data;
-};
-
-const selectedItems = ref(getListId(props.modelValue));
-
-emit("update:modelValue", selectedItems);
-
-const getFlatList = (data: any) =>
-    data
-        .map((d: any) =>
-            d.children_recursive
-                ? [d, ...getFlatList(d.children_recursive)]
-                : [d],
-        )
-        .flat();
-
-const flatContent = getFlatList(props.content);
-
-const showContent = computed(() => {
-    if (props.multiple === true) {
-        return flatContent.filter((x: any) =>
-            selectedItems.value.includes(x.id),
-        );
-    } else {
-        return flatContent.filter((x: any) => x.id == selectedItems.value);
-    }
-});
-
-const removeItem = (id: number) => {
-    let index = selectedItems.value.indexOf(id);
-    selectedItems.value.splice(index, 1);
-};
-
-function filterArray(arrayList: any, search: string) {
-    return arrayList.filter((item: any) => {
-        let childrens = item.children_recursive;
-
-        if (childrens) {
-            item.children_recursive = filterArray(childrens, search);
-
-            if (item.children_recursive && item.children_recursive.length) {
-                return true;
-            }
-        }
-
-        return item.name.toLowerCase().indexOf(search) > -1;
-    });
-}
-
-const filteredItems = computed(() =>
-    searchInput.value === ""
-        ? JSON.parse(JSON.stringify(props.content))
-        : filterArray(
-              JSON.parse(JSON.stringify(props.content)),
-              searchInput.value,
-          ),
+const filteredPeople = computed(() =>
+    searchTerm.value === ""
+        ? props.content
+        : props.content.filter((item: { key: number; name: string }) => {
+              return item.name
+                  .toLowerCase()
+                  .includes(searchTerm.value.toLowerCase());
+          }),
 );
 
+const selectedIds = props.modelValue.map((item: any) => item.id);
+
+const selectedContent = props.content.filter((item: any) => {
+    return selectedIds.includes(item.id);
+});
+
+const selectedPeople = ref(selectedContent);
+
 const onEscape = () => {
-    searchInput.value = "";
+    searchTerm.value = "";
 };
 
 const onOpen = () => {
     onEscape();
-    emit("update:modelValue", selectedItems);
+    emit("update:modelValue", selectedContent);
 };
 
-const selectItems = props.disableSearch
-    ? JSON.parse(JSON.stringify(props.content))
-    : filteredItems;
+watch(
+    selectedContent,
+    () => {
+        searchTerm.value = "";
+    },
+    { deep: true },
+);
 </script>
 
 <template>
     <ComboboxRoot
-        v-model="selectedItems"
-        v-model:searchInput="searchInput"
-        class="relative"
+        v-model="selectedPeople"
+        v-model:search-term="searchTerm"
         :multiple="multiple"
         @update:open="onOpen"
+        class="my-4 mx-auto relative"
     >
         <ComboboxAnchor
-            class="relative w-full min-h-[41px] flex bg-zero-white dark:bg-zero-black border border-zero-light dark:border-zero-dark rounded-md focus-within:outline-none focus-within:ring-2 focus-within:ring-primary-light dark:focus-within:ring-primary-dark focus-within:ring-offset-1 focus-within:ring-offset-primary-light dark:focus-within:ring-offset-primary-dark shadow-primary-light/20 dark:shadow-primary-dark/20 shadow-[0_2px_10px] focus-within:shadow-[0_0_0_2px] focus-within:shadow-primary-light dark:focus-within:shadow-primary-dark transition ease-in-out duration-500 disabled:opacity-25"
+            class="w-full min-h-[41px] inline-flex items-center justify-between text-[13px] leading-none gap-[5px] bg-zero-white dark:bg-zero-black border border-zero-light dark:border-zero-dark rounded-md focus-within:outline-none focus-within:ring-2 focus-within:ring-primary-light dark:focus-within:ring-primary-dark focus-within:ring-offset-1 focus-within:ring-offset-primary-light dark:focus-within:ring-offset-primary-dark shadow-primary-light/20 dark:shadow-primary-dark/20 shadow-[0_2px_10px] focus-within:shadow-[0_0_0_2px] focus-within:shadow-primary-light dark:focus-within:shadow-primary-dark data-[placeholder]:text-zero-light/50 transition ease-in-out duration-500 disabled:opacity-25"
         >
-            <div class="w-full">
+            <!-- <div class="w-full">
                 <div class="flex flex-wrap gap-1 items-center my-[6px] ml-2">
-                    <div
-                        v-for="item in showContent"
-                        :class="
-                            multiple
-                                ? 'p-1 flex items-center text-zero-light dark:text-zero-dark rounded-md placeholder:text-xs sm:placeholder:text-sm text-xs sm:text-sm bg-zero-light dark:bg-zero-dark ring-0 border border-zero-light dark:border-zero-dark'
-                                : 'items-center text-zero-light dark:text-zero-dark rounded-md placeholder:text-xs sm:placeholder:text-sm bg-zero-white dark:bg-zero-black'
-                        "
-                    >
-                        {{ $t(item.name) }}
-                        <button
-                            v-if="multiple"
-                            @click="removeItem(item.id)"
-                            type="button"
-                            class="ml-1 rounded-full focus:outline-none focus:ring-2 focus:ring-zero-light dark:focus:ring-zero-dark focus:ring-offset-1 focus:ring-offset-zero-light dark:focus:ring-offset-zero-dark"
-                        >
-                            <Icon
-                                icon="mdi:close-circle-outline"
-                                class="w-4 h-4 text-zero-light dark:text-zero-dark cursor-pointer"
-                                :key="item.id"
-                            />
-                        </button>
-                    </div>
-                    <ComboboxTrigger class="grow w-0">
-                        <ComboboxInput
-                            v-if="!disableSearch"
-                            v-model="searchInput"
+                    wwww
+                </div>
+            </div> -->
+
+            <TagsInputRoot
+                v-slot="{ values: selectedPeople }"
+                :model-value="selectedPeople"
+                delimiter=""
+                class="flex flex-wrap gap-1 items-center my-[6px] ml-2 w-full"
+            >
+                <TagsInputItem
+                    v-for="item in selectedPeople"
+                    :key="item"
+                    :value="item"
+                    class="p-1 flex items-center justify-center gap-2 text-zero-light dark:text-zero-dark rounded-md placeholder:text-xs sm:placeholder:text-sm text-xs sm:text-sm aria-[current=true]:bg-grass9 bg-zero-light dark:bg-zero-dark ring-0 border border-zero-light dark:border-zero-dark"
+                >
+                    <TagsInputItemText class="text-sm">{{
+                        // @ts-expect-error
+                        item.name
+                    }}</TagsInputItemText>
+                    <TagsInputItemDelete>
+                        <Icon
+                            icon="mdi:close-circle-outline"
+                            class="w-4 h-4 text-zero-light dark:text-zero-dark cursor-pointer"
+                        />
+                    </TagsInputItemDelete>
+                </TagsInputItem>
+
+                <ComboboxTrigger class="grow w-0">
+                    <ComboboxInput as-child>
+                        <TagsInputInput
                             :id="id"
                             :name="name"
-                            :required="required && showContent.length === 0"
-                            autocomplete="off"
+                            placeholder="Fruits..."
+                            :required="required && selectedContent.length === 0"
                             class="p-0 w-full bg-transparent text-ellipsis border-0 outline-0 focus:ring-0 placeholder:text-sm placeholder-primary-dark/20 dark:placeholder-primary-dark/20 text-zero-light dark:text-zero-dark"
+                            @keydown.enter.prevent
                         />
-                    </ComboboxTrigger>
-                </div>
-            </div>
+                    </ComboboxInput>
+                </ComboboxTrigger>
+            </TagsInputRoot>
+
             <ComboboxTrigger>
-                <div
-                    class="inset-y-0 right-0 mr-2 flex items-center pointer-events-none"
-                >
-                    <button
-                        :id="id"
-                        :name="name"
-                        type="button"
-                        class="ml-1 rounded-full focus:outline-none focus:ring-2 focus:ring-primary-light dark:focus:ring-primary-dark focus:ring-offset-1 focus:ring-offset-primary-light dark:focus:ring-offset-primary-dark"
-                    >
-                        <Icon
-                            icon="mdi:chevron-down"
-                            class="w-6 h-6 text-zero-light dark:text-zero-dark"
-                        />
-                    </button>
-                </div>
+                <Icon
+                    icon="mdi:chevron-down"
+                    class="w-6 h-6 text-zero-light dark:text-zero-dark"
+                />
             </ComboboxTrigger>
         </ComboboxAnchor>
-
         <ComboboxContent
-            class="absolute z-[4] w-full mt-1 min-w-[160px] overflow-hidden bg-zero-white dark:bg-zero-black text-zero-light dark:text-zero-dark rounded-md border border-zero-light dark:border-zero-dark focus:outline-none focus:ring-2 focus:ring-primary-light dark:focus:ring-primary-dark focus:ring-offset-1 focus:ring-offset-primary-light dark:focus:ring-offset-primary-dark"
             @escapeKeyDown="onEscape"
             @pointerDownOutside="onEscape"
             @closeAutoFocus="onEscape"
+            class="absolute z-[4] w-full mt-1 min-w-[160px] overflow-hidden bg-zero-white dark:bg-zero-black text-zero-light dark:text-zero-dark rounded-md border border-zero-light dark:border-zero-dark focus:outline-none focus:ring-2 focus:ring-primary-light dark:focus:ring-primary-dark focus:ring-offset-1 focus:ring-offset-primary-light dark:focus:ring-offset-primary-dark shadow-[0px_10px_38px_-10px_rgba(22,_23,_24,_0.35),_0px_10px_20px_-15px_rgba(22,_23,_24,_0.2)] will-change-[opacity,transform] data-[side=top]:animate-slideDownAndFade data-[side=right]:animate-slideLeftAndFade data-[side=bottom]:animate-slideUpAndFade data-[side=left]:animate-slideRightAndFade"
         >
             <ComboboxViewport class="p-[5px] max-h-60">
                 <ComboboxEmpty class="text-xs font-medium text-center">{{
                     $t("No items to show.")
                 }}</ComboboxEmpty>
-                <SelectItems :items="selectItems" />
+
+                <ComboboxGroup>
+                    <ComboboxItem
+                        v-for="person in filteredPeople"
+                        :key="person.id"
+                        :value="person"
+                        :disabled="person.disabled"
+                        class="text-sm p-3 leading-none pr-[35px] pl-[25px] relative select-none data-[disabled]:opacity-25 data-[disabled]:pointer-events-none data-[highlighted]:outline-none data-[highlighted]:bg-zero-light-hover dark:data-[highlighted]:bg-zero-dark-hover cursor-pointer"
+                    >
+                        <ComboboxItemIndicator
+                            class="absolute left-0 w-[25px] inline-flex items-center justify-center"
+                        >
+                            <Icon icon="radix-icons:check" />
+                        </ComboboxItemIndicator>
+                        <span>
+                            {{ person.name }}
+                        </span>
+                    </ComboboxItem>
+                </ComboboxGroup>
             </ComboboxViewport>
         </ComboboxContent>
     </ComboboxRoot>
-    <!-- <p v-if="selectItems.length == 0" class="text-xs font-medium text-center">
-    <Link :href="route('apps.abilities.index')">
-      {{ $t('There are no abilities to select. Click here to manage them.') }}
-    </Link>
-  </p> -->
 </template>
