@@ -19,7 +19,7 @@ const activeTab = new URL(window.location.href);
 
 const __tab = activeTab.searchParams.get("__tab");
 
-const defaultTab = props.items.find((item: any) => item.condition !== false);
+const defaultTab = props.items.find((item: any) => item.showIf !== false);
 
 const tab = ref(
     (props.items.some((tab: any) => tab.id === __tab)
@@ -56,7 +56,7 @@ const onChangeTab = (name: string) => {
             </TabsIndicator>
             <template v-for="item in items">
                 <TabsTrigger
-                    v-if="item.condition !== false"
+                    v-if="item.showIf !== false"
                     class="bg-zero-light dark:bg-zero-dark text-zero-light/50 dark:text-zero-dark/50 px-5 h-[45px] flex-1 flex items-center justify-center leading-none select-none hover:text-secondary-light hover:dark:text-secondary-dark data-[state=active]:bg-zero-light-hover data-[state=active]:dark:bg-zero-dark-hover data-[state=active]:text-zero-light data-[state=active]:dark:text-zero-dark data-[state=active]:font-bold data-[state=active]:uppercase outline-none cursor-pointer transition ease-in-out duration-500"
                     :value="`${item.id}`"
                 >
@@ -70,7 +70,7 @@ const onChangeTab = (name: string) => {
             :value="`${item.id}`"
             forceMount
         >
-            <section v-if="item.condition !== false">
+            <section v-if="item.showIf !== false">
                 <header v-if="item.title || item.subtitle" class="mb-6">
                     <p
                         v-if="item.subtitle"
@@ -87,7 +87,7 @@ const onChangeTab = (name: string) => {
     <div v-else class="grid grid-cols-1 gap-10">
         <template v-for="item in items">
             <section
-                v-if="item.condition !== false"
+                v-if="item.showIf !== false"
                 class="rounded-xl p-2 sm:p-8 bg-zero-light dark:bg-zero-dark sm:rounded-lg shadow-primary-light/20 dark:shadow-primary-dark/20 shadow-[0_2px_10px]"
             >
                 <header v-if="item.title || item.subtitle" class="mb-6">

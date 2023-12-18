@@ -97,7 +97,7 @@ const changeTab = (item: any) => {
     <Tabs :items="form" :tabs="tabs" @change-tab="changeTab">
         <template v-for="mkForm in form" v-slot:[mkForm.id]>
             <form
-                v-if="mkForm.condition !== false"
+                v-if="mkForm.showIf !== false"
                 @submit.prevent="sendForm(mkForm.id)"
                 class="space-y-6"
             >
@@ -147,7 +147,7 @@ const changeTab = (item: any) => {
                             >
                                 <template v-for="link in field.values">
                                     <Link
-                                        v-if="link.condition !== false"
+                                        v-if="link.showIf !== false"
                                         :href="isValidUrl(link.route)"
                                         :method="link.method || 'get'"
                                         class="focus:outline-none border-b-2 border-transparent hover:border-zero-dark dark:hover:border-zero-white focus:border-zero-dark dark:focus:border-zero-white transition ease-in-out duration-500"
@@ -184,7 +184,7 @@ const changeTab = (item: any) => {
                                 :disabled="
                                     field.disabled
                                         ? field.disabled
-                                        : data?.inalterable === true
+                                        : mkForm.disabledIf === true
                                 "
                                 :required="field.required"
                                 :autocomplete="field.autocomplete"
@@ -202,7 +202,7 @@ const changeTab = (item: any) => {
                                 :disabled="
                                     field.disabled
                                         ? field.disabled
-                                        : data?.inalterable === true
+                                        : mkForm.disabledIf === true
                                 "
                                 class="mt-1"
                                 v-model="jsForm[field.name]"
@@ -223,7 +223,7 @@ const changeTab = (item: any) => {
                                 :disabled="
                                     field.disabled
                                         ? field.disabled
-                                        : data?.inalterable === true
+                                        : mkForm.disabledIf === true
                                 "
                                 class="mt-1"
                                 v-model="jsForm[field.name]"
@@ -238,13 +238,13 @@ const changeTab = (item: any) => {
                                 :content="field.content"
                                 class="mt-1 block w-full"
                                 :class="{
-                                    'opacity-25': data?.inalterable === true,
+                                    'opacity-25': mkForm.disabledIf === true,
                                 }"
                                 v-model="jsForm[field.name]"
                                 :disabled="
                                     field.disabled
                                         ? field.disabled
-                                        : data?.inalterable === true
+                                        : mkForm.disabledIf === true
                                 "
                                 :required="field.required"
                                 :autocomplete="field.autocomplete"
@@ -284,7 +284,7 @@ const changeTab = (item: any) => {
                         color="primary"
                         :class="{ 'opacity-25': jsForm.processing }"
                         :disabled="
-                            data?.inalterable === true || jsForm.processing
+                            mkForm.disabledIf === true || jsForm.processing
                         "
                     >
                         {{ $t(props.routes[mkForm.id].buttonTitle || "Save") }}

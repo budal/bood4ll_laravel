@@ -51,12 +51,12 @@ class AuthenticatedSessionController extends Controller
                                     [
                                         'title' => 'Not registered?',
                                         'route' => 'register',
-                                        'condition' => Route::has('register'),
+                                        'showIf' => Route::has('register'),
                                     ],
                                     [
                                         'title' => 'Forgot your password?',
                                         'route' => 'password.request',
-                                        'condition' => Route::has('password.request'),
+                                        'showIf' => Route::has('password.request'),
                                     ],
                                 ],
                             ],

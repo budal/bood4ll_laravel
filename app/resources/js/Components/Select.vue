@@ -18,7 +18,6 @@ import {
     TagsInputRoot,
 } from "radix-vue";
 import { Icon } from "@iconify/vue";
-import { Link } from "@inertiajs/vue3";
 import { ref, watch, computed } from "vue";
 
 const props = withDefaults(

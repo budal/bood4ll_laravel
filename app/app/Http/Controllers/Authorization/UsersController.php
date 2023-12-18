@@ -56,23 +56,23 @@ class UsersController extends Controller
                                     'routes' => [
                                         'createRoute' => [
                                             'route' => 'apps.users.create',
-                                            'condition' => Gate::allows('apps.users.create'),
+                                            'showIf' => Gate::allows('apps.users.create'),
                                         ],
                                         'editRoute' => [
                                             'route' => 'apps.users.edit',
-                                            'condition' => Gate::allows('apps.users.edit'),
+                                            'showIf' => Gate::allows('apps.users.edit'),
                                         ],
                                         'destroyRoute' => [
                                             'route' => 'apps.users.destroy',
-                                            'condition' => Gate::allows('apps.users.destroy'),
+                                            'showIf' => Gate::allows('apps.users.destroy'),
                                         ],
                                         'forceDestroyRoute' => [
                                             'route' => 'apps.users.forcedestroy',
-                                            'condition' => Gate::allows('apps.users.forcedestroy'),
+                                            'showIf' => Gate::allows('apps.users.forcedestroy'),
                                         ],
                                         'restoreRoute' => [
                                             'route' => 'apps.users.restore',
-                                            'condition' => Gate::allows('apps.users.restore'),
+                                            'showIf' => Gate::allows('apps.users.restore'),
                                         ],
                                     ],
                                     'titles' => [
@@ -129,7 +129,7 @@ class UsersController extends Controller
                                             'type' => 'button',
                                             'title' => 'Login as',
                                             'theme' => 'warning',
-                                            'condition' => Gate::allows('apps.users.change_user') && !$request->session()->has('previousUser'),
+                                            'showIf' => Gate::allows('apps.users.change_user') && !$request->session()->has('previousUser'),
                                             'icon' => 'mdi:login',
                                             'disableSort' => true,
                                             'preserveScroll' => true,

@@ -238,7 +238,7 @@ class UnitsController extends Controller
                 'id' => 'subunits',
                 'title' => 'Subunits',
                 'subtitle' => 'Management of subunits of this unit.',
-                'condition' => $unit->id != null,
+                'showIf' => $unit->id != null,
                 'fields' => [
                     [
                         [
@@ -287,7 +287,7 @@ class UnitsController extends Controller
                 'id' => 'staff',
                 'title' => 'Staff',
                 'subtitle' => 'Staff management of this unit.',
-                'condition' => $unit->id != null,
+                'showIf' => $unit->id != null,
                 'cols' => 2,
                 'fields' => [
                     [

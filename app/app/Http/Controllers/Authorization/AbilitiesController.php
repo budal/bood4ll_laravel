@@ -149,7 +149,7 @@ class AbilitiesController extends Controller
                     'id' => 'invalidAbilities',
                     'title' => 'Invalid abilities',
                     'subtitle' => 'This abilities does not have a specific route to refer to. Please delete them.',
-                    'condition' => count($invalidAbilities) > 0,
+                    'showIf' => count($invalidAbilities) > 0,
                     'fields' => [
                         [
                             [

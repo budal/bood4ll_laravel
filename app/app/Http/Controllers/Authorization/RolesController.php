@@ -145,7 +145,8 @@ class RolesController extends Controller
                 'id' => 'role',
                 'title' => 'Main data',
                 'subtitle' => 'Role name, abilities and settings',
-                'condition' => $request->user()->isSuperAdmin() || $request->user()->isManager() || $role->owner == $request->user()->id,
+                'showIf' => $request->user()->isSuperAdmin() || $request->user()->isManager() || $role->owner == $request->user()->id,
+                'disabledIf' => $role->inalterable == true,
                 'cols' => 3,
                 'fields' => [
                     [
@@ -154,6 +155,7 @@ class RolesController extends Controller
                             'name' => 'name',
                             'title' => 'Name',
                             'required' => true,
+                            'autofocus' => true,
                         ],
                         [
                             'type' => 'input',
@@ -213,7 +215,7 @@ class RolesController extends Controller
                 'id' => 'users',
                 'title' => 'Authorizations',
                 'subtitle' => 'Define which users will have access to this authorization',
-                'condition' => $role->id != null,
+                'showIf' => $role->id != null,
                 'fields' => [
                     [
                         [

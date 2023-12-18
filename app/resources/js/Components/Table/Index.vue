@@ -119,8 +119,8 @@ let menuItems = computed(() => {
     if (
         props.routes.restoreRoute &&
         (showRestoreItems == "trashed" || showRestoreItems == "both") &&
-        (props.routes.restoreRoute.condition == true ||
-            typeof props.routes.restoreRoute.condition == "undefined")
+        (props.routes.restoreRoute.showIf == true ||
+            typeof props.routes.restoreRoute.showIf == "undefined")
     ) {
         content.add({
             title: "Restore",
@@ -142,8 +142,8 @@ let menuItems = computed(() => {
     if (
         props.routes.destroyRoute &&
         showRestoreItems != "trashed" &&
-        (props.routes.destroyRoute.condition == true ||
-            typeof props.routes.destroyRoute.condition == "undefined")
+        (props.routes.destroyRoute.showIf == true ||
+            typeof props.routes.destroyRoute.showIf == "undefined")
     ) {
         content.add({
             title: "Remove",
@@ -165,8 +165,8 @@ let menuItems = computed(() => {
     if (
         props.routes.forceDestroyRoute &&
         showRestoreItems == "trashed" &&
-        (props.routes.forceDestroyRoute.condition == true ||
-            typeof props.routes.forceDestroyRoute.condition == "undefined")
+        (props.routes.forceDestroyRoute.showIf == true ||
+            typeof props.routes.forceDestroyRoute.showIf == "undefined")
     ) {
         content.add({
             title: "Erase",
@@ -218,7 +218,7 @@ let menuItems = computed(() => {
                     buttonTheme: item.buttonTheme,
                 });
             } else {
-                item.condition !== false ? content.add(item) : false;
+                item.showIf !== false ? content.add(item) : false;
             }
         });
     }
@@ -366,8 +366,8 @@ const submitModal = () => {
             <Button
                 v-if="
                     routes.createRoute &&
-                    (routes.createRoute.condition == true ||
-                        typeof routes.createRoute.condition == 'undefined')
+                    (routes.createRoute.showIf == true ||
+                        typeof routes.createRoute.showIf == 'undefined')
                 "
                 type="button"
                 color="success"
@@ -391,15 +391,13 @@ const submitModal = () => {
                                 v-if="
                                     routes.showCheckboxes == true ||
                                     (routes.destroyRoute &&
-                                        (routes.destroyRoute.condition ==
-                                            true ||
-                                            typeof routes.destroyRoute
-                                                .condition == 'undefined')) ||
+                                        (routes.destroyRoute.showIf == true ||
+                                            typeof routes.destroyRoute.showIf ==
+                                                'undefined')) ||
                                     (routes.restoreRoute &&
-                                        (routes.restoreRoute.condition ==
-                                            true ||
-                                            typeof routes.restoreRoute
-                                                .condition == 'undefined'))
+                                        (routes.restoreRoute.showIf == true ||
+                                            typeof routes.restoreRoute.showIf ==
+                                                'undefined'))
                                 "
                                 name="remember"
                                 :checked="selectedAll"
@@ -410,7 +408,7 @@ const submitModal = () => {
                         <template v-for="title in titles">
                             <th class="p-2" :class="title.class">
                                 <Sort
-                                    v-if="title.condition !== false"
+                                    v-if="title.showIf !== false"
                                     :prefix="prefix"
                                     :tab="tab"
                                     :sort="title"
@@ -421,8 +419,8 @@ const submitModal = () => {
                         <th
                             v-if="
                                 routes.editRoute &&
-                                (routes.editRoute.condition == true ||
-                                    typeof routes.editRoute.condition ==
+                                (routes.editRoute.showIf == true ||
+                                    typeof routes.editRoute.showIf ==
                                         'undefined')
                             "
                             class="p-2"
@@ -445,15 +443,13 @@ const submitModal = () => {
                                 v-if="
                                     routes.showCheckboxes == true ||
                                     (routes.destroyRoute &&
-                                        (routes.destroyRoute.condition ==
-                                            true ||
-                                            typeof routes.destroyRoute
-                                                .condition == 'undefined')) ||
+                                        (routes.destroyRoute.showIf == true ||
+                                            typeof routes.destroyRoute.showIf ==
+                                                'undefined')) ||
                                     (routes.restoreRoute &&
-                                        (routes.restoreRoute.condition ==
-                                            true ||
-                                            typeof routes.restoreRoute
-                                                .condition == 'undefined'))
+                                        (routes.restoreRoute.showIf == true ||
+                                            typeof routes.restoreRoute.showIf ==
+                                                'undefined'))
                                 "
                                 class="w-6 h-6 sm:w-8 sm:h-8 rounded-md sm:rounded-lg"
                                 :class="item.deleted_at ? '' : ''"
@@ -476,7 +472,7 @@ const submitModal = () => {
                                 <template
                                     v-if="
                                         content.type == 'composite' &&
-                                        content.condition !== false
+                                        content.showIf !== false
                                     "
                                 >
                                     <template
@@ -521,7 +517,7 @@ const submitModal = () => {
                                 <Avatar
                                     v-if="
                                         content.type == 'avatar' &&
-                                        content.condition !== false
+                                        content.showIf !== false
                                     "
                                     class="w-8 h-8 sm:w-12 sm:h-12 rounded-full"
                                     :fallback="item[content.fallback]"
@@ -530,7 +526,7 @@ const submitModal = () => {
                                 <Toggle
                                     v-if="
                                         content.type == 'toggle' &&
-                                        content.condition !== false
+                                        content.showIf !== false
                                     "
                                     :id="item.id"
                                     :name="item.name"
@@ -551,7 +547,7 @@ const submitModal = () => {
                                 <Button
                                     v-if="
                                         content.type == 'button' &&
-                                        content.condition !== false
+                                        content.showIf !== false
                                     "
                                     :id="item.id"
                                     :name="item.name"
@@ -572,8 +568,8 @@ const submitModal = () => {
                         <td
                             v-if="
                                 routes.editRoute &&
-                                (routes.editRoute.condition == true ||
-                                    typeof routes.editRoute.condition ==
+                                (routes.editRoute.showIf == true ||
+                                    typeof routes.editRoute.showIf ==
                                         'undefined')
                             "
                             class="sm:p-2 w-0 text-right"
