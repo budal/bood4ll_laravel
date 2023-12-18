@@ -212,12 +212,14 @@ class RolesController extends Controller
                             'type' => 'toggle',
                             'name' => 'full_access',
                             'title' => 'Full access',
+                            'disabled' => !$request->user()->isSuperAdmin() && !$request->user()->hasFullAccess(),
                             'colorOn' => 'info',
                         ],
                         [
                             'type' => 'toggle',
                             'name' => 'manage_nested',
                             'title' => 'Manage nested data',
+                            'disabled' => !$request->user()->isSuperAdmin() && !$request->user()->canManageNested(),
                             'colorOn' => 'info',
                         ],
                         [
