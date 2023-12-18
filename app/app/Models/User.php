@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Ramsey\Uuid\Uuid;
+use Illuminate\Support\Facades\Route;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -79,12 +80,12 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function hasFullAccess()
     {
-        return $this->abilities()->where('full_access', true)->pluck('ability')->contains(\Route::currentRouteName()) ? true : false;
+        return $this->abilities()->where('full_access', true)->pluck('ability')->contains(Route::current()->getName()) ? true : false;
     }
 
     public function canManageNested()
     {
-        return $this->abilities()->where('manage_nested', true)->pluck('ability')->contains(\Route::currentRouteName()) ? true : false;
+        return $this->abilities()->where('manage_nested', true)->pluck('ability')->contains(Route::current()->getName()) ? true : false;
     }
 
     public function unitsClassified(): BelongsToMany

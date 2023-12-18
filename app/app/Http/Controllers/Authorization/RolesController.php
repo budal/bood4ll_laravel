@@ -145,7 +145,7 @@ class RolesController extends Controller
                 'id' => 'role',
                 'title' => 'Main data',
                 'subtitle' => 'Role name, abilities and settings',
-                'showIf' => $request->user()->isSuperAdmin() || $request->user()->isManager() || $role->owner == $request->user()->id,
+                'showIf' => $request->user()->isSuperAdmin() || $request->user()->isManager(),
                 'disabledIf' => $role->inalterable == true,
                 'cols' => 3,
                 'fields' => [
@@ -368,6 +368,8 @@ class RolesController extends Controller
 
     public function store(RolesRequest $request): RedirectResponse
     {
+        $this->authorize('store', Role::class);
+
         $abilities = collect($request->abilities)->pluck('id');
 
         DB::beginTransaction();
