@@ -31,10 +31,12 @@ const props = withDefaults(
         required?: boolean;
         autocomplete?: boolean;
         multiple?: boolean;
+        placeholder?: string;
     }>(),
     {
         disableSearch: false,
         multiple: false,
+        placeholder: '',
     },
 );
 
@@ -122,7 +124,7 @@ watch(
                         <TagsInputInput
                             :id="id"
                             :name="name"
-                            placeholder="Fruits..."
+                            :placeholder="placeholder"
                             :autocomplete="autocomplete ? name : 'off'"
                             :required="required && selectedContent.length === 0"
                             class="p-0 w-full bg-transparent text-ellipsis border-0 outline-0 focus:ring-0 placeholder:text-sm placeholder-primary-dark/20 dark:placeholder-primary-dark/20 text-zero-light dark:text-zero-dark"

@@ -65,33 +65,33 @@ Route::middleware('auth')->group(function () {
     Route::prefix('apps')->name('apps.')->group(function () {
         Route::controller(UsersController::class)->group(function () {
             Route::name('users.')->middleware('verified', 'password.confirm')->group(function () {
-                Route::get('/users', 'index')->name('index')->breadcrumb('Users')->middleware('can:apps.users.index');
-                Route::post('/users/changeuser/{user}', 'changeUser')->name('change_user')->whereUuid('user')->middleware('can:apps.users.change_user');
+                Route::get('/users', 'index')->name('index')->breadcrumb('Users');
+                Route::post('/users/changeuser/{user}', 'changeUser')->name('change_user')->whereUuid('user');
                 Route::post('/users/returnToMyUser', 'returnToMyUser')->name('return_to_my_user')->whereUuid('user');
-                Route::post('/users/activate/{user}/{mode?}', 'activate')->name('activate')->whereUuid('user')->middleware('can:apps.users.activate');
-                Route::get('/users/create', 'create')->name('create')->breadcrumb('User creation', 'apps.users.index')->middleware('can:apps.users.create');
-                Route::post('/users/create', 'store')->name('store')->middleware('can:apps.users.store');
-                Route::get('/users/edit/{user}', 'edit')->name('edit')->whereUuid('user')->breadcrumb('User edition', 'apps.users.index')->middleware('can:apps.users.edit');
-                Route::patch('/users/edit/{user}', 'update')->name('update')->whereUuid('user')->middleware('can:apps.users.update');
-                Route::delete('/users/destroy', 'destroy')->name('destroy')->middleware('can:apps.users.destroy');
-                Route::delete('/users/forcedestroy', 'forceDestroy')->name('forcedestroy')->middleware('can:apps.users.forcedestroy');
-                Route::post('/users/restore', 'restore')->name('restore')->middleware('can:apps.users.restore');
+                Route::post('/users/activate/{user}/{mode?}', 'activate')->name('activate')->whereUuid('user');
+                Route::get('/users/create', 'create')->name('create')->breadcrumb('User creation', 'apps.users.index');
+                Route::post('/users/create', 'store')->name('store');
+                Route::get('/users/edit/{user}', 'edit')->name('edit')->whereUuid('user')->breadcrumb('User edition', 'apps.users.index');
+                Route::patch('/users/edit/{user}', 'update')->name('update')->whereUuid('user');
+                Route::delete('/users/destroy', 'destroy')->name('destroy');
+                Route::delete('/users/forcedestroy', 'forceDestroy')->name('forcedestroy');
+                Route::post('/users/restore', 'restore')->name('restore');
             });
         });
 
         Route::controller(RolesController::class)->group(function () {
             Route::name('roles.')->middleware('verified', 'password.confirm')->group(function () {
-                Route::get('/permissions/roles', 'index')->name('index')->breadcrumb('Roles')->middleware('can:apps.roles.index');
-                Route::get('/permissions/roles/create', 'create')->name('create')->breadcrumb('Role creation', 'apps.roles.index')->middleware('can:apps.roles.create');
-                Route::post('/permissions/roles/create', 'store')->name('store')->middleware('can:apps.roles.store');
-                Route::get('/permissions/roles/edit/{role}/{all?}', 'edit')->name('edit')->breadcrumb('Role edition', 'apps.roles.index')->middleware('can:apps.roles.edit');
-                Route::patch('/permissions/roles/edit/{role}', 'update')->name('update')->middleware('can:apps.roles.update');
-                Route::post('/permissions/roles/authorization/{role}/{mode?}', 'authorization')->name('authorization')->middleware('can:apps.roles.authorization');
-                Route::delete('/permissions/roles/destroy', 'destroy')->name('destroy')->middleware('can:apps.roles.destroy');
-                Route::delete('/permissions/roles/forcedestroy', 'forceDestroy')->name('forcedestroy')->middleware('can:apps.roles.forcedestroy');
-                Route::post('/permissions/roles/restore', 'restore')->name('restore')->middleware('can:apps.roles.restore');
-                // Route::get('/permissions/roles/adduser/{role}', 'adduser')->name('edit.adduser')->breadcrumb('Role edition', 'apps.roles.index')->middleware('can:apps.roles.adduser');
-                // Route::get('/permissions/roles/deleteuser/{role}', 'deleteuser')->name('edit.deleteuser')->middleware('can:apps.roles.deleteuser');
+                Route::get('/permissions/roles', 'index')->name('index')->breadcrumb('Roles');
+                Route::get('/permissions/roles/create', 'create')->name('create')->breadcrumb('Role creation', 'apps.roles.index');
+                Route::post('/permissions/roles/create', 'store')->name('store');
+                Route::get('/permissions/roles/edit/{role}/{all?}', 'edit')->name('edit')->breadcrumb('Role edition', 'apps.roles.index');
+                Route::patch('/permissions/roles/edit/{role}', 'update')->name('update');
+                Route::post('/permissions/roles/authorization/{role}/{mode?}', 'authorization')->name('authorization');
+                Route::delete('/permissions/roles/destroy', 'destroy')->name('destroy');
+                Route::delete('/permissions/roles/forcedestroy', 'forceDestroy')->name('forcedestroy');
+                Route::post('/permissions/roles/restore', 'restore')->name('restore');
+                // Route::get('/permissions/roles/adduser/{role}', 'adduser')->name('edit.adduser')->breadcrumb('Role edition', 'apps.roles.index');
+                // Route::get('/permissions/roles/deleteuser/{role}', 'deleteuser')->name('edit.deleteuser');
             });
         });
 

@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Inertia\Response;
+use Illuminate\Support\Facades\Gate;
 
 class RolesController extends Controller
 {
@@ -56,11 +57,26 @@ class RolesController extends Controller
                                 'name' => 'roles',
                                 'content' => [
                                     'routes' => [
-                                        'createRoute' => 'apps.roles.create',
-                                        'editRoute' => 'apps.roles.edit',
-                                        'destroyRoute' => 'apps.roles.destroy',
-                                        'forceDestroyRoute' => 'apps.roles.forcedestroy',
-                                        'restoreRoute' => 'apps.roles.restore',
+                                        'createRoute' => [
+                                            'route' => 'apps.roles.create',
+                                            'showIf' => Gate::allows('apps.roles.create'),
+                                        ],
+                                        'editRoute' => [
+                                            'route' => 'apps.roles.edit',
+                                            'showIf' => Gate::allows('apps.roles.edit'),
+                                        ],
+                                        'destroyRoute' => [
+                                            'route' => 'apps.roles.destroy',
+                                            'showIf' => Gate::allows('apps.roles.destroy'),
+                                        ],
+                                        'forceDestroyRoute' => [
+                                            'route' => 'apps.roles.forcedestroy',
+                                            'showIf' => Gate::allows('apps.roles.forcedestroy'),
+                                        ],
+                                        'restoreRoute' => [
+                                            'route' => 'apps.roles.restore',
+                                            'showIf' => Gate::allows('apps.roles.restore'),
+                                        ],
                                     ],
                                     'menu' => [
                                         [
@@ -449,8 +465,6 @@ class RolesController extends Controller
     public function update(Request $request, Role $role): RedirectResponse
     {
         $this->authorize('access', Role::class);
-
-dd(collect($request->abilities)->pluck('name'));
 
         $abilities = collect($request->abilities)->pluck('id');
 
