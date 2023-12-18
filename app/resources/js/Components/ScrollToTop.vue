@@ -9,7 +9,7 @@ const scrollToTop = () =>
 </script>
 <template>
     <Button
-        color="info"
+        color="warning"
         @click="scrollToTop"
         start-icon="mdi:arrow-up"
         rounded="rounded-full"

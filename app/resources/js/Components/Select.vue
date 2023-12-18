@@ -69,7 +69,7 @@ const onEscape = () => {
 
 const onOpen = () => {
     onEscape();
-    emit("update:modelValue", selectedContent);
+    emit("update:modelValue", selectedItems);
 };
 
 watch(
@@ -92,16 +92,11 @@ watch(
         <ComboboxAnchor
             class="w-full min-h-[41px] inline-flex items-center justify-between text-[13px] leading-none gap-[5px] bg-zero-white dark:bg-zero-black border border-zero-light dark:border-zero-dark rounded-md focus-within:outline-none focus-within:ring-2 focus-within:ring-primary-light dark:focus-within:ring-primary-dark focus-within:ring-offset-1 focus-within:ring-offset-primary-light dark:focus-within:ring-offset-primary-dark shadow-primary-light/20 dark:shadow-primary-dark/20 shadow-[0_2px_10px] focus-within:shadow-[0_0_0_2px] focus-within:shadow-primary-light dark:focus-within:shadow-primary-dark data-[placeholder]:text-zero-light/50 transition ease-in-out duration-500 disabled:opacity-25"
         >
-            <!-- <div class="w-full">
-                <div class="flex flex-wrap gap-1 items-center my-[6px] ml-2">
-                    wwww
-                </div>
-            </div> -->
-
             <TagsInputRoot
                 v-slot="{ values: selectedItems }"
                 :model-value="selectedItems"
-                delimiter=""
+                delimiter=","
+                @update:modelValue="onOpen"
                 class="flex flex-wrap gap-1 items-center my-[6px] ml-2 w-full"
             >
                 <TagsInputItem

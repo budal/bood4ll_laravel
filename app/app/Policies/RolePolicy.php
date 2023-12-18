@@ -17,9 +17,8 @@ class RolePolicy
         return null;
     }
 
-    public function store(User $user): bool
+    public function access(User $user): bool
     {
-        dd(Route::current()->getName());
         return $user->abilities->pluck('ability')->contains(Route::current()->getName());
     }
 

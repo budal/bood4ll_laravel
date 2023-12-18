@@ -22,6 +22,8 @@ class RolesController extends Controller
 
     public function index(Request $request): Response
     {
+        $this->authorize('access', Role::class);
+        
         $roles = Role::filter($request, 'roles')
             ->leftjoin('role_user', 'role_user.role_id', '=', 'roles.id')
             ->leftjoin('unit_user', 'unit_user.user_id', '=', 'role_user.user_id')
@@ -355,6 +357,8 @@ class RolesController extends Controller
 
     public function create(Request $request, Role $role): Response
     {
+        $this->authorize('access', Role::class);
+
         return Inertia::render('Default', [
             'form' => $this->__form($request, $role),
             'routes' => [
@@ -368,7 +372,7 @@ class RolesController extends Controller
 
     public function store(RolesRequest $request): RedirectResponse
     {
-        $this->authorize('store', Role::class);
+        $this->authorize('access', Role::class);
 
         $abilities = collect($request->abilities)->pluck('id');
 
@@ -424,6 +428,8 @@ class RolesController extends Controller
 
     public function edit(Request $request, Role $role): Response
     {
+        $this->authorize('access', Role::class);
+        
         $role['abilities'] = $role->abilities;
 
         return Inertia::render('Default', [
@@ -442,8 +448,9 @@ class RolesController extends Controller
 
     public function update(Request $request, Role $role): RedirectResponse
     {
-        $this->authorize('fullAccess', $request->user());
-        $this->authorize('allowedUnits', $request->user());
+        $this->authorize('access', Role::class);
+
+dd(collect($request->abilities)->pluck('name'));
 
         $abilities = collect($request->abilities)->pluck('id');
 
