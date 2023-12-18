@@ -19,10 +19,12 @@ const activeTab = new URL(window.location.href);
 
 const __tab = activeTab.searchParams.get("__tab");
 
+const defaultTab = props.items.find((item: any) => item.condition !== false);
+
 const tab = ref(
     (props.items.some((tab: any) => tab.id === __tab)
         ? __tab
-        : props.items[0].id) || props.items[0].id,
+        : defaultTab.id) || defaultTab.id,
 );
 
 const onChangeTab = (name: string) => {
