@@ -114,31 +114,28 @@ class RolesController extends Controller
             ->orderBy('name')
             ->get();
 
-        $source = $request->all ? new User() : $role->users();
-
-        $users = $source
-            ->filter($request, 'users')
+        $users = User::filter($request, 'users')
+            ->join('unit_user', 'unit_user.user_id', '=', 'users.id')
+            ->select('users.id', 'users.name', 'users.email')
+            ->groupBy('users.id', 'users.name', 'users.email')
+            ->when(!$request->all, function ($query) use ($role) {
+                $query->join('role_user', 'role_user.user_id', '=', 'users.id');
+                $query->where('role_user.role_id', $role->id);
+            })
             ->when(!$request->user()->isSuperAdmin(), function ($query) use ($request) {
-                // $query->join('unit_user', 'unit_user.user_id', '=', 'users.id');
+                $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
 
-                // $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
 
-                $query->when(!$request->all, function ($query) use ($request) {
-                    $query->join('unit_user', 'unit_user.user_id', '=', 'users.id');
-
-                    if (!$request->user()->hasFullAccess()) {
-                        $query->where('unit_user.user_id', $request->user()->id);
-                    }
-
-                    $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
-                });
+                if (!$request->user()->hasFullAccess()) {
+                    $query->where('unit_user.user_id', $request->user()->id);
+                }
             })
             ->with('unitsClassified', 'unitsWorking')
             ->paginate(20)
             ->onEachSide(2)
             ->appends(collect($request->query)->toArray())
             ->through(function ($item) use ($role) {
-                $item->checked = in_array($role->id, $item->roles->pluck('id')->toArray());
+                $item->checked = $item->roles->pluck('id')->contains($role->id);
 
                 return $item;
             });
@@ -441,6 +438,9 @@ class RolesController extends Controller
 
     public function update(Request $request, Role $role): RedirectResponse
     {
+        $this->authorize('fullAccess', $request->user());
+        $this->authorize('allowedUnits', $request->user());
+
         $abilities = collect($request->abilities)->pluck('id');
 
         DB::beginTransaction();
