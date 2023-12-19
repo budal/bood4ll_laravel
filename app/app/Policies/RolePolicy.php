@@ -5,6 +5,7 @@ namespace App\Policies;
 use App\Models\User;
 use App\Models\Role;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 
 class RolePolicy
 {
@@ -17,13 +18,14 @@ class RolePolicy
         return null;
     }
 
-    public function fullAccess(User $user, User $userToEdit): bool
+    public function fullAccess(User $user, Role $role, Request $request): bool
     {
-        if (!$user->hasFullAccess()) {
-            return $user->id === $userToEdit->id;
-        } else {
-            return true;
-        }
+        dd($user, $role, $request);
+        // if (!$user->hasFullAccess()) {
+        //     return $user->id === $userToEdit->id;
+        // } else {
+        //     return true;
+        // }
     }
 
     public function allowedUnits(User $user, User $userToEdit): bool

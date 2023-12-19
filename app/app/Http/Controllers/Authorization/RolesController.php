@@ -11,10 +11,10 @@ use Emargareten\InertiaModal\Modal;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Inertia\Response;
-use Illuminate\Support\Facades\Gate;
 
 class RolesController extends Controller
 {
@@ -24,7 +24,7 @@ class RolesController extends Controller
     public function index(Request $request): Response
     {
         $this->authorize('access', User::class);
-        
+
         $roles = Role::filter($request, 'roles')
             ->leftjoin('role_user', 'role_user.role_id', '=', 'roles.id')
             ->leftjoin('unit_user', 'unit_user.user_id', '=', 'role_user.user_id')
@@ -373,6 +373,56 @@ class RolesController extends Controller
         ];
     }
 
+    public function authorization(Request $request, Role $role, $mode): RedirectResponse
+    {
+        $this->authorize('access', User::class);
+        $this->authorize('fullAccess', [$role, $request]);
+        // $this->authorize('allowedUnits', User::class);
+
+        $hasRole = $role->users()->whereIn('user_id', $request->list)->first();
+
+        try {
+            if ($mode == 'toggle') {
+                $user = User::whereIn('id', $request->list)->first();
+                $hasRole ? $role->users()->detach($request->list) : $role->users()->attach($request->list);
+
+                return Redirect::back()->with([
+                    'toast_type' => 'success',
+                    'toast_message' => $hasRole
+                        ? "The user ':user' has been disabled in the ':role' role."
+                        : "The user ':user' was enabled in the ':role' role.",
+                    'toast_replacements' => ['user' => $user->name, 'role' => $role->name],
+                ]);
+            } elseif ($mode == 'on') {
+                $total = $role->users()->attach($request->list);
+
+                return Redirect::back()->with([
+                    'toast_type' => 'success',
+                    'toast_message' => '{0} Nobody to authorize.|[1] User successfully authorized.|[2,*] :total users successfully authorized.',
+                    'toast_count' => count($request->list),
+                    'toast_replacements' => ['total' => count($request->list)],
+                ]);
+            } elseif ($mode == 'off') {
+                $total = $role->users()->detach($request->list);
+
+                return Redirect::back()->with([
+                    'toast_type' => 'success',
+                    'toast_message' => '{0} Nobody to deauthorize.|[1] User successfully deauthorized.|[2,*] :total users successfully deauthorized.',
+                    'toast_count' => $total,
+                    'toast_replacements' => ['total' => $total],
+                ]);
+            }
+        } catch (\Throwable $e) {
+            report($e);
+
+            return Redirect::back()->with([
+                'toast_type' => 'error',
+                'toast_message' => 'Error on edit selected item.|Error on edit selected items.',
+                'toast_count' => count($request->list),
+            ]);
+        }
+    }
+
     public function create(Request $request, Role $role): Response
     {
         $this->authorize('access', User::class);
@@ -447,7 +497,7 @@ class RolesController extends Controller
     public function edit(Request $request, Role $role): Response
     {
         $this->authorize('access', User::class);
-        
+
         $role['abilities'] = $role->abilities;
 
         return Inertia::render('Default', [
@@ -529,56 +579,6 @@ class RolesController extends Controller
             'toast_message' => '{0} Nothing to edit.|[1] Item edited successfully.|[2,*] :total items successfully edited.',
             'toast_count' => 1,
         ]);
-    }
-
-    public function authorization(Request $request, Role $role, $mode): RedirectResponse
-    {
-        $this->authorize('access', User::class);
-        // $this->authorize('fullAccess', User::where('id', $request->user()->id));
-        // $this->authorize('allowedUnits', User::class);
-
-        $hasRole = $role->users()->whereIn('user_id', $request->list)->first();
-
-        try {
-            if ($mode == 'toggle') {
-                $user = User::whereIn('id', $request->list)->first();
-                $hasRole ? $role->users()->detach($request->list) : $role->users()->attach($request->list);
-
-                return Redirect::back()->with([
-                    'toast_type' => 'success',
-                    'toast_message' => $hasRole
-                        ? "The user ':user' has been disabled in the ':role' role."
-                        : "The user ':user' was enabled in the ':role' role.",
-                    'toast_replacements' => ['user' => $user->name, 'role' => $role->name],
-                ]);
-            } elseif ($mode == 'on') {
-                $total = $role->users()->attach($request->list);
-
-                return Redirect::back()->with([
-                    'toast_type' => 'success',
-                    'toast_message' => '{0} Nobody to authorize.|[1] User successfully authorized.|[2,*] :total users successfully authorized.',
-                    'toast_count' => count($request->list),
-                    'toast_replacements' => ['total' => count($request->list)],
-                ]);
-            } elseif ($mode == 'off') {
-                $total = $role->users()->detach($request->list);
-
-                return Redirect::back()->with([
-                    'toast_type' => 'success',
-                    'toast_message' => '{0} Nobody to deauthorize.|[1] User successfully deauthorized.|[2,*] :total users successfully deauthorized.',
-                    'toast_count' => $total,
-                    'toast_replacements' => ['total' => $total],
-                ]);
-            }
-        } catch (\Throwable $e) {
-            report($e);
-
-            return Redirect::back()->with([
-                'toast_type' => 'error',
-                'toast_message' => 'Error on edit selected item.|Error on edit selected items.',
-                'toast_count' => count($request->list),
-            ]);
-        }
     }
 
     public function destroy(Request $request): RedirectResponse
