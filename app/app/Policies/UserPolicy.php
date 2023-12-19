@@ -24,6 +24,16 @@ class UserPolicy
         return $user->getAllAbilities->where('ability', '!=', null)->pluck('ability')->contains(Route::current()->getName());
     }
 
+    public function isSuperAdmin(User $user): bool
+    {
+        return $user->isSuperAdmin();
+    }
+
+    public function isManager(User $user): bool
+    {
+        return $user->isManager();
+    }
+
     public function fullAccess(User $user, User $userToEdit): bool
     {
         if (!$user->hasFullAccess()) {

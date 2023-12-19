@@ -163,7 +163,7 @@ class RolesController extends Controller
                 'id' => 'role',
                 'title' => 'Main data',
                 'subtitle' => 'Role name, abilities and settings',
-                'showIf' => $request->user()->isSuperAdmin() || $request->user()->isManager(),
+                // 'showIf' => $request->user()->isSuperAdmin() || $request->user()->isManager(),
                 'disabledIf' => $role->inalterable == true,
                 'cols' => 3,
                 'fields' => [
@@ -425,6 +425,7 @@ class RolesController extends Controller
 
     public function create(Request $request, Role $role): Response
     {
+        $this->authorize('isManager', User::class);
         $this->authorize('access', User::class);
 
         return Inertia::render('Default', [
@@ -440,6 +441,7 @@ class RolesController extends Controller
 
     public function store(RolesRequest $request): RedirectResponse
     {
+        $this->authorize('isManager', User::class);
         $this->authorize('access', User::class);
 
         $abilities = collect($request->abilities)->pluck('id');
@@ -496,6 +498,7 @@ class RolesController extends Controller
 
     public function edit(Request $request, Role $role): Response
     {
+        $this->authorize('isManager', User::class);
         $this->authorize('access', User::class);
 
         $role['abilities'] = $role->abilities;
@@ -516,6 +519,7 @@ class RolesController extends Controller
 
     public function update(Request $request, Role $role): RedirectResponse
     {
+        $this->authorize('isManager', User::class);
         $this->authorize('access', User::class);
 
         $abilities = collect($request->abilities)->pluck('id');
@@ -583,6 +587,9 @@ class RolesController extends Controller
 
     public function destroy(Request $request): RedirectResponse
     {
+        $this->authorize('isManager', User::class);
+        $this->authorize('access', User::class);
+
         try {
             $total = Role::whereIn('id', $request->list)
                 ->where(function ($query) {
@@ -609,6 +616,9 @@ class RolesController extends Controller
 
     public function forceDestroy(Request $request): RedirectResponse
     {
+        $this->authorize('isManager', User::class);
+        $this->authorize('access', User::class);
+
         try {
             $total = Role::whereIn('id', $request->list)
                 ->where(function ($query) {
@@ -635,6 +645,9 @@ class RolesController extends Controller
 
     public function restore(Request $request): RedirectResponse
     {
+        $this->authorize('isManager', User::class);
+        $this->authorize('access', User::class);
+
         try {
             $total = Role::whereIn('id', $request->list)->restore();
 
