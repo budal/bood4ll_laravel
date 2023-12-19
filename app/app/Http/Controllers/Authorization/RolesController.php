@@ -28,8 +28,8 @@ class RolesController extends Controller
         $roles = Role::filter($request, 'roles')
             ->leftjoin('role_user', 'role_user.role_id', '=', 'roles.id')
             ->leftjoin('unit_user', 'unit_user.user_id', '=', 'role_user.user_id')
-            ->select('roles.id', 'roles.name')
-            ->groupBy('roles.id', 'roles.name')
+            ->select('roles.id', 'roles.name', 'roles.deleted_at')
+            ->groupBy('roles.id', 'roles.name', 'roles.deleted_at')
             ->when(!$request->user()->isSuperAdmin(), function ($query) use ($request) {
                 // $query->whereIn('roles.id', $request->user()->roles->pluck('id'));
 
