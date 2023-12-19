@@ -21,7 +21,6 @@ class UserPolicy
 
     public function access(User $user): bool
     {
-        dd($user->getAllAbilities->where('ability', '!=', null)->pluck('ability'));
         return $user->getAllAbilities->where('ability', '!=', null)->pluck('ability')->contains(Route::current()->getName());
     }
 
@@ -34,7 +33,7 @@ class UserPolicy
         }
     }
 
-    public function allowedUnits(User $user): bool
+    public function allowedUnits(User $user, User $userToEdit): bool
     {
         if ($user->canManageNested()) {
             $allowedUnits = $user->units()->get()->flatten()->pluck('id')->union(
@@ -44,6 +43,6 @@ class UserPolicy
             $allowedUnits = $user->units->pluck('id');
         }
 
-        return $allowedUnits->intersect($user->units->pluck('id'))->count() > 0;
+        return $allowedUnits->intersect($userToEdit->units->pluck('id'))->count() > 0;
     }
 }

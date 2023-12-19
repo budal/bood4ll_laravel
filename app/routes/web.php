@@ -97,8 +97,8 @@ Route::middleware('auth')->group(function () {
 
         Route::controller(AbilitiesController::class)->group(function () {
             Route::name('abilities.')->middleware('verified', 'password.confirm')->group(function () {
-                Route::get('/permissions/roles/abilities', 'index')->name('index')->breadcrumb('Abilities', 'apps.roles.index')->middleware('can:apps.abilities.index');
-                Route::post('/permissions/roles/abilities/update/{mode?}', 'update')->name('update')->whereIn('mode', ['toggle', 'on', 'off'])->middleware('can:apps.abilities.update');
+                Route::get('/permissions/roles/abilities', 'index')->name('index')->breadcrumb('Abilities', 'apps.roles.index');
+                Route::post('/permissions/roles/abilities/update/{mode?}', 'update')->name('update')->whereIn('mode', ['toggle', 'on', 'off']);
             });
         });
 

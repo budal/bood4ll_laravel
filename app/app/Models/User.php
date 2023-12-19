@@ -62,23 +62,20 @@ class User extends Authenticatable implements MustVerifyEmail
     public function getAllAbilities()
     {
         return $this->roles()
-            ->select('roles.id', 'roles.name', 'abilities.name AS ability', 'roles.superadmin', 'roles.manager', 'roles.full_access', 'roles.lock_on_expire', 'roles.expires_at')
             ->leftjoin('ability_role', 'ability_role.role_id', '=', 'roles.id')
             ->leftjoin('abilities', 'abilities.id', '=', 'ability_role.ability_id')
+            ->select('roles.id AS role_id', 'abilities.name AS ability', 'roles.superadmin', 'roles.manager', 'roles.full_access', 'roles.lock_on_expire', 'roles.expires_at')
+            ->where('roles.active', true)
             ->where(function ($query) {
-                $query->where('roles.active', true);
-                $query->where('roles.lock_on_expire', false);
-            })
-            ->Orwhere(function ($query) {
-                $query->where('roles.active', true);
                 $query->where('roles.lock_on_expire', true);
                 $query->where('roles.expires_at', '>=', 'NOW()');
+                $query->orwhere('roles.lock_on_expire', false);
             });
     }
 
     public function abilities()
     {
-        return $this->getAllAbilities->where('ability', '!=', null)->pluck('ability');
+        return $this->getAllAbilities->where('ability', '!=', null);
     }
 
     public function isSuperAdmin()

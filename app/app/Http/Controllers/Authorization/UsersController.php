@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -200,12 +201,20 @@ class UsersController extends Controller
             ]);
 
             Auth::loginUsingId($user->id, true);
-
-            return Redirect::route('dashboard')->with([
-                'toast_type' => 'warning',
-                'toast_message' => "Logged as ':user'.",
-                'toast_replacements' => ['user' => $user->name],
-            ]);
+            
+            if ($user->getAllAbilities->where('ability', '!=', null)->pluck('ability')->contains(Route::current()->getName())) {
+                return Redirect::back()->with([
+                    'toast_type' => 'warning',
+                    'toast_message' => "Logged as ':user'.",
+                    'toast_replacements' => ['user' => $user->name],
+                ]);
+            } else {
+                return Redirect::route('dashboard')->with([
+                    'toast_type' => 'warning',
+                    'toast_message' => "Logged as ':user'.",
+                    'toast_replacements' => ['user' => $user->name],
+                ]);
+            }
         } else {
             return Redirect::back()->with([
                 'toast_type' => 'error',
@@ -236,6 +245,8 @@ class UsersController extends Controller
 
     public function create(Request $request): Response
     {
+        $this->authorize('access', User::class);
+
         return Inertia::render('Default', [
             'form' => $this->__form(),
             'routes' => [
@@ -249,6 +260,8 @@ class UsersController extends Controller
 
     public function store(ProfileUpdateRequest $request): RedirectResponse
     {
+        $this->authorize('access', User::class);
+        
         // dd($request);
         // $request->user()->fill($request->validated());
 
@@ -267,6 +280,7 @@ class UsersController extends Controller
 
     public function edit(User $user): Response
     {
+        $this->authorize('access', User::class);
         $this->authorize('fullAccess', $user);
         $this->authorize('allowedUnits', $user);
 
@@ -282,8 +296,12 @@ class UsersController extends Controller
         ]);
     }
 
-    public function update(ProfileUpdateRequest $request): RedirectResponse
+    public function update(ProfileUpdateRequest $request, User $user): RedirectResponse
     {
+        $this->authorize('access', User::class);
+        $this->authorize('fullAccess', $user);
+        $this->authorize('allowedUnits', $user);
+
         // dd($request);
         // $request->user()->fill($request->validated());
 
