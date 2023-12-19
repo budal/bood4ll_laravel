@@ -59,7 +59,7 @@ class User extends Authenticatable implements MustVerifyEmail
         return Unit::get();
     }
 
-    public function abilities()
+    public function getAllAbilities()
     {
         return $this->roles()
             ->select('roles.id', 'roles.name', 'abilities.name AS ability', 'roles.superadmin', 'roles.manager', 'roles.full_access', 'roles.lock_on_expire', 'roles.expires_at')
@@ -68,24 +68,29 @@ class User extends Authenticatable implements MustVerifyEmail
             ->where('active', true);
     }
 
+    public function abilities()
+    {
+        return $this->getAllAbilities->where('ability', '!=', null)->pluck('ability');
+    }
+
     public function isSuperAdmin()
     {
-        return $this->abilities()->pluck('superadmin')->contains(true) ? true : false;
+        return $this->getAllAbilities()->pluck('superadmin')->contains(true) ? true : false;
     }
 
     public function isManager()
     {
-        return $this->abilities()->pluck('manager')->contains(true) ? true : false;
+        return $this->getAllAbilities()->pluck('manager')->contains(true) ? true : false;
     }
 
     public function hasFullAccess()
     {
-        return $this->abilities()->where('full_access', true)->pluck('ability')->contains(Route::current()->getName()) ? true : false;
+        return $this->getAllAbilities()->where('full_access', true)->pluck('ability')->contains(Route::current()->getName()) ? true : false;
     }
 
     public function canManageNested()
     {
-        return $this->abilities()->where('manage_nested', true)->pluck('ability')->contains(Route::current()->getName()) ? true : false;
+        return $this->getAllAbilities()->where('manage_nested', true)->pluck('ability')->contains(Route::current()->getName()) ? true : false;
     }
 
     public function unitsClassified(): BelongsToMany

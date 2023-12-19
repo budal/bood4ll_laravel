@@ -19,7 +19,7 @@ class RolePolicy
 
     public function access(User $user): bool
     {
-        return $user->abilities->pluck('ability')->contains(Route::current()->getName());
+        return $user->getAllAbilities->where('ability', '!=', null)->pluck('ability')->contains(Route::current()->getName());
     }
 
     public function fullAccess(User $user, User $userToEdit): bool

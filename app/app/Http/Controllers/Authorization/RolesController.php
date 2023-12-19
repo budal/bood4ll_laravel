@@ -126,7 +126,7 @@ class RolesController extends Controller
         $abilities = Ability::when(
             !$request->user()->isSuperAdmin(),
             function ($query) use ($request) {
-                $query->whereIn('name', $request->user()->abilities->where('ability', '!=', null)->pluck('ability'));
+                $query->whereIn('name', $request->user()->abilities);
             }
         )
             ->orderBy('name')
@@ -412,7 +412,7 @@ class RolesController extends Controller
             $role->save();
 
             try {
-                $role->abilities()->sync($abilities);
+                $role->getAllAbilities()->sync($abilities);
             } catch (\Exception $e) {
                 report($e);
 
@@ -499,7 +499,7 @@ class RolesController extends Controller
             $role->save();
 
             try {
-                $role->abilities()->sync($abilities);
+                $role->getAllAbilities()->sync($abilities);
             } catch (\Exception $e) {
                 report($e);
 
@@ -694,7 +694,7 @@ class RolesController extends Controller
 
     public function adduser(Request $request, Role $role): Modal
     {
-        $role['abilities'] = $role->abilities()->get()->map->only('id')->pluck('id');
+        $role['abilities'] = $role->getAllAbilities()->get()->map->only('id')->pluck('id');
 
         return Inertia::modal('Default', [
             'form' => $this->__formModal($request, $role),
