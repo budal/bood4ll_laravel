@@ -23,7 +23,7 @@ class RolesController extends Controller
 
     public function index(Request $request): Response
     {
-        $this->authorize('access', Role::class);
+        $this->authorize('access', User::class);
         
         $roles = Role::filter($request, 'roles')
             ->leftjoin('role_user', 'role_user.role_id', '=', 'roles.id')
@@ -375,7 +375,7 @@ class RolesController extends Controller
 
     public function create(Request $request, Role $role): Response
     {
-        $this->authorize('access', Role::class);
+        $this->authorize('access', User::class);
 
         return Inertia::render('Default', [
             'form' => $this->__form($request, $role),
@@ -390,7 +390,7 @@ class RolesController extends Controller
 
     public function store(RolesRequest $request): RedirectResponse
     {
-        $this->authorize('access', Role::class);
+        $this->authorize('access', User::class);
 
         $abilities = collect($request->abilities)->pluck('id');
 
@@ -446,7 +446,7 @@ class RolesController extends Controller
 
     public function edit(Request $request, Role $role): Response
     {
-        $this->authorize('access', Role::class);
+        $this->authorize('access', User::class);
         
         $role['abilities'] = $role->abilities;
 
@@ -466,7 +466,7 @@ class RolesController extends Controller
 
     public function update(Request $request, Role $role): RedirectResponse
     {
-        $this->authorize('access', Role::class);
+        $this->authorize('access', User::class);
 
         $abilities = collect($request->abilities)->pluck('id');
 
@@ -533,9 +533,9 @@ class RolesController extends Controller
 
     public function authorization(Request $request, Role $role, $mode): RedirectResponse
     {
-        $this->authorize('access', Role::class);
-        $this->authorize('fullAccess', $role);
-        $this->authorize('allowedUnits', User::class);
+        $this->authorize('access', User::class);
+        // $this->authorize('fullAccess', User::where('id', $request->user()->id));
+        // $this->authorize('allowedUnits', User::class);
 
         $hasRole = $role->users()->whereIn('user_id', $request->list)->first();
 

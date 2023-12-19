@@ -95,8 +95,8 @@ export default {
                 info: {
                     'light': colors.blue[600],
                     'light-hover': colors.blue[400],
-                    'dark': colors.blue[800],
-                    'dark-hover': colors.blue[600],
+                    'dark': colors.blue[900],
+                    'dark-hover': colors.blue[700],
                 },
             },
             textColor: {
