@@ -20,16 +20,28 @@ class RolePolicy
 
     public function fullAccess(User $user, Role $role, Request $request): bool
     {
-        dd($user, $role, $request);
-        // if (!$user->hasFullAccess()) {
-        //     return $user->id === $userToEdit->id;
-        // } else {
-        //     return true;
-        // }
+        if ($user->roles()->where('roles.id', $role->id)->count() === 0) {
+            return false;
+        }
+
+        if (!$user->hasFullAccess()) {
+            return collect($request->list)->contains($user->id) && collect($request->list)->count() === 1;
+        } else {
+            $usersToEditUnits = User::join('unit_user', 'unit_user.user_id', '=', 'users.id')
+                ->select('users.id', 'unit_user.unit_id')
+                ->whereIn('users.id', $request->list)
+                ->get()
+                ->pluck('unit_id');
+
+            return $usersToEditUnits->intersect($user->unitsIds())->count() == collect($request->list)->count();
+        }
     }
 
-    public function allowedUnits(User $user, User $userToEdit): bool
+    public function allowedUnits(User $user, Role $role, Request $request): bool
     {
+        if ($user->roles()->where('roles.id', $role->id)->count() === 0)
+            return false;
+
         if (!$user->canManageNested()) {
             $allowedUnits = $user->units->pluck('id');
         } else {
@@ -38,6 +50,12 @@ class RolePolicy
             );
         }
 
-        return $allowedUnits->intersect($userToEdit->units->pluck('id'))->count() > 0;
+        $usersToEditUnits = User::join('unit_user', 'unit_user.user_id', '=', 'users.id')
+            ->select('users.id', 'unit_user.unit_id')
+            ->whereIn('users.id', $request->list)
+            ->get()
+            ->pluck('unit_id');
+
+        return $usersToEditUnits->intersect($allowedUnits)->count() == collect($request->list)->count();
     }
 }

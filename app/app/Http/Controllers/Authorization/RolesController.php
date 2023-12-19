@@ -377,7 +377,7 @@ class RolesController extends Controller
     {
         $this->authorize('access', User::class);
         $this->authorize('fullAccess', [$role, $request]);
-        // $this->authorize('allowedUnits', User::class);
+        $this->authorize('allowedUnits', [$role, $request]);
 
         $hasRole = $role->users()->whereIn('user_id', $request->list)->first();
 
