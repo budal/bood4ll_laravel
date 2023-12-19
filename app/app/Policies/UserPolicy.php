@@ -4,6 +4,7 @@ namespace App\Policies;
 
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Route;
 
 // RedirectResponse.
 
@@ -18,6 +19,12 @@ class UserPolicy
         return null;
     }
 
+    public function access(User $user): bool
+    {
+        dd($user->getAllAbilities->where('ability', '!=', null)->pluck('ability'));
+        return $user->getAllAbilities->where('ability', '!=', null)->pluck('ability')->contains(Route::current()->getName());
+    }
+
     public function fullAccess(User $user, User $userToEdit): bool
     {
         if (!$user->hasFullAccess()) {
@@ -27,16 +34,16 @@ class UserPolicy
         }
     }
 
-    public function allowedUnits(User $user, User $userToEdit): bool
+    public function allowedUnits(User $user): bool
     {
-        if (!$user->canManageNested()) {
-            $allowedUnits = $user->units->pluck('id');
-        } else {
+        if ($user->canManageNested()) {
             $allowedUnits = $user->units()->get()->flatten()->pluck('id')->union(
                 $user->units()->get()->map->getAllChildren()->flatten()->pluck('id')
             );
+        } else {
+            $allowedUnits = $user->units->pluck('id');
         }
 
-        return $allowedUnits->intersect($userToEdit->units->pluck('id'))->count() > 0;
+        return $allowedUnits->intersect($user->units->pluck('id'))->count() > 0;
     }
 }

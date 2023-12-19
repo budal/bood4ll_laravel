@@ -65,7 +65,15 @@ class User extends Authenticatable implements MustVerifyEmail
             ->select('roles.id', 'roles.name', 'abilities.name AS ability', 'roles.superadmin', 'roles.manager', 'roles.full_access', 'roles.lock_on_expire', 'roles.expires_at')
             ->leftjoin('ability_role', 'ability_role.role_id', '=', 'roles.id')
             ->leftjoin('abilities', 'abilities.id', '=', 'ability_role.ability_id')
-            ->where('active', true);
+            ->where(function ($query) {
+                $query->where('roles.active', true);
+                $query->where('roles.lock_on_expire', false);
+            })
+            ->Orwhere(function ($query) {
+                $query->where('roles.active', true);
+                $query->where('roles.lock_on_expire', true);
+                $query->where('roles.expires_at', '>=', 'NOW()');
+            });
     }
 
     public function abilities()

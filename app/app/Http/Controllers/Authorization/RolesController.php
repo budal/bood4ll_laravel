@@ -126,7 +126,7 @@ class RolesController extends Controller
         $abilities = Ability::when(
             !$request->user()->isSuperAdmin(),
             function ($query) use ($request) {
-                $query->whereIn('name', $request->user()->abilities);
+                $query->whereIn('name', $request->user()->getAllAbilities->where('ability', '!=', null)->pluck('ability'));
             }
         )
             ->orderBy('name')
@@ -499,7 +499,7 @@ class RolesController extends Controller
             $role->save();
 
             try {
-                $role->getAllAbilities()->sync($abilities);
+                $role->abilities()->sync($abilities);
             } catch (\Exception $e) {
                 report($e);
 
@@ -533,6 +533,10 @@ class RolesController extends Controller
 
     public function authorization(Request $request, Role $role, $mode): RedirectResponse
     {
+        $this->authorize('access', Role::class);
+        $this->authorize('fullAccess', $role);
+        $this->authorize('allowedUnits', User::class);
+
         $hasRole = $role->users()->whereIn('user_id', $request->list)->first();
 
         try {

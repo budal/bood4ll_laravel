@@ -20,6 +20,8 @@ class UsersController extends Controller
 
     public function index(Request $request): Response
     {
+        $this->authorize('access', User::class);
+        
         $users = User::filter($request, 'users', [
             'where' => [
                 'name',
@@ -187,6 +189,7 @@ class UsersController extends Controller
 
     public function changeUser(Request $request, User $user): RedirectResponse
     {
+        $this->authorize('access', User::class);
         $this->authorize('fullAccess', $user);
         $this->authorize('allowedUnits', $user);
 
