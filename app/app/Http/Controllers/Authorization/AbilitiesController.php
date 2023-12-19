@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Authorization;
 
 use App\Http\Controllers\Controller;
 use App\Models\Ability;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
@@ -16,11 +17,13 @@ class AbilitiesController extends Controller
 {
     public function index(Request $request): Response
     {
+        $this->authorize('isSuperAdmin', User::class);
+
         $prefixes = ['apps', 'reports'];
 
         $routes = collect(Route::getRoutes())->filter(function ($route) use ($prefixes) {
             return Str::contains($route->uri, $prefixes)
-            // && ($request->abilities_search ? Str::contains($route->action['as'], $request->abilities_search) : true)
+                // && ($request->abilities_search ? Str::contains($route->action['as'], $request->abilities_search) : true)
             ;
         });
 
@@ -211,6 +214,8 @@ class AbilitiesController extends Controller
 
     public function update(Request $request, $mode): RedirectResponse
     {
+        $this->authorize('isSuperAdmin', User::class);
+
         try {
             $ability = Ability::sync($mode, $request->list);
 

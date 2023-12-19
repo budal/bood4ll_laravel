@@ -71,7 +71,7 @@ class RolesController extends Controller
                                         ],
                                         'forceDestroyRoute' => [
                                             'route' => 'apps.roles.forcedestroy',
-                                            'showIf' => Gate::allows('apps.roles.forcedestroy'),
+                                            'showIf' => Gate::allows('apps.roles.forcedestroy') && Gate::inspect('isSuperAdmin', User::class)->allowed(),
                                         ],
                                         'restoreRoute' => [
                                             'route' => 'apps.roles.restore',
@@ -83,6 +83,7 @@ class RolesController extends Controller
                                             'icon' => 'mdi:book-cog-outline',
                                             'title' => 'Abilities management',
                                             'route' => 'apps.abilities.index',
+                                            'showIf' => Gate::inspect('isSuperAdmin', User::class)->allowed(),
                                         ],
                                     ],
                                     'titles' => [
@@ -464,7 +465,7 @@ class RolesController extends Controller
             $role->save();
 
             try {
-                $role->getAllAbilities()->sync($abilities);
+                $role->abilities()->sync($abilities);
             } catch (\Exception $e) {
                 report($e);
 
