@@ -4,7 +4,7 @@ namespace App\Policies;
 
 use App\Models\User;
 use App\Models\Role;
-use Illuminate\Support\Facades\Route;
+use Illuminate\Auth\Access\Response;
 use Illuminate\Http\Request;
 
 class RolePolicy
@@ -18,14 +18,16 @@ class RolePolicy
         return null;
     }
 
-    public function fullAccess(User $user, Role $role, Request $request): bool
+    public function fullAccess(User $user, Role $role, Request $request): Response
     {
         if ($user->roles()->where('roles.id', $role->id)->count() === 0) {
-            return false;
+            return Response::deny("You do not have permission to access this feature.");
         }
 
         if (!$user->hasFullAccess()) {
-            return collect($request->list)->contains($user->id) && collect($request->list)->count() === 1;
+            return collect($request->list)->contains($user->id) && collect($request->list)->count() === 1
+                ? Response::allow()
+                : Response::deny("You can only manage your own data.");
         } else {
             $usersToEditUnits = User::join('unit_user', 'unit_user.user_id', '=', 'users.id')
                 ->select('users.id', 'unit_user.unit_id')
@@ -33,11 +35,13 @@ class RolePolicy
                 ->get()
                 ->pluck('unit_id');
 
-            return $usersToEditUnits->intersect($user->unitsIds())->count() == collect($request->list)->count();
+            return $usersToEditUnits->intersect($user->unitsIds())->count() == collect($request->list)->count()
+                ? Response::allow()
+                : Response::deny("You can only manage data from the location where you are classified.");
         }
     }
 
-    public function allowedUnits(User $user, Role $role, Request $request): bool
+    public function allowedUnits(User $user, Role $role, Request $request): Response
     {
         if ($user->roles()->where('roles.id', $role->id)->count() === 0)
             return false;
@@ -56,6 +60,8 @@ class RolePolicy
             ->get()
             ->pluck('unit_id');
 
-        return $usersToEditUnits->intersect($allowedUnits)->count() == collect($request->list)->count();
+        return $usersToEditUnits->intersect($allowedUnits)->count() == collect($request->list)->count()
+            ? Response::allow()
+            : Response::deny("Your permission don't provide access to manage nested data.");
     }
 }

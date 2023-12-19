@@ -425,7 +425,6 @@ class RolesController extends Controller
 
     public function create(Request $request, Role $role): Response
     {
-        $this->authorize('isManager', User::class);
         $this->authorize('access', User::class);
 
         return Inertia::render('Default', [
@@ -498,7 +497,6 @@ class RolesController extends Controller
 
     public function edit(Request $request, Role $role): Response
     {
-        $this->authorize('isManager', User::class);
         $this->authorize('access', User::class);
 
         $role['abilities'] = $role->abilities;
