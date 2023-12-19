@@ -59,7 +59,7 @@ class RolesController extends Controller
                                     'routes' => [
                                         'createRoute' => [
                                             'route' => 'apps.roles.create',
-                                            'showIf' => Gate::allows('apps.roles.create'),
+                                            'showIf' => Gate::allows('apps.roles.create') && Gate::inspect('isManager', User::class)->allowed(),
                                         ],
                                         'editRoute' => [
                                             'route' => 'apps.roles.edit',
@@ -163,7 +163,7 @@ class RolesController extends Controller
                 'id' => 'role',
                 'title' => 'Main data',
                 'subtitle' => 'Role name, abilities and settings',
-                // 'showIf' => $request->user()->isSuperAdmin() || $request->user()->isManager(),
+                'showIf' => $request->user()->isSuperAdmin() || $request->user()->isManager(),
                 'disabledIf' => $role->inalterable == true,
                 'cols' => 3,
                 'fields' => [
@@ -425,6 +425,7 @@ class RolesController extends Controller
 
     public function create(Request $request, Role $role): Response
     {
+        $this->authorize('isManager', User::class);
         $this->authorize('access', User::class);
 
         return Inertia::render('Default', [
