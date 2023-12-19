@@ -31,7 +31,7 @@ class RolesController extends Controller
             ->select('roles.id', 'roles.name')
             ->groupBy('roles.id', 'roles.name')
             ->when(!$request->user()->isSuperAdmin(), function ($query) use ($request) {
-                $query->whereIn('roles.id', $request->user()->roles->pluck('id'));
+                // $query->whereIn('roles.id', $request->user()->roles->pluck('id'));
 
                 if (!$request->user()->hasFullAccess()) {
                     $query->where('unit_user.user_id', $request->user()->id);
@@ -616,7 +616,7 @@ class RolesController extends Controller
 
     public function forceDestroy(Request $request): RedirectResponse
     {
-        $this->authorize('isManager', User::class);
+        $this->authorize('isSuperAdmin', User::class);
         $this->authorize('access', User::class);
 
         try {
