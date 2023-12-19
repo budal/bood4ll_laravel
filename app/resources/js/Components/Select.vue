@@ -105,7 +105,7 @@ watch(
                     v-for="item in selectedItems"
                     :key="item"
                     :value="item"
-                    class="p-1 flex items-center justify-center gap-2 text-zero-light dark:text-zero-dark rounded-md placeholder:text-xs sm:placeholder:text-sm text-xs sm:text-sm aria-[current=true]:bg-grass9 bg-zero-light dark:bg-zero-dark ring-0 border border-zero-light dark:border-zero-dark"
+                    class="p-1 flex items-center justify-center gap-2 data-[state=inactive]:animate-scaleIn data-[state=active]:animate-scaleOut text-zero-light dark:text-zero-dark rounded-md placeholder:text-xs sm:placeholder:text-sm text-xs sm:text-sm aria-[current=true]:bg-grass9 bg-zero-light dark:bg-zero-dark ring-0 border border-zero-light dark:border-zero-dark"
                 >
                     <TagsInputItemText class="text-sm">{{
                         // @ts-expect-error
