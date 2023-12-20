@@ -31,6 +31,8 @@ class RolesController extends Controller
             ->select('roles.id', 'roles.name', 'roles.deleted_at')
             ->groupBy('roles.id', 'roles.name', 'roles.deleted_at')
             ->when(!$request->user()->isSuperAdmin(), function ($query) use ($request) {
+                $query->where('roles.manager', false);
+
                 if (!$request->user()->hasFullAccess()) {
                     $query->where('unit_user.user_id', $request->user()->id);
                 }
@@ -501,6 +503,7 @@ class RolesController extends Controller
     {
         $this->authorize('access', User::class);
         $this->authorize('isActive', $role);
+        $this->authorize('canEdit', $role);
 
         $role['abilities'] = $role->abilities;
 
@@ -524,6 +527,7 @@ class RolesController extends Controller
         $this->authorize('access', User::class);
         $this->authorize('isActive', $role);
         $this->authorize('isOwner', $role);
+        $this->authorize('canEdit', $role);
 
         $abilities = collect($request->abilities)->pluck('id');
 

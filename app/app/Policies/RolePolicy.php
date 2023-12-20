@@ -81,9 +81,9 @@ class RolePolicy
 
     public function canEdit(User $user, Role $role): Response
     {
-        return $user->id === $role->owner
-        ? Response::allow()
-        : Response::deny("Your are not the owner of this registry.");
+        return $role->manager === false
+            ? Response::allow()
+            : Response::deny("You can't manage this registry.");
     }
 
     public function canDestroyOrRestore(User $user, Request $request): Response
