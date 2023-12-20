@@ -26,6 +26,7 @@ const props = withDefaults(
         name?: string;
         modelValue?: any;
         content: any;
+        disabled?: boolean;
         selected?: any;
         disableSearch?: boolean;
         required?: boolean;
@@ -34,6 +35,7 @@ const props = withDefaults(
         placeholder?: string;
     }>(),
     {
+        disabled: false,
         disableSearch: false,
         multiple: false,
         placeholder: '',
@@ -103,6 +105,7 @@ watch(
                 <TagsInputItem
                     v-for="item in selectedItems"
                     :key="item"
+        :disabled="disabled"
                     :value="item"
                     class="p-1 flex items-center justify-center gap-2 data-[state=inactive]:animate-scaleIn data-[state=active]:animate-scaleOut text-zero-light dark:text-zero-dark rounded-md placeholder:text-xs sm:placeholder:text-sm text-xs sm:text-sm aria-[current=true]:bg-grass9 bg-zero-light dark:bg-zero-dark ring-0 border border-zero-light dark:border-zero-dark"
                 >

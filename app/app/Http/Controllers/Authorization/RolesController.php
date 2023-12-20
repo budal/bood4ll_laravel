@@ -39,15 +39,15 @@ class RolesController extends Controller
 
                 $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
             })
-            ->withCount(['abilities', 'users' => function($query) use ($request) {
+            ->withCount(['abilities', 'users' => function ($query) use ($request) {
                 $query->when(!$request->user()->isSuperAdmin(), function ($query) use ($request) {
                     $query->leftjoin('unit_user', 'unit_user.user_id', '=', 'role_user.user_id');
                     $query->where('roles.manager', false);
-    
+
                     if (!$request->user()->hasFullAccess()) {
                         $query->where('unit_user.user_id', $request->user()->id);
                     }
-    
+
                     $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
                 });
             }])
@@ -155,7 +155,6 @@ class RolesController extends Controller
             ->when(!$request->user()->isSuperAdmin(), function ($query) use ($request) {
                 $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
 
-
                 if (!$request->user()->hasFullAccess()) {
                     $query->where('unit_user.user_id', $request->user()->id);
                 }
@@ -176,7 +175,7 @@ class RolesController extends Controller
                 'title' => 'Main data',
                 'subtitle' => 'Role name, abilities and settings',
                 'showIf' => $request->user()->isSuperAdmin() || $request->user()->isManager(),
-                'disabledIf' => $role->inalterable === true 
+                'disabledIf' => $role->inalterable === true
                     || $role->owner != $request->user()->id && !$request->user()->isManager(),
                 'cols' => 3,
                 'fields' => [

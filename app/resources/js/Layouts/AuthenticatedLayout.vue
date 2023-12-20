@@ -46,23 +46,27 @@ const apps = [
 const menuNav = [
     {
         title: "Dashboard",
+        icon: "mdi:monitor-dashboard",
         route: "dashboard",
         class: "sm:hidden",
     },
     {
         title: "Apps",
+        icon: "mdi:apps-box",
         route: "apps",
         class: "sm:hidden",
         links: apps,
     },
     {
         title: "Reports",
+        icon: "mdi:chart-areaspline",
         route: "reports",
         class: "sm:hidden",
         links: apps,
     },
     {
         title: "Help",
+        icon: "mdi:help-circle-outline",
         route: "help",
         class: "sm:hidden",
     },

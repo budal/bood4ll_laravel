@@ -49,7 +49,7 @@ const routeCurrent = window.location.href;
                                 />
                             </NavigationMenuTrigger>
                             <NavigationMenuContent
-                                class="z-[30] absolute top-0 left-0 w-full sm:w-auto data-[motion=from-start]:animate-enterFromLeft data-[motion=from-end]:animate-enterFromRight data-[motion=to-start]:animate-exitToLeft data-[motion=to-end]:animate-exitToRight"
+                                class="z-[30] absolute top-0 left-0 bg-zero-light-hover dark:bg-zero-dark-hover w-full sm:w-auto data-[motion=from-start]:animate-enterFromLeft data-[motion=from-end]:animate-enterFromRight data-[motion=to-start]:animate-exitToLeft data-[motion=to-end]:animate-exitToRight"
                             >
                                 <div
                                     class="container mx-auto grid gap-2 p-2 bg-zero-light-hover dark:bg-zero-dark-hover w-screen max-w-xl md:max-w-3xl lg:max-w-5xl sm:grid-flow-row sm:grid-cols-2 lg:grid-cols-3"
@@ -88,7 +88,7 @@ const routeCurrent = window.location.href;
                     </template>
                     <template v-else>
                         <NavigationMenuItem>
-                            <NavigationMenuLink
+                            <Link
                                 :href="route($t(item.route))"
                                 class="text-sm font-medium block select-none mx-3 py-[23px] leading-none no-underline outline-none border-b-2 border-transparent transition ease-in-out duration-500"
                                 :class="
@@ -98,7 +98,7 @@ const routeCurrent = window.location.href;
                                 "
                             >
                                 {{ $t(item.title) }}
-                            </NavigationMenuLink>
+                            </Link>
                         </NavigationMenuItem>
                     </template>
                 </template>
@@ -114,7 +114,7 @@ const routeCurrent = window.location.href;
                 class="perspective-[2000px] absolute top-full left-0 flex w-full justify-center"
             >
                 <NavigationMenuViewport
-                    class="bg-zero-light-hover dark:bg-zero-dark-hover data-[state=open]:animate-scaleIn data-[state=closed]:animate-scaleOut relative -mt-[17px] h-[var(--radix-navigation-menu-viewport-height)] w-full origin-[top_center] overflow-hidden rounded-[10px] transition-[width,_height] duration-300 sm:w-[var(--radix-navigation-menu-viewport-width)]"
+                    class="bg-zero-light-hover dark:bg-zero-dark-hover data-[state=open]:animate-scaleIn data-[state=closed]:animate-scaleOut relative -mt-[19px] h-[var(--radix-navigation-menu-viewport-height)] w-full origin-[top_center] overflow-hidden rounded-[10px] transition-[width,_height] duration-300 sm:w-[var(--radix-navigation-menu-viewport-width)]"
                 />
             </div>
         </NavigationMenuRoot>
