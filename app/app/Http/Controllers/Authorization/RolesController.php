@@ -39,7 +39,18 @@ class RolesController extends Controller
 
                 $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
             })
-            ->withCount('abilities', 'users')
+            ->withCount(['abilities', 'users' => function($query) use ($request) {
+                $query->when(!$request->user()->isSuperAdmin(), function ($query) use ($request) {
+                    $query->leftjoin('unit_user', 'unit_user.user_id', '=', 'role_user.user_id');
+                    $query->where('roles.manager', false);
+    
+                    if (!$request->user()->hasFullAccess()) {
+                        $query->where('unit_user.user_id', $request->user()->id);
+                    }
+    
+                    $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
+                });
+            }])
             ->paginate(20)
             ->onEachSide(2)
             ->appends(collect($request->query)->toArray());
