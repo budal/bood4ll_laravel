@@ -19,22 +19,36 @@ class UnitsController extends Controller
 
     public function index(Request $request): Response
     {
-        $units = Unit::filter($request, 'units', ['order' => ['shortpath']])
-            ->when(!$request->units_search, function ($query) {
-                $query->where('units.parent_id', null);
+        $units = Unit::filter($request, 'units', [
+            'where' => [
+                'shortpath'
+            ],
+            'order' => [
+                'shortpath'
+            ]
+        ])
+            ->leftjoin('unit_user', 'unit_user.unit_id', '=', 'units.id')
+            ->select('units.id', 'units.shortpath', 'units.deleted_at')
+            ->groupBy('units.id', 'units.shortpath', 'units.deleted_at')
+            ->when(!$request->user()->isSuperAdmin(), function ($query) use ($request) {
+                if (!$request->user()->hasFullAccess()) {
+                    $query->where('unit_user.user_id', $request->user()->id);
+                }
+
+                $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
             })
-            ->with('childrenWithUsersCount')
+            // ->with('childrenWithUsersCount')
             ->withCount('children', 'users')
             ->paginate(20)
             ->onEachSide(2)
             ->through(function ($item) {
-                $item->all_users_count = $item->getAllChildren()->pluck('users_count')->sum() + $item->users_count;
+                // $item->all_users_count = $item->getAllChildren()->pluck('users_count')->sum() + $item->users_count;
 
                 return $item;
             })
             ->appends(collect($request->query)->toArray());
 
-        // dd($units[0]);
+        // dd($units[0], $request->user()->hasFullAccess(), $request->user()->unitsIds());
 
         return Inertia::render('Default', [
             'form' => [
