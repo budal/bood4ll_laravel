@@ -115,10 +115,10 @@ watch(
                         // @ts-expect-error
                         item.name
                     }}</TagsInputItemText>
-                    <TagsInputItemDelete>
+                    <TagsInputItemDelete class="cursor-pointer data-[disabled]:pointer-events-none">
                         <Icon
                             icon="mdi:close-circle-outline"
-                            class="w-4 h-4 text-zero-light dark:text-zero-dark cursor-pointer"
+                            class="w-4 h-4 text-zero-light dark:text-zero-dark"
                         />
                     </TagsInputItemDelete>
                 </TagsInputItem>

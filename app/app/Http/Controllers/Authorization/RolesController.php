@@ -173,7 +173,8 @@ class RolesController extends Controller
                 'title' => 'Main data',
                 'subtitle' => 'Role name, abilities and settings',
                 'showIf' => $request->user()->isSuperAdmin() || $request->user()->isManager(),
-                'disabledIf' => true,
+                'disabledIf' => $role->inalterable == true
+                    || $role->owner != $request->user()->id && (!$request->user()->isSuperAdmin() || !$request->user()->isManager()),
                 'cols' => 3,
                 'fields' => [
                     [
