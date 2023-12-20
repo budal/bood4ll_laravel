@@ -79,12 +79,12 @@ class RolePolicy
             : Response::deny("Your are not the owner of this registry.");
     }
 
-    public function canDestroyOrRestore(User $user, Role $role, Request $request): Response
+    public function canDestroyOrRestore(User $user, Request $request): Response
     {
-        dd($request, $user, $role);
+        $roles = Role::whereIn('roles.id', $request->list)->withTrashed()->get();
 
-        return $usersToEditUnits->intersect($allowedUnits)->count() == collect($request->list)->count()
+        return $roles->pluck('owner')->intersect($user->id)->count() == collect($request->list)->count()
             ? Response::allow()
-            : Response::deny("Your permission don't provide access to manage nested data.");
+            : Response::deny("You are trying to destroy/restore items that don't belong to you.");
     }
 }
