@@ -132,7 +132,7 @@ class RolesController extends Controller
             ->get();
 
         $users = User::filter($request, 'users')
-            ->join('unit_user', 'unit_user.user_id', '=', 'users.id')
+            ->leftjoin('unit_user', 'unit_user.user_id', '=', 'users.id')
             ->select('users.id', 'users.name', 'users.email')
             ->groupBy('users.id', 'users.name', 'users.email')
             ->when(!$request->all, function ($query) use ($role) {
@@ -163,7 +163,8 @@ class RolesController extends Controller
                 'title' => 'Main data',
                 'subtitle' => 'Role name, abilities and settings',
                 'showIf' => $request->user()->isSuperAdmin() || $request->user()->isManager(),
-                'disabledIf' => $role->inalterable == true || $role->owner != $request->user()->id && !$request->user()->isSuperAdmin(),
+                'disabledIf' => $role->inalterable === true 
+                    || $role->owner != $request->user()->id && !$request->user()->isManager(),
                 'cols' => 3,
                 'fields' => [
                     [
@@ -463,6 +464,7 @@ class RolesController extends Controller
             $role->save();
 
             try {
+                $role->users()->attach($request->user()->id);
                 $role->abilities()->sync($abilities);
             } catch (\Exception $e) {
                 report($e);
