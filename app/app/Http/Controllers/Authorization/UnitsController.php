@@ -4,10 +4,12 @@ namespace App\Http\Controllers\Authorization;
 
 use App\Http\Controllers\Controller;
 use App\Models\Unit;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -19,6 +21,8 @@ class UnitsController extends Controller
 
     public function index(Request $request): Response
     {
+        $this->authorize('access', User::class);
+
         $units = Unit::filter($request, 'units', [
             'where' => [
                 'shortpath'
@@ -61,10 +65,22 @@ class UnitsController extends Controller
                                 'name' => 'units',
                                 'content' => [
                                     'routes' => [
-                                        'createRoute' => 'apps.units.create',
-                                        'editRoute' => 'apps.units.edit',
-                                        'destroyRoute' => 'apps.units.destroy',
-                                        'restoreRoute' => 'apps.units.restore',
+                                        'createRoute' => [
+                                            'route' => 'apps.units.create',
+                                            'showIf' => Gate::allows('apps.units.create') && Gate::inspect('isSuperAdmin', User::class)->allowed(),
+                                        ],
+                                        'editRoute' => [
+                                            'route' => 'apps.units.edit',
+                                            'showIf' => Gate::allows('apps.units.edit'),
+                                        ],
+                                        'destroyRoute' => [
+                                            'route' => 'apps.units.destroy',
+                                            'showIf' => Gate::allows('apps.units.destroy'),
+                                        ],
+                                        'restoreRoute' => [
+                                            'route' => 'apps.units.restore',
+                                            'showIf' => Gate::allows('apps.units.restore'),
+                                        ],
                                     ],
                                     'menu' => [
                                         [
@@ -72,6 +88,7 @@ class UnitsController extends Controller
                                             'title' => 'Refresh units hierarchy',
                                             'route' => 'apps.units.hierarchy',
                                             'method' => 'post',
+                                            'showIf' => Gate::inspect('isManager', User::class)->allowed(),
                                         ],
                                     ],
                                     'titles' => [
@@ -109,11 +126,17 @@ class UnitsController extends Controller
 
     public function __form(Request $request, Unit $unit): array
     {
-        $units = Unit::orderBy('parent_id')
-            ->select('id', 'name', 'active')
-            ->with('childrenRecursive')
-            ->orderBy('name')
-            ->where('parent_id', 0)
+        $units = Unit::select('units.id', 'units.shortpath AS name')
+            ->leftjoin('unit_user', 'unit_user.unit_id', '=', 'units.id')
+            ->groupBy('units.id', 'name')
+            ->when(!$request->user()->isSuperAdmin(), function ($query) use ($request) {
+                $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
+
+                if (!$request->user()->hasFullAccess()) {
+                    $query->where('unit_user.user_id', $request->user()->id);
+                }
+            })
+            ->orderBy('units.shortpath')
             ->get();
 
         $subunits = $unit
@@ -243,7 +266,7 @@ class UnitsController extends Controller
                             'title' => 'Geographic coordinates',
                             'span' => 4,
                         ],
-                        ],
+                    ],
                 ],
             ],
             [
@@ -361,6 +384,26 @@ class UnitsController extends Controller
         ];
     }
 
+    public function hierarchy(): RedirectResponse
+    {
+        Unit::orderBy('id')->chunk(100, function (Collection $units) {
+            foreach ($units as $unit) {
+                $unit = Unit::where('id', $unit->id)->first();
+
+                $unit->fullpath = $unit->getParentsNames();
+                $unit->shortpath = $unit->getParentsNicknames();
+
+                $unit->save();
+            }
+        });
+
+        return Redirect::back()->with([
+            'toast_type' => 'success',
+            'toast_message' => '{0} Nothing to refresh.|[1] Item refreshed successfully.|[2,*] :total items successfully refreshed.',
+            'toast_count' => 1,
+        ]);
+    }
+
     public function create(Request $request, Unit $unit): Response
     {
         $data['parent_id'] = $request->unit->id ?? '';
@@ -476,26 +519,6 @@ class UnitsController extends Controller
         return Redirect::back()->with([
             'toast_type' => 'success',
             'toast_message' => '{0} Nothing to edit.|[1] Item edited successfully.|[2,*] :total items successfully edited.',
-            'toast_count' => 1,
-        ]);
-    }
-
-    public function hierarchy(): RedirectResponse
-    {
-        DB::table('units')->orderBy('id')->chunk(100, function (Collection $units) {
-            foreach ($units as $unit) {
-                $unit = Unit::where('id', $unit->id)->first();
-
-                $unit->fullpath = $unit->getParentsNames();
-                $unit->shortpath = $unit->getParentsNicknames();
-
-                $unit->save();
-            }
-        });
-
-        return Redirect::back()->with([
-            'toast_type' => 'success',
-            'toast_message' => '{0} Nothing to refresh.|[1] Item refreshed successfully.|[2,*] :total items successfully refreshed.',
             'toast_count' => 1,
         ]);
     }

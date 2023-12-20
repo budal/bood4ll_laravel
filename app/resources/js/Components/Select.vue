@@ -90,6 +90,7 @@ watch(
         v-model:search-term="searchTerm"
         :multiple="multiple"
         @update:open="onOpen"
+        :disabled="disabled"
         class="my-4 mx-auto relative"
     >
         <ComboboxAnchor
@@ -98,15 +99,16 @@ watch(
             <TagsInputRoot
                 v-slot="{ values: selectedItems }"
                 :model-value="selectedItems"
-                delimiter=","
+                delimiter=""
                 @update:modelValue="onOpen"
+
                 class="flex flex-wrap gap-1 items-center my-[6px] ml-2 w-full"
             >
                 <TagsInputItem
                     v-for="item in selectedItems"
                     :key="item"
-        :disabled="disabled"
                     :value="item"
+                    :disabled="disabled"
                     class="p-1 flex items-center justify-center gap-2 data-[state=inactive]:animate-scaleIn data-[state=active]:animate-scaleOut text-zero-light dark:text-zero-dark rounded-md placeholder:text-xs sm:placeholder:text-sm text-xs sm:text-sm aria-[current=true]:bg-grass9 bg-zero-light dark:bg-zero-dark ring-0 border border-zero-light dark:border-zero-dark"
                 >
                     <TagsInputItemText class="text-sm">{{
@@ -122,7 +124,8 @@ watch(
                 </TagsInputItem>
 
                 <ComboboxTrigger class="grow w-0">
-                    <ComboboxInput as-child>
+                    <ComboboxInput as-child
+                    >
                         <TagsInputInput
                             :id="id"
                             :name="name"
@@ -159,7 +162,6 @@ watch(
                         v-for="item in filteredContent"
                         :key="item.id"
                         :value="item"
-                        :disabled="item.disabled"
                         class="text-sm p-3 leading-none pr-[35px] pl-[25px] relative select-none data-[disabled]:opacity-25 data-[disabled]:pointer-events-none data-[highlighted]:outline-none data-[highlighted]:bg-zero-light-hover dark:data-[highlighted]:bg-zero-dark-hover cursor-pointer"
                     >
                         <ComboboxItemIndicator

@@ -135,12 +135,10 @@ class RolesController extends Controller
 
     public function __form(Request $request, Role $role): array
     {
-        $abilities = Ability::when(
-            !$request->user()->isSuperAdmin(),
-            function ($query) use ($request) {
+        $abilities = Ability::select('abilities.*')
+            ->when(!$request->user()->isSuperAdmin(), function ($query) use ($request) {
                 $query->whereIn('name', $request->user()->getAllAbilities->where('ability', '!=', null)->pluck('ability'));
-            }
-        )
+            })
             ->orderBy('name')
             ->get();
 
@@ -175,8 +173,7 @@ class RolesController extends Controller
                 'title' => 'Main data',
                 'subtitle' => 'Role name, abilities and settings',
                 'showIf' => $request->user()->isSuperAdmin() || $request->user()->isManager(),
-                'disabledIf' => $role->inalterable == true
-                    || $role->owner != $request->user()->id && !$request->user()->isSuperAdmin() && !$request->user()->isManager(),
+                'disabledIf' => true,
                 'cols' => 3,
                 'fields' => [
                     [
