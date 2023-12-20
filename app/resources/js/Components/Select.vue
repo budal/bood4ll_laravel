@@ -99,7 +99,7 @@ watch(
             <TagsInputRoot
                 v-slot="{ values: selectedItems }"
                 :model-value="selectedItems"
-                delimiter=""
+                :disabled="disabled"
                 @update:modelValue="onOpen"
 
                 class="flex flex-wrap gap-1 items-center my-[6px] ml-2 w-full"
@@ -108,8 +108,11 @@ watch(
                     v-for="item in selectedItems"
                     :key="item"
                     :value="item"
-                    :disabled="disabled"
-                    class="p-1 flex items-center justify-center gap-2 data-[state=inactive]:animate-scaleIn data-[state=active]:animate-scaleOut text-zero-light dark:text-zero-dark rounded-md placeholder:text-xs sm:placeholder:text-sm text-xs sm:text-sm aria-[current=true]:bg-grass9 bg-zero-light dark:bg-zero-dark ring-0 border border-zero-light dark:border-zero-dark"
+                    :disabled="
+                        // @ts-expect-error
+                        item.disabled
+                    "
+                    class="p-1 flex items-center justify-center gap-2 data-[state=active]:text-info-light data-[state=active]:dark:text-info-dark data-[state=active]:bg-info-light data-[state=active]:dark:bg-info-dark data-[state=active]:border-info-light data-[state=active]:dark:border-info-dark data-[state=inactive]:text-zero-light data-[state=inactive]:dark:text-zero-dark data-[state=inactive]:bg-zero-light data-[state=inactive]:dark:bg-zero-dark data-[state=inactive]:border-zero-light data-[state=inactive]:dark:border-zero-dark data-[disabled]:text-zero-light/50 data-[disabled]:dark:text-zero-dark/50 data-[disabled]:bg-zero-light/50 data-[disabled]:dark:bg-zero-dark/50 data-[disabled]:border-zero-light/50 data-[disabled]:dark:border-zero-dark/50 rounded-md placeholder:text-xs sm:placeholder:text-sm text-xs sm:text-sm ring-0 border"
                 >
                     <TagsInputItemText class="text-sm">{{
                         // @ts-expect-error
@@ -124,7 +127,8 @@ watch(
                 </TagsInputItem>
 
                 <ComboboxTrigger class="grow w-0">
-                    <ComboboxInput as-child
+                    <ComboboxInput 
+                        as-child
                     >
                         <TagsInputInput
                             :id="id"
@@ -147,7 +151,7 @@ watch(
             </ComboboxTrigger>
         </ComboboxAnchor>
         <ComboboxContent
-            @escapeKeyDown="onEscape"
+        @escapeKeyDown="onEscape"
             @pointerDownOutside="onEscape"
             @closeAutoFocus="onEscape"
             class="absolute z-[4] w-full mt-1 min-w-[160px] overflow-hidden bg-zero-white dark:bg-zero-black text-zero-light dark:text-zero-dark rounded-md border border-zero-light dark:border-zero-dark focus:outline-none focus:ring-2 focus:ring-primary-light dark:focus:ring-primary-dark focus:ring-offset-1 focus:ring-offset-primary-light dark:focus:ring-offset-primary-dark shadow-[0px_10px_38px_-10px_rgba(22,_23,_24,_0.35),_0px_10px_20px_-15px_rgba(22,_23,_24,_0.2)] will-change-[opacity,transform] data-[side=top]:animate-slideDownAndFade data-[side=right]:animate-slideLeftAndFade data-[side=bottom]:animate-slideUpAndFade data-[side=left]:animate-slideRightAndFade"
