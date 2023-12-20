@@ -70,7 +70,6 @@ const onEscape = () => {
 };
 
 const onOpen = () => {
-    onEscape();
     emit("update:modelValue", selectedItems);
 };
 

@@ -42,13 +42,11 @@ class UnitsController extends Controller
             ->paginate(20)
             ->onEachSide(2)
             ->through(function ($item) {
-                // $item->all_users_count = $item->getAllChildren()->pluck('users_count')->sum() + $item->users_count;
+                // $item->all_users_count = $item->getAllChildren()->pluck('users_count')->sum();
 
                 return $item;
             })
             ->appends(collect($request->query)->toArray());
-
-        // dd($units[0], $request->user()->hasFullAccess(), $request->user()->unitsIds());
 
         return Inertia::render('Default', [
             'form' => [
