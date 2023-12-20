@@ -31,8 +31,6 @@ class RolesController extends Controller
             ->select('roles.id', 'roles.name', 'roles.deleted_at')
             ->groupBy('roles.id', 'roles.name', 'roles.deleted_at')
             ->when(!$request->user()->isSuperAdmin(), function ($query) use ($request) {
-                // $query->whereIn('roles.id', $request->user()->roles->pluck('id'));
-
                 if (!$request->user()->hasFullAccess()) {
                     $query->where('unit_user.user_id', $request->user()->id);
                 }
@@ -165,7 +163,7 @@ class RolesController extends Controller
                 'title' => 'Main data',
                 'subtitle' => 'Role name, abilities and settings',
                 'showIf' => $request->user()->isSuperAdmin() || $request->user()->isManager(),
-                'disabledIf' => $role->inalterable == true,
+                'disabledIf' => $role->inalterable == true || $role->owner != $request->user()->id && !$request->user()->isSuperAdmin(),
                 'cols' => 3,
                 'fields' => [
                     [
@@ -500,6 +498,7 @@ class RolesController extends Controller
     public function edit(Request $request, Role $role): Response
     {
         $this->authorize('access', User::class);
+        $this->authorize('isActive', $role);
 
         $role['abilities'] = $role->abilities;
 
@@ -521,6 +520,8 @@ class RolesController extends Controller
     {
         $this->authorize('isManager', User::class);
         $this->authorize('access', User::class);
+        $this->authorize('isActive', $role);
+        $this->authorize('isOwner', $role);
 
         $abilities = collect($request->abilities)->pluck('id');
 
@@ -589,6 +590,7 @@ class RolesController extends Controller
     {
         $this->authorize('isManager', User::class);
         $this->authorize('access', User::class);
+        $this->authorize('canDestroyOrRestore', [Role::class, $request]);
 
         try {
             $total = Role::whereIn('id', $request->list)
@@ -647,6 +649,7 @@ class RolesController extends Controller
     {
         $this->authorize('isManager', User::class);
         $this->authorize('access', User::class);
+        $this->authorize('canDestroyOrRestore', [Role::class, $request]);
 
         try {
             $total = Role::whereIn('id', $request->list)->restore();

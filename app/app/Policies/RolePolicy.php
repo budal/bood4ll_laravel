@@ -64,4 +64,27 @@ class RolePolicy
             ? Response::allow()
             : Response::deny("Your permission don't provide access to manage nested data.");
     }
+
+    public function isActive(User $user, Role $role): Response
+    {
+        return $role->deleted_at === null
+            ? Response::allow()
+            : Response::deny("This registry is not active.");
+    }
+
+    public function isOwner(User $user, Role $role): Response
+    {
+        return $user->id === $role->owner
+            ? Response::allow()
+            : Response::deny("Your are not the owner of this registry.");
+    }
+
+    public function canDestroyOrRestore(User $user, Role $role, Request $request): Response
+    {
+        dd($request, $user, $role);
+
+        return $usersToEditUnits->intersect($allowedUnits)->count() == collect($request->list)->count()
+            ? Response::allow()
+            : Response::deny("Your permission don't provide access to manage nested data.");
+    }
 }
