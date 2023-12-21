@@ -8,9 +8,6 @@ use Illuminate\Database\Seeder;
 
 class UnitSeeder extends Seeder
 {
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
         \App\Models\Unit::factory()->afterCreating(function (\App\Models\Unit $unit) {
@@ -26,8 +23,8 @@ class UnitSeeder extends Seeder
 
         \App\Models\Unit::factory(6)
             ->sequence(fn (Sequence $sequence) => [
-                'name' => ($sequence->index + 1).' CRPM',
-                'nickname' => ($sequence->index + 1).' CRPM',
+                'name' => ($sequence->index + 1) . ' CRPM',
+                'nickname' => ($sequence->index + 1) . ' CRPM',
                 'parent_id' => 1,
                 'order' => $sequence->index + 1,
             ])->afterCreating(function (\App\Models\Unit $unit) {
@@ -39,8 +36,8 @@ class UnitSeeder extends Seeder
 
         \App\Models\Unit::factory(30)
             ->sequence(fn (Sequence $sequence) => [
-                'name' => ($sequence->index + 1).' BPM',
-                'nickname' => ($sequence->index + 1).' BPM',
+                'name' => ($sequence->index + 1) . ' BPM',
+                'nickname' => ($sequence->index + 1) . ' BPM',
                 'parent_id' => \App\Models\Unit::where('parent_id', 1)
                     ->inRandomOrder()
                     ->first()
@@ -68,25 +65,25 @@ class UnitSeeder extends Seeder
                 ];
 
                 \App\Models\Unit::factory(count($subunits))
-                ->state(new Sequence(...$subunits))->afterCreating(function (\App\Models\Unit $unit) {
-                    $unit->fullpath = $unit->getParentsNames();
-                    $unit->shortpath = $unit->getParentsNicknames();
+                    ->state(new Sequence(...$subunits))->afterCreating(function (\App\Models\Unit $unit) {
+                        $unit->fullpath = $unit->getParentsNames();
+                        $unit->shortpath = $unit->getParentsNicknames();
 
-                    $unit->save();
-                })->create();
+                        $unit->save();
+                    })->create();
 
                 \App\Models\Unit::factory(rand(3, 6))
-                ->sequence(fn (Sequence $sequence) => [
-                    'name' => ($sequence->index + 1).' Cia',
-                    'nickname' => ($sequence->index + 1).' Cia',
-                    'parent_id' => $unit->id,
-                    'order' => $sequence->index + ++$order,
-                ])->afterCreating(function (\App\Models\Unit $unit) {
-                    $unit->fullpath = $unit->getParentsNames();
-                    $unit->shortpath = $unit->getParentsNicknames();
+                    ->sequence(fn (Sequence $sequence) => [
+                        'name' => ($sequence->index + 1) . ' Cia',
+                        'nickname' => ($sequence->index + 1) . ' Cia',
+                        'parent_id' => $unit->id,
+                        'order' => $sequence->index + ++$order,
+                    ])->afterCreating(function (\App\Models\Unit $unit) {
+                        $unit->fullpath = $unit->getParentsNames();
+                        $unit->shortpath = $unit->getParentsNicknames();
 
-                    $unit->save();
-                })->create();
+                        $unit->save();
+                    })->create();
             })->create();
     }
 }

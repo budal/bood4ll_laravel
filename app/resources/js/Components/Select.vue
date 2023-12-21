@@ -38,7 +38,7 @@ const props = withDefaults(
         disabled: false,
         disableSearch: false,
         multiple: false,
-        placeholder: '',
+        placeholder: "",
     },
 );
 
@@ -62,7 +62,11 @@ const selectedIds =
         : [];
 
 const selectedContent = props.content.filter((item: any) => {
-    return selectedIds.includes(item.id);
+    if (props.multiple) {
+        return selectedIds.includes(item.id);
+    } else {
+        return item.id === props.modelValue;
+    }
 });
 
 const selectedItems = ref(selectedContent);
@@ -101,24 +105,32 @@ watch(
                 :model-value="selectedItems"
                 :disabled="disabled"
                 @update:modelValue="onOpen"
-
                 class="flex flex-wrap gap-1 items-center my-[6px] ml-2 w-full"
             >
                 <TagsInputItem
-                    v-for="item in selectedItems"
-                    :key="item"
+                    v-for="(item, key) in selectedItems"
+                    :key="key"
                     :value="item"
                     :disabled="
                         // @ts-expect-error
                         item.disabled
                     "
-                    class="p-1 flex items-center justify-center gap-2 data-[state=active]:text-info-light data-[state=active]:dark:text-info-dark data-[state=active]:bg-info-light data-[state=active]:dark:bg-info-dark data-[state=active]:border-info-light data-[state=active]:dark:border-info-dark data-[state=inactive]:text-zero-light data-[state=inactive]:dark:text-zero-dark data-[state=inactive]:bg-zero-light data-[state=inactive]:dark:bg-zero-dark data-[state=inactive]:border-zero-light data-[state=inactive]:dark:border-zero-dark data-[disabled]:text-zero-light/50 data-[disabled]:dark:text-zero-dark/50 data-[disabled]:bg-zero-light/50 data-[disabled]:dark:bg-zero-dark/50 data-[disabled]:border-zero-light/50 data-[disabled]:dark:border-zero-dark/50 rounded-md placeholder:text-xs sm:placeholder:text-sm text-xs sm:text-sm ring-0 border"
+                    class="items-center"
+                    :class="
+                        1 == 1
+                            ? // multiple
+                              'p-1 flex justify-center gap-2 data-[state=active]:text-info-light data-[state=active]:dark:text-info-dark data-[state=active]:bg-info-light data-[state=active]:dark:bg-info-dark data-[state=active]:border-info-light data-[state=active]:dark:border-info-dark data-[state=inactive]:text-zero-light data-[state=inactive]:dark:text-zero-dark data-[state=inactive]:bg-zero-light data-[state=inactive]:dark:bg-zero-dark data-[state=inactive]:border-zero-light data-[state=inactive]:dark:border-zero-dark data-[disabled]:text-zero-light/50 data-[disabled]:dark:text-zero-dark/50 data-[disabled]:bg-zero-light/50 data-[disabled]:dark:bg-zero-dark/50 data-[disabled]:border-zero-light/50 data-[disabled]:dark:border-zero-dark/50 rounded-md placeholder:text-xs sm:placeholder:text-sm text-xs sm:text-sm ring-0 border'
+                            : 'text-zero-light dark:text-zero-dark placeholder:text-xs sm:placeholder:text-md text-md bg-zero-white dark:bg-zero-black'
+                    "
                 >
                     <TagsInputItemText class="text-sm">{{
                         // @ts-expect-error
                         item.name
                     }}</TagsInputItemText>
-                    <TagsInputItemDelete class="cursor-pointer data-[disabled]:pointer-events-none">
+                    <TagsInputItemDelete
+                        v-if="multiple == true"
+                        class="cursor-pointer data-[disabled]:pointer-events-none"
+                    >
                         <Icon
                             icon="mdi:close-circle-outline"
                             class="w-4 h-4 text-zero-light dark:text-zero-dark"
@@ -126,10 +138,8 @@ watch(
                     </TagsInputItemDelete>
                 </TagsInputItem>
 
-                <ComboboxTrigger class="grow w-0">
-                    <ComboboxInput 
-                        as-child
-                    >
+                <div class="grow w-0">
+                    <ComboboxInput as-child>
                         <TagsInputInput
                             :id="id"
                             :name="name"
@@ -140,7 +150,7 @@ watch(
                             @keydown.enter.prevent
                         />
                     </ComboboxInput>
-                </ComboboxTrigger>
+                </div>
             </TagsInputRoot>
 
             <ComboboxTrigger>

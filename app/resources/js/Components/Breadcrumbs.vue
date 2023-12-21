@@ -27,7 +27,7 @@ const breadcrumbs = computed(() =>
         v-if="breadcrumbs.length > 0"
         class="bg-zero-light dark:bg-zero-dark shadow-primary-light/20 dark:shadow-primary-dark/20 border-t border-zero-light dark:border-zero-dark shadow-[0_2px_10px]"
     >
-        <div class="flex gap-4 max-w-7xl mx-auto py-1 px-4 sm:px-6 lg:px-8 ">
+        <div class="flex gap-4 max-w-7xl mx-auto py-1 px-4 sm:px-6 lg:px-8">
             <h2
                 v-for="page in breadcrumbs"
                 class="font-semibold text-md text-zero-light dark:text-zero-dark leading-tight"

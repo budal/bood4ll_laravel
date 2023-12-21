@@ -8,13 +8,10 @@ use Illuminate\Database\Eloquent\Factories\Sequence;
 
 class SuperadminUserSeeder extends Seeder
 {
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
         $superAdmin = \App\Models\User::first();
-        
+
         $superAdmin->roles()->attach(\App\Models\Role::first()->id);
     }
 }

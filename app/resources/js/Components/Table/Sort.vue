@@ -38,7 +38,9 @@ const sortBy = (column: any) => {
 
 <template>
     <Link
-        v-if="sort.disableSort != true && typeof sort.options?.length != 'number'"
+        v-if="
+            sort.disableSort != true && typeof sort.options?.length != 'number'
+        "
         :href="sortBy(sort.field).url"
         class="group focus:outline-none flex gap-1 items-center"
         preserve-scroll

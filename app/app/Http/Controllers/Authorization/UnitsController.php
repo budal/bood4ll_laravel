@@ -77,6 +77,10 @@ class UnitsController extends Controller
                                             'route' => 'apps.units.destroy',
                                             'showIf' => Gate::allows('apps.units.destroy'),
                                         ],
+                                        'forceDestroyRoute' => [
+                                            'route' => 'apps.roles.forcedestroy',
+                                            'showIf' => Gate::allows('apps.roles.forcedestroy') && Gate::inspect('isSuperAdmin', User::class)->allowed(),
+                                        ],
                                         'restoreRoute' => [
                                             'route' => 'apps.units.restore',
                                             'showIf' => Gate::allows('apps.units.restore'),

@@ -151,7 +151,7 @@ const selectItems = props.disableSearch
                             />
                         </button>
                     </div>
-                    <ComboboxTrigger class="grow w-0">
+                    <div class="grow w-0">
                         <ComboboxInput
                             v-if="!disableSearch"
                             v-model="searchInput"
@@ -161,7 +161,7 @@ const selectItems = props.disableSearch
                             autocomplete="off"
                             class="p-0 w-full bg-transparent text-ellipsis border-0 outline-0 focus:ring-0 placeholder:text-sm placeholder-primary-dark/20 dark:placeholder-primary-dark/20 text-zero-light dark:text-zero-dark"
                         />
-                    </ComboboxTrigger>
+                    </div>
                 </div>
             </div>
             <ComboboxTrigger>

@@ -202,22 +202,22 @@ let menuItems = computed(() => {
                     return items;
                 });
 
-                item.showIf !== false 
+                item.showIf !== false
                     ? content.add({
-                        title: item.title,
-                        theme: item.theme,
-                        icon: item.icon,
-                        disabled: customList.value.size === 0,
-                        list: customList,
-                        route: isValidUrl(item.route),
-                        method: item.method,
-                        preserveState: item.preserveState === true,
-                        modalTitle: item.modalTitle,
-                        modalSubTitle: item.modalSubTitle,
-                        buttonTitle: item.buttonTitle,
-                        buttonIcon: item.buttonIcon,
-                        buttonTheme: item.buttonTheme,
-                    })
+                          title: item.title,
+                          theme: item.theme,
+                          icon: item.icon,
+                          disabled: customList.value.size === 0,
+                          list: customList,
+                          route: isValidUrl(item.route),
+                          method: item.method,
+                          preserveState: item.preserveState === true,
+                          modalTitle: item.modalTitle,
+                          modalSubTitle: item.modalSubTitle,
+                          buttonTitle: item.buttonTitle,
+                          buttonIcon: item.buttonIcon,
+                          buttonTheme: item.buttonTheme,
+                      })
                     : false;
             } else {
                 item.showIf !== false ? content.add(item) : false;

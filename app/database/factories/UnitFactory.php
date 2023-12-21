@@ -4,16 +4,8 @@ namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Units>
- */
 class UnitFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
         return [
@@ -29,7 +21,7 @@ class UnitFactory extends Factory
             'country' => fake()->countryCode(),
             'state' => fake()->stateAbbr(),
             'city' => fake()->city(),
-            'address' => fake()->streetName().', '.fake()->buildingNumber(),
+            'address' => fake()->streetName() . ', ' . fake()->buildingNumber(),
             'complement' => fake()->secondaryAddress(),
             'postcode' => fake()->postcode(),
             'geo' => fake()->latitude() . "," . fake()->longitude(),
