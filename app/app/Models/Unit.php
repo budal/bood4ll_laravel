@@ -82,7 +82,7 @@ class Unit extends Base
     public function getParentsNames()
     {
         if ($this->parent) {
-            return $this->parent->getParentsNames().' > '.$this->name;
+            return $this->parent->getParentsNames() . ' > ' . $this->name;
         } else {
             return $this->name;
         }
@@ -91,7 +91,7 @@ class Unit extends Base
     public function getParentsNicknames()
     {
         if ($this->parent) {
-            return $this->parent->getParentsNames().' > '.$this->nickname;
+            return $this->parent->getParentsNames() . ' > ' . $this->nickname;
         } else {
             return $this->nickname;
         }

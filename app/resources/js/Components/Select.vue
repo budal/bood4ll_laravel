@@ -48,10 +48,14 @@ const emit = defineEmits(["update:modelValue"]);
 
 const searchTerm = ref("");
 
+const content = props.content;
+
+// content.unshift({ id: 20, name: "[ root ]" });
+
 const filteredContent = computed(() =>
     searchTerm.value === ""
-        ? props.content
-        : props.content.filter((item: { key: number; name: string }) => {
+        ? content
+        : content.filter((item: { key: number; name: string }) => {
               return item.name
                   .toLowerCase()
                   .includes(searchTerm.value.toLowerCase());
@@ -63,11 +67,11 @@ const selectedItemsIds =
         ? props.modelValue.map((item: any) => item.id)
         : [];
 
-const selectedContent = props.content.filter((item: any) => {
+const selectedContent = content.filter((item: any) => {
     if (props.multiple) {
         return selectedItemsIds.includes(item.id);
     } else {
-        return props.modelValue === item.id;
+        return props.modelValue === item?.id;
     }
 });
 
@@ -78,7 +82,7 @@ const selectedItems = ref(
 const onOpen = () => {
     emit(
         "update:modelValue",
-        props.multiple ? selectedItems : selectedItems.value.id,
+        props.multiple ? selectedItems : selectedItems.value?.id,
     );
 };
 
@@ -119,7 +123,10 @@ console.log(selectedItems.value);
                         :name="name"
                         :placeholder="placeholder"
                         :autocomplete="autocomplete ? name : 'off'"
-                        :required="required && selectedContent.length === 0"
+                        :required="
+                            false
+                            // required && selectedContent.length === 0
+                        "
                         class="p-0 w-full bg-transparent text-ellipsis border-0 outline-0 focus:ring-0 placeholder:text-sm placeholder-primary-dark/20 dark:placeholder-primary-dark/20 text-zero-light dark:text-zero-dark"
                     />
                 </div>
@@ -194,19 +201,6 @@ console.log(selectedItems.value);
 
                 <ComboboxGroup>
                     <ComboboxItem
-                        :value="{ id: null, name: '[ root ]' }"
-                        class="text-sm p-3 leading-none pr-[35px] pl-[25px] relative select-none data-[disabled]:opacity-25 data-[disabled]:pointer-events-none data-[highlighted]:outline-none data-[highlighted]:bg-zero-light-hover dark:data-[highlighted]:bg-zero-dark-hover cursor-pointer"
-                    >
-                        <ComboboxItemIndicator
-                            class="absolute left-0 w-[25px] inline-flex items-center justify-center"
-                        >
-                            <Icon icon="radix-icons:check" />
-                        </ComboboxItemIndicator>
-                        <span>
-                            {{ $t("[ root ]") }}
-                        </span>
-                    </ComboboxItem>
-                    <ComboboxItem
                         v-for="item in filteredContent"
                         :key="item.id"
                         :value="item"
@@ -219,7 +213,7 @@ console.log(selectedItems.value);
                             <Icon icon="radix-icons:check" />
                         </ComboboxItemIndicator>
                         <span>
-                            {{ item.name }}
+                            {{ $t(item.name) }}
                         </span>
                     </ComboboxItem>
                 </ComboboxGroup>

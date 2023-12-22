@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { Icon } from "@iconify/vue";
 import { Link } from "@inertiajs/vue3";
-import { computed, watch } from "vue";
 
 const props = defineProps<{
     prefix?: string | null;
@@ -10,9 +9,6 @@ const props = defineProps<{
 }>();
 
 const sortedFieldName = props.prefix ? `${props.prefix}_sorted` : "sorted";
-const sortedByFieldName = props.prefix
-    ? `${props.prefix}_sortedby`
-    : "sortedby";
 
 const sortBy = (column: any) => {
     let url = new URL(window.location.href);

@@ -18,7 +18,7 @@ class UnitSeeder extends Seeder
         })->create([
             'name' => 'PMPR',
             'nickname' => 'PMPR',
-            'parent_id' => null,
+            'parent_id' => 0,
         ]);
 
         \App\Models\Unit::factory(6)

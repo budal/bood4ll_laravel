@@ -25,15 +25,16 @@ class UnitsController extends Controller
 
         $units = Unit::filter($request, 'units', [
             'where' => [
-                'shortpath'
+                'name'
             ],
             'order' => [
-                'shortpath'
+                'parent_id',
+                'order'
             ]
         ])
             ->leftjoin('unit_user', 'unit_user.unit_id', '=', 'units.id')
-            ->select('units.id', 'units.shortpath', 'units.deleted_at')
-            ->groupBy('units.id', 'units.shortpath', 'units.deleted_at')
+            ->select('units.id', 'units.name', 'units.parent_id', 'units.deleted_at')
+            ->groupBy('units.id', 'units.name', 'units.parent_id', 'units.deleted_at')
             ->when(!$request->user()->isSuperAdmin(), function ($query) use ($request) {
                 if (!$request->user()->hasFullAccess()) {
                     $query->where('unit_user.user_id', $request->user()->id);
@@ -41,16 +42,18 @@ class UnitsController extends Controller
 
                 $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
             })
-            // ->with('childrenWithUsersCount')
             ->withCount('children', 'users')
             ->paginate(20)
             ->onEachSide(2)
             ->through(function ($item) {
-                // $item->all_users_count = $item->getAllChildren()->pluck('users_count')->sum();
+                $item->name = $item->getParentsNames();
+                // $item->all_users_count = $item->getAllChildren()->pluck('users_count')->sum() + $item->users->count();
 
                 return $item;
             })
             ->appends(collect($request->query)->toArray());
+
+        // dd($units);
 
         return Inertia::render('Default', [
             'form' => [
@@ -99,7 +102,7 @@ class UnitsController extends Controller
                                         [
                                             'type' => 'text',
                                             'title' => 'Name',
-                                            'field' => 'shortpath',
+                                            'field' => 'name',
                                         ],
                                         [
                                             'type' => 'text',
@@ -142,11 +145,19 @@ class UnitsController extends Controller
             })
             ->orderBy('units.shortpath')
             ->get()
-            ->map(function ($item) {
-                $item->disabled = $item->active === true ? false : true;
+            ->map(function ($item) use ($unit) {
+                $item->disabled = $item->active === true && $item->id != $unit->id ? false : true;
 
                 return $item;
             });
+
+        // $units->prepend([
+        //     'id' => $unit->parent_id,
+        //     'name' => '[ root ]',
+        //     'disabled' => true
+        // ]);
+
+        // dd($units);
 
         $subunits = $unit
             ->when(!$request->search, function ($query) use ($unit) {
@@ -493,6 +504,7 @@ class UnitsController extends Controller
 
     public function update(Unit $unit, Request $request): RedirectResponse
     {
+        // dd($request);
         DB::beginTransaction();
 
         try {

@@ -54,11 +54,6 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->belongsToMany(Unit::class);
     }
 
-    public function unitsChildren()
-    {
-        return Unit::get();
-    }
-
     public function getAllAbilities()
     {
         return $this->roles()
@@ -71,11 +66,6 @@ class User extends Authenticatable implements MustVerifyEmail
                 $query->where('roles.expires_at', '>=', 'NOW()');
                 $query->orwhere('roles.lock_on_expire', false);
             });
-    }
-
-    public function abilities()
-    {
-        return $this->getAllAbilities->where('ability', '!=', null);
     }
 
     public function isSuperAdmin()
@@ -123,11 +113,13 @@ class User extends Authenticatable implements MustVerifyEmail
     public function scopeUnitsIds()
     {
         if ($this->canManageNested() === true) {
-            return $this->units()->get()->flatten()->pluck('id')->union(
-                $this->units()->get()->map->getAllChildren()->flatten()->pluck('id')
-            );
+            $units = $this->units()->with('childrenRecursive')->get()
+                ->map->getAllChildren()->flatten()->pluck('id')
+                ->push(...$this->units->pluck('id'));
         } else {
-            return $this->units()->get()->flatten()->pluck('id');
+            $units = $this->units->pluck('id');
         }
+
+        return $units;
     }
 }
