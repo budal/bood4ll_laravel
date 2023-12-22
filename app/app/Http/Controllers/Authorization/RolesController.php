@@ -531,6 +531,7 @@ class RolesController extends Controller
 
     public function update(Request $request, Role $role): RedirectResponse
     {
+        // dd($request->abilities);
         $this->authorize('isManager', User::class);
         $this->authorize('access', User::class);
         $this->authorize('isActive', $role);

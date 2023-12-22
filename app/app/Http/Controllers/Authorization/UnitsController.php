@@ -130,9 +130,9 @@ class UnitsController extends Controller
 
     public function __form(Request $request, Unit $unit): array
     {
-        $units = Unit::select('units.id', 'units.shortpath AS name')
+        $units = Unit::select('units.id', 'units.shortpath AS name', 'units.active')
             ->leftjoin('unit_user', 'unit_user.unit_id', '=', 'units.id')
-            ->groupBy('units.id', 'name')
+            ->groupBy('units.id', 'name', 'units.active')
             ->when(!$request->user()->isSuperAdmin(), function ($query) use ($request) {
                 $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
 
@@ -141,7 +141,12 @@ class UnitsController extends Controller
                 }
             })
             ->orderBy('units.shortpath')
-            ->get();
+            ->get()
+            ->map(function ($item) {
+                $item->disabled = $item->active === true ? false : true;
+
+                return $item;
+            });
 
         $subunits = $unit
             ->when(!$request->search, function ($query) use ($unit) {
@@ -446,6 +451,7 @@ class UnitsController extends Controller
                 'complement' => $request->complement,
                 'postcode' => $request->postcode,
                 'geo' => $request->geo,
+
             ]);
         } catch (\Exception $e) {
             report($e);
@@ -470,6 +476,8 @@ class UnitsController extends Controller
 
     public function edit(Request $request, Unit $unit): Response
     {
+        $unit['abilities_disabled'] = $unit->id;
+
         return Inertia::render('Default', [
             'form' => $this->__form($request, $unit),
             'routes' => [
@@ -488,24 +496,29 @@ class UnitsController extends Controller
         DB::beginTransaction();
 
         try {
-            Unit::where('id', $unit->id)->update([
-                'name' => $request->name,
-                'nickname' => $request->nickname,
-                'founded' => $request->founded,
-                'parent_id' => $request->parent_id,
-                'active' => $request->active,
-                'expires' => $request->expires,
-                'cellphone' => $request->cellphone,
-                'landline' => $request->landline,
-                'email' => $request->email,
-                'country' => $request->country,
-                'state' => $request->state,
-                'city' => $request->city,
-                'address' => $request->address,
-                'complement' => $request->complement,
-                'postcode' => $request->postcode,
-                'geo' => $request->geo,
-            ]);
+            $unit->name = $request->name;
+            $unit->nickname = $request->nickname;
+            $unit->founded = $request->founded;
+            $unit->parent_id = $request->parent_id;
+            $unit->active = $request->active;
+            $unit->expires = $request->expires;
+            $unit->cellphone = $request->cellphone;
+            $unit->landline = $request->landline;
+            $unit->email = $request->email;
+            $unit->country = $request->country;
+            $unit->state = $request->state;
+            $unit->city = $request->city;
+            $unit->address = $request->address;
+            $unit->complement = $request->complement;
+            $unit->postcode = $request->postcode;
+            $unit->geo = $request->geo;
+
+            $unit->save();
+
+            $unit->fullpath = $unit->getParentsNames();
+            $unit->shortpath = $unit->getParentsNicknames();
+
+            $unit->save();
         } catch (\Exception $e) {
             report($e);
 
