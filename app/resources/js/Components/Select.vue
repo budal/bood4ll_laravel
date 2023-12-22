@@ -89,6 +89,7 @@ watch(
     },
     { deep: true },
 );
+console.log(selectedItems.value);
 </script>
 
 <template>
