@@ -150,7 +150,6 @@ class UnitsController extends Controller
                 return $item;
             });
 
-
         if ($units->pluck('id')->contains($unit->parent_id) === false) {
             $parent = Unit::where('id', $unit->parent_id)->first();
 
@@ -449,8 +448,8 @@ class UnitsController extends Controller
 
     public function create(Request $request, Unit $unit): Response
     {
-        $this->authorize('isSuperAdmin', User::class);
         $this->authorize('access', User::class);
+        $this->authorize('isSuperAdmin', User::class);
 
         $data['parent_id'] = $request->unit->id ?? '';
 
@@ -468,31 +467,35 @@ class UnitsController extends Controller
 
     public function store(Request $request, Unit $unit): RedirectResponse
     {
-        $this->authorize('isSuperAdmin', User::class);
         $this->authorize('access', User::class);
+        $this->authorize('isSuperAdmin', User::class);
 
         DB::beginTransaction();
 
         try {
-            $unit = Unit::firstOrCreate([
-                'name' => $request->name,
-                'nickname' => $request->nickname,
-                'founded' => $request->founded,
-                'parent_id' => $request->parent_id,
-                'active' => $request->active,
-                'expires' => $request->expires,
-                'cellphone' => $request->cellphone,
-                'landline' => $request->landline,
-                'email' => $request->email,
-                'country' => $request->country,
-                'state' => $request->state,
-                'city' => $request->city,
-                'address' => $request->address,
-                'complement' => $request->complement,
-                'postcode' => $request->postcode,
-                'geo' => $request->geo,
+            $unit->name = $request->name;
+            $unit->nickname = $request->nickname;
+            $unit->founded = $request->founded;
+            $unit->parent_id = $request->parent_id;
+            $unit->active = $request->active;
+            $unit->expires = $request->expires;
+            $unit->cellphone = $request->cellphone;
+            $unit->landline = $request->landline;
+            $unit->email = $request->email;
+            $unit->country = $request->country;
+            $unit->state = $request->state;
+            $unit->city = $request->city;
+            $unit->address = $request->address;
+            $unit->complement = $request->complement;
+            $unit->postcode = $request->postcode;
+            $unit->geo = $request->geo;
 
-            ]);
+            $unit->save();
+
+            $unit->fullpath = $unit->getParentsNames();
+            $unit->shortpath = $unit->getParentsNicknames();
+
+            $unit->save();
         } catch (\Exception $e) {
             report($e);
 
@@ -517,6 +520,7 @@ class UnitsController extends Controller
     public function edit(Request $request, Unit $unit): Response
     {
         $this->authorize('access', User::class);
+        $this->authorize('isManager', User::class);
         $this->authorize('isActive', $unit);
 
         $unit['abilities_disabled'] = $unit->id;
@@ -530,12 +534,15 @@ class UnitsController extends Controller
                 ],
             ],
             'data' => $unit,
-            // 'tabs' => false,
         ]);
     }
 
     public function update(Unit $unit, Request $request): RedirectResponse
     {
+        $this->authorize('access', User::class);
+        $this->authorize('isActive', $unit);
+        $this->authorize('isManager', User::class);
+
         if (
             !$request->user()->isSuperAdmin()
             && $request->user()->unitsIds()->contains($request->parent_id)
@@ -597,10 +604,19 @@ class UnitsController extends Controller
 
     public function destroy(Request $request): RedirectResponse
     {
-        $items = $request->all();
+        $this->authorize('access', User::class);
+        $this->authorize('isManager', User::class);
+        $this->authorize('canDestroyOrRestore', [Unit::class, $request]);
 
         try {
-            $usersToDelete = Unit::whereIn('id', $items['ids'])->delete();
+            $total = Unit::whereIn('id', $request->list)->delete();
+
+            return back()->with([
+                'toast_type' => 'success',
+                'toast_message' => '{0} Nothing to remove.|[1] Item removed successfully.|[2,*] :total items successfully removed.',
+                'toast_count' => $total,
+                'toast_replacements' => ['total' => $total],
+            ]);
         } catch (\Throwable $e) {
             report($e);
 
@@ -610,14 +626,56 @@ class UnitsController extends Controller
                 'toast_count' => count($request->list),
             ]);
         }
-
-        return back()->with('status', 'Items removed succesfully!');
     }
 
-    public function restore(Unit $unit): RedirectResponse
+    public function forceDestroy(Request $request): RedirectResponse
     {
-        $unit->restore();
+        $this->authorize('access', User::class);
+        $this->authorize('isSuperAdmin', User::class);
 
-        return Redirect::back()->with('status', 'Item restored.');
+        try {
+            $total = Unit::whereIn('id', $request->list)->forceDelete();
+
+            return back()->with([
+                'toast_type' => 'success',
+                'toast_message' => '{0} Nothing to erase.|[1] Item erased successfully.|[2,*] :total items successfully erased.',
+                'toast_count' => $total,
+                'toast_replacements' => ['total' => $total],
+            ]);
+        } catch (\Throwable $e) {
+            report($e);
+
+            return back()->with([
+                'toast_type' => 'error',
+                'toast_message' => 'Error on erase selected item.|Error on erase selected items.',
+                'toast_count' => $request->list,
+            ]);
+        }
+    }
+
+    public function restore(Request $request): RedirectResponse
+    {
+        $this->authorize('access', User::class);
+        $this->authorize('isManager', User::class);
+        $this->authorize('canDestroyOrRestore', [Unit::class, $request]);
+
+        try {
+            $total = Unit::whereIn('id', $request->list)->restore();
+
+            return back()->with([
+                'toast_type' => 'success',
+                'toast_message' => '{0} Nothing to restore.|[1] Item restored successfully.|[2,*] :total items successfully restored.',
+                'toast_count' => $total,
+                'toast_replacements' => ['total' => $total],
+            ]);
+        } catch (\Throwable $e) {
+            report($e);
+
+            return back()->with([
+                'toast_type' => 'error',
+                'toast_message' => 'Error on restore selected item.|Error on restore selected items.',
+                'toast_count' => $request->list,
+            ]);
+        }
     }
 }

@@ -30,21 +30,21 @@ class RolesController extends Controller
             ->leftjoin('unit_user', 'unit_user.user_id', '=', 'role_user.user_id')
             ->select('roles.id', 'roles.name', 'roles.deleted_at')
             ->groupBy('roles.id', 'roles.name', 'roles.deleted_at')
-            ->when(!$request->user()->isSuperAdmin(), function ($query) use ($request) {
+            ->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
                 $query->where('roles.manager', false);
 
-                if (!$request->user()->hasFullAccess()) {
+                if ($request->user()->cannot('hasFullAccess', User::class)) {
                     $query->where('unit_user.user_id', $request->user()->id);
                 }
 
                 $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
             })
             ->withCount(['abilities', 'users' => function ($query) use ($request) {
-                $query->when(!$request->user()->isSuperAdmin(), function ($query) use ($request) {
+                $query->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
                     $query->leftjoin('unit_user', 'unit_user.user_id', '=', 'role_user.user_id');
                     $query->where('roles.manager', false);
 
-                    if (!$request->user()->hasFullAccess()) {
+                    if ($request->user()->cannot('hasFullAccess', User::class)) {
                         $query->where('unit_user.user_id', $request->user()->id);
                     }
 
@@ -70,7 +70,7 @@ class RolesController extends Controller
                                     'routes' => [
                                         'createRoute' => [
                                             'route' => 'apps.roles.create',
-                                            'showIf' => Gate::allows('apps.roles.create') && Gate::inspect('isManager', User::class)->allowed(),
+                                            'showIf' => Gate::allows('apps.roles.create') && $request->user()->can('isManager', User::class),
                                         ],
                                         'editRoute' => [
                                             'route' => 'apps.roles.edit',
@@ -82,7 +82,7 @@ class RolesController extends Controller
                                         ],
                                         'forceDestroyRoute' => [
                                             'route' => 'apps.roles.forcedestroy',
-                                            'showIf' => Gate::allows('apps.roles.forcedestroy') && Gate::inspect('isSuperAdmin', User::class)->allowed(),
+                                            'showIf' => Gate::allows('apps.roles.forcedestroy') && $request->user()->can('isSuperAdmin', User::class),
                                         ],
                                         'restoreRoute' => [
                                             'route' => 'apps.roles.restore',
@@ -94,7 +94,7 @@ class RolesController extends Controller
                                             'icon' => 'mdi:book-cog-outline',
                                             'title' => 'Abilities management',
                                             'route' => 'apps.abilities.index',
-                                            'showIf' => Gate::inspect('isSuperAdmin', User::class)->allowed(),
+                                            'showIf' => $request->user()->can('isSuperAdmin', User::class),
                                         ],
                                     ],
                                     'titles' => [
@@ -136,7 +136,7 @@ class RolesController extends Controller
     public function __form(Request $request, Role $role): array
     {
         $abilities = Ability::select('abilities.*')
-            ->when(!$request->user()->isSuperAdmin(), function ($query) use ($request) {
+            ->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
                 $query->whereIn('name', $request->user()->getAllAbilities->where('ability', '!=', null)->pluck('ability'));
             })
             ->orderBy('name')
@@ -172,9 +172,9 @@ class RolesController extends Controller
                 'id' => 'role',
                 'title' => 'Main data',
                 'subtitle' => 'Role name, abilities and settings',
-                'showIf' => $request->user()->isSuperAdmin() || $request->user()->isManager(),
+                'showIf' => $request->user()->can('isManager', User::class),
                 'disabledIf' => $role->inalterable == true
-                    || $role->owner != $request->user()->id && !$request->user()->isManager(),
+                    || $role->owner != $request->user()->id && $request->user()->cannot('isManager', User::class),
                 'cols' => 3,
                 'fields' => [
                     [
@@ -222,14 +222,14 @@ class RolesController extends Controller
                             'type' => 'toggle',
                             'name' => 'full_access',
                             'title' => 'Full access',
-                            'disabled' => !$request->user()->isSuperAdmin() && !$request->user()->hasFullAccess(),
+                            'disabled' => $request->user()->cannot('hasFullAccess', User::class),
                             'colorOn' => 'info',
                         ],
                         [
                             'type' => 'toggle',
                             'name' => 'manage_nested',
                             'title' => 'Manage nested data',
-                            'disabled' => !$request->user()->isSuperAdmin() && !$request->user()->canManageNested(),
+                            'disabled' => $request->user()->cannot('canManageNested', User::class),
                             'colorOn' => 'info',
                         ],
                         [

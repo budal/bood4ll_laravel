@@ -72,6 +72,13 @@ class UnitPolicy
             : Response::deny("This registry is not active.");
     }
 
+    public function isOwner(User $user, Unit $unit): Response
+    {
+        return $user->id === $unit->owner
+            ? Response::allow()
+            : Response::deny("Your are not the owner of this registry.");
+    }
+
     public function canDestroyOrRestore(User $user, Request $request): Response
     {
         $roles = Unit::whereIn('roles.id', $request->list)->withTrashed()->get();
