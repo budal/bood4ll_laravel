@@ -79,7 +79,7 @@ class RolePolicy
             : Response::deny("Your are not the owner of this registry.");
     }
 
-    public function canEdit(User $user, Role $role): Response
+    public function canEditManagementRoles(User $user, Role $role): Response
     {
         return $role->manager === false
             ? Response::allow()

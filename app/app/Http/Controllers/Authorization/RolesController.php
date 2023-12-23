@@ -174,7 +174,7 @@ class RolesController extends Controller
                 'subtitle' => 'Role name, abilities and settings',
                 'showIf' => $request->user()->isSuperAdmin() || $request->user()->isManager(),
                 'disabledIf' => $role->inalterable == true
-                    || $role->owner != $request->user()->id && (!$request->user()->isSuperAdmin() || !$request->user()->isManager()),
+                    || $role->owner != $request->user()->id && !$request->user()->isManager(),
                 'cols' => 3,
                 'fields' => [
                     [
@@ -435,8 +435,8 @@ class RolesController extends Controller
 
     public function create(Request $request, Role $role): Response
     {
-        $this->authorize('isManager', User::class);
         $this->authorize('access', User::class);
+        $this->authorize('isManager', User::class);
 
         return Inertia::render('Default', [
             'form' => $this->__form($request, $role),
@@ -451,8 +451,8 @@ class RolesController extends Controller
 
     public function store(RolesRequest $request): RedirectResponse
     {
-        $this->authorize('isManager', User::class);
         $this->authorize('access', User::class);
+        $this->authorize('isManager', User::class);
 
         $abilities = collect($request->abilities)->pluck('id');
 
@@ -511,7 +511,7 @@ class RolesController extends Controller
     {
         $this->authorize('access', User::class);
         $this->authorize('isActive', $role);
-        $this->authorize('canEdit', $role);
+        $this->authorize('canEditManagementRoles', $role);
 
         $role['abilities'] = $role->abilities;
 
@@ -531,12 +531,11 @@ class RolesController extends Controller
 
     public function update(Request $request, Role $role): RedirectResponse
     {
-        // dd($request->abilities);
-        $this->authorize('isManager', User::class);
         $this->authorize('access', User::class);
         $this->authorize('isActive', $role);
+        $this->authorize('isManager', User::class);
+        $this->authorize('canEditManagementRoles', $role);
         $this->authorize('isOwner', $role);
-        $this->authorize('canEdit', $role);
 
         $abilities = collect($request->abilities)->pluck('id');
 
@@ -603,8 +602,8 @@ class RolesController extends Controller
 
     public function destroy(Request $request): RedirectResponse
     {
-        $this->authorize('isManager', User::class);
         $this->authorize('access', User::class);
+        $this->authorize('isManager', User::class);
         $this->authorize('canDestroyOrRestore', [Role::class, $request]);
 
         try {
@@ -633,8 +632,8 @@ class RolesController extends Controller
 
     public function forceDestroy(Request $request): RedirectResponse
     {
-        $this->authorize('isSuperAdmin', User::class);
         $this->authorize('access', User::class);
+        $this->authorize('isSuperAdmin', User::class);
 
         try {
             $total = Role::whereIn('id', $request->list)
@@ -662,8 +661,8 @@ class RolesController extends Controller
 
     public function restore(Request $request): RedirectResponse
     {
-        $this->authorize('isManager', User::class);
         $this->authorize('access', User::class);
+        $this->authorize('isManager', User::class);
         $this->authorize('canDestroyOrRestore', [Role::class, $request]);
 
         try {

@@ -22,6 +22,7 @@
   "Inactive": "Ativo",
   "List": "Listar",
   "Main data": "Dados principais",
+  "Belongs to": "Pertence a",
   
   "Current Password": "Senha atual",
   "New Password": "Nova Senha",
@@ -206,7 +207,7 @@
   "Local staff": "Efetivo local",
   "Total staff": "Efetivo total",
   "Refresh units hierarchy": "Atualizar hierarquia das unidades",
-  
+  "You cannot change the unit this record belongs to.": "Você não pode alterar a unidade à qual este registro pertence.",
  
 
   "The email has already been taken.": "Esse email já foi registrado.",

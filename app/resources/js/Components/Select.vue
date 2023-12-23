@@ -93,11 +93,12 @@ watch(
     },
     { deep: true },
 );
-console.log(selectedItems.value);
+console.log(selectedItems.value, props.modelValue);
 </script>
 
 <template>
     <ComboboxRoot
+        aria-readonly="true"
         v-model="selectedItems"
         v-model:search-term="searchTerm"
         :multiple="multiple"

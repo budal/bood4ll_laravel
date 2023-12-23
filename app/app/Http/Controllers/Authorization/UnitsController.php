@@ -42,7 +42,7 @@ class UnitsController extends Controller
 
                 $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
             })
-            ->withCount('children', 'users')
+            ->withCount(['children', 'users'])
             ->paginate(20)
             ->onEachSide(2)
             ->through(function ($item) {
@@ -52,8 +52,6 @@ class UnitsController extends Controller
                 return $item;
             })
             ->appends(collect($request->query)->toArray());
-
-        // dd($units);
 
         return Inertia::render('Default', [
             'form' => [
@@ -133,9 +131,9 @@ class UnitsController extends Controller
 
     public function __form(Request $request, Unit $unit): array
     {
-        $units = Unit::select('units.id', 'units.shortpath AS name', 'units.active')
-            ->leftjoin('unit_user', 'unit_user.unit_id', '=', 'units.id')
-            ->groupBy('units.id', 'name', 'units.active')
+        $units = Unit::leftjoin('unit_user', 'unit_user.unit_id', '=', 'units.id')
+            ->select('units.id', 'units.parent_id', 'units.shortpath AS name', 'units.active')
+            ->groupBy('units.id', 'units.parent_id', 'name', 'units.active')
             ->when(!$request->user()->isSuperAdmin(), function ($query) use ($request) {
                 $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
 
@@ -143,7 +141,8 @@ class UnitsController extends Controller
                     $query->where('unit_user.user_id', $request->user()->id);
                 }
             })
-            ->orderBy('units.shortpath')
+            ->orderBy('units.parent_id')
+            ->orderBy('units.order')
             ->get()
             ->map(function ($item) use ($unit) {
                 $item->disabled = $item->active === true && $item->id != $unit->id ? false : true;
@@ -151,19 +150,35 @@ class UnitsController extends Controller
                 return $item;
             });
 
-        // $units->prepend([
-        //     'id' => $unit->parent_id,
-        //     'name' => '[ root ]',
-        //     'disabled' => true
-        // ]);
 
-        // dd($units);
+        if ($units->pluck('id')->contains($unit->parent_id) === false) {
+            $parent = Unit::where('id', $unit->parent_id)->first();
 
-        $subunits = $unit
+            $units->prepend([
+                'id' => $parent->id,
+                'name' => $parent->getParentsNames(),
+            ]);
+        }
+
+        $subunits = $unit->leftjoin('unit_user', 'unit_user.unit_id', '=', 'units.id')
+            ->select('units.id', 'units.parent_id', 'units.name', 'units.active')
+            ->groupBy('units.id', 'units.parent_id', 'units.name', 'units.active')
             ->when(!$request->search, function ($query) use ($unit) {
                 $query->where('units.parent_id', $unit->id);
             })
-            ->filter($request, 'subunits', ['order' => ['parent_unit.name', 'parent_unit.order']])
+            ->when(!$request->user()->isSuperAdmin(), function ($query) use ($request) {
+                if (!$request->user()->hasFullAccess()) {
+                    $query->where('unit_user.user_id', $request->user()->id);
+                }
+
+                $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
+            })
+            ->filter($request, 'subunits', [
+                'order' => [
+                    'units.parent_id',
+                    'units.order'
+                ]
+            ])
             ->leftJoin('units as parent_unit', 'units.parent_id', '=', 'parent_unit.id')
             ->with('childrenWithUsersCount')
             ->withCount('children', 'users')
@@ -171,6 +186,7 @@ class UnitsController extends Controller
             ->onEachSide(2)
             ->appends(collect($request->query)->toArray())
             ->through(function ($item) {
+                $item->name = $item->getParentsNames();
                 $item->all_users_count = $item->getAllChildren()->pluck('users_count')->sum() + $item->users_count;
 
                 return $item;
@@ -178,6 +194,13 @@ class UnitsController extends Controller
 
         $staff = $unit->users()
             ->filter($request, 'staff')
+            ->when(!$request->user()->isSuperAdmin(), function ($query) use ($request) {
+                $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
+
+                if (!$request->user()->hasFullAccess()) {
+                    $query->where('unit_user.user_id', $request->user()->id);
+                }
+            })
             ->withCount('roles')
             ->paginate($perPage = 20, $columns = ['*'], $pageName = 'staff')
             ->onEachSide(2)
@@ -201,7 +224,7 @@ class UnitsController extends Controller
                         [
                             'type' => 'select',
                             'name' => 'parent_id',
-                            'title' => 'Unidade pai',
+                            'title' => 'Belongs to',
                             'span' => 2,
                             'content' => $units,
                             'required' => true,
@@ -313,7 +336,7 @@ class UnitsController extends Controller
                                     [
                                         'type' => 'text',
                                         'title' => 'Unit',
-                                        'field' => 'shortpath',
+                                        'field' => 'name',
                                     ],
                                     [
                                         'type' => 'text',
@@ -426,6 +449,9 @@ class UnitsController extends Controller
 
     public function create(Request $request, Unit $unit): Response
     {
+        $this->authorize('isSuperAdmin', User::class);
+        $this->authorize('access', User::class);
+
         $data['parent_id'] = $request->unit->id ?? '';
 
         return Inertia::render('Default', [
@@ -442,6 +468,9 @@ class UnitsController extends Controller
 
     public function store(Request $request, Unit $unit): RedirectResponse
     {
+        $this->authorize('isSuperAdmin', User::class);
+        $this->authorize('access', User::class);
+
         DB::beginTransaction();
 
         try {
@@ -487,6 +516,9 @@ class UnitsController extends Controller
 
     public function edit(Request $request, Unit $unit): Response
     {
+        $this->authorize('access', User::class);
+        $this->authorize('isActive', $unit);
+
         $unit['abilities_disabled'] = $unit->id;
 
         return Inertia::render('Default', [
@@ -504,7 +536,18 @@ class UnitsController extends Controller
 
     public function update(Unit $unit, Request $request): RedirectResponse
     {
-        // dd($request);
+        if (
+            !$request->user()->isSuperAdmin()
+            && $request->user()->unitsIds()->contains($request->parent_id)
+            && $unit->parent_id != $request->parent_id
+        ) {
+            return Redirect::back()->with([
+                'toast_type' => 'error',
+                'toast_message' => "You cannot change the unit this record belongs to.",
+            ]);
+        }
+
+        dd($request->user()->unitsIds()->contains($request->parent_id) === false, $unit->parent_id != $request->parent_id);
         DB::beginTransaction();
 
         try {

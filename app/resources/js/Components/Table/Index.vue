@@ -408,9 +408,12 @@ const submitModal = () => {
                             />
                         </th>
                         <template v-for="title in titles">
-                            <th class="p-2" :class="title.class">
+                            <th
+                                v-if="title.showIf !== false"
+                                class="p-2"
+                                :class="title.class"
+                            >
                                 <Sort
-                                    v-if="title.showIf !== false"
                                     :prefix="prefix"
                                     :tab="tab"
                                     :sort="title"
@@ -463,7 +466,11 @@ const submitModal = () => {
                             />
                         </td>
                         <template v-for="content in titles">
-                            <td class="p-1 text-center" :class="content.class">
+                            <td
+                                v-if="content.showIf !== false"
+                                class="p-1 text-center"
+                                :class="content.class"
+                            >
                                 <p
                                     v-if="content.type == 'text'"
                                     class="truncate text-sm leading-5 text-secondary-light dark:text-secondary-dark text-center"
