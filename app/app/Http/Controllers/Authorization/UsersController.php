@@ -22,17 +22,17 @@ class UsersController extends Controller
     public function index(Request $request): Response
     {
         $this->authorize('access', User::class);
-        
+
         $users = User::filter($request, 'users', [
             'where' => [
                 'name',
                 'email',
             ],
         ])
-            ->when(!$request->user()->isSuperAdmin(), function ($query) use ($request) {
+            ->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
                 $query->join('unit_user', 'unit_user.user_id', '=', 'users.id');
 
-                if (!$request->user()->hasFullAccess()) {
+                if ($request->user()->cannot('hasFullAccess', User::class)) {
                     $query->where('unit_user.user_id', $request->user()->id);
                 }
 
@@ -201,7 +201,7 @@ class UsersController extends Controller
             ]);
 
             Auth::loginUsingId($user->id, true);
-            
+
             if ($user->getAllAbilities->where('ability', '!=', null)->pluck('ability')->contains(Route::current()->getName())) {
                 return Redirect::back()->with([
                     'toast_type' => 'warning',
@@ -261,7 +261,7 @@ class UsersController extends Controller
     public function store(ProfileUpdateRequest $request): RedirectResponse
     {
         $this->authorize('access', User::class);
-        
+
         // dd($request);
         // $request->user()->fill($request->validated());
 

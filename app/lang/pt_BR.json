@@ -23,6 +23,7 @@
   "List": "Listar",
   "Main data": "Dados principais",
   "Belongs to": "Pertence a",
+  "Inactivated at": "Inativação",
   
   "Current Password": "Senha atual",
   "New Password": "Nova Senha",
@@ -63,7 +64,9 @@
   "Address": "Endereço",
   "Complement": "Complemento",
   "Geographic coordinates": "Coordenadas geográficas",
-
+  "Classified": "Classificado em",
+  "Working": "Trabalhando em",
+  
   "Add": "Adicionar",
   "Are you sure you want to add the selected item?|Are you sure you want to add the selected items?": "Você tem certeza que deseja adicionar o item selecionado?|Você tem certeza que deseja adicionar os itens selecionados?",
   "Informed item will be added. Do you want to continue?|Informed items will be added. Do you want to continue?": "O item informado será salvo. Você deseja continuar?|Os itens informados serão salvos. Você deseja continuar?",
@@ -195,8 +198,7 @@
   "Units": "Unidades",
   "Manage the units registered in the system.": "Gerencie as unidades cadastradas no sistema.",
   "Unit": "Unidade",
-  "Classified": "Classificado em",
-  "Working": "Trabalhando em",
+  "Founded": "Fundação",
   "Unit data management.": "Gerenciamento de dados da unidade.",
   "Subunits": "Subunidades",
   "Management of subunits of this unit.": "Gerenciamento de subunidades desta unidade.",

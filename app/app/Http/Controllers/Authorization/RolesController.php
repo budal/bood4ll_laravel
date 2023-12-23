@@ -150,10 +150,10 @@ class RolesController extends Controller
                 $query->join('role_user', 'role_user.user_id', '=', 'users.id');
                 $query->where('role_user.role_id', $role->id);
             })
-            ->when(!$request->user()->isSuperAdmin(), function ($query) use ($request) {
+            ->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
                 $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
 
-                if (!$request->user()->hasFullAccess()) {
+                if ($request->user()->cannot('hasFullAccess', User::class)) {
                     $query->where('unit_user.user_id', $request->user()->id);
                 }
             })

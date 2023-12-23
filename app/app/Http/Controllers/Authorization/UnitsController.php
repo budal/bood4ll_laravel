@@ -35,8 +35,8 @@ class UnitsController extends Controller
             ->leftjoin('unit_user', 'unit_user.unit_id', '=', 'units.id')
             ->select('units.id', 'units.name', 'units.parent_id', 'units.deleted_at')
             ->groupBy('units.id', 'units.name', 'units.parent_id', 'units.deleted_at')
-            ->when(!$request->user()->isSuperAdmin(), function ($query) use ($request) {
-                if (!$request->user()->hasFullAccess()) {
+            ->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
+                if ($request->user()->cannot('hasFullAccess', User::class)) {
                     $query->where('unit_user.user_id', $request->user()->id);
                 }
 
@@ -68,7 +68,7 @@ class UnitsController extends Controller
                                     'routes' => [
                                         'createRoute' => [
                                             'route' => 'apps.units.create',
-                                            'showIf' => Gate::allows('apps.units.create') && Gate::inspect('isSuperAdmin', User::class)->allowed(),
+                                            'showIf' => Gate::allows('apps.units.create') && $request->user()->can('isSuperAdmin', User::class),
                                         ],
                                         'editRoute' => [
                                             'route' => 'apps.units.edit',
@@ -80,7 +80,7 @@ class UnitsController extends Controller
                                         ],
                                         'forceDestroyRoute' => [
                                             'route' => 'apps.roles.forcedestroy',
-                                            'showIf' => Gate::allows('apps.roles.forcedestroy') && Gate::inspect('isSuperAdmin', User::class)->allowed(),
+                                            'showIf' => Gate::allows('apps.roles.forcedestroy') && $request->user()->can('isSuperAdmin', User::class),
                                         ],
                                         'restoreRoute' => [
                                             'route' => 'apps.units.restore',
@@ -93,7 +93,7 @@ class UnitsController extends Controller
                                             'title' => 'Refresh units hierarchy',
                                             'route' => 'apps.units.hierarchy',
                                             'method' => 'post',
-                                            'showIf' => Gate::inspect('isManager', User::class)->allowed(),
+                                            'showIf' => $request->user()->can('isSuperAdmin', User::class),
                                         ],
                                     ],
                                     'titles' => [
@@ -134,10 +134,10 @@ class UnitsController extends Controller
         $units = Unit::leftjoin('unit_user', 'unit_user.unit_id', '=', 'units.id')
             ->select('units.id', 'units.parent_id', 'units.shortpath AS name', 'units.active')
             ->groupBy('units.id', 'units.parent_id', 'name', 'units.active')
-            ->when(!$request->user()->isSuperAdmin(), function ($query) use ($request) {
+            ->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
                 $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
 
-                if (!$request->user()->hasFullAccess()) {
+                if ($request->user()->cannot('hasFullAccess', User::class)) {
                     $query->where('unit_user.user_id', $request->user()->id);
                 }
             })
@@ -165,8 +165,8 @@ class UnitsController extends Controller
             ->when(!$request->search, function ($query) use ($unit) {
                 $query->where('units.parent_id', $unit->id);
             })
-            ->when(!$request->user()->isSuperAdmin(), function ($query) use ($request) {
-                if (!$request->user()->hasFullAccess()) {
+            ->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
+                if ($request->user()->cannot('hasFullAccess', User::class)) {
                     $query->where('unit_user.user_id', $request->user()->id);
                 }
 
@@ -193,10 +193,10 @@ class UnitsController extends Controller
 
         $staff = $unit->users()
             ->filter($request, 'staff')
-            ->when(!$request->user()->isSuperAdmin(), function ($query) use ($request) {
+            ->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
                 $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
 
-                if (!$request->user()->hasFullAccess()) {
+                if ($request->user()->cannot('hasFullAccess', User::class)) {
                     $query->where('unit_user.user_id', $request->user()->id);
                 }
             })
@@ -250,7 +250,7 @@ class UnitsController extends Controller
                         [
                             'type' => 'date',
                             'name' => 'expires',
-                            'title' => 'Expires in',
+                            'title' => 'Inactivated at',
                         ],
                         [
                             'type' => 'input',
@@ -428,6 +428,9 @@ class UnitsController extends Controller
 
     public function hierarchy(): RedirectResponse
     {
+        $this->authorize('access', User::class);
+        $this->authorize('isSuperAdmin', User::class);
+
         Unit::orderBy('id')->chunk(100, function (Collection $units) {
             foreach ($units as $unit) {
                 $unit = Unit::where('id', $unit->id)->first();
@@ -544,7 +547,7 @@ class UnitsController extends Controller
         $this->authorize('isManager', User::class);
 
         if (
-            !$request->user()->isSuperAdmin()
+            $request->user()->can('isSuperAdmin', User::class)
             && $request->user()->unitsIds()->contains($request->parent_id)
             && $unit->parent_id != $request->parent_id
         ) {
