@@ -242,7 +242,7 @@ class RolesController extends Controller
                             'type' => 'toggle',
                             'name' => 'remove_on_change_unit',
                             'title' => 'Remove on transfer',
-                            'disabled' => $request->user()->cannot('canRemoveOnChangeUnit', User::class),
+                            'disabled' => $request->user()->can('canRemoveOnChangeUnit', User::class) && $request->user()->cannot('isSuperAdmin', User::class),
                             'colorOn' => 'info',
                         ],
                     ],
