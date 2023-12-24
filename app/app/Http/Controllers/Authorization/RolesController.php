@@ -367,7 +367,7 @@ class RolesController extends Controller
                                     ],
                                     [
                                         'type' => 'toggle',
-                                        'title' => 'Active',
+                                        'title' => '',
                                         'field' => 'checked',
                                         'disableSort' => true,
                                         'route' => [

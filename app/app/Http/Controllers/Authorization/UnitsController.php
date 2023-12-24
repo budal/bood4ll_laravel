@@ -153,10 +153,17 @@ class UnitsController extends Controller
         if ($units->pluck('id')->contains($unit->parent_id) === false && $unit->id != null) {
             $parent = Unit::where('id', $unit->parent_id)->first();
 
-            $units->prepend([
-                'id' => $parent->id,
-                'name' => $parent->getParentsNames(),
-            ]);
+            if ($parent === null) {
+                $units->prepend([
+                    'id' => null,
+                    'name' => '[ root ]',
+                ]);
+            } else {
+                $units->prepend([
+                    'id' => $parent->id,
+                    'name' => $parent->getParentsNames(),
+                ]);
+            }
         }
 
         $subunits = $unit->leftjoin('unit_user', 'unit_user.unit_id', '=', 'units.id')
@@ -547,8 +554,8 @@ class UnitsController extends Controller
         $this->authorize('isManager', User::class);
 
         if (
-            $request->user()->can('isSuperAdmin', User::class)
-            && $request->user()->unitsIds()->contains($request->parent_id)
+            $request->user()->cannot('isSuperAdmin', User::class)
+            && $request->user()->unitsIds()->contains($request->parent_id) === false
             && $unit->parent_id != $request->parent_id
         ) {
             return Redirect::back()->with([
