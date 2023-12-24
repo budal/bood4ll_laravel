@@ -179,9 +179,8 @@ class RolesController extends Controller
                 'id' => 'role',
                 'title' => 'Main data',
                 'subtitle' => 'Role name, abilities and settings',
-                'showIf' => $request->user()->can('isManager', User::class),
-                'disabledIf' => $role->inalterable == true
-                    || $role->owner != $request->user()->id && $request->user()->cannot('isManager', User::class),
+                'showIf' => $role->id === null || $request->user()->can('isOwner', $role),
+                'disabledIf' => $role->inalterable == true || $role->id !== null && $request->user()->cannot('isOwner', $role),
                 'cols' => 3,
                 'fields' => [
                     [
@@ -243,6 +242,7 @@ class RolesController extends Controller
                             'type' => 'toggle',
                             'name' => 'remove_on_change_unit',
                             'title' => 'Remove on transfer',
+                            'disabled' => $request->user()->cannot('canRemoveOnChangeUnit', User::class),
                             'colorOn' => 'info',
                         ],
                     ],
@@ -394,7 +394,6 @@ class RolesController extends Controller
     {
         $this->authorize('access', User::class);
         $this->authorize('fullAccess', [$role, $request]);
-        $this->authorize('allowedUnits', [$role, $request]);
 
         $hasRole = $role->users()->whereIn('user_id', $request->list)->first();
 
@@ -445,6 +444,8 @@ class RolesController extends Controller
         $this->authorize('access', User::class);
         $this->authorize('isManager', User::class);
 
+        $data['remove_on_change_unit'] = true;
+
         return Inertia::render('Default', [
             'form' => $this->__form($request, $role),
             'routes' => [
@@ -453,6 +454,7 @@ class RolesController extends Controller
                     'method' => 'post',
                 ],
             ],
+            'data' => $data,
         ]);
     }
 

@@ -108,6 +108,15 @@ class User extends Authenticatable implements MustVerifyEmail
             ->contains(Route::current()->getName());
     }
 
+    public function canRemoveOnChangeUnit()
+    {
+        return $this->getAllAbilities()
+            ->where('remove_on_change_unit', true)
+            ->where('abilities.name', '!=', null)
+            ->pluck('ability')
+            ->contains(Route::current()->getName());
+    }
+
     public function unitsClassified(): BelongsToMany
     {
         return $this->belongsToMany(Unit::class)

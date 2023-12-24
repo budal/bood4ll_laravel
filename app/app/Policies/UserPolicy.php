@@ -53,6 +53,13 @@ class UserPolicy
             : Response::deny("You cannot manage nested data.");
     }
 
+    public function canRemoveOnChangeUnit(User $user): Response
+    {
+        return $user->canRemoveOnChangeUnit()
+            ? Response::allow()
+            : Response::deny("This role will be removed when user change unit.");
+    }
+
 
 
 

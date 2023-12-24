@@ -37,30 +37,6 @@ class RolePolicy
         }
     }
 
-    public function allowedUnits(User $user, Role $role, Request $request): Response
-    {
-        if ($user->roles()->where('roles.id', $role->id)->count() === 0)
-            return false;
-
-        if (!$user->canManageNested()) {
-            $allowedUnits = $user->units->pluck('id');
-        } else {
-            $allowedUnits = $user->units()->get()->flatten()->pluck('id')->union(
-                $user->units()->get()->map->getAllChildren()->flatten()->pluck('id')
-            );
-        }
-
-        $usersToEditUnits = User::join('unit_user', 'unit_user.user_id', '=', 'users.id')
-            ->select('users.id', 'unit_user.unit_id')
-            ->whereIn('users.id', $request->list)
-            ->get()
-            ->pluck('unit_id');
-
-        return $usersToEditUnits->intersect($allowedUnits)->count() == collect($request->list)->count()
-            ? Response::allow()
-            : Response::deny("Your permission don't provide access to manage nested data.");
-    }
-
     public function isActive(User $user, Role $role): Response
     {
         return $role->deleted_at === null

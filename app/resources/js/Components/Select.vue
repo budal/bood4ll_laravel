@@ -93,7 +93,6 @@ watch(
     },
     { deep: true },
 );
-console.log(selectedItems.value, props.modelValue);
 </script>
 
 <template>
