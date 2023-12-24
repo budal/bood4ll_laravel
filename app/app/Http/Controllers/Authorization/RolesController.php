@@ -544,6 +544,7 @@ class RolesController extends Controller
         $this->authorize('access', User::class);
         $this->authorize('isActive', $role);
         $this->authorize('isManager', User::class);
+        $this->authorize('canEdit', $role);
         $this->authorize('canEditManagementRoles', $role);
         $this->authorize('isOwner', $role);
 
