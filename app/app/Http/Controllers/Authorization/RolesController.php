@@ -31,7 +31,14 @@ class RolesController extends Controller
             ->select('roles.id', 'roles.name', 'roles.deleted_at')
             ->groupBy('roles.id', 'roles.name', 'roles.deleted_at')
             ->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
+                $query->where('active', true)->where(function ($query) {
+                    $query->where('roles.lock_on_expire', true);
+                    $query->where('roles.expires_at', '>=', 'NOW()');
+                    $query->orwhere('roles.lock_on_expire', false);
+                });
+
                 $query->where('roles.manager', false);
+                $query->where('role_user.user_id', $request->user()->id);
 
                 if ($request->user()->cannot('hasFullAccess', User::class)) {
                     $query->where('unit_user.user_id', $request->user()->id);
@@ -40,8 +47,8 @@ class RolesController extends Controller
                 $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
             })
             ->withCount(['abilities', 'users' => function ($query) use ($request) {
+                $query->leftjoin('unit_user', 'unit_user.user_id', '=', 'role_user.user_id');
                 $query->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
-                    $query->leftjoin('unit_user', 'unit_user.user_id', '=', 'role_user.user_id');
                     $query->where('roles.manager', false);
 
                     if ($request->user()->cannot('hasFullAccess', User::class)) {
@@ -74,7 +81,7 @@ class RolesController extends Controller
                                         ],
                                         'editRoute' => [
                                             'route' => 'apps.roles.edit',
-                                            'showIf' => Gate::allows('apps.roles.edit'),
+                                            'showIf' => Gate::allows('apps.roles.edit')
                                         ],
                                         'destroyRoute' => [
                                             'route' => 'apps.roles.destroy',
@@ -137,7 +144,7 @@ class RolesController extends Controller
     {
         $abilities = Ability::select('abilities.*')
             ->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
-                $query->whereIn('name', $request->user()->getAllAbilities->where('ability', '!=', null)->pluck('ability'));
+                $query->whereIn('name', $request->user()->getAllAbilities->whereNotNull('ability')->pluck('ability'));
             })
             ->orderBy('name')
             ->get();
@@ -151,11 +158,11 @@ class RolesController extends Controller
                 $query->where('role_user.role_id', $role->id);
             })
             ->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
-                $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
-
                 if ($request->user()->cannot('hasFullAccess', User::class)) {
                     $query->where('unit_user.user_id', $request->user()->id);
                 }
+
+                $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
             })
             ->with('unitsClassified', 'unitsWorking')
             ->paginate(20)
@@ -229,7 +236,7 @@ class RolesController extends Controller
                             'type' => 'toggle',
                             'name' => 'manage_nested',
                             'title' => 'Manage nested data',
-                            'disabled' => $request->user()->cannot('canManageNested', User::class),
+                            'disabled' => $request->user()->cannot('canManageNestedData', User::class),
                             'colorOn' => 'info',
                         ],
                         [
@@ -511,7 +518,8 @@ class RolesController extends Controller
     {
         $this->authorize('access', User::class);
         $this->authorize('isActive', $role);
-        $this->authorize('canEditManagementRoles', $role);
+        $this->authorize('canEdit', $role);
+        // $this->authorize('canEditManagementRoles', $role);
 
         $role['abilities'] = $role->abilities;
 

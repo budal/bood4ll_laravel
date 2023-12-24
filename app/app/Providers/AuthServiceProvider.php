@@ -8,8 +8,7 @@ use Illuminate\Support\Facades\Gate;
 
 class AuthServiceProvider extends ServiceProvider
 {
-    protected $policies = [
-    ];
+    protected $policies = [];
 
     public function boot(): void
     {
@@ -20,7 +19,7 @@ class AuthServiceProvider extends ServiceProvider
                 return true;
             }
 
-            if ($user->getAllAbilities->where('ability', '!=', null)->pluck('ability')->contains($ability)) {
+            if ($user->getAllAbilities->whereNotNull('ability')->pluck('ability')->contains($ability)) {
                 return true;
             }
         });

@@ -202,7 +202,7 @@ class UsersController extends Controller
 
             Auth::loginUsingId($user->id, true);
 
-            if ($user->getAllAbilities->where('ability', '!=', null)->pluck('ability')->contains(Route::current()->getName())) {
+            if ($user->getAllAbilities->whereNotNull('ability')->pluck('ability')->contains(Route::current()->getName())) {
                 return Redirect::back()->with([
                     'toast_type' => 'warning',
                     'toast_message' => "Logged as ':user'.",

@@ -19,7 +19,8 @@ class UserPolicy
 
     public function access(User $user): Response
     {
-        return $user->getAllAbilities->where('ability', '!=', null)->pluck('ability')->contains(Route::current()->getName())
+        return $user->getAllAbilities->whereNotNull('ability')->pluck('ability')
+            ->contains(Route::current()->getName())
             ? Response::allow()
             : Response::deny("You do not have permission to access this feature.");
     }
@@ -37,6 +38,25 @@ class UserPolicy
             ? Response::allow()
             : Response::deny("Only managers can access this feature.");
     }
+
+    public function hasFullAccess(User $user): Response
+    {
+        return $user->hasFullAccess()
+            ? Response::allow()
+            : Response::deny("You can only manage your own data.");
+    }
+
+    public function canManageNestedData(User $user): Response
+    {
+        return $user->canManageNested()
+            ? Response::allow()
+            : Response::deny("You cannot manage nested data.");
+    }
+
+
+
+
+
 
     public function fullAccess(User $user, User $userToEdit): Response
     {

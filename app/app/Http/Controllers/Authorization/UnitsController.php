@@ -36,7 +36,7 @@ class UnitsController extends Controller
             ->select('units.id', 'units.name', 'units.parent_id', 'units.deleted_at')
             ->groupBy('units.id', 'units.name', 'units.parent_id', 'units.deleted_at')
             ->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
-                if ($request->user()->cannot('hasFullAccess', User::class)) {
+                if ($request->user()->can('hasFullAccess', User::class)) {
                     $query->where('unit_user.user_id', $request->user()->id);
                 }
 
@@ -72,11 +72,11 @@ class UnitsController extends Controller
                                         ],
                                         'editRoute' => [
                                             'route' => 'apps.units.edit',
-                                            'showIf' => Gate::allows('apps.units.edit'),
+                                            'showIf' => Gate::allows('apps.units.edit') && $request->user()->can('isManager', User::class),
                                         ],
                                         'destroyRoute' => [
                                             'route' => 'apps.units.destroy',
-                                            'showIf' => Gate::allows('apps.units.destroy'),
+                                            'showIf' => Gate::allows('apps.units.destroy') && $request->user()->can('isSuperAdmin', User::class),
                                         ],
                                         'forceDestroyRoute' => [
                                             'route' => 'apps.roles.forcedestroy',
@@ -84,7 +84,7 @@ class UnitsController extends Controller
                                         ],
                                         'restoreRoute' => [
                                             'route' => 'apps.units.restore',
-                                            'showIf' => Gate::allows('apps.units.restore'),
+                                            'showIf' => Gate::allows('apps.units.restore') && $request->user()->can('isSuperAdmin', User::class),
                                         ],
                                     ],
                                     'menu' => [
@@ -150,7 +150,7 @@ class UnitsController extends Controller
                 return $item;
             });
 
-        if ($units->pluck('id')->contains($unit->parent_id) === false) {
+        if ($units->pluck('id')->contains($unit->parent_id) === false && $unit->id != null) {
             $parent = Unit::where('id', $unit->parent_id)->first();
 
             $units->prepend([

@@ -20,10 +20,6 @@ class RolePolicy
 
     public function fullAccess(User $user, Role $role, Request $request): Response
     {
-        if ($user->roles()->where('roles.id', $role->id)->count() === 0) {
-            return Response::deny("You do not have permission to access this feature.");
-        }
-
         if (!$user->hasFullAccess()) {
             return collect($request->list)->contains($user->id) && collect($request->list)->count() === 1
                 ? Response::allow()
@@ -35,7 +31,7 @@ class RolePolicy
                 ->get()
                 ->pluck('unit_id');
 
-            return $usersToEditUnits->intersect($user->unitsIds())->count() == collect($request->list)->count()
+            return $usersToEditUnits->intersect($user->unitsIds())->count() === collect($request->list)->count()
                 ? Response::allow()
                 : Response::deny("You can only manage data from the location where you are classified.");
         }
@@ -69,7 +65,7 @@ class RolePolicy
     {
         return $role->deleted_at === null
             ? Response::allow()
-            : Response::deny("This registry is not active.");
+            : Response::deny("This registry is not editable.");
     }
 
     public function isOwner(User $user, Role $role): Response
@@ -77,6 +73,18 @@ class RolePolicy
         return $user->id === $role->owner
             ? Response::allow()
             : Response::deny("Your are not the owner of this registry.");
+    }
+
+    public function canEdit(User $user, Role $role): Response
+    {
+        return $user->roles()
+            ->where('roles.active', true)->where(function ($query) {
+                $query->where('roles.lock_on_expire', true);
+                $query->where('roles.expires_at', '>=', 'NOW()');
+                $query->orwhere('roles.lock_on_expire', false);
+            })->get()->pluck('id')->contains($role->id)
+            ? Response::allow()
+            : Response::deny("You cannot edit this registry.");
     }
 
     public function canEditManagementRoles(User $user, Role $role): Response
