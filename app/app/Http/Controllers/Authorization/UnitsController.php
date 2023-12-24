@@ -564,7 +564,11 @@ class UnitsController extends Controller
             ]);
         }
 
-        dd($request->user()->unitsIds()->contains($request->parent_id) === false, $unit->parent_id != $request->parent_id);
+        dd(
+            $request->user()->cannot('isSuperAdmin', User::class),
+            $request->user()->unitsIds()->contains($request->parent_id) === false,
+            $unit->parent_id != $request->parent_id
+        );
         DB::beginTransaction();
 
         try {
