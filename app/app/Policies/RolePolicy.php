@@ -74,7 +74,7 @@ class RolePolicy
     {
         $roles = Role::whereIn('roles.id', $request->list)->withTrashed()->get();
 
-        return $roles->pluck('owner')->intersect($user->id)->count() == collect($request->list)->count()
+        return $roles->pluck('owner')->intersect($user->id)->count() === collect($request->list)->count()
             ? Response::allow()
             : Response::deny("You are trying to destroy/restore items that don't belong to you.");
     }
