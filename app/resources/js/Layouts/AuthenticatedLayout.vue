@@ -10,7 +10,7 @@ import ToggleTheme from "@/Components/ToggleTheme.vue";
 import NavMenu from "@/Components/NavMenu.vue";
 // @ts-expect-error
 import { Modal } from "/vendor/emargareten/inertia-modal";
-import { Link } from "@inertiajs/vue3";
+import { Link, usePage } from "@inertiajs/vue3";
 
 const apps = [
     {
