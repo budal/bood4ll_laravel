@@ -42,7 +42,15 @@ class UnitsController extends Controller
 
                 $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
             })
-            ->withCount(['children', 'users'])
+            ->withCount(['children', 'users' => function ($query) use ($request) {
+                $query->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
+                    if ($request->user()->cannot('hasFullAccess', User::class)) {
+                        $query->where('unit_user.user_id', $request->user()->id);
+                    }
+
+                    $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
+                });
+            }])
             ->paginate(20)
             ->onEachSide(2)
             ->through(function ($item) {
@@ -193,7 +201,7 @@ class UnitsController extends Controller
             ->appends(collect($request->query)->toArray())
             ->through(function ($item) {
                 $item->name = $item->getParentsNames();
-                $item->all_users_count = $item->getAllChildren()->pluck('users_count')->sum() + $item->users_count;
+                // $item->all_users_count = $item->getAllChildren()->pluck('users_count')->sum() + $item->users_count;
 
                 return $item;
             });
@@ -567,7 +575,7 @@ class UnitsController extends Controller
 
         if (
             $request->user()->cannot('isSuperAdmin', User::class)
-            && $request->user()->unitsIds()->contains($request->parent_id) === false
+            && $request->user()->unitsIds()->contains($unit->parent_id) === false
             && $unit->parent_id != $request->parent_id
         ) {
             return Redirect::back()->with([
@@ -577,9 +585,9 @@ class UnitsController extends Controller
         }
 
         dd(
-            $request->user()->cannot('isSuperAdmin', User::class),
-            $request->user()->unitsIds()->contains($request->parent_id) === false,
-            $unit->parent_id != $request->parent_id
+            $request->user()->unitsIds()->contains($request->parent_id) == false,
+            $request->user()->unitsIds(),
+            $request->parent_id,
         );
         DB::beginTransaction();
 
