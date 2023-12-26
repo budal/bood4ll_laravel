@@ -36,7 +36,7 @@ class UnitsController extends Controller
             ->select('units.id', 'units.name', 'units.parent_id', 'units.deleted_at')
             ->groupBy('units.id', 'units.name', 'units.parent_id', 'units.deleted_at')
             ->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
-                if ($request->user()->can('hasFullAccess', User::class)) {
+                if ($request->user()->cannot('hasFullAccess', User::class)) {
                     $query->where('unit_user.user_id', $request->user()->id);
                 }
 
@@ -198,15 +198,18 @@ class UnitsController extends Controller
                 return $item;
             });
 
-        $staff = $unit->users()
-            ->filter($request, 'staff')
+        $staff = User::filter($request, 'staff')
+            ->leftjoin('unit_user', 'unit_user.user_id', '=', 'users.id')
+            ->select('users.id', 'users.name', 'users.email')
+            ->groupBy('users.id', 'users.name', 'users.email')
             ->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
-                $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
-
                 if ($request->user()->cannot('hasFullAccess', User::class)) {
                     $query->where('unit_user.user_id', $request->user()->id);
                 }
+
+                $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
             })
+            ->with('unitsClassified', 'unitsWorking')
             ->withCount('roles')
             ->paginate($perPage = 20, $columns = ['*'], $pageName = 'staff')
             ->onEachSide(2)
@@ -382,19 +385,6 @@ class UnitsController extends Controller
                             'content' => [
                                 'routes' => [
                                     'editRoute' => 'apps.users.edit',
-                                    'destroyRoute' => 'apps.units.destroy',
-                                    'restoreRoute' => 'apps.units.restore',
-                                ],
-                                'menu' => [
-                                    [
-                                        'icon' => 'mdi:plus',
-                                        'title' => 'Unit creation',
-                                        'route' => [
-                                            'apps.units.create',
-                                            ['id' => $unit->id],
-                                        ],
-                                        'modal' => true,
-                                    ],
                                 ],
                                 'titles' => [
                                     [
@@ -415,6 +405,28 @@ class UnitsController extends Controller
                                             [
                                                 'field' => 'email',
                                                 'class' => 'text-xs',
+                                            ],
+                                        ],
+                                    ],
+                                    [
+                                        'type' => 'composite',
+                                        'title' => 'Classified',
+                                        'class' => 'collapse',
+                                        'field' => 'units_classified',
+                                        'options' => [
+                                            [
+                                                'field' => 'name',
+                                            ],
+                                        ],
+                                    ],
+                                    [
+                                        'type' => 'composite',
+                                        'title' => 'Working',
+                                        'class' => 'collapse',
+                                        'field' => 'units_working',
+                                        'options' => [
+                                            [
+                                                'field' => 'name',
                                             ],
                                         ],
                                     ],
