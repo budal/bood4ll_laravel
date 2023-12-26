@@ -42,15 +42,27 @@ class UnitsController extends Controller
 
                 $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
             })
-            ->withCount(['children', 'users' => function ($query) use ($request) {
-                $query->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
-                    if ($request->user()->cannot('hasFullAccess', User::class)) {
-                        $query->where('unit_user.user_id', $request->user()->id);
-                    }
+            ->withCount([
+                'children',
+                'users' => function ($query) use ($request) {
+                    $query->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
+                        if ($request->user()->cannot('hasFullAccess', User::class)) {
+                            $query->where('unit_user.user_id', $request->user()->id);
+                        }
 
-                    $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
-                });
-            }])
+                        $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
+                    });
+                },
+                'users AS all_users_count' => function ($query) use ($request) {
+                    // $query->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
+                    //     if ($request->user()->cannot('hasFullAccess', User::class)) {
+                    //         // $query->where('unit_user.user_id', $request->user()->id);
+                    //     }
+                    // });
+                    // $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
+                    // dd($query->get());
+                },
+            ])
             ->paginate(20)
             ->onEachSide(2)
             ->through(function ($item) {

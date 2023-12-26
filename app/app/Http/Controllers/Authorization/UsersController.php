@@ -31,6 +31,8 @@ class UsersController extends Controller
         ])
             ->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
                 $query->join('unit_user', 'unit_user.user_id', '=', 'users.id');
+                $query->select('users.id', 'users.name', 'users.email');
+                $query->groupBy('users.id', 'users.name', 'users.email');
 
                 if ($request->user()->cannot('hasFullAccess', User::class)) {
                     $query->where('unit_user.user_id', $request->user()->id);
