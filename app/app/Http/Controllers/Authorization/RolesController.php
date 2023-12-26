@@ -85,7 +85,7 @@ class RolesController extends Controller
                                         ],
                                         'destroyRoute' => [
                                             'route' => 'apps.roles.destroy',
-                                            'showIf' => Gate::allows('apps.roles.destroy'),
+                                            'showIf' => Gate::allows('apps.roles.destroy') && $request->user()->can('isManager', User::class),
                                         ],
                                         'forceDestroyRoute' => [
                                             'route' => 'apps.roles.forcedestroy',
@@ -93,7 +93,7 @@ class RolesController extends Controller
                                         ],
                                         'restoreRoute' => [
                                             'route' => 'apps.roles.restore',
-                                            'showIf' => Gate::allows('apps.roles.restore'),
+                                            'showIf' => Gate::allows('apps.roles.restore') && $request->user()->can('isManager', User::class),
                                         ],
                                     ],
                                     'menu' => [

@@ -15,6 +15,7 @@ return new class() extends Migration
             $table->text('shortpath')->nullable();
             $table->text('fullpath')->nullable();
             $table->integer('order')->default(1);
+            $table->uuid('owner')->nullable();
             $table->date('founded')->nullable();
             $table->unsignedBigInteger('parent_id')->nullable();
             $table->boolean('active')->default(true);

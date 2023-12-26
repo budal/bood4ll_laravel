@@ -76,15 +76,15 @@ class UnitsController extends Controller
                                     'routes' => [
                                         'createRoute' => [
                                             'route' => 'apps.units.create',
-                                            'showIf' => Gate::allows('apps.units.create') && $request->user()->can('isSuperAdmin', User::class),
+                                            'showIf' => Gate::allows('apps.units.create') && $request->user()->can('isManager', User::class) && $request->user()->can('canManageNestedData', User::class),
                                         ],
                                         'editRoute' => [
                                             'route' => 'apps.units.edit',
-                                            'showIf' => Gate::allows('apps.units.edit') && $request->user()->can('isManager', User::class),
+                                            'showIf' => Gate::allows('apps.units.edit'),
                                         ],
                                         'destroyRoute' => [
                                             'route' => 'apps.units.destroy',
-                                            'showIf' => Gate::allows('apps.units.destroy') && $request->user()->can('isSuperAdmin', User::class),
+                                            'showIf' => Gate::allows('apps.units.destroy') && $request->user()->can('isManager', User::class),
                                         ],
                                         'forceDestroyRoute' => [
                                             'route' => 'apps.roles.forcedestroy',
@@ -92,7 +92,7 @@ class UnitsController extends Controller
                                         ],
                                         'restoreRoute' => [
                                             'route' => 'apps.units.restore',
-                                            'showIf' => Gate::allows('apps.units.restore') && $request->user()->can('isSuperAdmin', User::class),
+                                            'showIf' => Gate::allows('apps.units.restore') && $request->user()->can('isManager', User::class),
                                         ],
                                     ],
                                     'menu' => [
@@ -479,7 +479,8 @@ class UnitsController extends Controller
     public function create(Request $request, Unit $unit): Response
     {
         $this->authorize('access', User::class);
-        $this->authorize('isSuperAdmin', User::class);
+        $this->authorize('isManager', User::class);
+        $this->authorize('canManageNestedData', User::class);
 
         $data['parent_id'] = $request->unit->id ?? '';
 
@@ -498,13 +499,15 @@ class UnitsController extends Controller
     public function store(Request $request, Unit $unit): RedirectResponse
     {
         $this->authorize('access', User::class);
-        $this->authorize('isSuperAdmin', User::class);
+        $this->authorize('isManager', User::class);
+        $this->authorize('canManageNestedData', User::class);
 
         DB::beginTransaction();
 
         try {
             $unit->name = $request->name;
             $unit->nickname = $request->nickname;
+            $unit->owner = $request->user()->id;
             $unit->founded = $request->founded;
             $unit->parent_id = $request->parent_id;
             $unit->active = $request->active;
@@ -526,6 +529,8 @@ class UnitsController extends Controller
             $unit->shortpath = $unit->getParentsNicknames();
 
             $unit->save();
+
+            $unit->users()->attach($request->user()->id);
         } catch (\Exception $e) {
             report($e);
 
@@ -540,7 +545,7 @@ class UnitsController extends Controller
 
         DB::commit();
 
-        return Redirect::back()->with([
+        return Redirect::route('apps.units.edit', $unit->id)->with([
             'toast_type' => 'success',
             'toast_message' => '{0} Nothing to add.|[1] Item added successfully.|[2,*] :total items successfully added.',
             'toast_count' => 1,
@@ -550,8 +555,8 @@ class UnitsController extends Controller
     public function edit(Request $request, Unit $unit): Response
     {
         $this->authorize('access', User::class);
-        $this->authorize('isManager', User::class);
         $this->authorize('isActive', $unit);
+        $this->authorize('canEdit', $unit);
 
         $unit['abilities_disabled'] = $unit->id;
 
@@ -572,6 +577,8 @@ class UnitsController extends Controller
         $this->authorize('access', User::class);
         $this->authorize('isActive', $unit);
         $this->authorize('isManager', User::class);
+        $this->authorize('canEdit', $unit);
+        $this->authorize('isOwner', $unit);
 
         if (
             $request->user()->cannot('isSuperAdmin', User::class)
@@ -584,11 +591,6 @@ class UnitsController extends Controller
             ]);
         }
 
-        dd(
-            $request->user()->unitsIds()->contains($request->parent_id) == false,
-            $request->user()->unitsIds(),
-            $request->parent_id,
-        );
         DB::beginTransaction();
 
         try {

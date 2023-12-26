@@ -45,21 +45,28 @@ class UnitPolicy
     {
         return $unit->deleted_at === null
             ? Response::allow()
-            : Response::deny("This registry is not active.");
+            : Response::deny("This record does not exist.");
     }
 
     public function isOwner(User $user, Unit $unit): Response
     {
         return $user->id === $unit->owner
             ? Response::allow()
-            : Response::deny("Your are not the owner of this registry.");
+            : Response::deny("You are not the owner of this record.");
+    }
+
+    public function canEdit(User $user, Unit $unit): Response
+    {
+        return $user->unitsIds()->contains($unit->id)
+            ? Response::allow()
+            : Response::deny("You cannot update this record.");
     }
 
     public function canDestroyOrRestore(User $user, Request $request): Response
     {
-        $roles = Unit::whereIn('roles.id', $request->list)->withTrashed()->get();
+        $units = Unit::whereIn('units.id', $request->list)->withTrashed()->get();
 
-        return $roles->pluck('owner')->intersect($user->id)->count() == collect($request->list)->count()
+        return $units->pluck('owner')->intersect($user->id)->count() === collect($request->list)->count()
             ? Response::allow()
             : Response::deny("You are trying to destroy/restore items that don't belong to you.");
     }

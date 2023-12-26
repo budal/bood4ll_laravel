@@ -41,14 +41,14 @@ class RolePolicy
     {
         return $role->deleted_at === null
             ? Response::allow()
-            : Response::deny("This registry do not exists.");
+            : Response::deny("This record does not exist.");
     }
 
     public function isOwner(User $user, Role $role): Response
     {
         return $user->id === $role->owner
             ? Response::allow()
-            : Response::deny("Your are not the owner of this registry.");
+            : Response::deny("You are not the owner of this record.");
     }
 
     public function canEdit(User $user, Role $role): Response
@@ -60,14 +60,14 @@ class RolePolicy
                 $query->orwhere('roles.lock_on_expire', false);
             })->get()->pluck('id')->contains($role->id)
             ? Response::allow()
-            : Response::deny("This registry is not active.");
+            : Response::deny("You cannot update this record.");
     }
 
     public function canEditManagementRoles(User $user, Role $role): Response
     {
         return $role->manager === false
             ? Response::allow()
-            : Response::deny("You can't manage this registry.");
+            : Response::deny("You can't manage this record.");
     }
 
     public function canDestroyOrRestore(User $user, Request $request): Response
