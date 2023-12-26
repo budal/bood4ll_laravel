@@ -530,7 +530,7 @@ class UnitsController extends Controller
 
             $unit->save();
 
-            $unit->users()->attach($request->user()->id);
+            $unit->users()->attach($request->user()->id, ['primary' => false]);
         } catch (\Exception $e) {
             report($e);
 
