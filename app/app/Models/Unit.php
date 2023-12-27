@@ -39,7 +39,7 @@ class Unit extends Base
 
     public function children(): HasMany
     {
-        return $this->hasMany(Unit::class, 'parent_id');
+        return $this->hasMany(Self::class, 'parent_id', 'id');
     }
 
     public function childrenRecursive()
@@ -66,7 +66,7 @@ class Unit extends Base
 
     public function parent(): BelongsTo
     {
-        return $this->belongsTo(Unit::class, 'parent_id');
+        return $this->belongsTo(Self::class, 'parent_id');
     }
 
     public function parentRecursive()

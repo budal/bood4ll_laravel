@@ -63,15 +63,22 @@ class UnitsController extends Controller
                 //     // dd($query->get());
                 // },
             ])
+            // ->withSum(
+            //     'users',
+            //     'unit_user.user_id'
+            // )
             ->paginate(20)
             ->onEachSide(2)
             ->through(function ($item) {
                 $item->name = $item->getParentsNames();
-                $item->all_users_count = $item->getAllChildren()->pluck('users_count')->sum() + $item->users->count();
+                $item->children_ids = $item->getAllChildren()->pluck('id');
+                // $item->all_users_count = $item->getAllChildren()->pluck('users_count')->sum() + $item->users->count();
 
                 return $item;
             })
             ->appends(collect($request->query)->toArray());
+
+        dd($units[0]);
 
         return Inertia::render('Default', [
             'form' => [

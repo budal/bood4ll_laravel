@@ -72,7 +72,7 @@ class UserPolicy
                 ? Response::allow()
                 : Response::deny("You can only manage your own data.");
         } else {
-            return true;
+            return Response::allow();
         }
     }
 
