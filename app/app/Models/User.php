@@ -97,6 +97,7 @@ class User extends Authenticatable implements MustVerifyEmail
             ->where('abilities.name', '!=', null)
             ->pluck('ability')
             ->contains(Route::current()->getName());
+        //$request->route()->named('profile')
     }
 
     public function canManageNested()

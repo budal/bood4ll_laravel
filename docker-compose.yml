@@ -2,7 +2,7 @@ version: "3.9"
 services:
   php:
     container_name: budal_php
-    build: 
+    build:
       context: .
       dockerfile: ./docker/php/Dockerfile
       args:
@@ -35,7 +35,7 @@ services:
       - DB_USERNAME=${DB_USERNAME:-bood4ll}
       - DB_PASSWORD=${DB_PASSWORD:-admin}
 
-      - BROADCAST_DRIVER=log
+      - BROADCAST_DRIVER=redis
       - CACHE_DRIVER=redis
       - FILESYSTEM_DISK=local
       - QUEUE_CONNECTION=database
@@ -135,7 +135,7 @@ services:
         chown pgadmin /var/lib/pgadmin/pgpass;
         /entrypoint.sh
       "
-    restart: unless-stopped  
+    restart: unless-stopped
     networks:
       - budal_laravel_network
     ports:
