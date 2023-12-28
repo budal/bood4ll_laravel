@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Inertia\Response;
 
+use Illuminate\Support\Facades\Redis;
+
 class UnitsController extends Controller
 {
     public $title = 'Units';
@@ -76,7 +78,11 @@ class UnitsController extends Controller
 
                 return $item;
             })
-            ->appends(collect($request->query)->toArray());
+            ->appends(collect($request->query)->toArray())
+            ->withQueryString();
+
+        // Redis::get('user:profile:' . $id);
+        // Redis::set('name', 'Taylor');
 
         dd($units[0]);
 
