@@ -47,18 +47,17 @@ class Menu
 
         return [
             [
-                'title' => "Dashboard",
-                'description' => "",
-                'icon' => "mdi:monitor-dashboard",
+                'title' => $routes['dashboard']->defaults['title'],
+                'description' => $routes['dashboard']->defaults['description'],
+                'icon' => isset($routes['dashboard']->defaults['icon']) ? $routes['dashboard']->defaults['icon'] : null,
                 'route' => $routes['dashboard']->action['as'],
-                'class' => "sm:hidden",
+                'class' => "hidden sm:flex",
             ],
             [
                 'title' => "Apps",
-                'description' => "",
                 'icon' => "mdi:apps-box",
                 'route' => 'apps',
-                'class' => "sm:hidden",
+                'class' => "hidden sm:flex",
                 'links' => $routes->filter(function ($item, $route) {
                     if ($this->user->isSuperAdmin()) {
                         return Str::contains($route, 'apps');
@@ -71,16 +70,15 @@ class Menu
                         'description' => $item->defaults['description'],
                         'icon' => isset($item->defaults['icon']) ? $item->defaults['icon'] : null,
                         'route' => $item->action['as'],
-                        'class' => "sm:hidden",
+                        'class' => "hidden sm:flex",
                     ];
                 }),
             ],
             [
                 'title' => "Reports",
-                'description' => "",
                 'icon' => "mdi:chart-areaspline",
                 'route' => 'reports',
-                'class' => "sm:hidden",
+                'class' => "hidden sm:flex",
                 'links' => $routes->filter(function ($item, $route) {
                     if ($this->user->isSuperAdmin()) {
                         return Str::contains($route, 'reports');
@@ -93,52 +91,52 @@ class Menu
                         'description' => "",
                         'icon' => "mdi:chart-areaspline",
                         'route' => $item->action['as'],
-                        'class' => "sm:hidden",
+                        'class' => "hidden sm:flex",
                     ];
                 }),
             ],
             [
-                'title' => "Help",
-                'description' => "",
-                'icon' => "mdi:help-circle-outline",
+                'title' => $routes['help']->defaults['title'],
+                'description' => $routes['help']->defaults['description'],
+                'icon' => isset($routes['help']->defaults['icon']) ? $routes['help']->defaults['icon'] : null,
                 'route' => $routes['help']->action['as'],
-                'class' => "sm:hidden",
+                'class' => "hidden sm:flex",
             ],
             [
                 'title' => "-",
-                'class' => "sm:hidden",
+                'class' => "hidden sm:flex",
                 'showInNav' => false,
             ],
             [
-                'title' => "Profile",
-                'description' => "",
-                'icon' => "mdi:account-circle-outline",
+                'title' => $routes['profile.edit']->defaults['title'],
+                'description' => $routes['profile.edit']->defaults['description'],
+                'icon' => isset($routes['profile.edit']->defaults['icon']) ? $routes['profile.edit']->defaults['icon'] : null,
                 'route' => $routes['profile.edit']->action['as'],
-                'class' => "sm:hidden",
+                'class' => "hidden sm:flex",
                 'showInNav' => false,
             ],
             [
-                'title' => "Settings",
-                'description' => "",
-                'icon' => "mdi:cog-outline",
+                'title' => $routes['settings']->defaults['title'],
+                'description' => $routes['settings']->defaults['description'],
+                'icon' => isset($routes['settings']->defaults['icon']) ? $routes['settings']->defaults['icon'] : null,
                 'route' => $routes['settings']->action['as'],
-                'class' => "sm:hidden",
+                'class' => "hidden sm:flex",
                 'showInNav' => false,
             ],
             [
-                'title' => "Messages",
-                'description' => "",
-                'icon' => "mdi:message-outline",
+                'title' => $routes['messages']->defaults['title'],
+                'description' => $routes['messages']->defaults['description'],
+                'icon' => isset($routes['messages']->defaults['icon']) ? $routes['messages']->defaults['icon'] : null,
                 'route' => $routes['messages']->action['as'],
-                'class' => "sm:hidden",
+                'class' => "hidden sm:flex",
                 'showInNav' => false,
             ],
             [
-                'title' => "Schedule",
-                'description' => "",
-                'icon' => "mdi:calendar-month-outline",
+                'title' => $routes['schedule']->defaults['title'],
+                'description' => $routes['schedule']->defaults['description'],
+                'icon' => isset($routes['schedule']->defaults['icon']) ? $routes['schedule']->defaults['icon'] : null,
                 'route' => $routes['schedule']->action['as'],
-                'class' => "sm:hidden",
+                'class' => "hidden sm:flex",
                 'showInNav' => false,
             ],
         ];

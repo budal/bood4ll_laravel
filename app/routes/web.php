@@ -38,18 +38,34 @@ Route::post('/email/verification-notification', function (Request $request) {
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
-})->middleware(['auth'])->name('dashboard')->breadcrumb('Dashboard');
+})->middleware(['auth'])->name('dashboard')->breadcrumb('Dashboard')
+    ->defaults('title', 'Dashboard')
+    ->defaults('description', 'See all your related data in one place.')
+    ->defaults('icon', 'mdi:monitor-dashboard');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit')->breadcrumb('Profile');
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit')->breadcrumb('Profile')
+        ->defaults('title', 'Profile')
+        ->defaults('description', 'Manage your personal data.')
+        ->defaults('icon', 'mdi:account-details');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    Route::get('/messages', [ProfileController::class, 'edit'])->name('messages')->breadcrumb('Messages');
+    Route::get('/messages', [ProfileController::class, 'edit'])->name('messages')->breadcrumb('Messages')
+        ->defaults('title', 'Messages')
+        ->defaults('description', 'See all chats between you and other users.')
+        ->defaults('icon', 'mdi:chat-outline');
 
-    Route::get('/schedule', [ProfileController::class, 'edit'])->name('schedule')->breadcrumb('Schedule');
+    Route::get('/schedule', [ProfileController::class, 'edit'])->name('schedule')->breadcrumb('Schedule')
 
-    Route::get('/settings', [ProfileController::class, 'edit'])->name('settings')->breadcrumb('Settings');
+        ->defaults('title', 'Schedule')
+        ->defaults('description', 'Manage all your appointments.')
+        ->defaults('icon', 'mdi:calendar-multiselect-outline');
+
+    Route::get('/settings', [ProfileController::class, 'edit'])->name('settings')->breadcrumb('Settings')
+        ->defaults('title', 'Settings')
+        ->defaults('description', 'Personalize how the system is showed to you.')
+        ->defaults('icon', 'mdi:cog-outline');
 
     Route::prefix('apps')->name('apps.')->group(function () {
         Route::controller(UsersController::class)->group(function () {
@@ -117,9 +133,15 @@ Route::middleware('auth')->group(function () {
         });
     });
 
-    Route::get('/reports', [ProfileController::class, 'edit'])->name('reports')->breadcrumb('Reports');
+    Route::get('/reports', [ProfileController::class, 'edit'])->name('reports')->breadcrumb('Reports')
+        ->defaults('title', 'Reports')
+        ->defaults('description', 'See all data registered in the system.')
+        ->defaults('icon', 'mdi:chart-areaspline');
 
-    Route::get('/help', [ProfileController::class, 'edit'])->name('help')->breadcrumb('Help');
+    Route::get('/help', [ProfileController::class, 'edit'])->name('help')->breadcrumb('Help')
+        ->defaults('title', 'Help')
+        ->defaults('description', 'System manual.')
+        ->defaults('icon', 'mdi:help-circle-outline');
 });
 
 require __DIR__ . '/auth.php';
