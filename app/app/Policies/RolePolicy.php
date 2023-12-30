@@ -54,13 +54,14 @@ class RolePolicy
     public function canEdit(User $user, Role $role): Response
     {
         return $user->roles()
-            ->where('roles.active', true)->where(function ($query) {
+            ->where('roles.active', true)
+            ->where(function ($query) {
                 $query->where('roles.lock_on_expire', true);
                 $query->where('roles.expires_at', '>=', 'NOW()');
                 $query->orwhere('roles.lock_on_expire', false);
             })->get()->pluck('id')->contains($role->id)
             ? Response::allow()
-            : Response::deny("You cannot update this record.");
+            : Response::deny("You cannot edit this record.");
     }
 
     public function canEditManagementRoles(User $user, Role $role): Response

@@ -8,6 +8,7 @@ use App\Models\Ability;
 use App\Models\Role;
 use App\Models\User;
 use Emargareten\InertiaModal\Modal;
+use Illuminate\Database\Query\JoinClause;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -24,36 +25,28 @@ class RolesController extends Controller
         $this->authorize('access', User::class);
 
         $roles = Role::filter($request, 'roles')
-            ->leftjoin('role_user', 'role_user.role_id', '=', 'roles.id')
-            ->leftjoin('unit_user', 'unit_user.user_id', '=', 'role_user.user_id')
-            ->select('roles.id', 'roles.name', 'roles.deleted_at')
-            ->groupBy('roles.id', 'roles.name', 'roles.deleted_at')
             ->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
-                $query->where('active', true)->where(function ($query) {
+                $query->where('active', true);
+
+                $query->where(function ($query) {
                     $query->where('roles.lock_on_expire', true);
                     $query->where('roles.expires_at', '>=', 'NOW()');
                     $query->orwhere('roles.lock_on_expire', false);
                 });
 
                 $query->where('roles.manager', false);
-                $query->where('role_user.user_id', $request->user()->id);
-
-                if ($request->user()->cannot('hasFullAccess', User::class)) {
-                    $query->where('unit_user.user_id', $request->user()->id);
-                }
-
-                $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
             })
             ->withCount(['abilities', 'users' => function ($query) use ($request) {
-                $query->leftjoin('unit_user', 'unit_user.user_id', '=', 'role_user.user_id');
                 $query->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
-                    $query->where('roles.manager', false);
 
-                    if ($request->user()->cannot('hasFullAccess', User::class)) {
-                        $query->where('unit_user.user_id', $request->user()->id);
-                    }
+                    $query->join('unit_user', function (JoinClause $join) use ($request, $query) {
+                        $join->on('unit_user.user_id', '=', 'role_user.user_id')
+                            ->whereIn('unit_user.unit_id', $request->user()->unitsIds());
 
-                    $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
+                        if ($request->user()->cannot('hasFullAccess', User::class)) {
+                            $query->where('unit_user.user_id', $request->user()->id);
+                        }
+                    });
                 });
             }])
             ->paginate(20)
@@ -434,8 +427,6 @@ class RolesController extends Controller
         $this->authorize('access', User::class);
         $this->authorize('isManager', User::class);
 
-        $data['remove_on_change_unit'] = true;
-
         return Inertia::render('Default', [
             'form' => $this->__form($request, $role),
             'routes' => [
@@ -444,7 +435,10 @@ class RolesController extends Controller
                     'method' => 'post',
                 ],
             ],
-            'data' => $data,
+            'data' => [
+                'active' => true,
+                'remove_on_change_unit' => true,
+            ],
         ]);
     }
 

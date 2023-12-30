@@ -82,7 +82,7 @@ class UnitsController extends Controller
         // Redis::get('user:profile:' . $id);
         // Redis::set('name', 'Taylor');
 
-        dd($units[0]);
+        // dd($units[0]);
 
         return Inertia::render('Default', [
             'form' => [
