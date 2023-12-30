@@ -404,7 +404,7 @@ class UnitsController extends Controller
                 'id' => 'staff',
                 'title' => 'Staff',
                 'subtitle' => 'Staff management of this unit.',
-                'showIf' => $unit->id != null,
+                'showIf' => $unit->id != null && Gate::allows('apps.users.index'),
                 'cols' => 2,
                 'fields' => [
                     [
