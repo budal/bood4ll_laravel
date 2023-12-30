@@ -65,7 +65,6 @@ const toggleState = ref(false);
                             <DropdownMenuSubTrigger
                                 :value="item.title"
                                 class="flex items-center px-[5px] relative pl-[25px] text-sm py-3 text-secondary-light dark:text-secondary-dark hover:bg-zero-light dark:hover:bg-zero-dark focus:outline-none focus:bg-zero-light dark:focus:bg-zero-dark transition duration-150 ease-in-out"
-                                :class="item.class"
                             >
                                 {{ $t(item.title) }}
                                 <div
@@ -101,7 +100,6 @@ const toggleState = ref(false);
                                         <DropdownMenuSeparator
                                             v-else
                                             class="h-[0.5px] bg-zero-dark/10 dark:bg-zero-light/5"
-                                            :class="item.class"
                                         />
                                     </template>
                                 </DropdownMenuSubContent>
@@ -115,7 +113,6 @@ const toggleState = ref(false);
                         >
                             <DropdownMenuItem
                                 :value="item.title"
-                                :class="item.class"
                                 class="px-[5px] relative pl-[25px] text-sm py-3 text-zero-light dark:text-zero-dark hover:bg-zero-light dark:hover:bg-zero-dark focus:outline-none focus:bg-zero-light dark:focus:bg-zero-dark transition duration-150 ease-in-out"
                             >
                                 {{ $t(item.title) }}
@@ -124,7 +121,6 @@ const toggleState = ref(false);
                         <DropdownMenuSeparator
                             v-else
                             class="h-[0.5px] bg-zero-dark/10 dark:bg-zero-light/5"
-                            :class="item.class"
                         />
                     </template>
                 </template>
