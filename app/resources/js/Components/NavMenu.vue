@@ -34,14 +34,23 @@ const routeCurrent = window.location.href;
                     <template v-if="item.links">
                         <NavigationMenuItem v-if="item.links.length !== 0">
                             <NavigationMenuTrigger
-                                class="group flex items-center justify-between gap-[2px] mx-3 py-[23px] leading-none outline-none border-b-2 border-transparent select-none text-sm font-medium transition ease-in-out duration-500"
+                                class="group flex items-center justify-between gap-[2px] mx-3 py-[19px] sm:py-[23px] leading-none outline-none border-b-2 border-transparent select-none text-sm font-medium transition ease-in-out duration-500"
                                 :class="
                                     routeCurrent.includes(item.route)
                                         ? 'border-warning-light dark:border-warning-dark focus:border-info-light dark:focus:border-info-dark text-zero-light dark:text-zero-dark'
                                         : 'hover:border-zero-dark dark:hover:border-zero-light focus:border-zero-dark dark:focus:border-zero-light text-zero-light/60 dark:text-zero-dark/60 hover:text-zero-light dark:hover:text-zero-dark focus:text-zero-light dark:focus:text-zero-dark'
                                 "
                             >
-                                {{ $t(item.title) }}
+                                <Icon
+                                    :icon="item.icon"
+                                    class="flex w-5 h-5 sm:hidden text-zero-light/60 dark:text-zero-dark/60 group-hover:text-zero-light dark:group-hover:text-zero-dark focus:text-zero-light dark:focus:text-zero-dark relative top-[1px]"
+                                    aria-hidden
+                                />
+                                <span
+                                    class="hidden sm:flex text-zero-light/60 dark:text-zero-dark/60 group-hover:text-zero-light dark:group-hover:text-zero-dark focus:text-zero-light dark:focus:text-zero-dark relative top-[1px]"
+                                >
+                                    {{ $t(item.title) }}
+                                </span>
                                 <Icon
                                     icon="radix-icons:caret-down"
                                     class="text-zero-light/60 dark:text-zero-dark/60 group-hover:text-zero-light dark:group-hover:text-zero-dark focus:text-zero-light dark:focus:text-zero-dark relative top-[1px] transition-transform duration-[250] ease-in group-data-[state=open]:-rotate-180"
@@ -90,14 +99,23 @@ const routeCurrent = window.location.href;
                         <NavigationMenuItem>
                             <Link
                                 :href="route($t(item.route))"
-                                class="text-sm font-medium block select-none mx-3 py-[23px] leading-none no-underline outline-none border-b-2 border-transparent transition ease-in-out duration-500"
+                                class="group text-sm font-medium block select-none mx-3 py-[19px] sm:py-[23px] leading-none no-underline outline-none border-b-2 border-transparent transition ease-in-out duration-500"
                                 :class="
                                     routeCurrent.includes(item.route)
                                         ? 'border-warning-light dark:border-warning-dark focus:border-info-light dark:focus:border-info-dark text-zero-light dark:text-zero-dark '
                                         : 'hover:border-zero-dark dark:hover:border-zero-light focus:border-zero-dark dark:focus:border-zero-light text-zero-light/60 dark:text-zero-dark/60 hover:text-zero-light dark:hover:text-zero-dark focus:text-zero-light dark:focus:text-zero-dark'
                                 "
                             >
-                                {{ $t(item.title) }}
+                                <Icon
+                                    :icon="item.icon"
+                                    class="flex w-5 h-5 sm:hidden text-zero-light/60 dark:text-zero-dark/60 group-hover:text-zero-light dark:group-hover:text-zero-dark focus:text-zero-light dark:focus:text-zero-dark relative top-[1px]"
+                                    aria-hidden
+                                />
+                                <span
+                                    class="hidden sm:flex text-zero-light/60 dark:text-zero-dark/60 group-hover:text-zero-light dark:group-hover:text-zero-dark focus:text-zero-light dark:focus:text-zero-dark relative top-[1px]"
+                                >
+                                    {{ $t(item.title) }}
+                                </span>
                             </Link>
                         </NavigationMenuItem>
                     </template>

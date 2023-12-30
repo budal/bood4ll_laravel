@@ -50,7 +50,7 @@ const menuItems = menu;
                                 />
                             </Link>
                         </div>
-                        <div class="hidden space-x-8 sm:-my-px sm:ml-6 sm:flex">
+                        <div class="space-x-8 sm:-my-px sm:ml-6">
                             <NavMenu :content="navItems" />
                         </div>
                     </div>
