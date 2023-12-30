@@ -16,9 +16,6 @@ use Inertia\Response;
 
 class UsersController extends Controller
 {
-    public $title = 'Users management';
-    public $description = 'Manage users informations and authorizations.';
-
     public function index(Request $request): Response
     {
         $this->authorize('access', User::class);
@@ -50,8 +47,8 @@ class UsersController extends Controller
             'form' => [
                 [
                     'id' => 'users',
-                    'title' => $this->title,
-                    'subtitle' => $this->description,
+                    'title' => Route::current()->title,
+                    'subtitle' => Route::current()->description,
                     'fields' => [
                         [
                             [

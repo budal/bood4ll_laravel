@@ -32,7 +32,7 @@ const routeCurrent = window.location.href;
             >
                 <template v-for="item in content">
                     <template v-if="item.links">
-                        <NavigationMenuItem>
+                        <NavigationMenuItem v-if="item.links.length !== 0">
                             <NavigationMenuTrigger
                                 class="group flex items-center justify-between gap-[2px] mx-3 py-[23px] leading-none outline-none border-b-2 border-transparent select-none text-sm font-medium transition ease-in-out duration-500"
                                 :class="

@@ -34,6 +34,7 @@ class HandleInertiaRequests extends Middleware
             ...parent::share($request),
             'appEnv' => config('app.env'),
             'appName' => config('app.name'),
+            'appMenu' => app(\App\Services\Menu\Menu::class)->menu(),
             'auth' => [
                 'user' => $request->user(),
                 'previousUser' => $request->session()->has('previousUser') ? true : false,

@@ -13,14 +13,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class RolesController extends Controller
 {
-    public $title = 'Roles management';
-    public $description = 'Define roles, grouping abilities to define specific access.';
-
     public function index(Request $request): Response
     {
         $this->authorize('access', User::class);
@@ -66,8 +64,8 @@ class RolesController extends Controller
             'form' => [
                 [
                     'id' => 'roles',
-                    'title' => $this->title,
-                    'subtitle' => $this->description,
+                    'title' => Route::current()->title,
+                    'subtitle' => Route::current()->description,
                     'fields' => [
                         [
                             [
@@ -94,14 +92,6 @@ class RolesController extends Controller
                                         'restoreRoute' => [
                                             'route' => 'apps.roles.restore',
                                             'showIf' => Gate::allows('apps.roles.restore') && $request->user()->can('isManager', User::class),
-                                        ],
-                                    ],
-                                    'menu' => [
-                                        [
-                                            'icon' => 'mdi:book-cog-outline',
-                                            'title' => 'Abilities management',
-                                            'route' => 'apps.abilities.index',
-                                            'showIf' => $request->user()->can('isSuperAdmin', User::class),
                                         ],
                                     ],
                                     'titles' => [

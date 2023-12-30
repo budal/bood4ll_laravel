@@ -68,8 +68,8 @@ class AbilitiesController extends Controller
             'form' => [
                 [
                     'id' => 'validAbilities',
-                    'title' => 'Valid abilities',
-                    'subtitle' => 'Define which abilities will be showed in the roles management.',
+                    'title' => Route::current()->title,
+                    'subtitle' => Route::current()->description,
                     'fields' => [
                         [
                             [

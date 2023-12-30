@@ -54,7 +54,10 @@ Route::middleware('auth')->group(function () {
     Route::prefix('apps')->name('apps.')->group(function () {
         Route::controller(UsersController::class)->group(function () {
             Route::name('users.')->middleware('verified', 'password.confirm')->group(function () {
-                Route::get('/users', 'index')->name('index')->breadcrumb('Users');
+                Route::get('/users', 'index')->name('index')->breadcrumb('Users')
+                    ->defaults('title', 'Users management')
+                    ->defaults('description', 'Manage users informations and authorizations.')
+                    ->defaults('icon', 'mdi:account-multiple');
                 Route::post('/users/changeuser/{user}', 'changeUser')->name('change_user');
                 Route::post('/users/returnToMyUser', 'returnToMyUser')->name('return_to_my_user');
                 Route::post('/users/activate/{user}/{mode?}', 'activate')->name('activate');
@@ -70,7 +73,10 @@ Route::middleware('auth')->group(function () {
 
         Route::controller(RolesController::class)->group(function () {
             Route::name('roles.')->middleware('verified', 'password.confirm')->group(function () {
-                Route::get('/permissions/roles', 'index')->name('index')->breadcrumb('Roles');
+                Route::get('/permissions/roles', 'index')->name('index')->breadcrumb('Roles')
+                    ->defaults('title', 'Roles management')
+                    ->defaults('description', 'Define roles, grouping abilities to define specific access.')
+                    ->defaults('icon', 'mdi:account-details-outline');
                 Route::get('/permissions/roles/create', 'create')->name('create')->breadcrumb('Role creation', 'apps.roles.index');
                 Route::post('/permissions/roles/create', 'store')->name('store');
                 Route::get('/permissions/roles/edit/{role}/{all?}', 'edit')->name('edit')->breadcrumb('Role edition', 'apps.roles.index');
@@ -86,14 +92,20 @@ Route::middleware('auth')->group(function () {
 
         Route::controller(AbilitiesController::class)->group(function () {
             Route::name('abilities.')->middleware('verified', 'password.confirm')->group(function () {
-                Route::get('/permissions/roles/abilities', 'index')->name('index')->breadcrumb('Abilities', 'apps.roles.index');
-                Route::post('/permissions/roles/abilities/update/{mode?}', 'update')->name('update')->whereIn('mode', ['toggle', 'on', 'off']);
+                Route::get('/permissions/abilities', 'index')->name('index')->breadcrumb('Abilities')
+                    ->defaults('title', 'Abilities management')
+                    ->defaults('description', 'Define which abilities will be showed in the roles management.')
+                    ->defaults('icon', 'mdi:book-cog-outline');
+                Route::post('/permissions/abilities/update/{mode?}', 'update')->name('update')->whereIn('mode', ['toggle', 'on', 'off']);
             });
         });
 
         Route::controller(UnitsController::class)->group(function () {
             Route::name('units.')->middleware('verified', 'password.confirm')->group(function () {
-                Route::get('/units', 'index')->name('index')->breadcrumb('Units');
+                Route::get('/units', 'index')->name('index')->breadcrumb('Units')
+                    ->defaults('title', 'Units management')
+                    ->defaults('description', 'Manage the units registered in the system.')
+                    ->defaults('icon', 'mdi:home-group');;
                 Route::get('/units/create/{unit?}', 'create')->name('create')->breadcrumb('Unit creation', 'apps.units.index');
                 Route::post('/units/create', 'store')->name('store');
                 Route::get('/units/edit/{unit}', 'edit')->name('edit')->breadcrumb('Unit edition', 'apps.units.index');

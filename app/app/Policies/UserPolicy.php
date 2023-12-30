@@ -22,7 +22,7 @@ class UserPolicy
         return $user->getAllAbilities->whereNotNull('ability')->pluck('ability')
             ->contains(Route::current()->getName())
             ? Response::allow()
-            : Response::deny("You do not have permission to access this feature.");
+            : Response::deny("You cannot access this feature.");
     }
 
     public function isSuperAdmin(User $user): Response
@@ -88,6 +88,6 @@ class UserPolicy
 
         return $allowedUnits->intersect($userToEdit->units->pluck('id'))->count() > 0
             ? Response::allow()
-            : Response::deny("Your permission don't provide access to manage nested data.");
+            : Response::deny("You cannot manage nested data.");
     }
 }

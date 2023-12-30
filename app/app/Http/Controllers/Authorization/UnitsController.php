@@ -11,6 +11,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -18,9 +19,6 @@ use Illuminate\Support\Facades\Redis;
 
 class UnitsController extends Controller
 {
-    public $title = 'Units';
-    public $description = 'Manage the units registered in the system.';
-
     public function index(Request $request): Response
     {
         $this->authorize('access', User::class);
@@ -90,8 +88,8 @@ class UnitsController extends Controller
             'form' => [
                 [
                     'id' => 'units',
-                    'title' => $this->title,
-                    'subtitle' => $this->description,
+                    'title' => Route::current()->title,
+                    'subtitle' => Route::current()->description,
                     'fields' => [
                         [
                             [

@@ -183,8 +183,7 @@
   "{0} Nobody to authorize.|[1] User successfully authorized.|[2,*] :total users successfully authorized.": "{0} Ninguém para autorizar.|[1] Usuário autorizado com sucesso.|[2,*] :total usuários autorizados com sucesso.",
   "{0} Nobody to deauthorize.|[1] User successfully deauthorized.|[2,*] :total users successfully deauthorized.": "{0} Ninguém para desautorizar.|[1] Usuário desautorizado com sucesso.|[2,*] :total usuários desautorizados com sucesso.",
 
-  "Abilities management": "Gerenciar abilitações",
-  "Valid abilities": "Abilitações válidas",
+  "Abilities management": "Gerenciamento de abilitações",
   "Define which abilities will be showed in the roles management.": "Defina quais abilitações serão exibidas no gerenciamento de funções.",
   "Invalid abilities": "Abilitações inválidas",
   "This abilities does not have a specific route to refer to. Please delete them.": "Estas abilitações não possuem uma rota especifica para se referir. Por favor, exclua-as.",
@@ -195,8 +194,9 @@
   "The ability ':ability' was activated.": "A abilitação ':ability' foi ativada.",
   "The ability ':ability' was deactivated.": "A abilitação ':ability' foi desativada.",
 
-  "Units": "Unidades",
+  "Units management": "Gerenciamento de unidades",
   "Manage the units registered in the system.": "Gerencie as unidades cadastradas no sistema.",
+  "Units": "Unidades",
   "Unit": "Unidade",
   "Founded": "Fundação",
   "Unit data management.": "Gerenciamento de dados da unidade.",
