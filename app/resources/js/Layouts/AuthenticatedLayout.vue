@@ -10,12 +10,7 @@ import ToggleTheme from "@/Components/ToggleTheme.vue";
 import NavMenu from "@/Components/NavMenu.vue";
 // @ts-expect-error
 import { Modal } from "/vendor/emargareten/inertia-modal";
-import { Link, usePage } from "@inertiajs/vue3";
-
-const menu = usePage().props.appMenu as any;
-
-const navItems = menu.filter((item: any) => item.showInNav !== false);
-const menuItems = menu;
+import { Link } from "@inertiajs/vue3";
 </script>
 
 <template>
@@ -51,12 +46,12 @@ const menuItems = menu;
                             </Link>
                         </div>
                         <div class="space-x-8 sm:-my-px sm:ml-6">
-                            <NavMenu :content="navItems" />
+                            <NavMenu :content="$page.props.appNavMenu" />
                         </div>
                     </div>
                     <div class="xs:-mr-2 flex items-center sm:ml-6">
                         <ToggleTheme />
-                        <NavUser :content="menuItems">
+                        <NavUser :content="$page.props.appUserMenu">
                             <template #trigger>
                                 <Bullet>
                                     <Avatar

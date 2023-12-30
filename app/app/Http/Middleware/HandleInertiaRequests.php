@@ -34,7 +34,26 @@ class HandleInertiaRequests extends Middleware
             ...parent::share($request),
             'appEnv' => config('app.env'),
             'appName' => config('app.name'),
-            'appMenu' => app(\App\Services\Menu\Menu::class)->menu(),
+            'appNavMenu' => app(\App\Services\Menu\Menu::class)->menu([
+                'dashboard',
+                [
+                    'route' => 'apps',
+                    'title' => 'Apps',
+                    'icon' => 'mdi:apps-box',
+                ],
+                [
+                    'route' => 'reports',
+                    'title' => 'Reports',
+                    'icon' => 'mdi:chart-areaspline',
+                ],
+                'help'
+            ]),
+            'appUserMenu' => app(\App\Services\Menu\Menu::class)->menu([
+                'profile.edit',
+                'messages',
+                'schedule',
+                'settings',
+            ]),
             'auth' => [
                 'user' => $request->user(),
                 'previousUser' => $request->session()->has('previousUser') ? true : false,
