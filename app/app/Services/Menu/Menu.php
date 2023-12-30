@@ -51,9 +51,8 @@ class Menu
                         'title' => $value['title'],
                         'icon' => $value['icon'],
                         'route' => $value['route'],
-                        'class' => "hidden sm:flex",
                         'links' => $routes->filter(function ($item, $route) use ($value) {
-                            if ($this->user->isSuperAdmin()) {
+                            if ($this->user?->isSuperAdmin()) {
                                 return Str::contains($route, $value['route']);
                             } else {
                                 return Str::contains($route, $value['route']) && collect($this->abilities)->contains($route);
@@ -64,7 +63,6 @@ class Menu
                                 'description' => $item->defaults['description'],
                                 'icon' => isset($item->defaults['icon']) ? $item->defaults['icon'] : null,
                                 'route' => $item->action['as'],
-                                'class' => "hidden sm:flex",
                             ];
                         })->values(),
                     ],
@@ -75,7 +73,6 @@ class Menu
                         'description' => $routes[$value]->defaults['description'],
                         'icon' => isset($routes[$value]->defaults['icon']) ? $routes[$value]->defaults['icon'] : null,
                         'route' => $routes[$value]->action['as'],
-                        'class' => "hidden sm:flex",
                     ],
                 );
         });
