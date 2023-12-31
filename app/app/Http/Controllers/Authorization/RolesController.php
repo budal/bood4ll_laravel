@@ -25,15 +25,16 @@ class RolesController extends Controller
         $this->authorize('access', User::class);
 
         $roles = Role::filter($request, 'roles')
+            ->join('role_user', 'role_user.role_id', '=', 'roles.id')
+            ->select('roles.*')
+            ->groupBy('roles.id', 'roles.*')
             ->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
-                $query->join('role_user', 'role_user.role_id', '=', 'roles.id');
-                $query->select('roles.id', 'roles.name', 'roles.description', 'roles.deleted_at');
-                $query->groupBy('roles.id', 'roles.name', 'roles.description', 'roles.deleted_at');
-
                 $query->where(function ($query) {
-                    $query->where('roles.lock_on_expire', true);
-                    $query->where('roles.expires_at', '>=', 'NOW()');
-                    $query->orwhere('roles.lock_on_expire', false);
+                    $query->where('roles.lock_on_expire', false);
+                    $query->orWhere(function ($query) {
+                        $query->where('roles.lock_on_expire', true);
+                        $query->where('roles.expires_at', '>=', 'NOW()');
+                    });
                 });
                 $query->where('roles.manager', false);
                 $query->where('roles.active', true);
@@ -150,7 +151,6 @@ class RolesController extends Controller
                 if ($request->user()->cannot('hasFullAccess', User::class)) {
                     $query->where('unit_user.user_id', $request->user()->id);
                 }
-
                 $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
             })
             ->with('unitsClassified', 'unitsWorking')

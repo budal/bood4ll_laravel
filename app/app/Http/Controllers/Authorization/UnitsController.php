@@ -32,10 +32,10 @@ class UnitsController extends Controller
                 'order'
             ]
         ])
+            ->leftjoin('unit_user', 'unit_user.unit_id', '=', 'units.id')
+            ->select('units.*')
+            ->groupBy('units.id', 'units.*')
             ->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
-                $query->leftjoin('unit_user', 'unit_user.unit_id', '=', 'units.id');
-                $query->select('units.id', 'units.name', 'units.parent_id', 'units.deleted_at');
-                $query->groupBy('units.id', 'units.name', 'units.parent_id', 'units.deleted_at');
 
                 if ($request->user()->cannot('hasFullAccess', User::class)) {
                     $query->where('unit_user.user_id', $request->user()->id);
@@ -43,6 +43,7 @@ class UnitsController extends Controller
 
                 $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
             })
+            ->with('childrenRecursive')
             ->withCount([
                 'children',
                 'users' => function ($query) use ($request) {
@@ -55,13 +56,18 @@ class UnitsController extends Controller
                     });
                 },
                 'users AS all_users_count' => function ($query) use ($request) {
+
+                    // $query->select(DB::raw("SUM(users_count) as paidsum"));
+
+
+
                     $query->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
                         if ($request->user()->cannot('hasFullAccess', User::class)) {
                             // $query->where('unit_user.user_id', $request->user()->id);
                         }
+
+                        // $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
                     });
-                    $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
-                    // dd($query->get());
                 },
             ])
             // ->withSum(
