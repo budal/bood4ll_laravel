@@ -26,29 +26,35 @@ class RolesController extends Controller
 
         $roles = Role::filter($request, 'roles')
             ->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
-                $query->where('active', true);
+                $query->join('role_user', 'role_user.role_id', '=', 'roles.id');
+                $query->select('roles.id', 'roles.name', 'roles.description', 'roles.deleted_at');
+                $query->groupBy('roles.id', 'roles.name', 'roles.description', 'roles.deleted_at');
 
                 $query->where(function ($query) {
                     $query->where('roles.lock_on_expire', true);
                     $query->where('roles.expires_at', '>=', 'NOW()');
                     $query->orwhere('roles.lock_on_expire', false);
                 });
-
                 $query->where('roles.manager', false);
+                $query->where('roles.active', true);
+                $query->where('role_user.user_id', $request->user()->id);
             })
-            ->withCount(['abilities', 'users' => function ($query) use ($request) {
-                $query->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
+            ->withCount([
+                'abilities',
+                'users' => function ($query) use ($request) {
+                    $query->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
 
-                    $query->join('unit_user', function (JoinClause $join) use ($request, $query) {
-                        $join->on('unit_user.user_id', '=', 'role_user.user_id')
-                            ->whereIn('unit_user.unit_id', $request->user()->unitsIds());
+                        $query->join('unit_user', function (JoinClause $join) use ($request, $query) {
+                            $join->on('unit_user.user_id', '=', 'role_user.user_id')
+                                ->whereIn('unit_user.unit_id', $request->user()->unitsIds());
 
-                        if ($request->user()->cannot('hasFullAccess', User::class)) {
-                            $query->where('unit_user.user_id', $request->user()->id);
-                        }
+                            if ($request->user()->cannot('hasFullAccess', User::class)) {
+                                $query->where('unit_user.user_id', $request->user()->id);
+                            }
+                        });
                     });
-                });
-            }])
+                }
+            ])
             ->paginate(20)
             ->onEachSide(2)
             ->appends(collect($request->query)->toArray());
