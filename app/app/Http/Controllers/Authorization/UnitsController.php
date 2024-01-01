@@ -15,7 +15,9 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Inertia\Response;
 
-use Illuminate\Support\Facades\Redis;
+// use Illuminate\Support\Facades\Redis;
+// Redis::get('user:profile:' . $id);
+// Redis::set('name', 'Taylor');
 
 class UnitsController extends Controller
 {
@@ -86,8 +88,10 @@ class UnitsController extends Controller
             ->appends(collect($request->query)->toArray())
             ->withQueryString();
 
-        // Redis::get('user:profile:' . $id);
-        // Redis::set('name', 'Taylor');
+
+
+        // $category = Unit::find(5)->getDescendants();
+        // dd($category);
 
         // dd($units[0]);
 

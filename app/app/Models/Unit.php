@@ -32,6 +32,8 @@ class Unit extends Base
         'geo',
     ];
 
+    private $descendants;
+
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class)->where('primary', true);
@@ -46,6 +48,45 @@ class Unit extends Base
     {
         return $this->children()->with('childrenRecursive');
     }
+
+
+
+    public function hasChildren()
+    {
+        if ($this->children->count()) {
+            return true;
+        }
+        return false;
+    }
+
+    public function findDescendants(Unit $unit)
+    {
+        $this->descendants[] = $unit->id;
+
+        if ($unit->hasChildren()) {
+            foreach ($unit->children as $child) {
+                $this->findDescendants($child);
+            }
+        }
+    }
+
+    public function getDescendants()
+    {
+        $this->findDescendants($this);
+        return $this->descendants;
+    }
+
+    function getDepth($category, $level = 0)
+    {
+        if ($category->parent_id > 0) {
+            if ($category->parent) {
+                $level++;
+                return $this->getDepth($category->parent, $level);
+            }
+        }
+        return $level;
+    }
+
 
     public function childrenWithUsersCount(): HasMany
     {
