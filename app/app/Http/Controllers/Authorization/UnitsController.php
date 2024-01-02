@@ -58,6 +58,7 @@ class UnitsController extends Controller
                     });
                 },
                 'users AS all_users_count' => function ($query) use ($request) {
+                    $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
 
                     // $query->select(DB::raw("SUM(users_count) as paidsum"));
 

@@ -51,6 +51,8 @@ class Unit extends Base
 
 
 
+
+
     public function hasChildren()
     {
         if ($this->children->count()) {
@@ -86,6 +88,11 @@ class Unit extends Base
         }
         return $level;
     }
+
+
+
+
+
 
 
     public function childrenWithUsersCount(): HasMany

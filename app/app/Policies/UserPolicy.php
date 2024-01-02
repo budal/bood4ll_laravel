@@ -64,13 +64,12 @@ class UserPolicy
 
 
 
-
     public function fullAccess(User $user, User $userToEdit): Response
     {
         if (!$user->hasFullAccess()) {
             return $user->id === $userToEdit->id
                 ? Response::allow()
-                : Response::deny("You can only manage your own data.");
+                : Response::deny("You can only manage your own data 2.");
         } else {
             return Response::allow();
         }
@@ -78,16 +77,8 @@ class UserPolicy
 
     public function allowedUnits(User $user, User $userToEdit): Response
     {
-        if ($user->canManageNested()) {
-            $allowedUnits = $user->units()->get()->flatten()->pluck('id')->union(
-                $user->units()->get()->map->getAllChildren()->flatten()->pluck('id')
-            );
-        } else {
-            $allowedUnits = $user->units->pluck('id');
-        }
-
-        return $allowedUnits->intersect($userToEdit->units->pluck('id'))->count() > 0
+        return $user->unitsIds()->intersect($userToEdit->units->pluck('id'))->count() > 0
             ? Response::allow()
-            : Response::deny("You cannot manage nested data.");
+            : Response::deny("You cannot manage nested data 2.");
     }
 }
