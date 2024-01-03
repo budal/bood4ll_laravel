@@ -45,7 +45,8 @@ class UnitsController extends Controller
 
                 $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
             })
-            ->with('childrenRecursive')
+            // ->with('childrenRecursive')
+            ->withSum('users', 'unit_user.unit_id')
             ->withCount([
                 'children',
                 'users' => function ($query) use ($request) {
@@ -57,21 +58,21 @@ class UnitsController extends Controller
                         $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
                     });
                 },
-                'users AS all_users_count' => function ($query) use ($request) {
-                    $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
+                // 'users AS all_users_count' => function ($query) use ($request) {
+                //     $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
 
-                    // $query->select(DB::raw("SUM(users_count) as paidsum"));
+                //     // $query->select(DB::raw("SUM(users_count) as paidsum"));
 
 
 
-                    $query->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
-                        if ($request->user()->cannot('hasFullAccess', User::class)) {
-                            // $query->where('unit_user.user_id', $request->user()->id);
-                        }
+                //     $query->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
+                //         if ($request->user()->cannot('hasFullAccess', User::class)) {
+                //             // $query->where('unit_user.user_id', $request->user()->id);
+                //         }
 
-                        // $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
-                    });
-                },
+                //         // $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
+                //     });
+                // },
             ])
             // ->withSum(
             //     'users',
@@ -82,7 +83,7 @@ class UnitsController extends Controller
             ->through(function ($item) {
                 $item->name = $item->getParentsNames();
                 // $item->children_ids = $item->getAllChildren()->pluck('id');
-                // $item->all_users_count = $item->getAllChildren()->pluck('users_count')->sum() + $item->users->count();
+                $item->all_users_count = $item->getAllChildren()->pluck('users_count')->sum() + $item->users->count();
 
                 return $item;
             })
