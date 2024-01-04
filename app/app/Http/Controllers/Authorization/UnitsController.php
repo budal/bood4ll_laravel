@@ -25,6 +25,40 @@ class UnitsController extends Controller
     {
         $this->authorize('access', User::class);
 
+
+        $unitUsers = Unit::filter($request, 'units', [
+            'where' => [
+                'name'
+            ],
+            'order' => [
+                'parent_id',
+                'order'
+            ]
+        ])
+            ->leftjoin('unit_user', 'unit_user.unit_id', '=', 'units.id')
+            ->select('units.id', 'units.name')
+            ->selectRaw('COUNT(units.id) as users_count')
+            // ->select('units.*')
+            ->groupBy('units.id', 'units.name')
+            ->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
+
+                if ($request->user()->cannot('hasFullAccess', User::class)) {
+                    $query->where('unit_user.user_id', $request->user()->id);
+                }
+
+                $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
+            })
+            // ->with('childrenRecursive')
+            // ->withSum('users', 'unit_user.unit_id')
+            ->take(10)
+            ->get()
+            // ->each(function ($item) {
+            //     return $item->childs = $item->getDescendants();
+            // })
+        ;
+
+        dd($unitUsers);
+
         $units = Unit::filter($request, 'units', [
             'where' => [
                 'name'
