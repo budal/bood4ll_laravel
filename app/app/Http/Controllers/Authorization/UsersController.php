@@ -156,7 +156,7 @@ class UsersController extends Controller
                 'id' => 'profile',
                 'title' => 'User profile Information',
                 'subtitle' => 'User account profile information',
-                'cols' => 2,
+                'cols' => 3,
                 'fields' => [
                     [
                         [
@@ -169,15 +169,49 @@ class UsersController extends Controller
                             'name' => 'email',
                             'title' => 'Email',
                         ],
+                        [
+                            'type' => 'toggle',
+                            'name' => 'active',
+                            'title' => 'Active',
+                            'colorOn' => 'success',
+                            'colorOff' => 'danger',
+                        ],
                     ],
                     [
                         [
-                            'type' => 'input',
-                            'name' => 'username',
-                            'title' => 'Username',
+                            'type' => 'date',
+                            'name' => 'birthday',
+                            'title' => 'Birthday',
                         ],
-                    ],
+                        [
+                            'type' => 'input',
+                            'name' => 'naturalness',
+                            'title' => 'Naturalness',
+                        ],
+                        [
+                            'type' => 'input',
+                            'name' => 'nationality',
+                            'title' => 'Nationality',
+                        ],
+                    ]
                 ],
+                [
+                    [
+                        'type' => 'date',
+                        'name' => 'birthday',
+                        'title' => 'Birthday',
+                    ],
+                    [
+                        'type' => 'input',
+                        'name' => 'naturalness',
+                        'title' => 'Naturalness',
+                    ],
+                    [
+                        'type' => 'input',
+                        'name' => 'nationality',
+                        'title' => 'Nationality',
+                    ],
+                ]
             ],
         ];
     }

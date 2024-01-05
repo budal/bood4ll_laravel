@@ -38,7 +38,6 @@ class UnitsController extends Controller
             ->leftjoin('unit_user', 'unit_user.unit_id', '=', 'units.id')
             ->select('units.id', 'units.name')
             ->selectRaw('COUNT(units.id) as users_count')
-            // ->select('units.*')
             ->groupBy('units.id', 'units.name')
             ->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
 
@@ -46,6 +45,7 @@ class UnitsController extends Controller
                     $query->where('unit_user.user_id', $request->user()->id);
                 }
 
+                // $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
                 $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
             })
             // ->with('childrenRecursive')
@@ -57,7 +57,7 @@ class UnitsController extends Controller
             // })
         ;
 
-        dd($unitUsers);
+        // dd($unitUsers);
 
         $units = Unit::filter($request, 'units', [
             'where' => [
@@ -69,8 +69,8 @@ class UnitsController extends Controller
             ]
         ])
             ->leftjoin('unit_user', 'unit_user.unit_id', '=', 'units.id')
-            ->select('units.*')
-            ->groupBy('units.id', 'units.*')
+            ->select('units.id', 'units.name')
+            ->groupBy('units.id', 'units.name')
             ->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
 
                 if ($request->user()->cannot('hasFullAccess', User::class)) {
@@ -533,6 +533,7 @@ class UnitsController extends Controller
 
                 $unit->fullpath = $unit->getParentsNames();
                 $unit->shortpath = $unit->getParentsNicknames();
+                $unit->children_id = collect($unit->getDescendants())->toJson();
 
                 $unit->save();
             }
