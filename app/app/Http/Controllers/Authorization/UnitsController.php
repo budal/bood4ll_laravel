@@ -582,10 +582,14 @@ class UnitsController extends Controller
 
             $unit->fullpath = $unit->getParentsNames();
             $unit->shortpath = $unit->getParentsNicknames();
+            $unit->children_id = collect($unit->getDescendants())->toJson();
 
             $unit->save();
 
             $unit->users()->attach($request->user()->id, ['primary' => false]);
+
+            $parentUnit = Unit::where('id', $unit->parent_id)->first();
+            dd($parentUnit);
         } catch (\Exception $e) {
             report($e);
 
@@ -649,6 +653,8 @@ class UnitsController extends Controller
         DB::beginTransaction();
 
         try {
+            $parentId = $unit->parent_id;
+
             $unit->name = $request->name;
             $unit->nickname = $request->nickname;
             $unit->founded = $request->founded;
@@ -670,8 +676,19 @@ class UnitsController extends Controller
 
             $unit->fullpath = $unit->getParentsNames();
             $unit->shortpath = $unit->getParentsNicknames();
+            $unit->children_id = collect($unit->getDescendants())->toJson();
 
             $unit->save();
+
+            $oldParentUnit = Unit::where('id', $parentId)->first();
+            $oldParentUnit->children_id = collect($oldParentUnit->getDescendants())->toJson();
+
+            $oldParentUnit->save();
+
+            $newParentUnit = Unit::where('id', $request->parent_id)->first();
+            $newParentUnit->children_id = collect($newParentUnit->getDescendants())->toJson();
+
+            $newParentUnit->save();
         } catch (\Exception $e) {
             report($e);
 
