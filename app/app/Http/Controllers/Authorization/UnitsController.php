@@ -127,6 +127,7 @@ class UnitsController extends Controller
                                             'type' => 'text',
                                             'title' => 'Subunits',
                                             'field' => 'children_count',
+                                            'showIf' => $request->user()->can('canManageNestedData', User::class),
                                         ],
                                         [
                                             'type' => 'text',
@@ -137,6 +138,7 @@ class UnitsController extends Controller
                                             'type' => 'text',
                                             'title' => 'Total staff',
                                             'field' => 'all_users_count',
+                                            'showIf' => $request->user()->can('canManageNestedData', User::class),
                                             'disableSort' => true,
                                         ],
                                     ],
@@ -214,6 +216,7 @@ class UnitsController extends Controller
                 },
             ])
             ->where('unit_user.unit_id', '<>', $unit->id)
+            ->whereIn('unit_user.unit_id', $unit->children->pluck('id'))
             ->whereIn('unit_user.unit_id', json_decode($unit['children_id']))
             ->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
                 if ($request->user()->cannot('hasFullAccess', User::class)) {
@@ -363,7 +366,7 @@ class UnitsController extends Controller
                 'id' => 'subunits',
                 'title' => 'Subunits',
                 'subtitle' => 'Management of subunits of this unit.',
-                'showIf' => $unit->id != null,
+                'showIf' => $unit->id != null && $request->user()->can('canManageNestedData', User::class),
                 'fields' => [
                     [
                         [
@@ -374,10 +377,24 @@ class UnitsController extends Controller
                                     'createRoute' => [
                                         'route' => 'apps.units.create',
                                         'attributes' => $unit->id,
+                                        'showIf' => Gate::allows('apps.units.create') && $request->user()->can('isManager', User::class) && $request->user()->can('canManageNestedData', User::class),
                                     ],
-                                    'editRoute' => 'apps.units.edit',
-                                    'destroyRoute' => 'apps.units.destroy',
-                                    'restoreRoute' => 'apps.units.restore',
+                                    'editRoute' => [
+                                        'route' => 'apps.units.edit',
+                                        'showIf' => Gate::allows('apps.units.edit'),
+                                    ],
+                                    'destroyRoute' => [
+                                        'route' => 'apps.units.destroy',
+                                        'showIf' => Gate::allows('apps.units.destroy') && $request->user()->can('isManager', User::class),
+                                    ],
+                                    'forceDestroyRoute' => [
+                                        'route' => 'apps.roles.forcedestroy',
+                                        'showIf' => Gate::allows('apps.roles.forcedestroy') && $request->user()->can('isSuperAdmin', User::class),
+                                    ],
+                                    'restoreRoute' => [
+                                        'route' => 'apps.units.restore',
+                                        'showIf' => Gate::allows('apps.units.restore') && $request->user()->can('isManager', User::class),
+                                    ],
                                 ],
                                 'titles' => [
                                     [
@@ -388,8 +405,8 @@ class UnitsController extends Controller
                                     [
                                         'type' => 'text',
                                         'title' => 'Subunits',
-                                        'showIf' => $request->user()->can('hasFullAccess', User::class) && $request->user()->can('canManageNested', User::class),
                                         'field' => 'children_count',
+                                        'showIf' => $request->user()->can('canManageNestedData', User::class),
                                     ],
                                     [
                                         'type' => 'text',
@@ -400,7 +417,7 @@ class UnitsController extends Controller
                                         'type' => 'text',
                                         'title' => 'Total staff',
                                         'field' => 'all_users_count',
-                                        'showIf' => $request->user()->can('hasFullAccess', User::class) && $request->user()->can('canManageNested', User::class),
+                                        'showIf' => $request->user()->can('canManageNestedData', User::class),
                                         'disableSort' => true,
                                     ],
                                 ],

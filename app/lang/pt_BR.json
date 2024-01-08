@@ -195,7 +195,7 @@
   "The ability ':ability' was deactivated.": "A abilitação ':ability' foi desativada.",
 
   "Units management": "Gerenciamento de unidades",
-  "Manage the units registered in the system.": "Gerencie as unidades cadastradas no sistema.",
+  "Manage units registered in the system, their subunits and users.": "Gerenciar unidades cadastradas no sistema, suas subunidades e usuários.",
   "Units": "Unidades",
   "Unit": "Unidade",
   "Founded": "Fundação",

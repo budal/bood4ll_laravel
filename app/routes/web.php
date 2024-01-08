@@ -120,7 +120,7 @@ Route::middleware('auth')->group(function () {
             Route::name('units.')->middleware('verified', 'password.confirm')->group(function () {
                 Route::get('/units', 'index')->name('index')->breadcrumb('Units')
                     ->defaults('title', 'Units management')
-                    ->defaults('description', 'Manage the units registered in the system.')
+                    ->defaults('description', 'Manage units registered in the system, their subunits and users.')
                     ->defaults('icon', 'mdi:home-group');;
                 Route::get('/units/create/{unit?}', 'create')->name('create')->breadcrumb('Unit creation', 'apps.units.index');
                 Route::post('/units/create', 'store')->name('store');
