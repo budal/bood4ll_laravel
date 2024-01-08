@@ -29,47 +29,17 @@ class UnitsController extends Controller
         $unitsUsers = Unit::leftjoin('unit_user', 'unit_user.unit_id', '=', 'units.id')
             ->groupBy('units.id', 'units.name')
             ->select('units.id', 'units.name')
-            ->selectRaw('COUNT(units.id) as total_users');
-
-        // $unitsWithChilds = Unit::with('descendantsAndSelf')
-        //     ->withCount('users')
-        //     // ->select('units.id', 'units.name', 'units.name')
-        //     // ->take(10)
-        //     // ->union($unitsUsers)
-        //     ->get()
-        //     ->map(function ($item) use ($unitsUsers) {
-        //         $item->descendents = $item->descendantsAndSelf->pluck('id');
-        //         $item->all_users_count = $unitsUsers
-        //             ->whereIn('units.id', $item->descendantsAndSelf->pluck('id'))
-        //             ->get()
-        //             ->pluck('total_users');
-        //         return $item;
-        //     });
-
-        // dd($unitsUsers->take(10)->get(), $unitsWithChilds);
+            ->selectRaw('COUNT(units.id) as total_users')
+            ->get();
 
         $units = Unit::leftjoin('unit_user', 'unit_user.unit_id', '=', 'units.id')
-            ->leftJoinSub($unitsUsers, 'units_users', function (JoinClause $join) {
-                $join->on('units.id', '=', 'units_users.id');
-            })
             ->filter($request, 'units', [
                 'where' => ['name'],
                 'order' => ['parent_id', 'order']
             ])
-            ->select('units.id', 'units.name', 'units_users.total_users', 'units.children_id')
+            ->select('units.id', 'units.shortpath as name', 'units.children_id')
             ->selectRaw('COUNT(units.id) as total_users')
-
-            // ->addSelect([
-            //     'all_total_users2' => $unitsUsers
-            //         ->select('units_users.total_users')
-            //         // ->selectRaw('SUM(units_users.total_users) as all_total_users')
-            //         // ->whereColumn('user_id', 'users.id')
-            //         // ->whereRaw("units.id IN JSON(units.children_id)")
-            //         ->take(1)
-            // ])
-
-
-            ->groupBy('units.id', 'units.name', 'units_users.total_users')
+            ->groupBy('units.id', 'units.shortpath')
             ->withCount([
                 'children',
                 'users' => function ($query) use ($request) {
@@ -93,7 +63,16 @@ class UnitsController extends Controller
             ->orderBy('order')
             ->paginate(20)
             ->onEachSide(2)
-            ->withQueryString();
+            ->withQueryString()
+            ->through(function ($item) use ($unitsUsers) {
+                $item->all_users_count = $unitsUsers->filter(function ($list) use ($item) {
+                    return collect(json_decode($item['children_id']))->contains($list->id);
+                })->pluck('total_users')->sum();
+
+                return $item;
+            });
+
+        // dd($units[0], $unitsUsers);
 
         return Inertia::render('Default', [
             'form' => [
@@ -208,12 +187,33 @@ class UnitsController extends Controller
             }
         }
 
+        $unitsUsers = Unit::leftjoin('unit_user', 'unit_user.unit_id', '=', 'units.id')
+            ->groupBy('units.id', 'units.name')
+            ->select('units.id', 'units.name')
+            ->selectRaw('COUNT(units.id) as total_users')
+            ->get();
+
         $subunits = $unit->leftjoin('unit_user', 'unit_user.unit_id', '=', 'units.id')
-            ->select('units.id', 'units.parent_id', 'units.name', 'units.active')
-            ->groupBy('units.id', 'units.parent_id', 'units.name', 'units.active')
-            ->when(!$request->search, function ($query) use ($unit) {
-                $query->where('units.parent_id', $unit->id);
-            })
+            ->filter($request, 'subunits', [
+                'where' => ['name'],
+                'order' => ['parent_id', 'order']
+            ])
+            ->select('units.id', 'units.shortpath as name', 'units.children_id')
+            ->selectRaw('COUNT(units.id) as total_users')
+            ->groupBy('units.id', 'units.shortpath')
+            ->withCount([
+                'children',
+                'users' => function ($query) use ($request) {
+                    $query->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
+                        if ($request->user()->cannot('hasFullAccess', User::class)) {
+                            $query->where('unit_user.user_id', $request->user()->id);
+                        }
+
+                        $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
+                    });
+                },
+            ])
+            ->whereIn('unit_user.unit_id', json_decode($unit['children_id']))
             ->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
                 if ($request->user()->cannot('hasFullAccess', User::class)) {
                     $query->where('unit_user.user_id', $request->user()->id);
@@ -221,20 +221,15 @@ class UnitsController extends Controller
 
                 $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
             })
-            ->filter($request, 'subunits', [
-                'order' => [
-                    'units.parent_id',
-                    'units.order'
-                ]
-            ])
-            ->leftJoin('units as parent_unit', 'units.parent_id', '=', 'parent_unit.id')
-            ->withCount('children', 'users')
+            ->orderBy('parent_id')
+            ->orderBy('order')
             ->paginate($perPage = 20, $columns = ['*'], $pageName = 'subunits')
             ->onEachSide(2)
-            ->appends(collect($request->query)->toArray())
-            ->through(function ($item) {
-                $item->name = $item->getParentsNames();
-                $item->all_users_count = $item->getAllChildren()->pluck('users_count')->sum() + $item->users_count;
+            ->withQueryString()
+            ->through(function ($item) use ($unitsUsers) {
+                $item->all_users_count = $unitsUsers->filter(function ($list) use ($item) {
+                    return collect(json_decode($item['children_id']))->contains($list->id);
+                })->pluck('total_users')->sum();
 
                 return $item;
             });
@@ -243,6 +238,7 @@ class UnitsController extends Controller
             ->leftjoin('unit_user', 'unit_user.user_id', '=', 'users.id')
             ->select('users.id', 'users.name', 'users.email')
             ->groupBy('users.id', 'users.name', 'users.email')
+            ->whereIn('unit_user.unit_id', json_decode($unit['children_id']))
             ->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
                 if ($request->user()->cannot('hasFullAccess', User::class)) {
                     $query->where('unit_user.user_id', $request->user()->id);
@@ -391,6 +387,7 @@ class UnitsController extends Controller
                                     [
                                         'type' => 'text',
                                         'title' => 'Subunits',
+                                        'showIf' => $request->user()->can('hasFullAccess', User::class) && $request->user()->can('canManageNested', User::class),
                                         'field' => 'children_count',
                                     ],
                                     [
@@ -402,6 +399,7 @@ class UnitsController extends Controller
                                         'type' => 'text',
                                         'title' => 'Total staff',
                                         'field' => 'all_users_count',
+                                        'showIf' => $request->user()->can('hasFullAccess', User::class) && $request->user()->can('canManageNested', User::class),
                                         'disableSort' => true,
                                     ],
                                 ],
