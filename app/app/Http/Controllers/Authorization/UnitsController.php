@@ -588,8 +588,10 @@ class UnitsController extends Controller
 
             $unit->users()->attach($request->user()->id, ['primary' => false]);
 
-            $parentUnit = Unit::where('id', $unit->parent_id)->first();
-            dd($parentUnit);
+            $newParentUnit = Unit::where('id', $request->parent_id)->first();
+            $newParentUnit->children_id = collect($newParentUnit->getDescendants())->toJson();
+
+            $newParentUnit->save();
         } catch (\Exception $e) {
             report($e);
 
