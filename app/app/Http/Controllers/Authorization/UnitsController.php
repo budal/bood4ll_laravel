@@ -213,6 +213,7 @@ class UnitsController extends Controller
                     });
                 },
             ])
+            ->where('unit_user.unit_id', '<>', $unit->id)
             ->whereIn('unit_user.unit_id', json_decode($unit['children_id']))
             ->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
                 if ($request->user()->cannot('hasFullAccess', User::class)) {
