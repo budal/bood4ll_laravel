@@ -682,15 +682,19 @@ class UnitsController extends Controller
 
             $unit->save();
 
-            $oldParentUnit = Unit::where('id', $parentId)->first();
-            $oldParentUnit->children_id = collect($oldParentUnit->getDescendants())->toJson();
+            if ($parentId) {
+                $oldParentUnit = Unit::where('id', $parentId)->first();
+                $oldParentUnit->children_id = collect($oldParentUnit->getDescendants())->toJson();
 
-            $oldParentUnit->save();
+                $oldParentUnit->save();
+            }
 
-            $newParentUnit = Unit::where('id', $request->parent_id)->first();
-            $newParentUnit->children_id = collect($newParentUnit->getDescendants())->toJson();
+            if ($request->parent_id) {
+                $newParentUnit = Unit::where('id', $request->parent_id)->first();
+                $newParentUnit->children_id = collect($newParentUnit->getDescendants())->toJson();
 
-            $newParentUnit->save();
+                $newParentUnit->save();
+            }
         } catch (\Exception $e) {
             report($e);
 
