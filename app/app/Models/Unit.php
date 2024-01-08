@@ -12,6 +12,7 @@ class Unit extends Base
 {
     use HasFactory;
     use SoftDeletes;
+    use \Staudenmeir\LaravelAdjacencyList\Eloquent\HasRecursiveRelationships;
 
     protected $fillable = [
         'name',
@@ -48,6 +49,9 @@ class Unit extends Base
     {
         return $this->children()->with('childrenRecursive');
     }
+
+
+
 
 
 
