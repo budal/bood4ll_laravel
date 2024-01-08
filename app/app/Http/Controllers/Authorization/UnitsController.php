@@ -537,6 +537,7 @@ class UnitsController extends Controller
         $this->authorize('canManageNestedData', User::class);
 
         $data['parent_id'] = $request->unit->id ?? '';
+        $data['active'] = true;
 
         return Inertia::render('Default', [
             'form' => $this->__form($request, $unit),
