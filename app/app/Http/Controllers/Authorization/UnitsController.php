@@ -217,7 +217,9 @@ class UnitsController extends Controller
             ])
             ->where('unit_user.unit_id', '<>', $unit->id)
             ->whereIn('unit_user.unit_id', $unit->children->pluck('id'))
-            ->whereIn('unit_user.unit_id', json_decode($unit['children_id']))
+            ->when($unit['children_id'], function ($query) use ($unit) {
+                $query->whereIn('unit_user.unit_id', json_decode($unit['children_id']));
+            })
             ->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
                 if ($request->user()->cannot('hasFullAccess', User::class)) {
                     $query->where('unit_user.user_id', $request->user()->id);
@@ -242,7 +244,9 @@ class UnitsController extends Controller
             ->leftjoin('unit_user', 'unit_user.user_id', '=', 'users.id')
             ->select('users.id', 'users.name', 'users.email')
             ->groupBy('users.id', 'users.name', 'users.email')
-            ->whereIn('unit_user.unit_id', json_decode($unit['children_id']))
+            ->when($unit['children_id'], function ($query) use ($unit) {
+                $query->whereIn('unit_user.unit_id', json_decode($unit['children_id']));
+            })
             ->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
                 if ($request->user()->cannot('hasFullAccess', User::class)) {
                     $query->where('unit_user.user_id', $request->user()->id);

@@ -25,7 +25,7 @@ class RolesController extends Controller
         $this->authorize('access', User::class);
 
         $roles = Role::filter($request, 'roles')
-            ->join('role_user', 'role_user.role_id', '=', 'roles.id')
+            ->leftjoin('role_user', 'role_user.role_id', '=', 'roles.id')
             ->select('roles.*')
             ->groupBy('roles.id', 'roles.*')
             ->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
