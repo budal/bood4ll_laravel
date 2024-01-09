@@ -149,7 +149,7 @@ class UsersController extends Controller
         ]);
     }
 
-    public function __form(): array
+    public function __form(Request $request, User $user): array
     {
         return [
             [
@@ -213,6 +213,72 @@ class UsersController extends Controller
                     ],
                 ]
             ],
+            // [
+            //     'id' => 'subunits',
+            //     'title' => 'Subunits',
+            //     'subtitle' => 'Management of subunits of this unit.',
+            //     'showIf' => $user->id != null && $request->user()->can('canManageNestedData', User::class),
+            //     'fields' => [
+            //         [
+            //             [
+            //                 'type' => 'table',
+            //                 'name' => 'subunits',
+            //                 'content' => [
+            //                     'routes' => [
+            //                         'createRoute' => [
+            //                             'route' => 'apps.units.create',
+            //                             'attributes' => $user->id,
+            //                             'showIf' => Gate::allows('apps.units.create') && $request->user()->can('isManager', User::class) && $request->user()->can('canManageNestedData', User::class),
+            //                         ],
+            //                         'editRoute' => [
+            //                             'route' => 'apps.units.edit',
+            //                             'showIf' => Gate::allows('apps.units.edit'),
+            //                         ],
+            //                         'destroyRoute' => [
+            //                             'route' => 'apps.units.destroy',
+            //                             'showIf' => Gate::allows('apps.units.destroy') && $request->user()->can('isManager', User::class),
+            //                         ],
+            //                         'forceDestroyRoute' => [
+            //                             'route' => 'apps.roles.forcedestroy',
+            //                             'showIf' => Gate::allows('apps.roles.forcedestroy') && $request->user()->can('isSuperAdmin', User::class),
+            //                         ],
+            //                         'restoreRoute' => [
+            //                             'route' => 'apps.units.restore',
+            //                             'showIf' => Gate::allows('apps.units.restore') && $request->user()->can('isManager', User::class),
+            //                         ],
+            //                     ],
+            //                     'titles' => [
+            //                         [
+            //                             'type' => 'text',
+            //                             'title' => 'Unit',
+            //                             'field' => 'name',
+            //                         ],
+            //                         [
+            //                             'type' => 'text',
+            //                             'title' => 'Subunits',
+            //                             'field' => 'children_count',
+            //                             'showIf' => $request->user()->can('canManageNestedData', User::class),
+            //                         ],
+            //                         [
+            //                             'type' => 'text',
+            //                             'title' => 'Local staff',
+            //                             'field' => 'users_count',
+            //                         ],
+            //                         [
+            //                             'type' => 'text',
+            //                             'title' => 'Total staff',
+            //                             'field' => 'all_users_count',
+            //                             'showIf' => $request->user()->can('canManageNestedData', User::class),
+            //                             'disableSort' => true,
+            //                         ],
+            //                     ],
+            //                     // 'items' => $subunits,
+            //                 ],
+            //             ],
+            //         ],
+            //     ],
+            // ],
+
         ];
     }
 
@@ -276,12 +342,12 @@ class UsersController extends Controller
         ]);
     }
 
-    public function create(Request $request): Response
+    public function create(Request $request, User $user): Response
     {
         $this->authorize('access', User::class);
 
         return Inertia::render('Default', [
-            'form' => $this->__form(),
+            'form' => $this->__form($request, $user),
             'routes' => [
                 'profile' => [
                     'route' => route('apps.users.store'),
@@ -311,14 +377,14 @@ class UsersController extends Controller
         ]);
     }
 
-    public function edit(User $user): Response
+    public function edit(Request $request, User $user): Response
     {
         $this->authorize('access', User::class);
         $this->authorize('fullAccess', $user);
         $this->authorize('allowedUnits', $user);
 
         return Inertia::render('Default', [
-            'form' => $this->__form(),
+            'form' => $this->__form($request, $user),
             'routes' => [
                 'profile' => [
                     'route' => route('apps.users.edit', $user->id),

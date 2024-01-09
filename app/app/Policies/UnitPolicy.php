@@ -50,7 +50,7 @@ class UnitPolicy
 
     public function isOwner(User $user, Unit $unit): Response
     {
-        return $user->id === $unit->owner
+        return $user->id === $unit->owner || $user->isManager() == true
             ? Response::allow()
             : Response::deny("You are not the owner of this record.");
     }
