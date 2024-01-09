@@ -151,6 +151,16 @@ class UsersController extends Controller
 
     public function __form(Request $request, User $user): array
     {
+        $units = $user->units()
+            ->paginate($perPage = 20, $columns = ['*'], $pageName = 'subunits')
+            ->onEachSide(2)
+            ->withQueryString();
+
+        $roles = $user->roles()
+            ->paginate($perPage = 20, $columns = ['*'], $pageName = 'subunits')
+            ->onEachSide(2)
+            ->withQueryString();
+
         return [
             [
                 'id' => 'profile',
@@ -213,72 +223,118 @@ class UsersController extends Controller
                     ],
                 ]
             ],
-            // [
-            //     'id' => 'subunits',
-            //     'title' => 'Subunits',
-            //     'subtitle' => 'Management of subunits of this unit.',
-            //     'showIf' => $user->id != null && $request->user()->can('canManageNestedData', User::class),
-            //     'fields' => [
-            //         [
-            //             [
-            //                 'type' => 'table',
-            //                 'name' => 'subunits',
-            //                 'content' => [
-            //                     'routes' => [
-            //                         'createRoute' => [
-            //                             'route' => 'apps.units.create',
-            //                             'attributes' => $user->id,
-            //                             'showIf' => Gate::allows('apps.units.create') && $request->user()->can('isManager', User::class) && $request->user()->can('canManageNestedData', User::class),
-            //                         ],
-            //                         'editRoute' => [
-            //                             'route' => 'apps.units.edit',
-            //                             'showIf' => Gate::allows('apps.units.edit'),
-            //                         ],
-            //                         'destroyRoute' => [
-            //                             'route' => 'apps.units.destroy',
-            //                             'showIf' => Gate::allows('apps.units.destroy') && $request->user()->can('isManager', User::class),
-            //                         ],
-            //                         'forceDestroyRoute' => [
-            //                             'route' => 'apps.roles.forcedestroy',
-            //                             'showIf' => Gate::allows('apps.roles.forcedestroy') && $request->user()->can('isSuperAdmin', User::class),
-            //                         ],
-            //                         'restoreRoute' => [
-            //                             'route' => 'apps.units.restore',
-            //                             'showIf' => Gate::allows('apps.units.restore') && $request->user()->can('isManager', User::class),
-            //                         ],
-            //                     ],
-            //                     'titles' => [
-            //                         [
-            //                             'type' => 'text',
-            //                             'title' => 'Unit',
-            //                             'field' => 'name',
-            //                         ],
-            //                         [
-            //                             'type' => 'text',
-            //                             'title' => 'Subunits',
-            //                             'field' => 'children_count',
-            //                             'showIf' => $request->user()->can('canManageNestedData', User::class),
-            //                         ],
-            //                         [
-            //                             'type' => 'text',
-            //                             'title' => 'Local staff',
-            //                             'field' => 'users_count',
-            //                         ],
-            //                         [
-            //                             'type' => 'text',
-            //                             'title' => 'Total staff',
-            //                             'field' => 'all_users_count',
-            //                             'showIf' => $request->user()->can('canManageNestedData', User::class),
-            //                             'disableSort' => true,
-            //                         ],
-            //                     ],
-            //                     // 'items' => $subunits,
-            //                 ],
-            //             ],
-            //         ],
-            //     ],
-            // ],
-
+            [
+                'id' => 'units',
+                'title' => 'Units',
+                'subtitle' => "Users' units management.",
+                'showIf' => $user->id != null && $request->user()->can('canManageNestedData', User::class),
+                'fields' => [
+                    [
+                        [
+                            'type' => 'table',
+                            'name' => 'units',
+                            'content' => [
+                                'routes' => [
+                                    'createRoute' => [
+                                        'route' => 'apps.units.create',
+                                        'attributes' => $user->id,
+                                        'showIf' => Gate::allows('apps.units.create') && $request->user()->can('isManager', User::class) && $request->user()->can('canManageNestedData', User::class),
+                                    ],
+                                    'editRoute' => [
+                                        'route' => 'apps.units.edit',
+                                        'showIf' => Gate::allows('apps.units.edit'),
+                                    ],
+                                    'destroyRoute' => [
+                                        'route' => 'apps.units.destroy',
+                                        'showIf' => Gate::allows('apps.units.destroy') && $request->user()->can('isManager', User::class),
+                                    ],
+                                    'forceDestroyRoute' => [
+                                        'route' => 'apps.roles.forcedestroy',
+                                        'showIf' => Gate::allows('apps.roles.forcedestroy') && $request->user()->can('isSuperAdmin', User::class),
+                                    ],
+                                    'restoreRoute' => [
+                                        'route' => 'apps.units.restore',
+                                        'showIf' => Gate::allows('apps.units.restore') && $request->user()->can('isManager', User::class),
+                                    ],
+                                ],
+                                'titles' => [
+                                    [
+                                        'type' => 'text',
+                                        'title' => 'Name',
+                                        'field' => 'shortpath',
+                                    ],
+                                ],
+                                'items' => $units,
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+            [
+                'id' => 'roles',
+                'title' => 'Roles',
+                'subtitle' => "Users' roles management.",
+                'showIf' => $user->id != null && $request->user()->can('canManageNestedData', User::class),
+                'fields' => [
+                    [
+                        [
+                            'type' => 'table',
+                            'name' => 'subunits',
+                            'content' => [
+                                'routes' => [
+                                    'createRoute' => [
+                                        'route' => 'apps.units.create',
+                                        'attributes' => $user->id,
+                                        'showIf' => Gate::allows('apps.units.create') && $request->user()->can('isManager', User::class) && $request->user()->can('canManageNestedData', User::class),
+                                    ],
+                                    'editRoute' => [
+                                        'route' => 'apps.units.edit',
+                                        'showIf' => Gate::allows('apps.units.edit'),
+                                    ],
+                                    'destroyRoute' => [
+                                        'route' => 'apps.units.destroy',
+                                        'showIf' => Gate::allows('apps.units.destroy') && $request->user()->can('isManager', User::class),
+                                    ],
+                                    'forceDestroyRoute' => [
+                                        'route' => 'apps.roles.forcedestroy',
+                                        'showIf' => Gate::allows('apps.roles.forcedestroy') && $request->user()->can('isSuperAdmin', User::class),
+                                    ],
+                                    'restoreRoute' => [
+                                        'route' => 'apps.units.restore',
+                                        'showIf' => Gate::allows('apps.units.restore') && $request->user()->can('isManager', User::class),
+                                    ],
+                                ],
+                                'titles' => [
+                                    [
+                                        'type' => 'text',
+                                        'title' => 'Unit',
+                                        'field' => 'name',
+                                    ],
+                                    [
+                                        'type' => 'text',
+                                        'title' => 'Subunits',
+                                        'field' => 'children_count',
+                                        'showIf' => $request->user()->can('canManageNestedData', User::class),
+                                    ],
+                                    [
+                                        'type' => 'text',
+                                        'title' => 'Local staff',
+                                        'field' => 'users_count',
+                                    ],
+                                    [
+                                        'type' => 'text',
+                                        'title' => 'Total staff',
+                                        'field' => 'all_users_count',
+                                        'showIf' => $request->user()->can('canManageNestedData', User::class),
+                                        'disableSort' => true,
+                                    ],
+                                ],
+                                'items' => $roles,
+                            ],
+                        ],
+                    ],
+                ],
+            ],
         ];
     }
 
