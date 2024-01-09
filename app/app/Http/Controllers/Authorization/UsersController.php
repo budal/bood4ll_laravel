@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Authorization;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\Role;
 use App\Models\User;
+use Emargareten\InertiaModal\Modal;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -152,19 +154,36 @@ class UsersController extends Controller
     public function __form(Request $request, User $user): array
     {
         $units = $user->units()
-            ->paginate($perPage = 20, $columns = ['*'], $pageName = 'subunits')
+            ->filter($request, 'units')
+            ->paginate($perPage = 20, $columns = ['*'], $pageName = 'units')
             ->onEachSide(2)
             ->withQueryString();
 
-        $roles = $user->roles()
-            ->paginate($perPage = 20, $columns = ['*'], $pageName = 'subunits')
+        $roles = Role::filter($request, 'roles')
+            ->select('roles.id', 'roles.name')
+            ->when(!$request->all, function ($query) use ($user) {
+                $query->join('role_user', 'role_user.role_id', '=', 'roles.id');
+                $query->where('role_user.user_id', $user->id);
+            })
+            // ->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
+            //     if ($request->user()->cannot('hasFullAccess', User::class)) {
+            //         $query->where('unit_user.user_id', $request->user()->id);
+            //     }
+            //     $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
+            // })
+            ->paginate($perPage = 20, $columns = ['*'], $pageName = 'roles')
             ->onEachSide(2)
-            ->withQueryString();
+            ->withQueryString()
+            ->through(function ($item) use ($user) {
+                $item->checked = $item->users->pluck('id')->contains($user->id);
+
+                return $item;
+            });
 
         return [
             [
                 'id' => 'profile',
-                'title' => 'User profile Information',
+                'title' => 'Main data',
                 'subtitle' => 'User account profile information',
                 'cols' => 3,
                 'fields' => [
@@ -263,6 +282,16 @@ class UsersController extends Controller
                                         'title' => 'Name',
                                         'field' => 'shortpath',
                                     ],
+                                    [
+                                        'type' => 'text',
+                                        'title' => 'Classified',
+                                        'field' => 'primary',
+                                    ],
+                                    [
+                                        'type' => 'text',
+                                        'title' => 'Working',
+                                        'field' => 'temporary',
+                                    ],
                                 ],
                                 'items' => $units,
                             ],
@@ -282,51 +311,94 @@ class UsersController extends Controller
                             'name' => 'subunits',
                             'content' => [
                                 'routes' => [
-                                    'createRoute' => [
-                                        'route' => 'apps.units.create',
-                                        'attributes' => $user->id,
-                                        'showIf' => Gate::allows('apps.units.create') && $request->user()->can('isManager', User::class) && $request->user()->can('canManageNestedData', User::class),
+                                    'showCheckboxes' => true,
+                                ],
+                                'menu' => [
+                                    [
+                                        'icon' => 'mdi:plus-circle-outline',
+                                        'title' => 'Authorize',
+                                        'route' => [
+                                            'route' => 'apps.roles.authorization',
+                                            'attributes' => [
+                                                $user->id,
+                                                'on',
+                                            ],
+                                        ],
+                                        'method' => 'post',
+                                        'list' => 'checkboxes',
+                                        'listCondition' => false,
+                                        'modalTitle' => 'Are you sure you want to authorize the selected users?|Are you sure you want to authorize the selected users?',
+                                        'modalSubTitle' => 'The selected user will have the rights to access this role. Do you want to continue?|The selected user will have the rights to access this role. Do you want to continue?',
+                                        'buttonTitle' => 'Authorize',
+                                        'buttonIcon' => 'mdi:plus-circle-outline',
+                                        'buttonColor' => 'success',
                                     ],
-                                    'editRoute' => [
-                                        'route' => 'apps.units.edit',
-                                        'showIf' => Gate::allows('apps.units.edit'),
+                                    [
+                                        'icon' => 'mdi:minus-circle-outline',
+                                        'title' => 'Deauthorize',
+                                        'route' => [
+                                            'route' => 'apps.roles.authorization',
+                                            'attributes' => [
+                                                $user->id,
+                                                'off',
+                                            ],
+                                        ],
+                                        'method' => 'post',
+                                        'list' => 'checkboxes',
+                                        'listCondition' => true,
+                                        'modalTitle' => 'Are you sure you want to deauthorize the selected users?|Are you sure you want to deauthorize the selected users?',
+                                        'modalSubTitle' => 'The selected user will lose the rights to access this role. Do you want to continue?|The selected users will lose the rights to access this role. Do you want to continue?',
+                                        'buttonTitle' => 'Deauthorize',
+                                        'buttonIcon' => 'mdi:minus-circle-outline',
+                                        'buttonColor' => 'danger',
                                     ],
-                                    'destroyRoute' => [
-                                        'route' => 'apps.units.destroy',
-                                        'showIf' => Gate::allows('apps.units.destroy') && $request->user()->can('isManager', User::class),
+                                    [
+                                        'title' => '-',
                                     ],
-                                    'forceDestroyRoute' => [
-                                        'route' => 'apps.roles.forcedestroy',
-                                        'showIf' => Gate::allows('apps.roles.forcedestroy') && $request->user()->can('isSuperAdmin', User::class),
-                                    ],
-                                    'restoreRoute' => [
-                                        'route' => 'apps.units.restore',
-                                        'showIf' => Gate::allows('apps.units.restore') && $request->user()->can('isManager', User::class),
+
+                                    [
+                                        'icon' => 'mdi:format-list-checkbox',
+                                        'title' => 'List',
+                                        'items' => [
+                                            [
+                                                'icon' => 'mdi:account-key-outline',
+                                                'title' => 'Authorized users',
+                                                'route' => [
+                                                    'route' => 'apps.users.edit',
+                                                    'attributes' => $user->id,
+                                                ],
+                                            ],
+                                            [
+                                                'icon' => 'mdi:account-multiple-outline',
+                                                'title' => 'All users',
+                                                'route' => [
+                                                    'route' => 'apps.users.edit',
+                                                    'attributes' => [$user->id, 'all'],
+                                                ],
+                                            ],
+                                        ],
                                     ],
                                 ],
                                 'titles' => [
                                     [
                                         'type' => 'text',
-                                        'title' => 'Unit',
+                                        'title' => 'Name',
                                         'field' => 'name',
                                     ],
                                     [
-                                        'type' => 'text',
-                                        'title' => 'Subunits',
-                                        'field' => 'children_count',
-                                        'showIf' => $request->user()->can('canManageNestedData', User::class),
-                                    ],
-                                    [
-                                        'type' => 'text',
-                                        'title' => 'Local staff',
-                                        'field' => 'users_count',
-                                    ],
-                                    [
-                                        'type' => 'text',
-                                        'title' => 'Total staff',
-                                        'field' => 'all_users_count',
-                                        'showIf' => $request->user()->can('canManageNestedData', User::class),
+                                        'type' => 'toggle',
+                                        'title' => '',
+                                        'field' => 'checked',
                                         'disableSort' => true,
+                                        'route' => [
+                                            'route' => 'apps.roles.authorization',
+                                            'attributes' => [
+                                                $user->id,
+                                                'toggle',
+                                            ],
+                                        ],
+                                        'method' => 'post',
+                                        'colorOn' => 'info',
                                     ],
                                 ],
                                 'items' => $roles,
@@ -537,5 +609,68 @@ class UsersController extends Controller
                 'toast_count' => count($request->list),
             ]);
         }
+    }
+
+
+    public function __formModal(Request $request, Role $role): array
+    {
+        $abilities = Ability::sort('name')->get()->map->only(['id', 'name']);
+
+        $users = User::paginate(5)
+            ->onEachSide(1)
+            ->appends($request->all('users_search', 'users_sorted', 'users_trashed'));
+
+        return [
+            [
+                'id' => 'users',
+                'fields' => [
+                    [
+                        [
+                            'type' => 'table',
+                            'name' => 'users',
+                            'span' => 2,
+                            'content' => [
+                                'menu' => [
+                                    [
+                                        'icon' => 'mdi:book-cog-outline',
+                                        'title' => 'Abilities management',
+                                        'route' => 'apps.abilities.index',
+                                    ],
+                                ],
+                                'titles' => [
+                                    [
+                                        'type' => 'text',
+                                        'title' => 'Name',
+                                        'field' => 'name',
+                                    ],
+                                ],
+                                'items' => $users,
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ];
+    }
+
+    public function adduser(Request $request, Role $role): Modal
+    {
+        $role['abilities'] = $role->getAllAbilities()->get()->map->only('id')->pluck('id');
+
+        return Inertia::modal('Default', [
+            'form' => $this->__formModal($request, $role),
+            'isModal' => true,
+            'title' => 'Define the users who have access to this authorization',
+            'routes' => [
+                'role' => [
+                    'route' => route('apps.roles.edit', $role->id),
+                    'method' => 'patch',
+                ],
+            ],
+            'data' => $role,
+        ])
+            ->baseRoute('apps.roles.edit', $role)
+            // ->refreshBackdrop()
+        ;
     }
 }

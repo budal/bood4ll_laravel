@@ -79,11 +79,14 @@ Route::middleware('auth')->group(function () {
                 Route::post('/users/activate/{user}/{mode?}', 'activate')->name('activate');
                 Route::get('/users/create', 'create')->name('create')->breadcrumb('User creation', 'apps.users.index');
                 Route::post('/users/create', 'store')->name('store');
-                Route::get('/users/edit/{user}', 'edit')->name('edit')->breadcrumb('User edition', 'apps.users.index');
+                Route::get('/users/edit/{user}/{all?}', 'edit')->name('edit')->breadcrumb('User edition', 'apps.users.index');
                 Route::patch('/users/edit/{user}', 'update')->name('update');
                 Route::delete('/users/destroy', 'destroy')->name('destroy');
                 Route::delete('/users/forcedestroy', 'forceDestroy')->name('forcedestroy');
                 Route::post('/users/restore', 'restore')->name('restore');
+
+                // Route::get('/permissions/roles/adduser/{role}', 'adduser')->name('edit.adduser')->breadcrumb('Role edition', 'apps.roles.index');
+                // Route::get('/permissions/roles/deleteuser/{role}', 'deleteuser')->name('edit.deleteuser');
             });
         });
 
@@ -101,8 +104,6 @@ Route::middleware('auth')->group(function () {
                 Route::delete('/permissions/roles/destroy', 'destroy')->name('destroy');
                 Route::delete('/permissions/roles/forcedestroy', 'forceDestroy')->name('forcedestroy');
                 Route::post('/permissions/roles/restore', 'restore')->name('restore');
-                // Route::get('/permissions/roles/adduser/{role}', 'adduser')->name('edit.adduser')->breadcrumb('Role edition', 'apps.roles.index');
-                // Route::get('/permissions/roles/deleteuser/{role}', 'deleteuser')->name('edit.deleteuser');
             });
         });
 
