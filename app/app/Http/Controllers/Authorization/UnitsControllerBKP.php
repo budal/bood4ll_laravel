@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Authorization;
 use App\Http\Controllers\Controller;
 use App\Models\Unit;
 use App\Models\User;
+use Illuminate\Database\Query\JoinClause;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -15,19 +16,35 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Inertia\Response;
 
+// use Illuminate\Support\Facades\Redis;
+// Redis::get('user:profile:' . $id);
+// Redis::set('name', 'Taylor');
+
 class UnitsController extends Controller
 {
     public function index(Request $request): Response
     {
         $this->authorize('access', User::class);
 
+        $unitsUsers = Unit::leftjoin('unit_user', 'unit_user.unit_id', '=', 'units.id')
+            ->groupBy('unit_user.unit_id')
+            ->select('unit_user.unit_id')
+            ->selectRaw('COUNT(unit_user.unit_id) as total_users');
+
         $units = Unit::leftjoin('unit_user', 'unit_user.unit_id', '=', 'units.id')
             ->filter($request, 'units', [
                 'where' => ['name'],
                 'order' => ['shortpath']
             ])
+            // $units = Unit::leftjoin('unit_user AS uu', 'uu.unit_id', '=', 'units.id')
+            // ->leftJoinSub($unitsUsers, 'units_users', function (JoinClause $join) {
+            //     $join->on('units.id', '=', 'units_users.unit_id');
+            // })
             ->groupBy('units.id', 'units.shortpath')
             ->select('units.id', 'units.shortpath as name')
+            // ->selectRaw("(SELECT COUNT(suu.unit_id) FROM unit_user suu WHERE unit_id IN (
+            //         SELECT (json_array_elements(units.children_id::json)::text)::bigint FROM units u WHERE u.id = suu.unit_id)
+            //     ) as all_users_count")
 
             // ->addSelect([
             //     'lastPost' => DB::table('unit_user')
@@ -36,6 +53,9 @@ class UnitsController extends Controller
             //         ->whereRaw('unit_user.unit_id IN (SELECT (json_array_elements(units.children_id::json)::text)::bigint FROM units WHERE id = unit_user.unit_id)')
             //         ->take(1)
             // ])
+
+            // ->selectRaw('COUNT(units.id) as total_users')
+            // ->selectRaw("units.children_id @> '20' as total_units_id")
 
             ->withCount([
                 'children',
@@ -55,13 +75,22 @@ class UnitsController extends Controller
                             SELECT (json_array_elements(units.children_id::json)::text)::bigint FROM units WHERE id = units.id
                         )'
                     );
-                    $query->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
-                        if ($request->user()->cannot('hasFullAccess', User::class)) {
-                            $query->where('unit_user.user_id', $request->user()->id);
-                        }
 
-                        $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
-                    });
+                    //     // $query->groupBy('unit_user.unit_id');
+
+                    //     //     // $query->whereIn('unit_user.unit_id', [20, 213]);
+                    //     //     // $query->whereRaw('unit_user.unit_id IN ()');
+                    //     //     $query->whereRaw('unit_user.unit_id IN (SELECT (json_array_elements(units.children_id::json)::text)::bigint FROM units)');
+                    //     // $query->take(1);
+
+
+                    //     //     // $query->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
+                    //     //     //     if ($request->user()->cannot('hasFullAccess', User::class)) {
+                    //     //     //         $query->where('unit_user.user_id', $request->user()->id);
+                    //     //     //     }
+
+                    //     //     //     $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
+                    //     //     // });
                 },
             ])
             ->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
@@ -73,7 +102,75 @@ class UnitsController extends Controller
             })
             ->paginate(20)
             ->onEachSide(2)
-            ->withQueryString();
+            ->withQueryString()
+            // ->take(30)
+            // ->get()
+            // ->through(function ($item) use ($unitsUsers) {
+            //     $item->all_users_count = $unitsUsers->filter(function ($list) use ($item) {
+            //         return collect(json_decode($item['children_id']))->contains($list->id);
+            //     })->pluck('total_users')->sum();
+
+            //     return $item;
+            // })
+        ;
+
+        // dd($units[0]);
+
+
+
+
+
+
+
+
+
+
+
+        // $unitsUsers = Unit::leftjoin('unit_user', 'unit_user.unit_id', '=', 'units.id')
+        //     ->groupBy('units.id', 'units.name')
+        //     ->select('units.id', 'units.name')
+        //     ->selectRaw('COUNT(units.id) as total_users')
+        //     ->get();
+
+        // $units = Unit::leftjoin('unit_user', 'unit_user.unit_id', '=', 'units.id')
+        //     ->filter($request, 'units', [
+        //         'where' => ['name'],
+        //         'order' => ['parent_id', 'order']
+        //     ])
+        //     ->select('units.id', 'units.shortpath as name', 'units.children_id')
+        //     ->selectRaw('COUNT(units.id) as total_users')
+        //     ->groupBy('units.id', 'units.shortpath')
+        //     ->withCount([
+        //         'children',
+        //         'users' => function ($query) use ($request) {
+        //             $query->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
+        //                 if ($request->user()->cannot('hasFullAccess', User::class)) {
+        //                     $query->where('unit_user.user_id', $request->user()->id);
+        //                 }
+
+        //                 $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
+        //             });
+        //         },
+        //     ])
+        //     ->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
+        //         if ($request->user()->cannot('hasFullAccess', User::class)) {
+        //             $query->where('unit_user.user_id', $request->user()->id);
+        //         }
+
+        //         $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
+        //     })
+        //     ->orderBy('parent_id')
+        //     ->orderBy('order')
+        //     ->paginate(20)
+        //     ->onEachSide(2)
+        //     ->withQueryString()
+        //     ->through(function ($item) use ($unitsUsers) {
+        //         $item->all_users_count = $unitsUsers->filter(function ($list) use ($item) {
+        //             return collect(json_decode($item['children_id']))->contains($list->id);
+        //         })->pluck('total_users')->sum();
+
+        //         return $item;
+        //     });
 
         return Inertia::render('Default', [
             'form' => [
