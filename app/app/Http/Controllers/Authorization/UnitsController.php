@@ -35,8 +35,8 @@ class UnitsController extends Controller
             ->joinSub($unitsUsers, 'units_users', function (JoinClause $join) {
                 $join->on('units.id', '=', 'units_users.id');
             })
-            ->groupBy('units.id', 'units.shortpath')
-            ->select('units.id', 'units.shortpath as name', 'units.children_id')
+            ->groupBy('units.id', 'units.shortpath', 'units_users.total_users')
+            ->select('units.id', 'units.shortpath as name', 'units.children_id', 'units_users.total_users')
 
             // ->addSelect(DB::raw('(SELECT COUNT(id) FROM units_users LIMIT 1) as lastPost'))
             // ->addSelect(DB::raw('(SELECT created_at FROM posts WHERE posts.user_id = users.id ORDER BY created_at DESC LIMIT 1) as lastPost'))
@@ -45,24 +45,24 @@ class UnitsController extends Controller
 
             // ->selectRaw('SUM(units_users.total_users) as total_users')
 
-            // ->selectRaw("(SELECT SUM(total_users) FROM unit_user WHERE id IN (213) LIMIT 1) as total_users")
+            // ->selectRaw("(SELECT SUM(total_users) FROM unit_user WHERE id IN (213) LIMIT 1) as total_users_count")
 
 
 
 
-            // ->addSelect([
-            //     'lastPost' => $unitsUsers
-            //         ->select('units.created_at')
-            //         ->whereRaw('units.id IN (20, 413)')
-            //         ->take(1)
-            // ])
+            ->addSelect([
+                'lastPost' => DB::table('unit_user')
+                    ->selectRaw('COUNT(unit_user.id)')
+                    ->whereRaw('unit_user.unit_id IN (SELECT (json_array_elements(units.children_id::json)::text)::bigint FROM units WHERE id = unit_user.unit_id)')
+                    ->take(1)
+            ])
 
 
 
 
 
 
-            ->selectRaw("(select * from json_array_elements(units.children_id::json) LIMIT 1) as total_users")
+            // ->selectRaw("(select * from json_array_elements(units.children_id::json) LIMIT 1) as total_users")
 
 
 
@@ -85,10 +85,12 @@ class UnitsController extends Controller
                 },
                 'users AS all_users_count' => function ($query) use ($request) {
                     $query->leftjoin('units', 'unit_user.unit_id', '=', 'units.id');
+                    $query->groupBy('unit_user.unit_id');
 
                     // $query->whereIn('unit_user.unit_id', [20, 213]);
                     // $query->whereRaw('unit_user.unit_id IN ()');
-                    $query->whereRaw('unit_user.unit_id IN (select * from json_array_elements(units.children_id::json))');
+                    $query->whereRaw('unit_user.unit_id IN (SELECT (json_array_elements(units.children_id::json)::text)::bigint FROM units)');
+                    $query->take(1);
 
 
                     // $query->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
