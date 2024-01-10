@@ -81,12 +81,12 @@ Route::middleware('auth')->group(function () {
                 Route::post('/users/create', 'store')->name('store');
                 Route::get('/users/edit/{user}/{all?}', 'edit')->name('edit')->breadcrumb('User edition', 'apps.users.index');
                 Route::patch('/users/edit/{user}', 'update')->name('update');
+                Route::post('/users/authorization/{user}/{mode?}', 'authorization')->name('authorization');
                 Route::delete('/users/destroy', 'destroy')->name('destroy');
                 Route::delete('/users/forcedestroy', 'forceDestroy')->name('forcedestroy');
                 Route::post('/users/restore', 'restore')->name('restore');
 
-                // Route::get('/permissions/roles/adduser/{role}', 'adduser')->name('edit.adduser')->breadcrumb('Role edition', 'apps.roles.index');
-                // Route::get('/permissions/roles/deleteuser/{role}', 'deleteuser')->name('edit.deleteuser');
+                Route::get('/users/adduser/{user}', 'adduser')->name('edit.adduser')->breadcrumb('Unit management', 'apps.users.index');
             });
         });
 

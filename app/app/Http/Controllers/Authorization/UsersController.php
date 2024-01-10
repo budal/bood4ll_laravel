@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Authorization;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ProfileUpdateRequest;
 use App\Models\Role;
+use App\Models\Unit;
 use App\Models\User;
 use Emargareten\InertiaModal\Modal;
 use Illuminate\Http\RedirectResponse;
@@ -151,6 +152,115 @@ class UsersController extends Controller
         ]);
     }
 
+    public function activate(): RedirectResponse
+    {
+        return Redirect::back()->with('status', 'Error on edit selected item.|Error on edit selected items.');
+    }
+
+    public function changeUser(Request $request, User $user): RedirectResponse
+    {
+        $this->authorize('access', User::class);
+        $this->authorize('fullAccess', $user);
+        $this->authorize('allowedUnits', $user);
+
+        if (!$request->session()->has('previousUser')) {
+            $request->session()->put('previousUser', [
+                'id' => Auth::user()->id,
+                'name' => Auth::user()->name,
+            ]);
+
+            Auth::loginUsingId($user->id, true);
+
+            if ($user->getAllAbilities->whereNotNull('ability')->pluck('ability')->contains(Route::current()->getName())) {
+                return Redirect::back()->with([
+                    'toast_type' => 'warning',
+                    'toast_message' => "Logged as ':user'.",
+                    'toast_replacements' => ['user' => $user->name],
+                ]);
+            } else {
+                return Redirect::route('dashboard')->with([
+                    'toast_type' => 'warning',
+                    'toast_message' => "Logged as ':user'.",
+                    'toast_replacements' => ['user' => $user->name],
+                ]);
+            }
+        } else {
+            return Redirect::back()->with([
+                'toast_type' => 'error',
+                'toast_message' => 'This action is unauthorized.',
+            ]);
+        }
+    }
+
+    public function returnToMyUser(Request $request): RedirectResponse
+    {
+        $previousUser = $request->session()->all()['previousUser'];
+
+        $request->session()->put('previousUser', [
+            'id' => Auth::user()->id,
+            'name' => Auth::user()->name,
+        ]);
+
+        Auth::loginUsingId($previousUser['id'], true);
+
+        $request->session()->forget('previousUser');
+
+        return Redirect::back()->with([
+            'toast_type' => 'info',
+            'toast_message' => "Logged as ':user'.",
+            'toast_replacements' => ['user' => $previousUser['name']],
+        ]);
+    }
+
+    public function authorization(Request $request, User $user, $mode): RedirectResponse
+    {
+        $this->authorize('access', User::class);
+        // $this->authorize('fullAccess', [$role, $request]);
+
+        $hasRole = $user->roles()->whereIn('roles.id', $request->list)->first();
+
+        try {
+            if ($mode == 'toggle') {
+                $role = Role::whereIn('id', $request->list)->first();
+                $hasRole ? $user->roles()->detach($request->list) : $user->roles()->attach($request->list);
+
+                return Redirect::back()->with([
+                    'toast_type' => 'success',
+                    'toast_message' => $hasRole
+                        ? "The user ':user' has been disabled in the ':role' role."
+                        : "The user ':user' was enabled in the ':role' role.",
+                    'toast_replacements' => ['user' => $user->name, 'role' => $role->name],
+                ]);
+            } elseif ($mode == 'on') {
+                $total = $user->roles()->attach($request->list);
+
+                return Redirect::back()->with([
+                    'toast_type' => 'success',
+                    'toast_message' => '{0} Nobody to authorize.|[1] User successfully authorized.|[2,*] :total users successfully authorized.',
+                    'toast_count' => count($request->list),
+                    'toast_replacements' => ['total' => count($request->list)],
+                ]);
+            } elseif ($mode == 'off') {
+                $total = $user->roles()->detach($request->list);
+
+                return Redirect::back()->with([
+                    'toast_type' => 'success',
+                    'toast_message' => '{0} Nobody to deauthorize.|[1] User successfully deauthorized.|[2,*] :total users successfully deauthorized.',
+                    'toast_count' => $total,
+                    'toast_replacements' => ['total' => $total],
+                ]);
+            }
+        } catch (\Throwable $e) {
+            report($e);
+
+            return Redirect::back()->with([
+                'toast_type' => 'error',
+                'toast_message' => 'Error on edit selected item.|Error on edit selected items.',
+                'toast_count' => count($request->list),
+            ]);
+        }
+    }
+
     public function __form(Request $request, User $user): array
     {
         $units = $user->units()
@@ -255,7 +365,7 @@ class UsersController extends Controller
                             'content' => [
                                 'routes' => [
                                     'createRoute' => [
-                                        'route' => 'apps.units.create',
+                                        'route' => 'apps.users.edit.adduser',
                                         'attributes' => $user->id,
                                         'showIf' => Gate::allows('apps.units.create') && $request->user()->can('isManager', User::class) && $request->user()->can('canManageNestedData', User::class),
                                     ],
@@ -318,7 +428,7 @@ class UsersController extends Controller
                                         'icon' => 'mdi:plus-circle-outline',
                                         'title' => 'Authorize',
                                         'route' => [
-                                            'route' => 'apps.roles.authorization',
+                                            'route' => 'apps.users.authorization',
                                             'attributes' => [
                                                 $user->id,
                                                 'on',
@@ -337,7 +447,7 @@ class UsersController extends Controller
                                         'icon' => 'mdi:minus-circle-outline',
                                         'title' => 'Deauthorize',
                                         'route' => [
-                                            'route' => 'apps.roles.authorization',
+                                            'route' => 'apps.users.authorization',
                                             'attributes' => [
                                                 $user->id,
                                                 'off',
@@ -391,7 +501,7 @@ class UsersController extends Controller
                                         'field' => 'checked',
                                         'disableSort' => true,
                                         'route' => [
-                                            'route' => 'apps.roles.authorization',
+                                            'route' => 'apps.users.authorization',
                                             'attributes' => [
                                                 $user->id,
                                                 'toggle',
@@ -408,66 +518,6 @@ class UsersController extends Controller
                 ],
             ],
         ];
-    }
-
-    public function activate(): RedirectResponse
-    {
-        return Redirect::back()->with('status', 'Error on edit selected item.|Error on edit selected items.');
-    }
-
-    public function changeUser(Request $request, User $user): RedirectResponse
-    {
-        $this->authorize('access', User::class);
-        $this->authorize('fullAccess', $user);
-        $this->authorize('allowedUnits', $user);
-
-        if (!$request->session()->has('previousUser')) {
-            $request->session()->put('previousUser', [
-                'id' => Auth::user()->id,
-                'name' => Auth::user()->name,
-            ]);
-
-            Auth::loginUsingId($user->id, true);
-
-            if ($user->getAllAbilities->whereNotNull('ability')->pluck('ability')->contains(Route::current()->getName())) {
-                return Redirect::back()->with([
-                    'toast_type' => 'warning',
-                    'toast_message' => "Logged as ':user'.",
-                    'toast_replacements' => ['user' => $user->name],
-                ]);
-            } else {
-                return Redirect::route('dashboard')->with([
-                    'toast_type' => 'warning',
-                    'toast_message' => "Logged as ':user'.",
-                    'toast_replacements' => ['user' => $user->name],
-                ]);
-            }
-        } else {
-            return Redirect::back()->with([
-                'toast_type' => 'error',
-                'toast_message' => 'This action is unauthorized.',
-            ]);
-        }
-    }
-
-    public function returnToMyUser(Request $request): RedirectResponse
-    {
-        $previousUser = $request->session()->all()['previousUser'];
-
-        $request->session()->put('previousUser', [
-            'id' => Auth::user()->id,
-            'name' => Auth::user()->name,
-        ]);
-
-        Auth::loginUsingId($previousUser['id'], true);
-
-        $request->session()->forget('previousUser');
-
-        return Redirect::back()->with([
-            'toast_type' => 'info',
-            'toast_message' => "Logged as ':user'.",
-            'toast_replacements' => ['user' => $previousUser['name']],
-        ]);
     }
 
     public function create(Request $request, User $user): Response
@@ -612,9 +662,9 @@ class UsersController extends Controller
     }
 
 
-    public function __formModal(Request $request, Role $role): array
+    public function __formModal(Request $request, User $user): array
     {
-        $abilities = Ability::sort('name')->get()->map->only(['id', 'name']);
+        $units = Unit::get();
 
         $users = User::paginate(5)
             ->onEachSide(1)
@@ -644,7 +694,7 @@ class UsersController extends Controller
                                         'field' => 'name',
                                     ],
                                 ],
-                                'items' => $users,
+                                'items' => $units,
                             ],
                         ],
                     ],
@@ -653,23 +703,23 @@ class UsersController extends Controller
         ];
     }
 
-    public function adduser(Request $request, Role $role): Modal
+    public function adduser(Request $request, User $user): Modal
     {
-        $role['abilities'] = $role->getAllAbilities()->get()->map->only('id')->pluck('id');
+        // $role['abilities'] = $role->getAllAbilities()->get()->map->only('id')->pluck('id');
 
         return Inertia::modal('Default', [
-            'form' => $this->__formModal($request, $role),
+            'form' => $this->__formModal($request, $user),
             'isModal' => true,
             'title' => 'Define the users who have access to this authorization',
             'routes' => [
-                'role' => [
-                    'route' => route('apps.roles.edit', $role->id),
+                'user' => [
+                    'route' => route('apps.users.edit', $user->id),
                     'method' => 'patch',
                 ],
             ],
-            'data' => $role,
+            // 'data' => $role,
         ])
-            ->baseRoute('apps.roles.edit', $role)
+            ->baseRoute('apps.users.edit', $user)
             // ->refreshBackdrop()
         ;
     }

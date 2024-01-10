@@ -5,7 +5,7 @@ import { ref } from "vue";
 
 const props = withDefaults(
     defineProps<{
-        id?: string;
+        id?: string | number;
         name?: string;
         colorOn?:
             | "zero"
