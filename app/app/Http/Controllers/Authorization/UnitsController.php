@@ -29,6 +29,114 @@ class UnitsController extends Controller
         $unitsUsers = Unit::leftjoin('unit_user', 'unit_user.unit_id', '=', 'units.id')
             ->groupBy('units.id', 'units.name')
             ->select('units.id', 'units.name')
+            ->selectRaw('COUNT(units.id) as total_users');
+
+        $units = Unit::leftjoin('unit_user', 'unit_user.unit_id', '=', 'units.id')
+            ->joinSub($unitsUsers, 'units_users', function (JoinClause $join) {
+                $join->on('units.id', '=', 'units_users.id');
+            })
+            ->groupBy('units.id', 'units.shortpath')
+            ->select('units.id', 'units.shortpath as name', 'units.children_id')
+
+            // ->addSelect(DB::raw('(SELECT COUNT(id) FROM units_users LIMIT 1) as lastPost'))
+            // ->addSelect(DB::raw('(SELECT created_at FROM posts WHERE posts.user_id = users.id ORDER BY created_at DESC LIMIT 1) as lastPost'))
+
+
+
+            // ->selectRaw('SUM(units_users.total_users) as total_users')
+
+            // ->selectRaw("(SELECT SUM(total_users) FROM unit_user WHERE id IN (213) LIMIT 1) as total_users")
+
+
+
+
+            // ->addSelect([
+            //     'lastPost' => $unitsUsers
+            //         ->select('units.created_at')
+            //         ->whereRaw('units.id IN (20, 413)')
+            //         ->take(1)
+            // ])
+
+
+
+
+
+
+            ->selectRaw("(select * from json_array_elements(units.children_id::json) LIMIT 1) as total_users")
+
+
+
+
+
+
+            // ->selectRaw('COUNT(units.id) as total_users')
+            // ->selectRaw("units.children_id @> '20' as total_units_id")
+
+            ->withCount([
+                'children',
+                'users' => function ($query) use ($request) {
+                    $query->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
+                        if ($request->user()->cannot('hasFullAccess', User::class)) {
+                            $query->where('unit_user.user_id', $request->user()->id);
+                        }
+
+                        $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
+                    });
+                },
+                'users AS all_users_count' => function ($query) use ($request) {
+                    $query->leftjoin('units', 'unit_user.unit_id', '=', 'units.id');
+
+                    // $query->whereIn('unit_user.unit_id', [20, 213]);
+                    // $query->whereRaw('unit_user.unit_id IN ()');
+                    $query->whereRaw('unit_user.unit_id IN (select * from json_array_elements(units.children_id::json))');
+
+
+                    // $query->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
+                    //     if ($request->user()->cannot('hasFullAccess', User::class)) {
+                    //         $query->where('unit_user.user_id', $request->user()->id);
+                    //     }
+
+                    //     $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
+                    // });
+                },
+            ])
+            ->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
+                if ($request->user()->cannot('hasFullAccess', User::class)) {
+                    $query->where('unit_user.user_id', $request->user()->id);
+                }
+
+                $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
+            })
+            ->orderBy('parent_id')
+            ->orderBy('order')
+            // ->paginate(20)
+            // ->onEachSide(2)
+            // ->withQueryString()
+            ->get()
+            // ->through(function ($item) use ($unitsUsers) {
+            //     $item->all_users_count = $unitsUsers->filter(function ($list) use ($item) {
+            //         return collect(json_decode($item['children_id']))->contains($list->id);
+            //     })->pluck('total_users')->sum();
+
+            //     return $item;
+            // })
+        ;
+
+        dd($units);
+
+
+
+
+
+
+
+
+
+
+
+        $unitsUsers = Unit::leftjoin('unit_user', 'unit_user.unit_id', '=', 'units.id')
+            ->groupBy('units.id', 'units.name')
+            ->select('units.id', 'units.name')
             ->selectRaw('COUNT(units.id) as total_users')
             ->get();
 
@@ -71,8 +179,6 @@ class UnitsController extends Controller
 
                 return $item;
             });
-
-        // dd($units[0], $unitsUsers);
 
         return Inertia::render('Default', [
             'form' => [

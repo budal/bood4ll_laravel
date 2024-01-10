@@ -168,6 +168,8 @@
   "Deauthorize": "Desautorizar",
   "All users": "Todos os usuários",
   "Authorized users": "Usuários autorizados",
+  "Authorized roles": "Funções autorizadas",
+  "All roles": "Todas as funções",
   "Role creation": "Criação de função",
   "Role edition": "Edição de função",
   "Error when syncing abilities to the role.": "Erro ao sincronizar as abilitações à função.",

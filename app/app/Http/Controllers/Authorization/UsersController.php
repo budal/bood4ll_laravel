@@ -472,7 +472,7 @@ class UsersController extends Controller
                                         'items' => [
                                             [
                                                 'icon' => 'mdi:account-key-outline',
-                                                'title' => 'Authorized users',
+                                                'title' => 'Authorized roles',
                                                 'route' => [
                                                     'route' => 'apps.users.edit',
                                                     'attributes' => $user->id,
@@ -480,7 +480,7 @@ class UsersController extends Controller
                                             ],
                                             [
                                                 'icon' => 'mdi:account-multiple-outline',
-                                                'title' => 'All users',
+                                                'title' => 'All roles',
                                                 'route' => [
                                                     'route' => 'apps.users.edit',
                                                     'attributes' => [$user->id, 'all'],
