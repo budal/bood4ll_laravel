@@ -79,9 +79,10 @@ Route::middleware('auth')->group(function () {
                 Route::post('/users/activate/{user}/{mode?}', 'activate')->name('activate');
                 Route::get('/users/create', 'create')->name('create')->breadcrumb('User creation', 'apps.users.index');
                 Route::post('/users/create', 'store')->name('store');
-                Route::get('/users/edit/{user}/{all?}', 'edit')->name('edit')->breadcrumb('User edition', 'apps.users.index');
+                Route::get('/users/edit/{user}/{show?}', 'edit')->name('edit')->breadcrumb('User edition', 'apps.users.index');
                 Route::patch('/users/edit/{user}', 'update')->name('update');
-                Route::post('/users/authorization/{user}/{mode?}', 'authorization')->name('authorization');
+                Route::post('/users/authorize_unit/{user}/{mode?}', 'authorizeUnit')->name('authorize_unit');
+                Route::post('/users/authorize_role/{user}/{mode?}', 'authorizeRole')->name('authorize_role');
                 Route::delete('/users/destroy', 'destroy')->name('destroy');
                 Route::delete('/users/forcedestroy', 'forceDestroy')->name('forcedestroy');
                 Route::post('/users/restore', 'restore')->name('restore');

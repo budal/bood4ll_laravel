@@ -212,7 +212,56 @@ class UsersController extends Controller
         ]);
     }
 
-    public function authorization(Request $request, User $user, $mode): RedirectResponse
+    public function authorizeRole(Request $request, User $user, $mode): RedirectResponse
+    {
+        $this->authorize('access', User::class);
+        // $this->authorize('fullAccess', [$role, $request]);
+
+        $hasRole = $user->roles()->whereIn('roles.id', $request->list)->first();
+
+        try {
+            if ($mode == 'toggle') {
+                $role = Role::whereIn('id', $request->list)->first();
+                $hasRole ? $user->roles()->detach($request->list) : $user->roles()->attach($request->list);
+
+                return Redirect::back()->with([
+                    'toast_type' => 'success',
+                    'toast_message' => $hasRole
+                        ? "The user ':user' has been disabled in the ':role' role."
+                        : "The user ':user' was enabled in the ':role' role.",
+                    'toast_replacements' => ['user' => $user->name, 'role' => $role->name],
+                ]);
+            } elseif ($mode == 'on') {
+                $total = $user->roles()->attach($request->list);
+
+                return Redirect::back()->with([
+                    'toast_type' => 'success',
+                    'toast_message' => '{0} Nothing to authorize.|[1] Authorization successfully assigned.|[2,*] :total authorizations successfully assigned.',
+                    'toast_count' => count($request->list),
+                    'toast_replacements' => ['total' => count($request->list)],
+                ]);
+            } elseif ($mode == 'off') {
+                $total = $user->roles()->detach($request->list);
+
+                return Redirect::back()->with([
+                    'toast_type' => 'success',
+                    'toast_message' => '{0} Nothing to deauthorize.|[1] Authorization successfully unassigned.|[2,*] :total authorizations successfully unassigned.',
+                    'toast_count' => $total,
+                    'toast_replacements' => ['total' => $total],
+                ]);
+            }
+        } catch (\Throwable $e) {
+            report($e);
+
+            return Redirect::back()->with([
+                'toast_type' => 'error',
+                'toast_message' => 'Error on edit selected item.|Error on edit selected items.',
+                'toast_count' => count($request->list),
+            ]);
+        }
+    }
+
+    public function authorizeUnit(Request $request, User $user, $mode): RedirectResponse
     {
         $this->authorize('access', User::class);
         // $this->authorize('fullAccess', [$role, $request]);
@@ -263,24 +312,67 @@ class UsersController extends Controller
 
     public function __form(Request $request, User $user): array
     {
-        $units = $user->units()
-            ->filter($request, 'units')
+        $units = Unit::leftJoin('unit_user', 'unit_user.unit_id', '=', 'units.id')
+            ->filter($request, 'units', [
+                'where' => ['shortpath'],
+                'order' => ['shortpath'],
+            ])
+            ->select('units.id', 'units.parent_id', 'units.shortpath', 'units.active')
+            ->groupBy('units.id', 'units.parent_id', 'units.shortpath', 'units.active')
+            ->when(
+                $request->show == 'all_units',
+                function ($query) use ($request) {
+                    $query->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
+                        $query->where('units.active', true);
+
+                        foreach ($request->user()->units->pluck('id') as $id) {
+                            $query->whereRaw('unit_user.unit_id IN (SELECT (json_array_elements(u.children_id::json)::text)::bigint FROM units u WHERE u.id = ' . $id . ')');
+                        }
+                    });
+                },
+                function ($query) use ($user) {
+                    $query->where('unit_user.user_id', $user->id);
+                }
+            )
             ->paginate($perPage = 20, $columns = ['*'], $pageName = 'units')
             ->onEachSide(2)
-            ->withQueryString();
+            ->withQueryString()
+            ->through(function ($item) use ($user) {
+                $item->checked = $item->users->pluck('id')->contains($user->id);
+
+                return $item;
+            });
 
         $roles = Role::filter($request, 'roles')
+            ->leftjoin('role_user', 'role_user.role_id', '=', 'roles.id')
             ->select('roles.id', 'roles.name')
-            ->when(!$request->all, function ($query) use ($user) {
-                $query->join('role_user', 'role_user.role_id', '=', 'roles.id');
-                $query->where('role_user.user_id', $user->id);
-            })
-            // ->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
-            //     if ($request->user()->cannot('hasFullAccess', User::class)) {
-            //         $query->where('unit_user.user_id', $request->user()->id);
-            //     }
-            //     $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
-            // })
+            ->groupBy('roles.id', 'roles.name')
+            ->where('roles.active', true)
+            ->where('roles.superadmin', false)
+            ->where('roles.manager', false)
+            ->when(
+                $request->show == 'all_roles',
+                function ($query) use ($request) {
+                    $query->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
+                        $query->whereIn(
+                            'role_user.role_id',
+                            $request->user()
+                                ->roles()
+                                ->where(function ($query) {
+                                    $query->where('roles.lock_on_expire', false);
+                                    $query->orWhere(function ($query) {
+                                        $query->where('roles.lock_on_expire', true);
+                                        $query->where('roles.expires_at', '>=', 'NOW()');
+                                    });
+                                })
+                                ->pluck('roles.id')
+                        );
+                    });
+                },
+                function ($query) use ($user) {
+                    $query->where('role_user.user_id', $user->id);
+                }
+            )
             ->paginate($perPage = 20, $columns = ['*'], $pageName = 'roles')
             ->onEachSide(2)
             ->withQueryString()
@@ -363,29 +455,31 @@ class UsersController extends Controller
                             'type' => 'table',
                             'name' => 'units',
                             'content' => [
-                                'routes' => [
-                                    'createRoute' => [
-                                        'route' => 'apps.users.edit.adduser',
-                                        'attributes' => $user->id,
-                                        'showIf' => Gate::allows('apps.units.create') && $request->user()->can('isManager', User::class) && $request->user()->can('canManageNestedData', User::class),
+                                'menu' => [
+                                    [
+                                        'icon' => 'mdi:home-lock',
+                                        'title' => 'Authorized units',
+                                        'route' => [
+                                            'route' => 'apps.users.edit',
+                                            'attributes' => [
+                                                $user->id,
+                                            ]
+                                        ],
                                     ],
-                                    'editRoute' => [
-                                        'route' => 'apps.units.edit',
-                                        'showIf' => Gate::allows('apps.units.edit'),
-                                    ],
-                                    'destroyRoute' => [
-                                        'route' => 'apps.units.destroy',
-                                        'showIf' => Gate::allows('apps.units.destroy') && $request->user()->can('isManager', User::class),
-                                    ],
-                                    'forceDestroyRoute' => [
-                                        'route' => 'apps.roles.forcedestroy',
-                                        'showIf' => Gate::allows('apps.roles.forcedestroy') && $request->user()->can('isSuperAdmin', User::class),
-                                    ],
-                                    'restoreRoute' => [
-                                        'route' => 'apps.units.restore',
-                                        'showIf' => Gate::allows('apps.units.restore') && $request->user()->can('isManager', User::class),
+                                    [
+                                        'icon' => 'mdi:home-city',
+                                        'title' => 'All units',
+                                        'route' => [
+                                            'route' => 'apps.users.edit',
+                                            'attributes' => [
+                                                $user->id,
+                                                'all_units'
+                                            ]
+                                        ],
+                                        'showIf' => $request->user()->can('canManageNestedData', User::class)
                                     ],
                                 ],
+
                                 'titles' => [
                                     [
                                         'type' => 'text',
@@ -393,15 +487,21 @@ class UsersController extends Controller
                                         'field' => 'shortpath',
                                     ],
                                     [
-                                        'type' => 'text',
-                                        'title' => 'Classified',
-                                        'field' => 'primary',
+                                        'type' => 'toggle',
+                                        'title' => '',
+                                        'field' => 'checked',
+                                        'disableSort' => true,
+                                        'route' => [
+                                            'route' => 'apps.users.authorize_unit',
+                                            'attributes' => [
+                                                $user->id,
+                                                'toggle',
+                                            ],
+                                        ],
+                                        'method' => 'post',
+                                        'colorOn' => 'info',
                                     ],
-                                    [
-                                        'type' => 'text',
-                                        'title' => 'Working',
-                                        'field' => 'temporary',
-                                    ],
+
                                 ],
                                 'items' => $units,
                             ],
@@ -428,7 +528,7 @@ class UsersController extends Controller
                                         'icon' => 'mdi:plus-circle-outline',
                                         'title' => 'Authorize',
                                         'route' => [
-                                            'route' => 'apps.users.authorization',
+                                            'route' => 'apps.users.authorize_role',
                                             'attributes' => [
                                                 $user->id,
                                                 'on',
@@ -447,7 +547,7 @@ class UsersController extends Controller
                                         'icon' => 'mdi:minus-circle-outline',
                                         'title' => 'Deauthorize',
                                         'route' => [
-                                            'route' => 'apps.users.authorization',
+                                            'route' => 'apps.users.authorize_role',
                                             'attributes' => [
                                                 $user->id,
                                                 'off',
@@ -483,7 +583,10 @@ class UsersController extends Controller
                                                 'title' => 'All roles',
                                                 'route' => [
                                                     'route' => 'apps.users.edit',
-                                                    'attributes' => [$user->id, 'all'],
+                                                    'attributes' => [
+                                                        $user->id,
+                                                        'all_roles'
+                                                    ],
                                                 ],
                                             ],
                                         ],
@@ -501,7 +604,7 @@ class UsersController extends Controller
                                         'field' => 'checked',
                                         'disableSort' => true,
                                         'route' => [
-                                            'route' => 'apps.users.authorization',
+                                            'route' => 'apps.users.authorize_role',
                                             'attributes' => [
                                                 $user->id,
                                                 'toggle',

@@ -157,7 +157,9 @@
   "Users management": "Gerenciamento de usuários",
   "User creation": "Criação de usuário",
   "User edition": "Edição de usuário",
-  
+  "{0} Nothing to authorize.|[1] Authorization successfully assigned.|[2,*] :total authorizations successfully assigned.": "{0} Nada para autorizar.|[1] Autorização atribuída com sucesso.|[2,*] :total autorizações atribuídas com sucesso.",
+  "{0} Nothing to deauthorize.|[1] Authorization successfully unassigned.|[2,*] :total authorizations successfully unassigned.": "{0} Nada para desautorizar.|[1] Autorização desatribuída com sucesso.|[2,*] :total autorizações desatribuídas com sucesso.",
+
   "Roles": "Funções",
   "Role": "Função",
   "Roles management": "Gerenciamento de funções",
@@ -211,6 +213,8 @@
   "Local staff": "Efetivo local",
   "Total staff": "Efetivo total",
   "Refresh units hierarchy": "Atualizar hierarquia das unidades",
+  "Authorized units": "Unidades autorizadas",
+  "All units": "Todas as unidades",
   "You cannot change the unit this record belongs to.": "Você não pode alterar a unidade à qual este registro pertence.",
  
 

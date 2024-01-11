@@ -28,6 +28,9 @@ class RolesController extends Controller
             ->select('roles.*')
             ->groupBy('roles.id', 'roles.*')
             ->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
+                $query->where('roles.superadmin', false);
+                $query->where('roles.manager', false);
+                $query->where('roles.active', true);
                 $query->where(function ($query) {
                     $query->where('roles.lock_on_expire', false);
                     $query->orWhere(function ($query) {
@@ -35,8 +38,6 @@ class RolesController extends Controller
                         $query->where('roles.expires_at', '>=', 'NOW()');
                     });
                 });
-                $query->where('roles.manager', false);
-                $query->where('roles.active', true);
                 $query->where('role_user.user_id', $request->user()->id);
             })
             ->withCount([
