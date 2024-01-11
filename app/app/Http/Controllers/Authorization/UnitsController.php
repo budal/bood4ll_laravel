@@ -180,41 +180,16 @@ class UnitsController extends Controller
             }
         }
 
-        $unitsUsers = Unit::leftJoin('unit_user', 'unit_user.unit_id', '=', 'units.id')
-            ->groupBy('units.id')
-            ->select('units.id as unit_id')
-            ->selectRaw('COUNT(unit_user.unit_id) as local_users')
-            ->selectRaw("
-                (SELECT COUNT(suu.unit_id) FROM unit_user suu 
-                INNER JOIN units u ON u.id = suu.unit_id
-                WHERE 
-                    unit_id IN (
-                        SELECT (json_array_elements(u.children_id::json)::text)::bigint FROM units u WHERE u.id = units.id
-                    ) 
-                    AND suu.primary = true
-                ) as all_users
-            ")
-
-            ->whereRaw(
-                'unit_user.unit_id IN (
-                            SELECT (json_array_elements(units.children_id::json)::text)::bigint FROM units WHERE id = units.id
-                        )'
-            )
-
-            ->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
-                if ($request->user()->cannot('hasFullAccess', User::class)) {
-                    $query->where('unit_user.user_id', $request->user()->id);
-                }
-
-                $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
-            });
-
         $staff = User::filter($request, 'staff')
             ->leftJoin('unit_user', 'unit_user.user_id', '=', 'users.id')
             ->select('users.id', 'users.name', 'users.email')
             ->groupBy('users.id', 'users.name', 'users.email')
             ->when($unit['children_id'], function ($query) use ($unit) {
                 $query->whereIn('unit_user.unit_id', json_decode($unit['children_id']));
+            })
+            ->when(!$request->all, function ($query) use ($unit) {
+                // $query->join('role_user', 'role_user.role_id', '=', 'roles.id');
+                // $query->where('role_user.user_id', $unit->id);
             })
             ->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
                 if ($request->user()->cannot('hasFullAccess', User::class)) {
@@ -355,12 +330,23 @@ class UnitsController extends Controller
                                     [
                                         'icon' => 'mdi:account-multiple',
                                         'title' => 'Local staff',
-                                        'route' => 'apps.units.hierarchy',
+                                        'route' => [
+                                            'route' => 'apps.units.edit',
+                                            'attributes' => [
+                                                $unit->id,
+                                            ]
+                                        ],
                                     ],
                                     [
                                         'icon' => 'mdi:account-group-outline',
                                         'title' => 'Total staff',
-                                        'route' => 'apps.units.hierarchy',
+                                        'route' => [
+                                            'route' => 'apps.units.edit',
+                                            'attributes' => [
+                                                $unit->id,
+                                                'all'
+                                            ]
+                                        ],
                                     ],
                                 ],
                                 'titles' => [
