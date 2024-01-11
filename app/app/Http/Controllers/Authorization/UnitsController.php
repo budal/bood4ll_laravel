@@ -209,6 +209,7 @@ class UnitsController extends Controller
                 'id' => 'unit',
                 'title' => 'Main data',
                 'subtitle' => 'Unit data management.',
+                'disabledIf' => $unit->id !== null && $request->user()->cannot('isOwner', $unit),
                 'cols' => 4,
                 'fields' => [
                     [
@@ -347,6 +348,7 @@ class UnitsController extends Controller
                                                 'all'
                                             ]
                                         ],
+                                        'showIf' => $request->user()->can('canManageNestedData', User::class)
                                     ],
                                 ],
                                 'titles' => [
