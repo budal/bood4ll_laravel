@@ -135,7 +135,7 @@ class UsersController extends Controller
                                             'title' => 'Login as',
                                             'theme' => 'warning',
                                             'showIf' => Gate::allows('apps.users.change_user') && !$request->session()->has('previousUser'),
-                                            'icon' => 'mdi:login',
+                                            'icon' => 'mdi:account-convert',
                                             'disableSort' => true,
                                             'preserveScroll' => true,
                                             'route' => 'apps.users.change_user',

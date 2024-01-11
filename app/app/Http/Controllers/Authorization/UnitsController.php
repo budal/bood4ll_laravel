@@ -194,6 +194,13 @@ class UnitsController extends Controller
                     AND suu.primary = true
                 ) as all_users
             ")
+
+            ->whereRaw(
+                'unit_user.unit_id IN (
+                            SELECT (json_array_elements(units.children_id::json)::text)::bigint FROM units WHERE id = units.id
+                        )'
+            )
+
             ->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
                 if ($request->user()->cannot('hasFullAccess', User::class)) {
                     $query->where('unit_user.user_id', $request->user()->id);
@@ -201,29 +208,6 @@ class UnitsController extends Controller
 
                 $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
             });
-
-        $subunits = Unit::leftJoin('unit_user', 'unit_user.unit_id', '=', 'units.id')
-            ->filter($request, 'subunits', [
-                'where' => ['name'],
-                'order' => ['shortpath']
-            ])
-            ->leftJoinSub($unitsUsers, 'units_users', function (JoinClause $join) {
-                $join->on('units.id', '=', 'units_users.unit_id');
-            })
-            ->groupBy('units.id', 'units.shortpath', 'units_users.local_users', 'units_users.all_users')
-            ->select('units.id', 'units.shortpath as name', 'units_users.local_users', 'units_users.all_users')
-            ->withCount('children')
-            ->where('unit_user.unit_id', '<>', $unit->id)
-            ->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
-                if ($request->user()->cannot('hasFullAccess', User::class)) {
-                    $query->where('unit_user.user_id', $request->user()->id);
-                }
-
-                $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
-            })
-            ->paginate(20)
-            ->onEachSide(2)
-            ->withQueryString();
 
         $staff = User::filter($request, 'staff')
             ->leftJoin('unit_user', 'unit_user.user_id', '=', 'users.id')
@@ -352,70 +336,6 @@ class UnitsController extends Controller
                 ],
             ],
             [
-                'id' => 'subunits',
-                'title' => 'Subunits',
-                'subtitle' => 'Management of subunits of this unit.',
-                'showIf' => $unit->id != null && $request->user()->can('canManageNestedData', User::class),
-                'fields' => [
-                    [
-                        [
-                            'type' => 'table',
-                            'name' => 'subunits',
-                            'content' => [
-                                'routes' => [
-                                    'createRoute' => [
-                                        'route' => 'apps.units.create',
-                                        'attributes' => $unit->id,
-                                        'showIf' => Gate::allows('apps.units.create') && $request->user()->can('isManager', User::class) && $request->user()->can('canManageNestedData', User::class),
-                                    ],
-                                    'editRoute' => [
-                                        'route' => 'apps.units.edit',
-                                        'showIf' => Gate::allows('apps.units.edit'),
-                                    ],
-                                    'destroyRoute' => [
-                                        'route' => 'apps.units.destroy',
-                                        'showIf' => Gate::allows('apps.units.destroy') && $request->user()->can('isManager', User::class),
-                                    ],
-                                    'forceDestroyRoute' => [
-                                        'route' => 'apps.roles.forcedestroy',
-                                        'showIf' => Gate::allows('apps.roles.forcedestroy') && $request->user()->can('isSuperAdmin', User::class),
-                                    ],
-                                    'restoreRoute' => [
-                                        'route' => 'apps.units.restore',
-                                        'showIf' => Gate::allows('apps.units.restore') && $request->user()->can('isManager', User::class),
-                                    ],
-                                ],
-                                'titles' => [
-                                    [
-                                        'type' => 'text',
-                                        'title' => 'Unit',
-                                        'field' => 'name',
-                                    ],
-                                    [
-                                        'type' => 'text',
-                                        'title' => 'Subunits',
-                                        'field' => 'children_count',
-                                        'showIf' => $request->user()->can('canManageNestedData', User::class),
-                                    ],
-                                    [
-                                        'type' => 'text',
-                                        'title' => 'Local staff',
-                                        'field' => 'local_users',
-                                    ],
-                                    [
-                                        'type' => 'text',
-                                        'title' => 'Total staff',
-                                        'field' => 'all_users',
-                                        'showIf' => $request->user()->can('canManageNestedData', User::class),
-                                    ],
-                                ],
-                                'items' => $subunits,
-                            ],
-                        ],
-                    ],
-                ],
-            ],
-            [
                 'id' => 'staff',
                 'title' => 'Staff',
                 'subtitle' => 'Staff management of this unit.',
@@ -430,6 +350,18 @@ class UnitsController extends Controller
                             'content' => [
                                 'routes' => [
                                     'editRoute' => 'apps.users.edit',
+                                ],
+                                'menu' => [
+                                    [
+                                        'icon' => 'mdi:account-multiple',
+                                        'title' => 'Local staff',
+                                        'route' => 'apps.units.hierarchy',
+                                    ],
+                                    [
+                                        'icon' => 'mdi:account-group-outline',
+                                        'title' => 'Total staff',
+                                        'route' => 'apps.units.hierarchy',
+                                    ],
                                 ],
                                 'titles' => [
                                     [
