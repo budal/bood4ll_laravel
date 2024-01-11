@@ -459,31 +459,81 @@ class UsersController extends Controller
                             'type' => 'table',
                             'name' => 'units',
                             'content' => [
+                                'routes' => [
+                                    'showCheckboxes' => true,
+                                ],
                                 'menu' => [
                                     [
-                                        'icon' => 'mdi:home-lock',
-                                        'title' => 'Authorized units',
+                                        'icon' => 'mdi:plus-circle-outline',
+                                        'title' => 'Attach',
                                         'route' => [
-                                            'route' => 'apps.users.edit',
+                                            'route' => 'apps.users.authorize_unit',
                                             'attributes' => [
                                                 $user->id,
-                                            ]
+                                                'on',
+                                            ],
                                         ],
+                                        'method' => 'post',
+                                        'list' => 'checkboxes',
+                                        'listCondition' => false,
+                                        'modalTitle' => 'Are you sure you want to attach the selected item?|Are you sure you want to attach the selected items?',
+                                        'modalSubTitle' => 'This user will have the rights to access this unit. Do you want to continue?|This user will have the rights to access this unit. Do you want to continue?',
+                                        'buttonTitle' => 'Attach',
+                                        'buttonIcon' => 'mdi:plus-circle-outline',
+                                        'buttonColor' => 'success',
                                     ],
                                     [
-                                        'icon' => 'mdi:home-city',
-                                        'title' => 'All units',
+                                        'icon' => 'mdi:minus-circle-outline',
+                                        'title' => 'Detach',
                                         'route' => [
-                                            'route' => 'apps.users.edit',
+                                            'route' => 'apps.users.authorize_unit',
                                             'attributes' => [
                                                 $user->id,
-                                                'all_units'
-                                            ]
+                                                'off',
+                                            ],
                                         ],
-                                        'showIf' => $request->user()->can('canManageNestedData', User::class)
+                                        'method' => 'post',
+                                        'list' => 'checkboxes',
+                                        'listCondition' => true,
+                                        'modalTitle' => 'Are you sure you want to detach the selected item?|Are you sure you want to detach the selected items?',
+                                        'modalSubTitle' => 'This user will lose the rights to access this unit. Do you want to continue?|This users will lose the rights to access this unit. Do you want to continue?',
+                                        'buttonTitle' => 'Detach',
+                                        'buttonIcon' => 'mdi:minus-circle-outline',
+                                        'buttonColor' => 'danger',
+                                    ],
+                                    [
+                                        'title' => '-',
+                                    ],
+
+                                    [
+                                        'icon' => 'mdi:format-list-checkbox',
+                                        'title' => 'List',
+                                        'items' => [
+                                            [
+                                                'icon' => 'mdi:home-lock',
+                                                'title' => 'Authorized units',
+                                                'route' => [
+                                                    'route' => 'apps.users.edit',
+                                                    'attributes' => [
+                                                        $user->id,
+                                                    ]
+                                                ],
+                                            ],
+                                            [
+                                                'icon' => 'mdi:home-city',
+                                                'title' => 'All units',
+                                                'route' => [
+                                                    'route' => 'apps.users.edit',
+                                                    'attributes' => [
+                                                        $user->id,
+                                                        'all_units'
+                                                    ]
+                                                ],
+                                                'showIf' => $request->user()->can('canManageNestedData', User::class)
+                                            ],
+                                        ],
                                     ],
                                 ],
-
                                 'titles' => [
                                     [
                                         'type' => 'text',
