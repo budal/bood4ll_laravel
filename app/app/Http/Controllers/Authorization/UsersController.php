@@ -215,7 +215,7 @@ class UsersController extends Controller
     public function authorizeRole(Request $request, User $user, $mode): RedirectResponse
     {
         $this->authorize('access', User::class);
-        // $this->authorize('fullAccess', [$role, $request]);
+        // $this->authorize('fullAccess', [$user, $request]);
 
         $hasRole = $user->roles()->whereIn('roles.id', $request->list)->first();
 
@@ -264,37 +264,37 @@ class UsersController extends Controller
     public function authorizeUnit(Request $request, User $user, $mode): RedirectResponse
     {
         $this->authorize('access', User::class);
-        // $this->authorize('fullAccess', [$role, $request]);
+        // $this->authorize('fullAccess', [$user, $request]);
 
-        $hasRole = $user->roles()->whereIn('roles.id', $request->list)->first();
+        $hasUnit = $user->units()->whereIn('units.id', $request->list)->first();
 
         try {
             if ($mode == 'toggle') {
-                $role = Role::whereIn('id', $request->list)->first();
-                $hasRole ? $user->roles()->detach($request->list) : $user->roles()->attach($request->list);
+                $unit = Unit::whereIn('id', $request->list)->first();
+                $hasUnit ? $user->units()->detach($request->list) : $user->units()->attach($request->list);
 
                 return Redirect::back()->with([
                     'toast_type' => 'success',
-                    'toast_message' => $hasRole
-                        ? "The user ':user' has been disabled in the ':role' role."
-                        : "The user ':user' was enabled in the ':role' role.",
-                    'toast_replacements' => ['user' => $user->name, 'role' => $role->name],
+                    'toast_message' => $hasUnit
+                        ? "The user ':user' was detached in the ':unit'."
+                        : "The user ':user' was attached in the ':unit'.",
+                    'toast_replacements' => ['user' => $user->name, 'unit' => $unit->name],
                 ]);
             } elseif ($mode == 'on') {
-                $total = $user->roles()->attach($request->list);
+                $total = $user->units()->attach($request->list);
 
                 return Redirect::back()->with([
                     'toast_type' => 'success',
-                    'toast_message' => '{0} Nobody to authorize.|[1] User successfully authorized.|[2,*] :total users successfully authorized.',
+                    'toast_message' => '{0} Nothing to do.|[1] Unit successfully attached.|[2,*] :total units successfully attached.',
                     'toast_count' => count($request->list),
                     'toast_replacements' => ['total' => count($request->list)],
                 ]);
             } elseif ($mode == 'off') {
-                $total = $user->roles()->detach($request->list);
+                $total = $user->units()->detach($request->list);
 
                 return Redirect::back()->with([
                     'toast_type' => 'success',
-                    'toast_message' => '{0} Nobody to deauthorize.|[1] User successfully deauthorized.|[2,*] :total users successfully deauthorized.',
+                    'toast_message' => '{0} Nothing to do.|[1] Unit successfully detached.|[2,*] :total units successfully detached.',
                     'toast_count' => $total,
                     'toast_replacements' => ['total' => $total],
                 ]);
@@ -347,9 +347,6 @@ class UsersController extends Controller
             ->leftjoin('role_user', 'role_user.role_id', '=', 'roles.id')
             ->select('roles.id', 'roles.name')
             ->groupBy('roles.id', 'roles.name')
-            ->where('roles.active', true)
-            ->where('roles.superadmin', false)
-            ->where('roles.manager', false)
             ->when(
                 $request->show == 'all_roles',
                 function ($query) use ($request) {
@@ -358,6 +355,9 @@ class UsersController extends Controller
                             'role_user.role_id',
                             $request->user()
                                 ->roles()
+                                ->where('roles.active', true)
+                                ->where('roles.superadmin', false)
+                                ->where('roles.manager', false)
                                 ->where(function ($query) {
                                     $query->where('roles.lock_on_expire', false);
                                     $query->orWhere(function ($query) {
@@ -370,7 +370,11 @@ class UsersController extends Controller
                     });
                 },
                 function ($query) use ($user) {
-                    $query->where('role_user.user_id', $user->id);
+                    $query
+                        ->where('roles.active', true)
+                        ->where('roles.superadmin', false)
+                        ->where('roles.manager', false)
+                        ->where('role_user.user_id', $user->id);
                 }
             )
             ->paginate($perPage = 20, $columns = ['*'], $pageName = 'roles')
