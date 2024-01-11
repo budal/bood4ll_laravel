@@ -236,7 +236,7 @@ class UsersController extends Controller
 
                 return Redirect::back()->with([
                     'toast_type' => 'success',
-                    'toast_message' => '{0} Nothing to authorize.|[1] Authorization successfully assigned.|[2,*] :total authorizations successfully assigned.',
+                    'toast_message' => '{0} Nothing to authorize.|[1] Item authorized successfully.|[2,*] :total items successfully authorized.',
                     'toast_count' => count($request->list),
                     'toast_replacements' => ['total' => count($request->list)],
                 ]);
@@ -245,7 +245,7 @@ class UsersController extends Controller
 
                 return Redirect::back()->with([
                     'toast_type' => 'success',
-                    'toast_message' => '{0} Nothing to deauthorize.|[1] Authorization successfully unassigned.|[2,*] :total authorizations successfully unassigned.',
+                    'toast_message' => '{0} Nothing to deauthorize.|[1] Item deauthorized successfully.|[2,*] :total items successfully deauthorized.',
                     'toast_count' => $total,
                     'toast_replacements' => ['total' => $total],
                 ]);
@@ -255,7 +255,7 @@ class UsersController extends Controller
 
             return Redirect::back()->with([
                 'toast_type' => 'error',
-                'toast_message' => 'Error on edit selected item.|Error on edit selected items.',
+                'toast_message' => 'Error on authorize selected item.|Error on authorize selected items.',
                 'toast_count' => count($request->list),
             ]);
         }
@@ -274,7 +274,7 @@ class UsersController extends Controller
                 $hasUnit ? $user->units()->detach($request->list) : $user->units()->attach($request->list);
 
                 return Redirect::back()->with([
-                    'toast_type' => 'success',
+                    'toast_type' => 'info',
                     'toast_message' => $hasUnit
                         ? "The user ':user' was detached in the ':unit'."
                         : "The user ':user' was attached in the ':unit'.",
@@ -285,7 +285,7 @@ class UsersController extends Controller
 
                 return Redirect::back()->with([
                     'toast_type' => 'success',
-                    'toast_message' => '{0} Nothing to do.|[1] Unit successfully attached.|[2,*] :total units successfully attached.',
+                    'toast_message' => '{0} Nothing to attach.|[1] Item attached successfully.|[2,*] :total items successfully attached.',
                     'toast_count' => count($request->list),
                     'toast_replacements' => ['total' => count($request->list)],
                 ]);
@@ -294,7 +294,7 @@ class UsersController extends Controller
 
                 return Redirect::back()->with([
                     'toast_type' => 'success',
-                    'toast_message' => '{0} Nothing to do.|[1] Unit successfully detached.|[2,*] :total units successfully detached.',
+                    'toast_message' => '{0} Nothing to detach.|[1] Item detached successfully.|[2,*] :total items successfully detached.',
                     'toast_count' => $total,
                     'toast_replacements' => ['total' => $total],
                 ]);
@@ -304,7 +304,7 @@ class UsersController extends Controller
 
             return Redirect::back()->with([
                 'toast_type' => 'error',
-                'toast_message' => 'Error on edit selected item.|Error on edit selected items.',
+                'toast_message' => 'Error on attach selected item.|Error on attach selected items.',
                 'toast_count' => count($request->list),
             ]);
         }
@@ -477,7 +477,7 @@ class UsersController extends Controller
                                         'list' => 'checkboxes',
                                         'listCondition' => false,
                                         'modalTitle' => 'Are you sure you want to attach the selected item?|Are you sure you want to attach the selected items?',
-                                        'modalSubTitle' => 'This user will have the rights to access this unit. Do you want to continue?|This user will have the rights to access this unit. Do you want to continue?',
+                                        'modalSubTitle' => 'The selected item will be attached. Do you want to continue?|The selected items will be attached. Do you want to continue?',
                                         'buttonTitle' => 'Attach',
                                         'buttonIcon' => 'mdi:plus-circle-outline',
                                         'buttonColor' => 'success',
@@ -496,7 +496,7 @@ class UsersController extends Controller
                                         'list' => 'checkboxes',
                                         'listCondition' => true,
                                         'modalTitle' => 'Are you sure you want to detach the selected item?|Are you sure you want to detach the selected items?',
-                                        'modalSubTitle' => 'This user will lose the rights to access this unit. Do you want to continue?|This users will lose the rights to access this unit. Do you want to continue?',
+                                        'modalSubTitle' => 'The selected item will be detached. Do you want to continue?|The selected items will be detached. Do you want to continue?',
                                         'buttonTitle' => 'Detach',
                                         'buttonIcon' => 'mdi:minus-circle-outline',
                                         'buttonColor' => 'danger',
@@ -591,8 +591,8 @@ class UsersController extends Controller
                                         'method' => 'post',
                                         'list' => 'checkboxes',
                                         'listCondition' => false,
-                                        'modalTitle' => 'Are you sure you want to authorize the selected users?|Are you sure you want to authorize the selected users?',
-                                        'modalSubTitle' => 'The selected user will have the rights to access this role. Do you want to continue?|The selected user will have the rights to access this role. Do you want to continue?',
+                                        'modalTitle' => 'Are you sure you want to authorize the selected item?|Are you sure you want to authorize the selected items?',
+                                        'modalSubTitle' => 'The selected item will be authorized. Do you want to continue?|The selected items will be authorized. Do you want to continue?',
                                         'buttonTitle' => 'Authorize',
                                         'buttonIcon' => 'mdi:plus-circle-outline',
                                         'buttonColor' => 'success',
@@ -610,8 +610,8 @@ class UsersController extends Controller
                                         'method' => 'post',
                                         'list' => 'checkboxes',
                                         'listCondition' => true,
-                                        'modalTitle' => 'Are you sure you want to deauthorize the selected users?|Are you sure you want to deauthorize the selected users?',
-                                        'modalSubTitle' => 'The selected user will lose the rights to access this role. Do you want to continue?|The selected users will lose the rights to access this role. Do you want to continue?',
+                                        'modalTitle' => 'Are you sure you want to deauthorize the selected item?|Are you sure you want to deauthorize the selected items?',
+                                        'modalSubTitle' => 'The selected item will be deauthorized. Do you want to continue?|The selected items will be deauthorized. Do you want to continue?',
                                         'buttonTitle' => 'Deauthorize',
                                         'buttonIcon' => 'mdi:minus-circle-outline',
                                         'buttonColor' => 'danger',
