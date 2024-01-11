@@ -189,7 +189,7 @@ class UnitsController extends Controller
             })
             ->when(!$request->all, function ($query) use ($unit) {
                 // $query->join('role_user', 'role_user.role_id', '=', 'roles.id');
-                // $query->where('role_user.user_id', $unit->id);
+                $query->where('unit_user.unit_id', $unit->id);
             })
             ->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
                 if ($request->user()->cannot('hasFullAccess', User::class)) {
