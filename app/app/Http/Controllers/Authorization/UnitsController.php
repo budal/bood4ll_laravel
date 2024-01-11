@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Authorization;
 use App\Http\Controllers\Controller;
 use App\Models\Unit;
 use App\Models\User;
+use Illuminate\Database\Query\JoinClause;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -21,49 +22,39 @@ class UnitsController extends Controller
     {
         $this->authorize('access', User::class);
 
-        $units = Unit::leftjoin('unit_user', 'unit_user.unit_id', '=', 'units.id')
+        $unitsUsers = Unit::leftJoin('unit_user', 'unit_user.unit_id', '=', 'units.id')
+            ->groupBy('units.id')
+            ->select('units.id as unit_id')
+            ->selectRaw('COUNT(unit_user.unit_id) as local_users')
+            ->selectRaw("
+                (SELECT COUNT(suu.unit_id) FROM unit_user suu 
+                    INNER JOIN units u ON u.id = suu.unit_id
+                    WHERE 
+                        unit_id IN (
+                            SELECT (json_array_elements(u.children_id::json)::text)::bigint FROM units u WHERE u.id = units.id
+                        ) 
+                        AND suu.primary = true
+                ) as all_users
+            ")
+            ->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
+                if ($request->user()->cannot('hasFullAccess', User::class)) {
+                    $query->where('unit_user.user_id', $request->user()->id);
+                }
+
+                $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
+            });
+
+        $units = Unit::leftJoin('unit_user', 'unit_user.unit_id', '=', 'units.id')
             ->filter($request, 'units', [
                 'where' => ['name'],
                 'order' => ['shortpath']
             ])
-            ->groupBy('units.id', 'units.shortpath')
-            ->select('units.id', 'units.shortpath as name')
-
-            // ->addSelect([
-            //     'lastPost' => DB::table('unit_user')
-            //         ->selectRaw('COUNT(unit_user.unit_id) as qqq')
-            //         ->groupBy('unit_user.unit_id')
-            //         ->whereRaw('unit_user.unit_id IN (SELECT (json_array_elements(units.children_id::json)::text)::bigint FROM units WHERE id = unit_user.unit_id)')
-            //         ->take(1)
-            // ])
-
-            ->withCount([
-                'children',
-                'users' => function ($query) use ($request) {
-                    $query->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
-                        if ($request->user()->cannot('hasFullAccess', User::class)) {
-                            $query->where('unit_user.user_id', $request->user()->id);
-                        }
-
-                        $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
-                    });
-                },
-                'users AS all_users_count' => function ($query) use ($request) {
-                    $query->leftjoin('units', 'unit_user.unit_id', '=', 'units.id');
-                    $query->whereRaw(
-                        'unit_user.unit_id IN (
-                            SELECT (json_array_elements(units.children_id::json)::text)::bigint FROM units WHERE id = units.id
-                        )'
-                    );
-                    $query->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
-                        if ($request->user()->cannot('hasFullAccess', User::class)) {
-                            $query->where('unit_user.user_id', $request->user()->id);
-                        }
-
-                        $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
-                    });
-                },
-            ])
+            ->leftJoinSub($unitsUsers, 'units_users', function (JoinClause $join) {
+                $join->on('units.id', '=', 'units_users.unit_id');
+            })
+            ->groupBy('units.id', 'units.shortpath', 'units_users.local_users', 'units_users.all_users')
+            ->select('units.id', 'units.shortpath as name', 'units_users.local_users', 'units_users.all_users')
+            ->withCount('children')
             ->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
                 if ($request->user()->cannot('hasFullAccess', User::class)) {
                     $query->where('unit_user.user_id', $request->user()->id);
@@ -133,14 +124,13 @@ class UnitsController extends Controller
                                         [
                                             'type' => 'text',
                                             'title' => 'Local staff',
-                                            'field' => 'users_count',
+                                            'field' => 'local_users',
                                         ],
                                         [
                                             'type' => 'text',
                                             'title' => 'Total staff',
-                                            'field' => 'all_users_count',
+                                            'field' => 'all_users',
                                             'showIf' => $request->user()->can('canManageNestedData', User::class),
-                                            // 'disableSort' => true,
                                         ],
                                     ],
                                     'items' => $units,
@@ -155,7 +145,7 @@ class UnitsController extends Controller
 
     public function __form(Request $request, Unit $unit): array
     {
-        $units = Unit::leftjoin('unit_user', 'unit_user.unit_id', '=', 'units.id')
+        $units = Unit::leftJoin('unit_user', 'unit_user.unit_id', '=', 'units.id')
             ->select('units.id', 'units.parent_id', 'units.shortpath AS name', 'units.active')
             ->groupBy('units.id', 'units.parent_id', 'name', 'units.active')
             ->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
@@ -190,37 +180,40 @@ class UnitsController extends Controller
             }
         }
 
-        $unitsUsers = Unit::leftjoin('unit_user', 'unit_user.unit_id', '=', 'units.id')
-            ->groupBy('units.id', 'units.name')
-            ->select('units.id', 'units.name')
-            ->selectRaw('COUNT(units.id) as total_users')
-            ->get();
+        $unitsUsers = Unit::leftJoin('unit_user', 'unit_user.unit_id', '=', 'units.id')
+            ->groupBy('units.id')
+            ->select('units.id as unit_id')
+            ->selectRaw('COUNT(unit_user.unit_id) as local_users')
+            ->selectRaw("
+                (SELECT COUNT(suu.unit_id) FROM unit_user suu 
+                INNER JOIN units u ON u.id = suu.unit_id
+                WHERE 
+                    unit_id IN (
+                        SELECT (json_array_elements(u.children_id::json)::text)::bigint FROM units u WHERE u.id = units.id
+                    ) 
+                    AND suu.primary = true
+                ) as all_users
+            ")
+            ->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
+                if ($request->user()->cannot('hasFullAccess', User::class)) {
+                    $query->where('unit_user.user_id', $request->user()->id);
+                }
 
-        $subunits = $unit->leftjoin('unit_user', 'unit_user.unit_id', '=', 'units.id')
+                $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
+            });
+
+        $subunits = Unit::leftJoin('unit_user', 'unit_user.unit_id', '=', 'units.id')
             ->filter($request, 'subunits', [
                 'where' => ['name'],
-                'order' => ['parent_id', 'order']
+                'order' => ['shortpath']
             ])
-            ->select('units.id', 'units.shortpath as name', 'units.children_id')
-            ->selectRaw('COUNT(units.id) as total_users')
-            ->groupBy('units.id', 'units.shortpath')
-            ->withCount([
-                'children',
-                'users' => function ($query) use ($request) {
-                    $query->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
-                        if ($request->user()->cannot('hasFullAccess', User::class)) {
-                            $query->where('unit_user.user_id', $request->user()->id);
-                        }
-
-                        $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
-                    });
-                },
-            ])
-            ->where('unit_user.unit_id', '<>', $unit->id)
-            ->whereIn('unit_user.unit_id', $unit->children->pluck('id'))
-            ->when($unit['children_id'], function ($query) use ($unit) {
-                $query->whereIn('unit_user.unit_id', json_decode($unit['children_id']));
+            ->leftJoinSub($unitsUsers, 'units_users', function (JoinClause $join) {
+                $join->on('units.id', '=', 'units_users.unit_id');
             })
+            ->groupBy('units.id', 'units.shortpath', 'units_users.local_users', 'units_users.all_users')
+            ->select('units.id', 'units.shortpath as name', 'units_users.local_users', 'units_users.all_users')
+            ->withCount('children')
+            ->where('unit_user.unit_id', '<>', $unit->id)
             ->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
                 if ($request->user()->cannot('hasFullAccess', User::class)) {
                     $query->where('unit_user.user_id', $request->user()->id);
@@ -228,21 +221,12 @@ class UnitsController extends Controller
 
                 $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
             })
-            ->orderBy('parent_id')
-            ->orderBy('order')
-            ->paginate($perPage = 20, $columns = ['*'], $pageName = 'subunits')
+            ->paginate(20)
             ->onEachSide(2)
-            ->withQueryString()
-            ->through(function ($item) use ($unitsUsers) {
-                $item->all_users_count = $unitsUsers->filter(function ($list) use ($item) {
-                    return collect(json_decode($item['children_id']))->contains($list->id);
-                })->pluck('total_users')->sum();
-
-                return $item;
-            });
+            ->withQueryString();
 
         $staff = User::filter($request, 'staff')
-            ->leftjoin('unit_user', 'unit_user.user_id', '=', 'users.id')
+            ->leftJoin('unit_user', 'unit_user.user_id', '=', 'users.id')
             ->select('users.id', 'users.name', 'users.email')
             ->groupBy('users.id', 'users.name', 'users.email')
             ->when($unit['children_id'], function ($query) use ($unit) {
@@ -416,14 +400,13 @@ class UnitsController extends Controller
                                     [
                                         'type' => 'text',
                                         'title' => 'Local staff',
-                                        'field' => 'users_count',
+                                        'field' => 'local_users',
                                     ],
                                     [
                                         'type' => 'text',
                                         'title' => 'Total staff',
-                                        'field' => 'all_users_count',
+                                        'field' => 'all_users',
                                         'showIf' => $request->user()->can('canManageNestedData', User::class),
-                                        'disableSort' => true,
                                     ],
                                 ],
                                 'items' => $subunits,

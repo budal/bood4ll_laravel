@@ -37,7 +37,38 @@ class Unit extends Base
 
     public function users(): BelongsToMany
     {
-        return $this->belongsToMany(User::class)->where('primary', true);
+        return $this->belongsToMany(User::class);
+    }
+
+    public function allUsers(): BelongsToMany
+    {
+        $children = Unit::selectRaw('(json_array_elements(units.children_id::json)::text)::bigint')
+            ->where('id', 20)
+            ->get();
+
+        dd($children);
+
+        // $query->leftjoin('units', 'unit_user.unit_id', '=', 'units.id')->whereRaw(
+        //     'unit_user.unit_id IN (
+        //         SELECT (json_array_elements(units.children_id::json)::text)::bigint FROM units WHERE id = unit_user.unit_id
+        //     )'
+        // );
+
+
+        return $this->belongsToMany(User::class)
+            // ->where('primary', false)
+            // ->where('units.id', '<>', 20)
+            //
+
+
+            // ->leftjoin('units', 'unit_user.unit_id', '=', 'units.id')
+            ->orWhereRaw(
+                'unit_user.unit_id IN (
+                    1,2,3,4
+                )'
+            )
+            //
+        ;
     }
 
     public function children(): HasMany
