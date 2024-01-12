@@ -4,7 +4,9 @@ use App\Http\Controllers\Authorization\AbilitiesController;
 use App\Http\Controllers\Authorization\RolesController;
 use App\Http\Controllers\Authorization\UnitsController;
 use App\Http\Controllers\Authorization\UsersController;
+use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SchedulesController;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
@@ -68,10 +70,70 @@ Route::middleware('auth')->group(function () {
         ->defaults('icon', 'mdi:cog-outline');
 
     Route::prefix('apps')->name('apps.')->group(function () {
+        Route::controller(AbilitiesController::class)->group(function () {
+            Route::name('abilities.')->middleware('verified', 'password.confirm')->group(function () {
+                Route::get('/abilities', 'index')->name('index')->breadcrumb('Abilities')
+                    ->defaults('title', 'Abilities')
+                    ->defaults('description', 'Define which abilities will be showed in the roles management.')
+                    ->defaults('icon', 'mdi:book-cog-outline');
+                Route::post('/abilities/update/{mode?}', 'update')->name('update')->whereIn('mode', ['toggle', 'on', 'off']);
+            });
+        });
+
+        Route::controller(RolesController::class)->group(function () {
+            Route::name('roles.')->middleware('verified', 'password.confirm')->group(function () {
+                Route::get('/roles', 'index')->name('index')->breadcrumb('Roles')
+                    ->defaults('title', 'Roles')
+                    ->defaults('description', 'Define roles, grouping abilities to define specific access.')
+                    ->defaults('icon', 'mdi:account-details-outline');
+                Route::get('/roles/create', 'create')->name('create')->breadcrumb('Role creation', 'apps.roles.index');
+                Route::post('/roles/create', 'store')->name('store');
+                Route::get('/roles/edit/{role}/{show?}', 'edit')->name('edit')->breadcrumb('Role edition', 'apps.roles.index');
+                Route::patch('/roles/edit/{role}', 'update')->name('update');
+                Route::post('/roles/authorization/{role}/{mode?}', 'authorization')->name('authorization');
+                Route::delete('/roles/destroy', 'destroy')->name('destroy');
+                Route::delete('/roles/forcedestroy', 'forceDestroy')->name('forcedestroy');
+                Route::post('/roles/restore', 'restore')->name('restore');
+            });
+        });
+
+        Route::controller(UnitsController::class)->group(function () {
+            Route::name('units.')->middleware('verified', 'password.confirm')->group(function () {
+                Route::get('/units', 'index')->name('index')->breadcrumb('Units')
+                    ->defaults('title', 'Units')
+                    ->defaults('description', 'Manage units registered in the system, their subunits and users.')
+                    ->defaults('icon', 'mdi:home-group');;
+                Route::get('/units/create/{unit?}', 'create')->name('create')->breadcrumb('Unit creation', 'apps.units.index');
+                Route::post('/units/create', 'store')->name('store');
+                Route::get('/units/edit/{unit}/{show?}', 'edit')->name('edit')->breadcrumb('Unit edition', 'apps.units.index');
+                Route::patch('/units/edit/{unit}', 'update')->name('update');
+                Route::post('/units/hierarchy', 'hierarchy')->name('hierarchy');
+                Route::delete('/units/destroy', 'destroy')->name('destroy');
+                Route::post('/units/restore/{unit}', 'restore')->name('restore');
+            });
+        });
+
+        Route::controller(CalendarController::class)->group(function () {
+            Route::name('calendar.')->middleware('verified', 'password.confirm')->group(function () {
+                Route::get('/calendar', 'index')->name('index')->breadcrumb('Calendars')
+                    ->defaults('title', 'Calendar')
+                    ->defaults('description', "Manage calendar with working days, holidays and optional points.")
+                    ->defaults('icon', 'mdi:calendar-multiselect-outline');
+                Route::get('/calendar/create', 'create')->name('create')->breadcrumb('Schedule creation', 'apps.calendar.index');
+                Route::post('/calendar/create', 'store')->name('store');
+                Route::get('/calendar/edit/{role}/{show?}', 'edit')->name('edit')->breadcrumb('Schedule edition', 'apps.calendar.index');
+                Route::patch('/calendar/edit/{role}', 'update')->name('update');
+                Route::post('/calendar/authorization/{role}/{mode?}', 'authorization')->name('authorization');
+                Route::delete('/calendar/destroy', 'destroy')->name('destroy');
+                Route::delete('/calendar/forcedestroy', 'forceDestroy')->name('forcedestroy');
+                Route::post('/calendar/restore', 'restore')->name('restore');
+            });
+        });
+
         Route::controller(UsersController::class)->group(function () {
             Route::name('users.')->middleware('verified', 'password.confirm')->group(function () {
                 Route::get('/users', 'index')->name('index')->breadcrumb('Users')
-                    ->defaults('title', 'Users management')
+                    ->defaults('title', 'Users')
                     ->defaults('description', 'Manage users informations and authorizations.')
                     ->defaults('icon', 'mdi:account-multiple');
                 Route::post('/users/changeuser/{user}', 'changeUser')->name('change_user');
@@ -91,46 +153,20 @@ Route::middleware('auth')->group(function () {
             });
         });
 
-        Route::controller(RolesController::class)->group(function () {
-            Route::name('roles.')->middleware('verified', 'password.confirm')->group(function () {
-                Route::get('/roles', 'index')->name('index')->breadcrumb('Roles')
-                    ->defaults('title', 'Roles management')
-                    ->defaults('description', 'Define roles, grouping abilities to define specific access.')
-                    ->defaults('icon', 'mdi:account-details-outline');
-                Route::get('/roles/create', 'create')->name('create')->breadcrumb('Role creation', 'apps.roles.index');
-                Route::post('/roles/create', 'store')->name('store');
-                Route::get('/roles/edit/{role}/{show?}', 'edit')->name('edit')->breadcrumb('Role edition', 'apps.roles.index');
-                Route::patch('/roles/edit/{role}', 'update')->name('update');
-                Route::post('/roles/authorization/{role}/{mode?}', 'authorization')->name('authorization');
-                Route::delete('/roles/destroy', 'destroy')->name('destroy');
-                Route::delete('/roles/forcedestroy', 'forceDestroy')->name('forcedestroy');
-                Route::post('/roles/restore', 'restore')->name('restore');
-            });
-        });
-
-        Route::controller(AbilitiesController::class)->group(function () {
-            Route::name('abilities.')->middleware('verified', 'password.confirm')->group(function () {
-                Route::get('/abilities', 'index')->name('index')->breadcrumb('Abilities')
-                    ->defaults('title', 'Abilities management')
-                    ->defaults('description', 'Define which abilities will be showed in the roles management.')
-                    ->defaults('icon', 'mdi:book-cog-outline');
-                Route::post('/abilities/update/{mode?}', 'update')->name('update')->whereIn('mode', ['toggle', 'on', 'off']);
-            });
-        });
-
-        Route::controller(UnitsController::class)->group(function () {
-            Route::name('units.')->middleware('verified', 'password.confirm')->group(function () {
-                Route::get('/units', 'index')->name('index')->breadcrumb('Units')
-                    ->defaults('title', 'Units management')
-                    ->defaults('description', 'Manage units registered in the system, their subunits and users.')
-                    ->defaults('icon', 'mdi:home-group');;
-                Route::get('/units/create/{unit?}', 'create')->name('create')->breadcrumb('Unit creation', 'apps.units.index');
-                Route::post('/units/create', 'store')->name('store');
-                Route::get('/units/edit/{unit}/{show?}', 'edit')->name('edit')->breadcrumb('Unit edition', 'apps.units.index');
-                Route::patch('/units/edit/{unit}', 'update')->name('update');
-                Route::post('/units/hierarchy', 'hierarchy')->name('hierarchy');
-                Route::delete('/units/destroy', 'destroy')->name('destroy');
-                Route::post('/units/restore/{unit}', 'restore')->name('restore');
+        Route::controller(SchedulesController::class)->group(function () {
+            Route::name('schedules.')->middleware('verified')->group(function () {
+                Route::get('/schedules', 'index')->name('index')->breadcrumb('Schedules')
+                    ->defaults('title', 'Schedules')
+                    ->defaults('description', "Manage your team's commitments, schedules and events.")
+                    ->defaults('icon', 'mdi:calendar-multiselect-outline');
+                Route::get('/schedules/create', 'create')->name('create')->breadcrumb('Schedule creation', 'apps.schedules.index');
+                Route::post('/schedules/create', 'store')->name('store');
+                Route::get('/schedules/edit/{role}/{show?}', 'edit')->name('edit')->breadcrumb('Schedule edition', 'apps.schedules.index');
+                Route::patch('/schedules/edit/{role}', 'update')->name('update');
+                Route::post('/schedules/authorization/{role}/{mode?}', 'authorization')->name('authorization');
+                Route::delete('/schedules/destroy', 'destroy')->name('destroy');
+                Route::delete('/schedules/forcedestroy', 'forceDestroy')->name('forcedestroy');
+                Route::post('/schedules/restore', 'restore')->name('restore');
             });
         });
     });

@@ -321,15 +321,9 @@ class UsersController extends Controller
             ->groupBy('units.id', 'units.parent_id', 'units.shortpath', 'units.active')
             ->when(
                 $request->show == 'all_units',
-                function ($query) use ($request) {
-                    $query->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
-                        // $query->where('units.active', true);
-
-                        dd($request->user()->units->pluck('id'));
-
-                        foreach ($request->user()->units->pluck('id') as $id) {
-                            $query->whereRaw('unit_user.unit_id IN (SELECT (json_array_elements(u.children_id::json)::text)::bigint FROM units u WHERE u.id = ' . $id . ')');
-                        }
+                function ($query) use ($request, $user) {
+                    $query->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request, $user) {
+                        $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
                     });
                 },
                 function ($query) use ($user) {
