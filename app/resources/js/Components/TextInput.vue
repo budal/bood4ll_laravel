@@ -7,7 +7,7 @@ withDefaults(
         name: string;
         type?: string;
         mask?: string;
-        modelValue?: string;
+        modelValue?: string | number;
         autocomplete: boolean;
     }>(),
     {

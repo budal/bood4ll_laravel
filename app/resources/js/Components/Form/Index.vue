@@ -171,6 +171,7 @@ const changeTab = (item: any) => {
                                 v-if="
                                     field.type == 'input' ||
                                     field.type == 'text' ||
+                                    field.type == 'number' ||
                                     field.type == 'password' ||
                                     field.type == 'date' ||
                                     field.type == 'email'

@@ -24,6 +24,9 @@
   "Main data": "Dados principais",
   "Belongs to": "Pertence a",
   "Inactivated at": "Inativação",
+  "Day": "Dia",
+  "Month": "Mês",
+  "Year": "Ano",
   
   "Current Password": "Senha atual",
   "New Password": "Nova Senha",
@@ -212,8 +215,12 @@
   "Refresh units hierarchy": "Atualizar hierarquia das unidades",
   "You cannot change the unit this record belongs to.": "Você não pode alterar a unidade à qual este registro pertence.",
  
+  "Calendars": "Calendários",
   "Calendar": "Calendário",
-  "Manage calendar with working days, holidays and optional points.": "Gerencie o calendário com dias úteis, feriados e pontos opcionais.",
+  "Manage calendars with working days, holidays and optional points.": "Gerencie calendários com dias úteis, feriados e pontos opcionais.",
+  "Calendar's info.": "Informações do calendário.",
+  "Calendar creation": "Criação de calendário",
+  "Calendar edition": "Edição de calendário",
 
   "Users": "Usuários",
   "User": "Usuário",

@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('calendars', function (Blueprint $table) {
+        Schema::create('holidays', function (Blueprint $table) {
             $table->id();
             $table->string('name', 100);
-            $table->uuid('owner')->nullable();
             $table->boolean('active')->default(true);
-            $table->year('year')->nullable();
+            $table->date('starts_at')->nullable();
+            $table->date('ends_at')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('calendars');
+        Schema::dropIfExists('holidays');
     }
 };
