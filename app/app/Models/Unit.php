@@ -40,37 +40,6 @@ class Unit extends Base
         return $this->belongsToMany(User::class);
     }
 
-    public function allUsers(): BelongsToMany
-    {
-        $children = Unit::selectRaw('(json_array_elements(units.children_id::json)::text)::bigint')
-            ->where('id', 20)
-            ->get();
-
-        dd($children);
-
-        // $query->leftjoin('units', 'unit_user.unit_id', '=', 'units.id')->whereRaw(
-        //     'unit_user.unit_id IN (
-        //         SELECT (json_array_elements(units.children_id::json)::text)::bigint FROM units WHERE id = unit_user.unit_id
-        //     )'
-        // );
-
-
-        return $this->belongsToMany(User::class)
-            // ->where('primary', false)
-            // ->where('units.id', '<>', 20)
-            //
-
-
-            // ->leftjoin('units', 'unit_user.unit_id', '=', 'units.id')
-            ->orWhereRaw(
-                'unit_user.unit_id IN (
-                    1,2,3,4
-                )'
-            )
-            //
-        ;
-    }
-
     public function children(): HasMany
     {
         return $this->hasMany(Self::class, 'parent_id', 'id');
@@ -81,12 +50,15 @@ class Unit extends Base
         return $this->children()->with('childrenRecursive');
     }
 
+    public function parent(): BelongsTo
+    {
+        return $this->belongsTo(Self::class, 'parent_id');
+    }
 
-
-
-
-
-
+    public function parentRecursive()
+    {
+        return $this->parent()->with('parentRecursive');
+    }
 
     public function hasChildren()
     {
@@ -122,39 +94,6 @@ class Unit extends Base
             }
         }
         return $level;
-    }
-
-
-
-
-
-
-
-    public function childrenWithUsersCount(): HasMany
-    {
-        return $this->children()->withCount('users')->with('childrenWithUsersCount');
-    }
-
-    public function getAllChildren()
-    {
-        $sections = collect();
-
-        foreach ($this->childrenWithUsersCount as $section) {
-            $sections->push($section);
-            $sections = $sections->merge($section->getAllChildren());
-        }
-
-        return $sections;
-    }
-
-    public function parent(): BelongsTo
-    {
-        return $this->belongsTo(Self::class, 'parent_id');
-    }
-
-    public function parentRecursive()
-    {
-        return $this->parent()->with('parentRecursive');
     }
 
     public function getParentsNames()

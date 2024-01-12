@@ -25,8 +25,8 @@ class RolesController extends Controller
 
         $roles = Role::filter($request, 'roles')
             ->leftjoin('role_user', 'role_user.role_id', '=', 'roles.id')
-            ->select('roles.*')
-            ->groupBy('roles.id', 'roles.*')
+            ->select('roles.id', 'roles.name', 'roles.description', 'roles.deleted_at')
+            ->groupBy('roles.id', 'roles.name', 'roles.description', 'roles.deleted_at')
             ->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
                 $query->where('roles.superadmin', false);
                 $query->where('roles.manager', false);
@@ -44,7 +44,6 @@ class RolesController extends Controller
                 'abilities',
                 'users' => function ($query) use ($request) {
                     $query->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
-
                         $query->join('unit_user', function (JoinClause $join) use ($request, $query) {
                             $join->on('unit_user.user_id', '=', 'role_user.user_id')
                                 ->whereIn('unit_user.unit_id', $request->user()->unitsIds());
@@ -141,12 +140,17 @@ class RolesController extends Controller
 
         $users = User::filter($request, 'users')
             ->leftjoin('unit_user', 'unit_user.user_id', '=', 'users.id')
+            ->leftjoin('role_user', 'role_user.user_id', '=', 'users.id')
             ->select('users.id', 'users.name', 'users.email')
             ->groupBy('users.id', 'users.name', 'users.email')
-            ->when(!$request->all, function ($query) use ($role) {
-                $query->join('role_user', 'role_user.user_id', '=', 'users.id');
-                $query->where('role_user.role_id', $role->id);
-            })
+            ->when(
+                $request->show == 'all',
+                function () {
+                },
+                function ($query) use ($role) {
+                    $query->where('role_user.role_id', $role->id);
+                }
+            )
             ->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
                 if ($request->user()->cannot('hasFullAccess', User::class)) {
                     $query->where('unit_user.user_id', $request->user()->id);

@@ -21,10 +21,9 @@ class AbilitiesController extends Controller
 
         $prefixes = ['apps', 'reports'];
 
-        $routes = collect(Route::getRoutes())->filter(function ($route) use ($prefixes) {
+        $routes = collect(Route::getRoutes())->filter(function ($route) use ($request, $prefixes) {
             return Str::contains($route->uri, $prefixes)
-                // && ($request->abilities_search ? Str::contains($route->action['as'], $request->abilities_search) : true)
-            ;
+                && ($request->validAbilities_search ? Str::contains($route->action['as'], $request->validAbilities_search) : true);
         });
 
         $abilitiesInDB = Ability::filter($request, 'abilites')->get()->pluck('name');

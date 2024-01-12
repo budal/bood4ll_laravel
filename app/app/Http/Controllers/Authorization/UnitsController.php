@@ -52,8 +52,8 @@ class UnitsController extends Controller
             ->leftJoinSub($unitsUsers, 'units_users', function (JoinClause $join) {
                 $join->on('units.id', '=', 'units_users.unit_id');
             })
-            ->groupBy('units.id', 'units.shortpath', 'units_users.local_users', 'units_users.all_users')
-            ->select('units.id', 'units.shortpath as name', 'units_users.local_users', 'units_users.all_users')
+            ->groupBy('units.id', 'units.shortpath', 'units_users.local_users', 'units_users.all_users', 'units.deleted_at')
+            ->select('units.id', 'units.shortpath as name', 'units_users.local_users', 'units_users.all_users', 'units.deleted_at')
             ->withCount('children')
             ->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
                 if ($request->user()->cannot('hasFullAccess', User::class)) {
@@ -184,13 +184,15 @@ class UnitsController extends Controller
             ->leftJoin('unit_user', 'unit_user.user_id', '=', 'users.id')
             ->select('users.id', 'users.name', 'users.email')
             ->groupBy('users.id', 'users.name', 'users.email')
-            ->when($unit['children_id'], function ($query) use ($unit) {
-                $query->whereIn('unit_user.unit_id', json_decode($unit['children_id']));
-            })
-            ->when(!$request->all, function ($query) use ($unit) {
-                // $query->join('role_user', 'role_user.role_id', '=', 'roles.id');
-                $query->where('unit_user.unit_id', $unit->id);
-            })
+            ->when(
+                $request->show == 'all',
+                function ($query) use ($unit) {
+                    $query->whereIn('unit_user.unit_id', json_decode($unit['children_id']));
+                },
+                function ($query) use ($unit) {
+                    $query->where('unit_user.unit_id', $unit->id);
+                }
+            )
             ->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
                 if ($request->user()->cannot('hasFullAccess', User::class)) {
                     $query->where('unit_user.user_id', $request->user()->id);
@@ -202,7 +204,7 @@ class UnitsController extends Controller
             ->withCount('roles')
             ->paginate($perPage = 20, $columns = ['*'], $pageName = 'staff')
             ->onEachSide(2)
-            ->appends(collect($request->query)->toArray());
+            ->withQueryString();
 
         return [
             [
@@ -315,7 +317,7 @@ class UnitsController extends Controller
                 'id' => 'staff',
                 'title' => 'Staff',
                 'subtitle' => 'Staff management of this unit.',
-                'showIf' => $unit->id != null && Gate::allows('apps.users.index'),
+                'showIf' => $unit->id != null,
                 'cols' => 2,
                 'fields' => [
                     [
@@ -325,7 +327,10 @@ class UnitsController extends Controller
                             'span' => 2,
                             'content' => [
                                 'routes' => [
-                                    'editRoute' => 'apps.users.edit',
+                                    'editRoute' => [
+                                        'route' => 'apps.users.edit',
+                                        'showIf' => Gate::allows('apps.users.index')
+                                    ],
                                 ],
                                 'menu' => [
                                     [

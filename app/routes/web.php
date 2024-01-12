@@ -93,28 +93,28 @@ Route::middleware('auth')->group(function () {
 
         Route::controller(RolesController::class)->group(function () {
             Route::name('roles.')->middleware('verified', 'password.confirm')->group(function () {
-                Route::get('/permissions/roles', 'index')->name('index')->breadcrumb('Roles')
+                Route::get('/roles', 'index')->name('index')->breadcrumb('Roles')
                     ->defaults('title', 'Roles management')
                     ->defaults('description', 'Define roles, grouping abilities to define specific access.')
                     ->defaults('icon', 'mdi:account-details-outline');
-                Route::get('/permissions/roles/create', 'create')->name('create')->breadcrumb('Role creation', 'apps.roles.index');
-                Route::post('/permissions/roles/create', 'store')->name('store');
-                Route::get('/permissions/roles/edit/{role}/{all?}', 'edit')->name('edit')->breadcrumb('Role edition', 'apps.roles.index');
-                Route::patch('/permissions/roles/edit/{role}', 'update')->name('update');
-                Route::post('/permissions/roles/authorization/{role}/{mode?}', 'authorization')->name('authorization');
-                Route::delete('/permissions/roles/destroy', 'destroy')->name('destroy');
-                Route::delete('/permissions/roles/forcedestroy', 'forceDestroy')->name('forcedestroy');
-                Route::post('/permissions/roles/restore', 'restore')->name('restore');
+                Route::get('/roles/create', 'create')->name('create')->breadcrumb('Role creation', 'apps.roles.index');
+                Route::post('/roles/create', 'store')->name('store');
+                Route::get('/roles/edit/{role}/{show?}', 'edit')->name('edit')->breadcrumb('Role edition', 'apps.roles.index');
+                Route::patch('/roles/edit/{role}', 'update')->name('update');
+                Route::post('/roles/authorization/{role}/{mode?}', 'authorization')->name('authorization');
+                Route::delete('/roles/destroy', 'destroy')->name('destroy');
+                Route::delete('/roles/forcedestroy', 'forceDestroy')->name('forcedestroy');
+                Route::post('/roles/restore', 'restore')->name('restore');
             });
         });
 
         Route::controller(AbilitiesController::class)->group(function () {
             Route::name('abilities.')->middleware('verified', 'password.confirm')->group(function () {
-                Route::get('/permissions/abilities', 'index')->name('index')->breadcrumb('Abilities')
+                Route::get('/abilities', 'index')->name('index')->breadcrumb('Abilities')
                     ->defaults('title', 'Abilities management')
                     ->defaults('description', 'Define which abilities will be showed in the roles management.')
                     ->defaults('icon', 'mdi:book-cog-outline');
-                Route::post('/permissions/abilities/update/{mode?}', 'update')->name('update')->whereIn('mode', ['toggle', 'on', 'off']);
+                Route::post('/abilities/update/{mode?}', 'update')->name('update')->whereIn('mode', ['toggle', 'on', 'off']);
             });
         });
 
@@ -126,7 +126,7 @@ Route::middleware('auth')->group(function () {
                     ->defaults('icon', 'mdi:home-group');;
                 Route::get('/units/create/{unit?}', 'create')->name('create')->breadcrumb('Unit creation', 'apps.units.index');
                 Route::post('/units/create', 'store')->name('store');
-                Route::get('/units/edit/{unit}/{all?}', 'edit')->name('edit')->breadcrumb('Unit edition', 'apps.units.index');
+                Route::get('/units/edit/{unit}/{show?}', 'edit')->name('edit')->breadcrumb('Unit edition', 'apps.units.index');
                 Route::patch('/units/edit/{unit}', 'update')->name('update');
                 Route::post('/units/hierarchy', 'hierarchy')->name('hierarchy');
                 Route::delete('/units/destroy', 'destroy')->name('destroy');
