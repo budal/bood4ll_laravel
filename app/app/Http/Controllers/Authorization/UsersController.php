@@ -274,7 +274,7 @@ class UsersController extends Controller
                 $hasUnit ? $user->units()->detach($request->list) : $user->units()->attach($request->list);
 
                 return Redirect::back()->with([
-                    'toast_type' => 'info',
+                    'toast_type' => 'success',
                     'toast_message' => $hasUnit
                         ? "The user ':user' was detached in the ':unit'."
                         : "The user ':user' was attached in the ':unit'.",
@@ -323,7 +323,9 @@ class UsersController extends Controller
                 $request->show == 'all_units',
                 function ($query) use ($request) {
                     $query->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
-                        $query->where('units.active', true);
+                        // $query->where('units.active', true);
+
+                        dd($request->user()->units->pluck('id'));
 
                         foreach ($request->user()->units->pluck('id') as $id) {
                             $query->whereRaw('unit_user.unit_id IN (SELECT (json_array_elements(u.children_id::json)::text)::bigint FROM units u WHERE u.id = ' . $id . ')');
