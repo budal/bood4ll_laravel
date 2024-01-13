@@ -102,10 +102,13 @@ class CalendarsController extends Controller
     public function __form(Request $request, Calendar $calendar): array
     {
         $holidays = $calendar->holidays()
+            // ->innerJoin('calendars', 'calendars.id', '=', )
             ->filter($request, 'holidays')
             ->paginate(20)
             ->onEachSide(2)
             ->appends(collect($request->query)->toArray());
+
+        // dd($holidays);
 
         return [
             [
@@ -175,7 +178,7 @@ class CalendarsController extends Controller
                                     [
                                         'type' => 'text',
                                         'title' => 'Starts at',
-                                        'field' => 'starts_at',
+                                        'field' => 'start',
                                     ],
                                     [
                                         'type' => 'text',

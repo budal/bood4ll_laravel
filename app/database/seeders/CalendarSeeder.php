@@ -19,7 +19,7 @@ class CalendarSeeder extends Seeder
                 ['name' => 'Sexta-Feira Santa', 'easter' => true, 'diference_start' => '-2 days', 'diference_end' => '-1 days 23 hours 59 minutes'],
                 ['name' => 'Páscoa', 'easter' => true],
                 ['name' => 'Corpus Christi', 'easter' => true, 'diference_start' => '+60 days', 'diference_end' => '+60 days 23 hours 59 minutes'],
-                ['name' => 'Tiradentes', 'day' => '04', 'month' => '21', 'start' => '00:00', 'end' => '23:59'],
+                ['name' => 'Tiradentes', 'day' => '21', 'month' => '04', 'start' => '00:00', 'end' => '23:59'],
                 ['name' => 'Dia mundial do Trabalho', 'day' => '01', 'month' => '05', 'start' => '00:00', 'end' => '23:59'],
                 ['name' => 'Independência do Brasil', 'day' => '07', 'month' => '09', 'start' => '00:00', 'end' => '23:59'],
                 ['name' => 'Dia de N. Sra. Aparecida', 'day' => '12', 'month' => '10', 'start' => '00:00', 'end' => '23:59'],
