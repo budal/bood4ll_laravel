@@ -174,6 +174,7 @@ const changeTab = (item: any) => {
                                     field.type == 'number' ||
                                     field.type == 'password' ||
                                     field.type == 'date' ||
+                                    field.type == 'datetime-local' ||
                                     field.type == 'email'
                                 "
                                 :id="field.name"

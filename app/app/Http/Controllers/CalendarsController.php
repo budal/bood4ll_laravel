@@ -140,124 +140,47 @@ class CalendarsController extends Controller
                             'content' => [
                                 'routes' => [
                                     'createRoute' => [
-                                        'route' => 'apps.calendars.create_holiday',
+                                        'route' => 'apps.calendars.holiday_create',
                                         'attributes' => [$calendar->id],
-                                        'showIf' => Gate::allows('apps.calendars.create_holiday'),
+                                        'showIf' => Gate::allows('apps.calendars.holiday_create'),
                                     ],
                                     'editRoute' => [
-                                        'route' => 'apps.calendars.edit_holiday',
-                                        'attributes' => [$calendar->id],
-                                        'showIf' => Gate::allows('apps.calendars.edit_holiday'),
+                                        'route' => 'apps.calendars.holiday_edit',
+                                        'showIf' => Gate::allows('apps.calendars.holiday_edit'),
                                     ],
-
-                                ],
-                                'menu' => [
-                                    [
-                                        'icon' => 'mdi:plus-circle-outline',
-                                        'title' => 'Authorize',
-                                        'route' => [
-                                            'route' => 'apps.roles.authorization',
-                                            'attributes' => [
-                                                $calendar->id,
-                                                'on',
-                                            ],
-                                        ],
-                                        'method' => 'post',
-                                        'list' => 'checkboxes',
-                                        'listCondition' => false,
-                                        'modalTitle' => 'Are you sure you want to authorize the selected users?|Are you sure you want to authorize the selected users?',
-                                        'modalSubTitle' => 'The selected user will have the rights to access this role. Do you want to continue?|The selected user will have the rights to access this role. Do you want to continue?',
-                                        'buttonTitle' => 'Authorize',
-                                        'buttonIcon' => 'mdi:plus-circle-outline',
-                                        'buttonColor' => 'success',
+                                    'destroyRoute' => [
+                                        'route' => 'apps.calendars.holiday_forcedestroy',
+                                        'showIf' => Gate::allows('apps.calendars.holiday_destroy'),
                                     ],
-                                    [
-                                        'icon' => 'mdi:minus-circle-outline',
-                                        'title' => 'Deauthorize',
-                                        'route' => [
-                                            'route' => 'apps.roles.authorization',
-                                            'attributes' => [
-                                                $calendar->id,
-                                                'off',
-                                            ],
-                                        ],
-                                        'method' => 'post',
-                                        'list' => 'checkboxes',
-                                        'listCondition' => true,
-                                        'modalTitle' => 'Are you sure you want to deauthorize the selected users?|Are you sure you want to deauthorize the selected users?',
-                                        'modalSubTitle' => 'The selected user will lose the rights to access this role. Do you want to continue?|The selected users will lose the rights to access this role. Do you want to continue?',
-                                        'buttonTitle' => 'Deauthorize',
-                                        'buttonIcon' => 'mdi:minus-circle-outline',
-                                        'buttonColor' => 'danger',
+                                    'forceDestroyRoute' => [
+                                        'route' => 'apps.calendars.holiday_forcedestroy',
+                                        'showIf' => Gate::allows('apps.calendars.holiday_forcedestroy'),
                                     ],
-                                    [
-                                        'title' => '-',
-                                    ],
-
-                                    [
-                                        'icon' => 'mdi:format-list-checkbox',
-                                        'title' => 'List',
-                                        'items' => [
-                                            [
-                                                'icon' => 'mdi:account-key-outline',
-                                                'title' => 'Authorized users',
-                                                'route' => [
-                                                    'route' => 'apps.roles.edit',
-                                                    'attributes' => $calendar->id,
-                                                ],
-                                            ],
-                                            [
-                                                'icon' => 'mdi:account-multiple-outline',
-                                                'title' => 'All users',
-                                                'route' => [
-                                                    'route' => 'apps.roles.edit',
-                                                    'attributes' => [$calendar->id, 'all'],
-                                                ],
-                                            ],
-                                        ],
+                                    'restoreRoute' => [
+                                        'route' => 'apps.calendars.holiday_restore',
+                                        'showIf' => Gate::allows('apps.calendars.holiday_restore'),
                                     ],
                                 ],
                                 'titles' => [
                                     [
-                                        'type' => 'composite',
+                                        'type' => 'text',
                                         'title' => 'User',
                                         'field' => 'name',
-                                        'values' => [
-                                            [
-                                                'field' => 'name',
-                                            ],
-                                            [
-                                                'field' => 'email',
-                                                'class' => 'text-xs',
-                                            ],
-                                        ],
                                     ],
                                     [
-                                        'type' => 'composite',
-                                        'title' => 'Classified',
-                                        'class' => 'collapse',
-                                        'field' => 'units_classified',
-                                        'options' => [
-                                            [
-                                                'field' => 'name',
-                                            ],
-                                        ],
+                                        'type' => 'text',
+                                        'title' => 'Starts at',
+                                        'field' => 'starts_at',
                                     ],
                                     [
-                                        'type' => 'composite',
-                                        'title' => 'Working',
-                                        'class' => 'collapse',
-                                        'field' => 'units_working',
-                                        'options' => [
-                                            [
-                                                'field' => 'name',
-                                            ],
-                                        ],
+                                        'type' => 'text',
+                                        'title' => 'Ends at',
+                                        'field' => 'ends_at',
                                     ],
                                     [
                                         'type' => 'toggle',
-                                        'title' => '',
-                                        'field' => 'checked',
+                                        'title' => 'Active',
+                                        'field' => 'active',
                                         'disableSort' => true,
                                         'route' => [
                                             'route' => 'apps.roles.authorization',
@@ -309,7 +232,6 @@ class CalendarsController extends Controller
             $calendar->name = $request->name;
             $calendar->owner = $request->user()->id;
             $calendar->active = $request->active;
-            $calendar->year = $request->year;
 
             $calendar->save();
         } catch (\Throwable $e) {
@@ -467,7 +389,7 @@ class CalendarsController extends Controller
         }
     }
 
-    public function __formModal(Request $request, Holiday $holiday): array
+    public function __formModal(): array
     {
         return [
             [
@@ -490,13 +412,13 @@ class CalendarsController extends Controller
                             'colorOff' => 'danger',
                         ],
                         [
-                            'type' => 'date',
+                            'type' => 'datetime-local',
                             'name' => 'starts_at',
                             'title' => 'Starts at',
                             'required' => true,
                         ],
                         [
-                            'type' => 'date',
+                            'type' => 'datetime-local',
                             'name' => 'ends_at',
                             'title' => 'Ends at',
                             'required' => true,
@@ -507,18 +429,16 @@ class CalendarsController extends Controller
         ];
     }
 
-    public function holidayCreate(Request $request, Holiday $holiday): Modal
+    public function holidayCreate(Request $request, Calendar $calendar): Modal
     {
-        // $role['abilities'] = $role->getAllAbilities()->get()->map->only('id')->pluck('id');
-
         return Inertia::modal('Default', [
-            'form' => $this->__formModal($request, $holiday),
+            'form' => $this->__formModal(),
             'isModal' => true,
             'tabs' => false,
             'title' => 'Holiday creation',
             'routes' => [
                 'holiday' => [
-                    'route' => route('apps.calendars.store'),
+                    'route' => route('apps.calendars.holiday_store', $calendar->id),
                     'method' => 'post',
                     'buttonClass' => 'justify-end',
                 ],
@@ -527,29 +447,176 @@ class CalendarsController extends Controller
                 'active' => true,
             ],
         ])
-            ->baseRoute('apps.calendars.create', $holiday)
-            // ->refreshBackdrop()
-        ;
+            ->baseRoute('apps.calendars.edit', $calendar->id)
+            ->refreshBackdrop();
+    }
+
+    public function holidayStore(Request $request, Calendar $calendar): RedirectResponse
+    {
+        $this->authorize('access', User::class);
+
+        DB::beginTransaction();
+
+        try {
+            $holiday = new Holiday();
+
+            $holiday->name = $request->name;
+            $holiday->active = $request->active;
+            $holiday->starts_at = $request->starts_at;
+            $holiday->ends_at = $request->ends_at;
+
+            $holiday->save();
+
+            try {
+                $calendar->holidays()->attach($holiday->id);
+            } catch (\Exception $e) {
+                report($e);
+
+                DB::rollback();
+
+                return Redirect::back()->with([
+                    'toast_type' => 'error',
+                    'toast_message' => 'Error when syncing holidays in the calendar.',
+                ]);
+            }
+        } catch (\Throwable $e) {
+            report($e);
+
+            DB::rollback();
+
+            return Redirect::back()->with([
+                'toast_type' => 'error',
+                'toast_message' => 'Error on add this item.|Error on add the items.',
+                'toast_count' => 1,
+            ]);
+        }
+
+        DB::commit();
+
+        return Redirect::route('apps.calendars.edit', $calendar->id)->with([
+            'toast_type' => 'success',
+            'toast_message' => '{0} Nothing to add.|[1] Item added successfully.|[2,*] :total items successfully added.',
+            'toast_count' => 1,
+        ]);
     }
 
     public function holidayEdit(Request $request, Holiday $holiday): Modal
     {
-        // $role['abilities'] = $role->getAllAbilities()->get()->map->only('id')->pluck('id');
-
         return Inertia::modal('Default', [
-            'form' => $this->__formModal($request, $holiday),
+            'form' => $this->__formModal(),
             'isModal' => true,
-            'title' => 'Define the users who have access to this authorization',
+            'tabs' => false,
+            'title' => 'Holiday creation',
             'routes' => [
-                'user' => [
-                    'route' => route('apps.users.edit', $holiday->id),
+                'holiday' => [
+                    'route' => route('apps.calendars.holiday_update', $holiday->id),
                     'method' => 'patch',
+                    'buttonClass' => 'justify-end',
                 ],
             ],
             'data' => $holiday,
         ])
-            ->baseRoute('apps.users.edit', $holiday)
-            // ->refreshBackdrop()
-        ;
+            ->baseRoute('apps.calendars.edit', $holiday->calendars()->first()->id)
+            ->refreshBackdrop();;
+    }
+
+    public function holidayUpdate(Request $request, Calendar $calendar, Holiday $holiday): RedirectResponse
+    {
+        $this->authorize('access', User::class);
+
+        DB::beginTransaction();
+
+        try {
+            $holiday->name = $request->name;
+            $holiday->active = $request->active;
+            $holiday->starts_at = $request->starts_at;
+            $holiday->ends_at = $request->ends_at;
+
+            $holiday->save();
+        } catch (\Throwable $e) {
+            report($e);
+
+            DB::rollback();
+
+            return Redirect::back()->with([
+                'toast_type' => 'error',
+                'toast_message' => 'Error on edit selected item.|Error on edit selected items.',
+                'toast_count' => 1,
+            ]);
+        }
+
+        DB::commit();
+
+        return Redirect::route('apps.calendars.edit', $holiday->calendars()->first()->id)->with([
+            'toast_type' => 'success',
+            'toast_message' => '{0} Nothing to edit.|[1] Item edited successfully.|[2,*] :total items successfully edited.',
+            'toast_count' => 1,
+        ]);
+    }
+
+    public function holidayDestroy(Request $request): RedirectResponse
+    {
+        try {
+            $total = Holiday::whereIn('id', $request->list)->delete();
+
+            return back()->with([
+                'toast_type' => 'success',
+                'toast_message' => '{0} Nothing to remove.|[1] Item removed successfully.|[2,*] :total items successfully removed.',
+                'toast_count' => $total,
+                'toast_replacements' => ['total' => $total],
+            ]);
+        } catch (\Throwable $e) {
+            report($e);
+
+            return back()->with([
+                'toast_type' => 'error',
+                'toast_message' => 'Error on remove selected item.|Error on remove selected items.',
+                'toast_count' => count($request->list),
+            ]);
+        }
+    }
+
+    public function holidayForceDestroy(Request $request): RedirectResponse
+    {
+        try {
+            $total = Holiday::whereIn('id', $request->list)->forceDelete();
+
+            return back()->with([
+                'toast_type' => 'success',
+                'toast_message' => '{0} Nothing to erase.|[1] Item erased successfully.|[2,*] :total items successfully erased.',
+                'toast_count' => $total,
+                'toast_replacements' => ['total' => $total],
+            ]);
+        } catch (\Throwable $e) {
+            report($e);
+
+            return back()->with([
+                'toast_type' => 'error',
+                'toast_message' => 'Error on erase selected item.|Error on erase selected items.',
+                'toast_count' => count($request->list),
+            ]);
+        }
+    }
+
+    public function holidayRestore(Request $request): RedirectResponse
+    {
+        try {
+            $total = Holiday::whereIn('id', $request->list)->restore();
+
+            return back()->with([
+                'toast_type' => 'success',
+                'toast_message' => '{0} Nothing to restore.|[1] Item restored successfully.|[2,*] :total items successfully restored.',
+                'toast_count' => $total,
+                'toast_replacements' => ['total' => $total],
+            ]);
+        } catch (\Throwable $e) {
+            report($e);
+
+            return back()->with([
+                'toast_type' => 'error',
+                'toast_message' => 'Error on restore selected item.|Error on restore selected items.',
+                'toast_count' => count($request->list),
+            ]);
+        }
     }
 }

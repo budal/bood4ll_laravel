@@ -227,6 +227,7 @@
   "Define which dates will be working days, holidays and optional points.": "Defina que datas serão dias uteis, feriados e pontos opcionais.",
   "Holiday creation": "Criação de feriado",
   "Holiday edition": "Edição de feriado",
+  "Error when syncing holidays in the calendar.": "Error ao sincronizar os feriados no calendário.",
 
   "Users": "Usuários",
   "User": "Usuário",

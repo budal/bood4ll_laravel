@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('name', 100);
             $table->boolean('active')->default(true);
-            $table->date('starts_at')->nullable();
-            $table->date('ends_at')->nullable();
+            $table->datetime('starts_at')->nullable();
+            $table->datetime('ends_at')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

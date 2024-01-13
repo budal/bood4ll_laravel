@@ -127,8 +127,13 @@ Route::middleware('auth')->group(function () {
                 Route::delete('/calendars/forcedestroy', 'forceDestroy')->name('forcedestroy');
                 Route::post('/calendars/restore', 'restore')->name('restore');
 
-                Route::get('/calendars/holiday/create/{calendar}', 'holidayCreate')->name('create_holiday')->breadcrumb('Holiday creation', 'apps.calendars.index');
-                Route::get('/calendars/holiday/edit/{calendar}/{holiday}', 'holidayEdit')->name('edit_holiday')->breadcrumb('Holiday edition', 'apps.calendars.index');
+                Route::get('/calendars/holiday/create/{calendar}', 'holidayCreate')->name('holiday_create')->breadcrumb('Holiday creation', 'apps.calendars.index');
+                Route::post('/calendars/holiday/create/{calendar}', 'holidayStore')->name('holiday_store');
+                Route::get('/calendars/holiday/edit/{holiday}', 'holidayEdit')->name('holiday_edit')->breadcrumb('Holiday edition', 'apps.calendars.index');
+                Route::patch('/calendars/holiday/edit/{holiday}', 'holidayUpdate')->name('holiday_update');
+                Route::delete('/calendars/holiday/destroy', 'holidayDestroy')->name('holiday_destroy');
+                Route::delete('/calendars/holiday/forcedestroy', 'holidayForceDestroy')->name('holiday_forcedestroy');
+                Route::post('/calendars/holiday/restore', 'holidayRestore')->name('holiday_restore');
             });
         });
 
