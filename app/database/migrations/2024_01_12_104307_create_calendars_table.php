@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('name', 100);
             $table->uuid('owner')->nullable();
             $table->boolean('active')->default(true);
+            $table->year('year')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

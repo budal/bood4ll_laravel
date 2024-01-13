@@ -24,7 +24,7 @@ class CalendarsController extends Controller
         $this->authorize('access', User::class);
 
         $calendars = Calendar::filter($request, 'calendar')
-            ->select('calendars.id', 'calendars.name', 'calendars.deleted_at')
+            ->select('calendars.id', 'calendars.name', 'calendars.year', 'calendars.deleted_at')
             ->withCount([
                 'holidays',
                 'schedules',
@@ -72,6 +72,11 @@ class CalendarsController extends Controller
                                             'type' => 'text',
                                             'title' => 'Name',
                                             'field' => 'name',
+                                        ],
+                                        [
+                                            'type' => 'text',
+                                            'title' => 'Year',
+                                            'field' => 'year',
                                         ],
                                         [
                                             'type' => 'text',
@@ -176,21 +181,6 @@ class CalendarsController extends Controller
                                         'type' => 'text',
                                         'title' => 'Ends at',
                                         'field' => 'ends_at',
-                                    ],
-                                    [
-                                        'type' => 'toggle',
-                                        'title' => 'Active',
-                                        'field' => 'active',
-                                        'disableSort' => true,
-                                        'route' => [
-                                            'route' => 'apps.roles.authorization',
-                                            'attributes' => [
-                                                $calendar->id,
-                                                'toggle',
-                                            ],
-                                        ],
-                                        'method' => 'post',
-                                        'colorOn' => 'info',
                                     ],
                                 ],
                                 'items' => $holidays,
@@ -517,7 +507,7 @@ class CalendarsController extends Controller
             'data' => $holiday,
         ])
             ->baseRoute('apps.calendars.edit', $holiday->calendars()->first()->id)
-            ->refreshBackdrop();;
+            ->refreshBackdrop();
     }
 
     public function holidayUpdate(Request $request, Calendar $calendar, Holiday $holiday): RedirectResponse

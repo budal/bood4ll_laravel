@@ -26,6 +26,7 @@ class UnitsController extends Controller
             ->groupBy('units.id')
             ->select('units.id as unit_id')
             ->selectRaw('COUNT(unit_user.unit_id) as local_users')
+            // ->selectRaw('0 as all_users')
             ->selectRaw("
                 (SELECT COUNT(suu.unit_id) FROM unit_user suu 
                     INNER JOIN units u ON u.id = suu.unit_id

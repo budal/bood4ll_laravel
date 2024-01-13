@@ -18,6 +18,7 @@ return new class() extends Migration
             $table->uuid('owner')->nullable();
             $table->date('founded')->nullable();
             $table->unsignedBigInteger('parent_id')->nullable();
+            $table->jsonb('children_id')->nullable();
             $table->boolean('active')->default(true);
             $table->date('expires')->nullable();
             $table->string('cellphone')->nullable();

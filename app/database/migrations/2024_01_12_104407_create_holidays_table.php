@@ -15,8 +15,13 @@ return new class extends Migration
             $table->id();
             $table->string('name', 100);
             $table->boolean('active')->default(true);
-            $table->datetime('starts_at')->nullable();
-            $table->datetime('ends_at')->nullable();
+            $table->integer('day')->nullable();
+            $table->integer('month')->nullable();
+            $table->time('start')->nullable();
+            $table->time('end')->nullable();
+            $table->boolean('easter')->default(false);
+            $table->string('diference_start', 100)->nullable();
+            $table->string('diference_end', 100)->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

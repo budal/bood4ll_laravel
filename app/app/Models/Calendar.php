@@ -15,6 +15,7 @@ class Calendar extends Base
         'name',
         'owner',
         'active',
+        'year',
     ];
 
     public function schedules(): BelongsToMany

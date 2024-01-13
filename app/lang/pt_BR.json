@@ -195,6 +195,8 @@
   "All users": "Todos os usuários",
   "Role creation": "Criação de função",
   "Role edition": "Edição de função",
+  "Authorized roles": "Funções autorizadas",
+  "All roles": "Todas as funções",
   "Error when syncing abilities to the role.": "Erro ao sincronizar as abilitações à função.",
   "Error when inserting a new role.": "Erro ao inserir uma nova função.",
   "Authorizations": "Autorizações",

@@ -12,6 +12,7 @@ class UnitSeeder extends Seeder
         \App\Models\Unit::factory()->afterCreating(function (\App\Models\Unit $unit) {
             $unit->fullpath = $unit->getParentsNames();
             $unit->shortpath = $unit->getParentsNicknames();
+            $unit->children_id = collect($unit->getDescendants())->toJson();
 
             $unit->save();
         })->create([
@@ -29,6 +30,7 @@ class UnitSeeder extends Seeder
             ])->afterCreating(function (\App\Models\Unit $unit) {
                 $unit->fullpath = $unit->getParentsNames();
                 $unit->shortpath = $unit->getParentsNicknames();
+                $unit->children_id = collect($unit->getDescendants())->toJson();
 
                 $unit->save();
             })->create();
@@ -45,6 +47,7 @@ class UnitSeeder extends Seeder
             ])->afterCreating(function (\App\Models\Unit $unit) {
                 $unit->fullpath = $unit->getParentsNames();
                 $unit->shortpath = $unit->getParentsNicknames();
+                $unit->children_id = collect($unit->getDescendants())->toJson();
 
                 $unit->save();
 
@@ -67,6 +70,7 @@ class UnitSeeder extends Seeder
                     ->state(new Sequence(...$subunits))->afterCreating(function (\App\Models\Unit $unit) {
                         $unit->fullpath = $unit->getParentsNames();
                         $unit->shortpath = $unit->getParentsNicknames();
+                        $unit->children_id = collect($unit->getDescendants())->toJson();
 
                         $unit->save();
                     })->create();
@@ -80,6 +84,7 @@ class UnitSeeder extends Seeder
                     ])->afterCreating(function (\App\Models\Unit $unit) {
                         $unit->fullpath = $unit->getParentsNames();
                         $unit->shortpath = $unit->getParentsNicknames();
+                        $unit->children_id = collect($unit->getDescendants())->toJson();
 
                         $unit->save();
                     })->create();
