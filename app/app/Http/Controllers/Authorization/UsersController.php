@@ -7,7 +7,6 @@ use App\Http\Requests\ProfileUpdateRequest;
 use App\Models\Role;
 use App\Models\Unit;
 use App\Models\User;
-use Emargareten\InertiaModal\Modal;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -812,68 +811,5 @@ class UsersController extends Controller
                 'toast_count' => count($request->list),
             ]);
         }
-    }
-
-
-    public function __formModal(Request $request, User $user): array
-    {
-        $units = Unit::get();
-
-        $users = User::paginate(5)
-            ->onEachSide(1)
-            ->appends($request->all('users_search', 'users_sorted', 'users_trashed'));
-
-        return [
-            [
-                'id' => 'users',
-                'fields' => [
-                    [
-                        [
-                            'type' => 'table',
-                            'name' => 'users',
-                            'span' => 2,
-                            'content' => [
-                                'menu' => [
-                                    [
-                                        'icon' => 'mdi:book-cog-outline',
-                                        'title' => 'Abilities management',
-                                        'route' => 'apps.abilities.index',
-                                    ],
-                                ],
-                                'titles' => [
-                                    [
-                                        'type' => 'text',
-                                        'title' => 'Name',
-                                        'field' => 'name',
-                                    ],
-                                ],
-                                'items' => $units,
-                            ],
-                        ],
-                    ],
-                ],
-            ],
-        ];
-    }
-
-    public function adduser(Request $request, User $user): Modal
-    {
-        // $role['abilities'] = $role->getAllAbilities()->get()->map->only('id')->pluck('id');
-
-        return Inertia::modal('Default', [
-            'form' => $this->__formModal($request, $user),
-            'isModal' => true,
-            'title' => 'Define the users who have access to this authorization',
-            'routes' => [
-                'user' => [
-                    'route' => route('apps.users.edit', $user->id),
-                    'method' => 'patch',
-                ],
-            ],
-            // 'data' => $role,
-        ])
-            ->baseRoute('apps.users.edit', $user)
-            // ->refreshBackdrop()
-        ;
     }
 }

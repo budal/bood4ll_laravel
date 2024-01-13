@@ -126,6 +126,9 @@ Route::middleware('auth')->group(function () {
                 Route::delete('/calendars/destroy', 'destroy')->name('destroy');
                 Route::delete('/calendars/forcedestroy', 'forceDestroy')->name('forcedestroy');
                 Route::post('/calendars/restore', 'restore')->name('restore');
+
+                Route::get('/calendars/holiday/create/{calendar}', 'holidayCreate')->name('create_holiday')->breadcrumb('Holiday creation', 'apps.calendars.index');
+                Route::get('/calendars/holiday/edit/{calendar}/{holiday}', 'holidayEdit')->name('edit_holiday')->breadcrumb('Holiday edition', 'apps.calendars.index');
             });
         });
 
@@ -147,8 +150,6 @@ Route::middleware('auth')->group(function () {
                 Route::delete('/users/destroy', 'destroy')->name('destroy');
                 Route::delete('/users/forcedestroy', 'forceDestroy')->name('forcedestroy');
                 Route::post('/users/restore', 'restore')->name('restore');
-
-                Route::get('/users/adduser/{user}', 'adduser')->name('edit.adduser')->breadcrumb('Unit management', 'apps.users.index');
             });
         });
 

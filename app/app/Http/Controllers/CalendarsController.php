@@ -5,8 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\RolesRequest;
 use App\Models\Calendar;
-use App\Models\Holidays;
+use App\Models\Holiday;
 use App\Models\User;
+use Emargareten\InertiaModal\Modal;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -95,41 +96,18 @@ class CalendarsController extends Controller
 
     public function __form(Request $request, Calendar $calendar): array
     {
-        // $calendars = User::filter($request, 'users')
-        //     ->leftjoin('unit_user', 'unit_user.user_id', '=', 'users.id')
-        //     ->leftjoin('role_user', 'role_user.user_id', '=', 'users.id')
-        //     ->select('users.id', 'users.name', 'users.email')
-        //     ->groupBy('users.id', 'users.name', 'users.email')
-        //     ->when(
-        //         $request->show == 'all',
-        //         function () {
-        //         },
-        //         function ($query) use ($calendar) {
-        //             $query->where('role_user.role_id', $calendar->id);
-        //         }
-        //     )
-        //     ->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
-        //         if ($request->user()->cannot('hasFullAccess', User::class)) {
-        //             $query->where('unit_user.user_id', $request->user()->id);
-        //         }
-        //         $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
-        //     })
-        //     ->with('unitsClassified', 'unitsWorking')
-        //     ->paginate(20)
-        //     ->onEachSide(2)
-        //     ->appends(collect($request->query)->toArray())
-        //     ->through(function ($item) use ($calendar) {
-        //         $item->checked = $item->roles->pluck('id')->contains($calendar->id);
-
-        //         return $item;
-        //     });
+        $holidays = $calendar->holidays()
+            ->filter($request, 'holidays')
+            ->paginate(20)
+            ->onEachSide(2)
+            ->appends(collect($request->query)->toArray());
 
         return [
             [
                 'id' => 'calendar',
-                'title' => 'Calendar',
+                'title' => 'Main data',
                 'subtitle' => "Calendar's info.",
-                'cols' => 3,
+                'cols' => 2,
                 'fields' => [
                     [
                         [
@@ -138,12 +116,6 @@ class CalendarsController extends Controller
                             'title' => 'Name',
                             'required' => true,
                             'autofocus' => true,
-                        ],
-                        [
-                            'type' => 'number',
-                            'name' => 'year',
-                            'title' => 'Year',
-                            'required' => true,
                         ],
                         [
                             'type' => 'toggle',
@@ -155,145 +127,155 @@ class CalendarsController extends Controller
                     ],
                 ],
             ],
-            // [
-            //     'id' => 'users',
-            //     'title' => 'Authorizations',
-            //     'subtitle' => 'Define which users will have access to this authorization',
-            //     'showIf' => $calendar->id != null,
-            //     'fields' => [
-            //         [
-            //             [
-            //                 'type' => 'table',
-            //                 'name' => 'users',
-            //                 'content' => [
-            //                     'routes' => [
-            //                         'showCheckboxes' => true,
-            //                     ],
-            //                     'menu' => [
-            //                         [
-            //                             'icon' => 'mdi:plus-circle-outline',
-            //                             'title' => 'Authorize',
-            //                             'route' => [
-            //                                 'route' => 'apps.roles.authorization',
-            //                                 'attributes' => [
-            //                                     $calendar->id,
-            //                                     'on',
-            //                                 ],
-            //                             ],
-            //                             'method' => 'post',
-            //                             'list' => 'checkboxes',
-            //                             'listCondition' => false,
-            //                             'modalTitle' => 'Are you sure you want to authorize the selected users?|Are you sure you want to authorize the selected users?',
-            //                             'modalSubTitle' => 'The selected user will have the rights to access this role. Do you want to continue?|The selected user will have the rights to access this role. Do you want to continue?',
-            //                             'buttonTitle' => 'Authorize',
-            //                             'buttonIcon' => 'mdi:plus-circle-outline',
-            //                             'buttonColor' => 'success',
-            //                         ],
-            //                         [
-            //                             'icon' => 'mdi:minus-circle-outline',
-            //                             'title' => 'Deauthorize',
-            //                             'route' => [
-            //                                 'route' => 'apps.roles.authorization',
-            //                                 'attributes' => [
-            //                                     $calendar->id,
-            //                                     'off',
-            //                                 ],
-            //                             ],
-            //                             'method' => 'post',
-            //                             'list' => 'checkboxes',
-            //                             'listCondition' => true,
-            //                             'modalTitle' => 'Are you sure you want to deauthorize the selected users?|Are you sure you want to deauthorize the selected users?',
-            //                             'modalSubTitle' => 'The selected user will lose the rights to access this role. Do you want to continue?|The selected users will lose the rights to access this role. Do you want to continue?',
-            //                             'buttonTitle' => 'Deauthorize',
-            //                             'buttonIcon' => 'mdi:minus-circle-outline',
-            //                             'buttonColor' => 'danger',
-            //                         ],
-            //                         [
-            //                             'title' => '-',
-            //                         ],
+            [
+                'id' => 'holidays',
+                'title' => 'Holidays',
+                'subtitle' => 'Define which dates will be working days, holidays and optional points.',
+                'showIf' => $calendar->id != null,
+                'fields' => [
+                    [
+                        [
+                            'type' => 'table',
+                            'name' => 'holidays',
+                            'content' => [
+                                'routes' => [
+                                    'createRoute' => [
+                                        'route' => 'apps.calendars.create_holiday',
+                                        'attributes' => [$calendar->id],
+                                        'showIf' => Gate::allows('apps.calendars.create_holiday'),
+                                    ],
+                                    'editRoute' => [
+                                        'route' => 'apps.calendars.edit_holiday',
+                                        'attributes' => [$calendar->id],
+                                        'showIf' => Gate::allows('apps.calendars.edit_holiday'),
+                                    ],
 
-            //                         [
-            //                             'icon' => 'mdi:format-list-checkbox',
-            //                             'title' => 'List',
-            //                             'items' => [
-            //                                 [
-            //                                     'icon' => 'mdi:account-key-outline',
-            //                                     'title' => 'Authorized users',
-            //                                     'route' => [
-            //                                         'route' => 'apps.roles.edit',
-            //                                         'attributes' => $calendar->id,
-            //                                     ],
-            //                                 ],
-            //                                 [
-            //                                     'icon' => 'mdi:account-multiple-outline',
-            //                                     'title' => 'All users',
-            //                                     'route' => [
-            //                                         'route' => 'apps.roles.edit',
-            //                                         'attributes' => [$calendar->id, 'all'],
-            //                                     ],
-            //                                 ],
-            //                             ],
-            //                         ],
-            //                     ],
-            //                     'titles' => [
-            //                         [
-            //                             'type' => 'composite',
-            //                             'title' => 'User',
-            //                             'field' => 'name',
-            //                             'values' => [
-            //                                 [
-            //                                     'field' => 'name',
-            //                                 ],
-            //                                 [
-            //                                     'field' => 'email',
-            //                                     'class' => 'text-xs',
-            //                                 ],
-            //                             ],
-            //                         ],
-            //                         [
-            //                             'type' => 'composite',
-            //                             'title' => 'Classified',
-            //                             'class' => 'collapse',
-            //                             'field' => 'units_classified',
-            //                             'options' => [
-            //                                 [
-            //                                     'field' => 'name',
-            //                                 ],
-            //                             ],
-            //                         ],
-            //                         [
-            //                             'type' => 'composite',
-            //                             'title' => 'Working',
-            //                             'class' => 'collapse',
-            //                             'field' => 'units_working',
-            //                             'options' => [
-            //                                 [
-            //                                     'field' => 'name',
-            //                                 ],
-            //                             ],
-            //                         ],
-            //                         [
-            //                             'type' => 'toggle',
-            //                             'title' => '',
-            //                             'field' => 'checked',
-            //                             'disableSort' => true,
-            //                             'route' => [
-            //                                 'route' => 'apps.roles.authorization',
-            //                                 'attributes' => [
-            //                                     $calendar->id,
-            //                                     'toggle',
-            //                                 ],
-            //                             ],
-            //                             'method' => 'post',
-            //                             'colorOn' => 'info',
-            //                         ],
-            //                     ],
-            //                     'items' => $calendars,
-            //                 ],
-            //             ],
-            //         ],
-            //     ],
-            // ],
+                                ],
+                                'menu' => [
+                                    [
+                                        'icon' => 'mdi:plus-circle-outline',
+                                        'title' => 'Authorize',
+                                        'route' => [
+                                            'route' => 'apps.roles.authorization',
+                                            'attributes' => [
+                                                $calendar->id,
+                                                'on',
+                                            ],
+                                        ],
+                                        'method' => 'post',
+                                        'list' => 'checkboxes',
+                                        'listCondition' => false,
+                                        'modalTitle' => 'Are you sure you want to authorize the selected users?|Are you sure you want to authorize the selected users?',
+                                        'modalSubTitle' => 'The selected user will have the rights to access this role. Do you want to continue?|The selected user will have the rights to access this role. Do you want to continue?',
+                                        'buttonTitle' => 'Authorize',
+                                        'buttonIcon' => 'mdi:plus-circle-outline',
+                                        'buttonColor' => 'success',
+                                    ],
+                                    [
+                                        'icon' => 'mdi:minus-circle-outline',
+                                        'title' => 'Deauthorize',
+                                        'route' => [
+                                            'route' => 'apps.roles.authorization',
+                                            'attributes' => [
+                                                $calendar->id,
+                                                'off',
+                                            ],
+                                        ],
+                                        'method' => 'post',
+                                        'list' => 'checkboxes',
+                                        'listCondition' => true,
+                                        'modalTitle' => 'Are you sure you want to deauthorize the selected users?|Are you sure you want to deauthorize the selected users?',
+                                        'modalSubTitle' => 'The selected user will lose the rights to access this role. Do you want to continue?|The selected users will lose the rights to access this role. Do you want to continue?',
+                                        'buttonTitle' => 'Deauthorize',
+                                        'buttonIcon' => 'mdi:minus-circle-outline',
+                                        'buttonColor' => 'danger',
+                                    ],
+                                    [
+                                        'title' => '-',
+                                    ],
+
+                                    [
+                                        'icon' => 'mdi:format-list-checkbox',
+                                        'title' => 'List',
+                                        'items' => [
+                                            [
+                                                'icon' => 'mdi:account-key-outline',
+                                                'title' => 'Authorized users',
+                                                'route' => [
+                                                    'route' => 'apps.roles.edit',
+                                                    'attributes' => $calendar->id,
+                                                ],
+                                            ],
+                                            [
+                                                'icon' => 'mdi:account-multiple-outline',
+                                                'title' => 'All users',
+                                                'route' => [
+                                                    'route' => 'apps.roles.edit',
+                                                    'attributes' => [$calendar->id, 'all'],
+                                                ],
+                                            ],
+                                        ],
+                                    ],
+                                ],
+                                'titles' => [
+                                    [
+                                        'type' => 'composite',
+                                        'title' => 'User',
+                                        'field' => 'name',
+                                        'values' => [
+                                            [
+                                                'field' => 'name',
+                                            ],
+                                            [
+                                                'field' => 'email',
+                                                'class' => 'text-xs',
+                                            ],
+                                        ],
+                                    ],
+                                    [
+                                        'type' => 'composite',
+                                        'title' => 'Classified',
+                                        'class' => 'collapse',
+                                        'field' => 'units_classified',
+                                        'options' => [
+                                            [
+                                                'field' => 'name',
+                                            ],
+                                        ],
+                                    ],
+                                    [
+                                        'type' => 'composite',
+                                        'title' => 'Working',
+                                        'class' => 'collapse',
+                                        'field' => 'units_working',
+                                        'options' => [
+                                            [
+                                                'field' => 'name',
+                                            ],
+                                        ],
+                                    ],
+                                    [
+                                        'type' => 'toggle',
+                                        'title' => '',
+                                        'field' => 'checked',
+                                        'disableSort' => true,
+                                        'route' => [
+                                            'route' => 'apps.roles.authorization',
+                                            'attributes' => [
+                                                $calendar->id,
+                                                'toggle',
+                                            ],
+                                        ],
+                                        'method' => 'post',
+                                        'colorOn' => 'info',
+                                    ],
+                                ],
+                                'items' => $holidays,
+                            ],
+                        ],
+                    ],
+                ],
+            ],
         ];
     }
 
@@ -483,5 +465,90 @@ class CalendarsController extends Controller
                 'toast_count' => $request->list,
             ]);
         }
+    }
+
+    public function __formModal(Request $request, Holiday $holiday): array
+    {
+        return [
+            [
+                'id' => 'holiday',
+                'title' => 'Main data',
+                'cols' => 2,
+                'fields' => [
+                    [
+                        [
+                            'type' => 'input',
+                            'name' => 'name',
+                            'title' => 'Name',
+                            'required' => true,
+                            'autofocus' => true,
+                        ],
+                        [
+                            'type' => 'toggle',
+                            'name' => 'active',
+                            'title' => 'Active',
+                            'colorOn' => 'success',
+                            'colorOff' => 'danger',
+                        ],
+                        [
+                            'type' => 'date',
+                            'name' => 'starts_at',
+                            'title' => 'Starts at',
+                            'required' => true,
+                        ],
+                        [
+                            'type' => 'date',
+                            'name' => 'ends_at',
+                            'title' => 'Ends at',
+                            'required' => true,
+                        ],
+                    ],
+                ],
+            ],
+        ];
+    }
+
+    public function holidayCreate(Request $request, Holiday $holiday): Modal
+    {
+        // $role['abilities'] = $role->getAllAbilities()->get()->map->only('id')->pluck('id');
+
+        return Inertia::modal('Default', [
+            'form' => $this->__formModal($request, $holiday),
+            'isModal' => true,
+            'title' => 'Holiday creation',
+            'routes' => [
+                'user' => [
+                    'route' => route('apps.calendars.store'),
+                    'method' => 'post',
+                ],
+            ],
+            'data' => [
+                'active' => true,
+            ],
+        ])
+            ->baseRoute('apps.calendars.create', $holiday)
+            // ->refreshBackdrop()
+        ;
+    }
+
+    public function holidayEdit(Request $request, Holiday $holiday): Modal
+    {
+        // $role['abilities'] = $role->getAllAbilities()->get()->map->only('id')->pluck('id');
+
+        return Inertia::modal('Default', [
+            'form' => $this->__formModal($request, $holiday),
+            'isModal' => true,
+            'title' => 'Define the users who have access to this authorization',
+            'routes' => [
+                'user' => [
+                    'route' => route('apps.users.edit', $holiday->id),
+                    'method' => 'patch',
+                ],
+            ],
+            'data' => $holiday,
+        ])
+            ->baseRoute('apps.users.edit', $holiday)
+            // ->refreshBackdrop()
+        ;
     }
 }

@@ -27,6 +27,8 @@
   "Day": "Dia",
   "Month": "Mês",
   "Year": "Ano",
+  "Starts at": "Inicia em",
+  "Ends at": "Termina em",
   
   "Current Password": "Senha atual",
   "New Password": "Nova Senha",
@@ -221,6 +223,10 @@
   "Calendar's info.": "Informações do calendário.",
   "Calendar creation": "Criação de calendário",
   "Calendar edition": "Edição de calendário",
+  "Holidays": "Feriados",
+  "Define which dates will be working days, holidays and optional points.": "Defina que datas serão dias uteis, feriados e pontos opcionais.",
+  "Holiday creation": "Criação de feriado",
+  "Holiday edition": "Edição de feriado",
 
   "Users": "Usuários",
   "User": "Usuário",
