@@ -472,7 +472,6 @@ class CalendarsController extends Controller
         return [
             [
                 'id' => 'holiday',
-                'title' => 'Main data',
                 'cols' => 2,
                 'fields' => [
                     [
@@ -515,11 +514,13 @@ class CalendarsController extends Controller
         return Inertia::modal('Default', [
             'form' => $this->__formModal($request, $holiday),
             'isModal' => true,
+            'tabs' => false,
             'title' => 'Holiday creation',
             'routes' => [
-                'user' => [
+                'holiday' => [
                     'route' => route('apps.calendars.store'),
                     'method' => 'post',
+                    'buttonClass' => 'justify-end',
                 ],
             ],
             'data' => [
