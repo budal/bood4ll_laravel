@@ -24,15 +24,17 @@ class Holiday extends Base
         return $this->belongsToMany(Calendar::class);
     }
 
-    protected function start(): Attribute
+    protected function startAt(): Attribute
     {
         return Attribute::make(
-            get: fn (string $value) => ucfirst($value) . 'q',
+            get: fn (string $value) => date_format(date_create($value), "d/m/Y H:i:s"),
         );
     }
 
-    // public function getStartAttribute()
-    // {
-    //     return $this->day . '/' . $this->month;
-    // }
+    protected function endAt(): Attribute
+    {
+        return Attribute::make(
+            get: fn (string $value) => date_format(date_create($value), "d/m/Y H:i:s"),
+        );
+    }
 }

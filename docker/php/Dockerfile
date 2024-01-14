@@ -43,6 +43,7 @@ RUN apt install -y \
 
 RUN docker-php-ext-install \
     bcmath \
+    calendar \
     exif \
     fileinfo \
     gd \
@@ -57,6 +58,8 @@ RUN docker-php-ext-install \
     simplexml \
     xml \
     zip
+
+RUN docker-php-ext-configure calendar
 
 RUN pecl install redis && docker-php-ext-enable redis 
 
