@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\RolesRequest;
-use App\Models\Calendar;
+use App\Models\Absence;
 use App\Models\Holiday;
 use App\Models\User;
 use Emargareten\InertiaModal\Modal;
@@ -23,12 +23,9 @@ class AbsencesController extends Controller
     {
         $this->authorize('access', User::class);
 
-        $calendars = Calendar::filter($request, 'calendar')
-            ->select('calendars.id', 'calendars.name', 'calendars.year', 'calendars.deleted_at')
-            ->withCount([
-                'holidays',
-                'schedules',
-            ])
+        $calendars = Absence::filter($request, 'calendar')
+            ->select('absence.id', 'absence.name', 'absence.year', 'absence.deleted_at')
+            ->withCount('users')
             ->paginate(20)
             ->onEachSide(2)
             ->withQueryString();

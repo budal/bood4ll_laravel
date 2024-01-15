@@ -25,10 +25,7 @@ class CalendarsController extends Controller
 
         $calendars = Calendar::filter($request, 'calendar')
             ->select('calendars.id', 'calendars.name', 'calendars.year', 'calendars.deleted_at')
-            ->withCount([
-                'holidays',
-                'schedules',
-            ])
+            ->withCount('holidays')
             ->paginate(20)
             ->onEachSide(2)
             ->withQueryString();
@@ -82,11 +79,6 @@ class CalendarsController extends Controller
                                             'type' => 'text',
                                             'title' => 'Holidays',
                                             'field' => 'holidays_count',
-                                        ],
-                                        [
-                                            'type' => 'text',
-                                            'title' => 'Schedules',
-                                            'field' => 'schedules_count',
                                         ],
                                     ],
                                     'items' => $calendars,
