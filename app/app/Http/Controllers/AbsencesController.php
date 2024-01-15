@@ -444,7 +444,7 @@ class AbsencesController extends Controller
                                             'field' => 'name',
                                         ],
                                         [
-                                            'type' => 'text',
+                                            'type' => 'active',
                                             'title' => 'Active',
                                             'field' => 'active',
                                         ],
@@ -454,7 +454,7 @@ class AbsencesController extends Controller
                                             'field' => 'duration',
                                         ],
                                         [
-                                            'type' => 'text',
+                                            'type' => 'active',
                                             'title' => 'Working days',
                                             'field' => 'working_days',
                                         ],

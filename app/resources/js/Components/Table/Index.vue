@@ -4,6 +4,7 @@ import Avatar from "@/Components/Avatar.vue";
 import Button from "@/Components/Button.vue";
 import Checkbox from "@/Components/Checkbox.vue";
 import Dropdown from "@/Components/Dropdown.vue";
+import { Icon } from "@iconify/vue";
 import Modal from "@/Components/Modal.vue";
 import Toggle from "@/Components/Toggle.vue";
 import Search from "@/Components/Table/Search.vue";
@@ -477,6 +478,30 @@ const submitModal = () => {
                                 >
                                     {{ item[content.field] ?? "-" }}
                                 </p>
+
+                                <div
+                                    v-if="content.type == 'active'"
+                                    class="flex items-center justify-center rounded-md color-primary-light dark:color-primary-dark"
+                                >
+                                    <Icon
+                                        v-if="item[content.field] == true"
+                                        icon="mdi:check"
+                                        class="w-5 h-5 text-success-light dark:text-success-dark"
+                                        color="green"
+                                    />
+                                    <Icon
+                                        v-else-if="item[content.field] == false"
+                                        icon="mdi:close"
+                                        class="w-5 h-5 text-danger-light dark:text-danger-dark"
+                                        color="red"
+                                    />
+                                    <Icon
+                                        v-else
+                                        icon="mdi:minus"
+                                        class="w-5 h-5 text-info-light dark:text-info-dark"
+                                        color="yellow"
+                                    />
+                                </div>
 
                                 <template
                                     v-if="
