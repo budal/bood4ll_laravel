@@ -398,7 +398,7 @@ class AbsencesController extends Controller
         $this->authorize('access', User::class);
 
         $absences = AbsencesType::filter($request, 'absences_types')
-            ->select('absences_types.id', 'absences_types.name', 'absences_types.active', 'absences_types.duration', 'absences_types.working_days', 'absences_types.deleted_at')
+            ->select('absences_types.id', 'absences_types.name', 'absences_types.active', 'absences_types.max_duration', 'absences_types.working_days', 'absences_types.deleted_at')
             ->paginate(20)
             ->onEachSide(2)
             ->withQueryString();
@@ -451,12 +451,7 @@ class AbsencesController extends Controller
                                         [
                                             'type' => 'text',
                                             'title' => 'Duration (days)',
-                                            'field' => 'duration',
-                                        ],
-                                        [
-                                            'type' => 'active',
-                                            'title' => 'Working days',
-                                            'field' => 'working_days',
+                                            'field' => 'max_duration',
                                         ],
                                     ],
                                     'items' => $absences,
@@ -476,13 +471,14 @@ class AbsencesController extends Controller
                 'id' => 'absences_types',
                 'title' => 'Main data',
                 'subtitle' => 'Absence type management.',
-                'cols' => 2,
+                'cols' => 3,
                 'fields' => [
                     [
                         [
                             'type' => 'input',
                             'name' => 'name',
                             'title' => 'Name',
+                            'span' => 2,
                             'required' => true,
                             'autofocus' => true,
                         ],
@@ -495,7 +491,7 @@ class AbsencesController extends Controller
                         ],
                         [
                             'type' => 'number',
-                            'name' => 'duration',
+                            'name' => 'max_duration',
                             'title' => 'Duration (days)',
                             'required' => true,
                         ],
@@ -505,6 +501,12 @@ class AbsencesController extends Controller
                             'title' => 'Working days',
                             'colorOn' => 'success',
                             'colorOff' => 'danger',
+                        ],
+                        [
+                            'type' => 'number',
+                            'name' => 'acquisition_period',
+                            'title' => 'Acquisition period (days)',
+                            'required' => true,
                         ],
                     ],
                 ],
@@ -541,8 +543,9 @@ class AbsencesController extends Controller
 
             $absences_types->name = $request->name;
             $absences_types->active = $request->active;
-            $absences_types->duration = $request->duration;
+            $absences_types->max_duration = $request->max_duration;
             $absences_types->working_days = $request->working_days;
+            $absences_types->acquisition_period = $request->acquisition_period;
 
             $absences_types->save();
         } catch (\Throwable $e) {
@@ -582,19 +585,20 @@ class AbsencesController extends Controller
         ]);
     }
 
-    public function typeUpdate(Request $request, Absence $absence, AbsencesType $absence_type): RedirectResponse
+    public function typeUpdate(Request $request, AbsencesType $absences_types): RedirectResponse
     {
         $this->authorize('access', User::class);
 
         DB::beginTransaction();
 
         try {
-            $absence_type->name = $request->name;
-            $absence_type->active = $request->active;
-            $absence_type->duration = $request->duration;
-            $absence_type->working_days = $request->working_days;
+            $absences_types->name = $request->name;
+            $absences_types->active = $request->active;
+            $absences_types->max_duration = $request->max_duration;
+            $absences_types->working_days = $request->working_days;
+            $absences_types->acquisition_period = $request->acquisition_period;
 
-            $absence_type->save();
+            $absences_types->save();
         } catch (\Throwable $e) {
             report($e);
 
@@ -609,7 +613,7 @@ class AbsencesController extends Controller
 
         DB::commit();
 
-        return Redirect::route('apps.absences.type_edit', $absence_type->id)->with([
+        return Redirect::route('apps.absences.type_edit', $absences_types->id)->with([
             'toast_type' => 'success',
             'toast_message' => '{0} Nothing to edit.|[1] Item edited successfully.|[2,*] :total items successfully edited.',
             'toast_count' => 1,

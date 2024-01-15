@@ -15,7 +15,8 @@ class AbsencesType extends Base
         'name',
         'owner',
         'active',
-        'duration',
+        'max_duration',
         'working_days',
+        'acquisition_period',
     ];
 }

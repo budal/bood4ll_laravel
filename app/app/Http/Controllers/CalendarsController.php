@@ -117,7 +117,7 @@ class CalendarsController extends Controller
                             'autofocus' => true,
                         ],
                         [
-                            'type' => 'input',
+                            'type' => 'number',
                             'name' => 'year',
                             'title' => 'Year',
                             'required' => true,
