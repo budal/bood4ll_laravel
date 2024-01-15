@@ -34,14 +34,14 @@ class AbsencesController extends Controller
         return Inertia::render('Default', [
             'form' => [
                 [
-                    'id' => 'absence',
+                    'id' => 'absences',
                     'title' => Route::current()->title,
                     'subtitle' => Route::current()->description,
                     'fields' => [
                         [
                             [
                                 'type' => 'table',
-                                'name' => 'absence',
+                                'name' => 'absences',
                                 'content' => [
                                     'routes' => [
                                         'createRoute' => [
@@ -63,6 +63,14 @@ class AbsencesController extends Controller
                                         'restoreRoute' => [
                                             'route' => 'apps.absences.restore',
                                             'showIf' => Gate::allows('apps.absences.restore'),
+                                        ],
+                                    ],
+                                    'menu' => [
+                                        [
+                                            'icon' => 'mdi:clipboard-text-clock-outline',
+                                            'title' => 'Absences types',
+                                            'route' => 'apps.absences.types_index',
+                                            'showIf' => $request->user()->can('isSuperAdmin', User::class),
                                         ],
                                     ],
                                     'titles' => [
@@ -99,11 +107,11 @@ class AbsencesController extends Controller
 
     public function __form(Request $request, Absence $absence): array
     {
-        $holidays = $absence->holidays()
-            ->filter($request, 'holidays', ['order' => ['start_at']])
-            ->paginate(20)
-            ->onEachSide(2)
-            ->appends(collect($request->query)->toArray());
+        // $holidays = $absence->holidays()
+        //     ->filter($request, 'holidays', ['order' => ['start_at']])
+        //     ->paginate(20)
+        //     ->onEachSide(2)
+        //     ->appends(collect($request->query)->toArray());
 
         // dd($holidays);
 
@@ -138,63 +146,63 @@ class AbsencesController extends Controller
                     ],
                 ],
             ],
-            [
-                'id' => 'holidays',
-                'title' => 'Holidays',
-                'subtitle' => 'Define which dates will be working days, holidays and optional points.',
-                'showIf' => $absence->id != null,
-                'fields' => [
-                    [
-                        [
-                            'type' => 'table',
-                            'name' => 'holidays',
-                            'content' => [
-                                'routes' => [
-                                    'createRoute' => [
-                                        'route' => 'apps.absences.holiday_create',
-                                        'attributes' => [$absence->id],
-                                        'showIf' => Gate::allows('apps.absences.holiday_create'),
-                                    ],
-                                    'editRoute' => [
-                                        'route' => 'apps.absences.holiday_edit',
-                                        'showIf' => Gate::allows('apps.absences.holiday_edit'),
-                                    ],
-                                    'destroyRoute' => [
-                                        'route' => 'apps.absences.holiday_forcedestroy',
-                                        'showIf' => Gate::allows('apps.absences.holiday_destroy'),
-                                    ],
-                                    'forceDestroyRoute' => [
-                                        'route' => 'apps.absences.holiday_forcedestroy',
-                                        'showIf' => Gate::allows('apps.absences.holiday_forcedestroy'),
-                                    ],
-                                    'restoreRoute' => [
-                                        'route' => 'apps.absences.holiday_restore',
-                                        'showIf' => Gate::allows('apps.absences.holiday_restore'),
-                                    ],
-                                ],
-                                'titles' => [
-                                    [
-                                        'type' => 'text',
-                                        'title' => 'User',
-                                        'field' => 'name',
-                                    ],
-                                    [
-                                        'type' => 'text',
-                                        'title' => 'Starts at',
-                                        'field' => 'start_at',
-                                    ],
-                                    [
-                                        'type' => 'text',
-                                        'title' => 'Ends at',
-                                        'field' => 'end_at',
-                                    ],
-                                ],
-                                'items' => $holidays,
-                            ],
-                        ],
-                    ],
-                ],
-            ],
+            // [
+            //     'id' => 'holidays',
+            //     'title' => 'Holidays',
+            //     'subtitle' => 'Define which dates will be working days, holidays and optional points.',
+            //     'showIf' => $absence->id != null,
+            //     'fields' => [
+            //         [
+            //             [
+            //                 'type' => 'table',
+            //                 'name' => 'holidays',
+            //                 'content' => [
+            //                     'routes' => [
+            //                         'createRoute' => [
+            //                             'route' => 'apps.absences.holiday_create',
+            //                             'attributes' => [$absence->id],
+            //                             'showIf' => Gate::allows('apps.absences.holiday_create'),
+            //                         ],
+            //                         'editRoute' => [
+            //                             'route' => 'apps.absences.holiday_edit',
+            //                             'showIf' => Gate::allows('apps.absences.holiday_edit'),
+            //                         ],
+            //                         'destroyRoute' => [
+            //                             'route' => 'apps.absences.holiday_forcedestroy',
+            //                             'showIf' => Gate::allows('apps.absences.holiday_destroy'),
+            //                         ],
+            //                         'forceDestroyRoute' => [
+            //                             'route' => 'apps.absences.holiday_forcedestroy',
+            //                             'showIf' => Gate::allows('apps.absences.holiday_forcedestroy'),
+            //                         ],
+            //                         'restoreRoute' => [
+            //                             'route' => 'apps.absences.holiday_restore',
+            //                             'showIf' => Gate::allows('apps.absences.holiday_restore'),
+            //                         ],
+            //                     ],
+            //                     'titles' => [
+            //                         [
+            //                             'type' => 'text',
+            //                             'title' => 'User',
+            //                             'field' => 'name',
+            //                         ],
+            //                         [
+            //                             'type' => 'text',
+            //                             'title' => 'Starts at',
+            //                             'field' => 'start_at',
+            //                         ],
+            //                         [
+            //                             'type' => 'text',
+            //                             'title' => 'Ends at',
+            //                             'field' => 'end_at',
+            //                         ],
+            //                     ],
+            //                     'items' => $holidays,
+            //                 ],
+            //             ],
+            //         ],
+            //     ],
+            // ],
         ];
     }
 
@@ -385,11 +393,89 @@ class AbsencesController extends Controller
         }
     }
 
-    public function __formModal(): array
+    public function typesIndex(Request $request): Response
+    {
+        $this->authorize('access', User::class);
+
+        $absences = AbsencesType::filter($request, 'absences_types')
+            ->select('absences_types.id', 'absences_types.name', 'absences_types.active', 'absences_types.duration', 'absences_types.working_days', 'absences_types.deleted_at')
+            ->paginate(20)
+            ->onEachSide(2)
+            ->withQueryString();
+
+        return Inertia::render('Default', [
+            'form' => [
+                [
+                    'id' => 'absences_types',
+                    'title' => Route::current()->title,
+                    'subtitle' => Route::current()->description,
+                    'fields' => [
+                        [
+                            [
+                                'type' => 'table',
+                                'name' => 'absences_types',
+                                'content' => [
+                                    'routes' => [
+                                        'createRoute' => [
+                                            'route' => 'apps.absences.type_create',
+                                            'showIf' => Gate::allows('apps.absences.type_create'),
+                                        ],
+                                        'editRoute' => [
+                                            'route' => 'apps.absences.type_edit',
+                                            'showIf' => Gate::allows('apps.absences.type_edit')
+                                        ],
+                                        'destroyRoute' => [
+                                            'route' => 'apps.absences.type_destroy',
+                                            'showIf' => Gate::allows('apps.absences.type_destroy'),
+                                        ],
+                                        'forceDestroyRoute' => [
+                                            'route' => 'apps.absences.type_forcedestroy',
+                                            'showIf' => Gate::allows('apps.absences.type_forcedestroy') && $request->user()->can('isSuperAdmin', User::class),
+                                        ],
+                                        'restoreRoute' => [
+                                            'route' => 'apps.absences.type_restore',
+                                            'showIf' => Gate::allows('apps.absences.type_restore'),
+                                        ],
+                                    ],
+                                    'titles' => [
+                                        [
+                                            'type' => 'text',
+                                            'title' => 'Name',
+                                            'field' => 'name',
+                                        ],
+                                        [
+                                            'type' => 'text',
+                                            'title' => 'Active',
+                                            'field' => 'active',
+                                        ],
+                                        [
+                                            'type' => 'text',
+                                            'title' => 'Duration',
+                                            'field' => 'duration',
+                                        ],
+                                        [
+                                            'type' => 'text',
+                                            'title' => 'Working days',
+                                            'field' => 'working_days',
+                                        ],
+                                    ],
+                                    'items' => $absences,
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ]);
+    }
+
+    public function __formTypes(): array
     {
         return [
             [
-                'id' => 'holiday',
+                'id' => 'absences_types',
+                'title' => 'Main data',
+                'subtitle' => 'Absence type management.',
                 'cols' => 2,
                 'fields' => [
                     [
@@ -408,16 +494,17 @@ class AbsencesController extends Controller
                             'colorOff' => 'danger',
                         ],
                         [
-                            'type' => 'datetime-local',
-                            'name' => 'starts_at',
-                            'title' => 'Starts at',
+                            'type' => 'number',
+                            'name' => 'duration',
+                            'title' => 'Duration',
                             'required' => true,
                         ],
                         [
-                            'type' => 'datetime-local',
-                            'name' => 'ends_at',
-                            'title' => 'Ends at',
-                            'required' => true,
+                            'type' => 'toggle',
+                            'name' => 'working_days',
+                            'title' => 'Working days',
+                            'colorOn' => 'success',
+                            'colorOff' => 'danger',
                         ],
                     ],
                 ],
@@ -425,56 +512,39 @@ class AbsencesController extends Controller
         ];
     }
 
-    public function holidayCreate(Request $request, Absence $absence): Modal
+    public function typeCreate(): Response
     {
-        return Inertia::modal('Default', [
-            'form' => $this->__formModal(),
-            'isModal' => true,
-            'tabs' => false,
-            'title' => 'Holiday creation',
+        $this->authorize('access', User::class);
+
+        return Inertia::render('Default', [
+            'form' => $this->__formTypes(),
             'routes' => [
-                'holiday' => [
-                    'route' => route('apps.absences.holiday_store', $absence->id),
+                'absences_types' => [
+                    'route' => route('apps.absences.type_store'),
                     'method' => 'post',
-                    'buttonClass' => 'justify-end',
                 ],
             ],
             'data' => [
                 'active' => true,
             ],
-        ])
-            ->baseRoute('apps.absences.edit', $absence->id)
-            ->refreshBackdrop();
+        ]);
     }
 
-    public function holidayStore(Request $request, Absence $absence): RedirectResponse
+    public function typeStore(Request $request): RedirectResponse
     {
         $this->authorize('access', User::class);
 
         DB::beginTransaction();
 
         try {
-            $holiday = new Holiday();
+            $absences_types = new AbsencesType();
 
-            $holiday->name = $request->name;
-            $holiday->active = $request->active;
-            $holiday->starts_at = $request->starts_at;
-            $holiday->ends_at = $request->ends_at;
+            $absences_types->name = $request->name;
+            $absences_types->active = $request->active;
+            $absences_types->duration = $request->duration;
+            $absences_types->working_days = $request->working_days;
 
-            $holiday->save();
-
-            try {
-                $absence->holidays()->attach($holiday->id);
-            } catch (\Exception $e) {
-                report($e);
-
-                DB::rollback();
-
-                return Redirect::back()->with([
-                    'toast_type' => 'error',
-                    'toast_message' => 'Error when syncing holidays in the absence.',
-                ]);
-            }
+            $absences_types->save();
         } catch (\Throwable $e) {
             report($e);
 
@@ -489,46 +559,42 @@ class AbsencesController extends Controller
 
         DB::commit();
 
-        return Redirect::route('apps.absences.edit', $absence->id)->with([
+        return Redirect::route('apps.absences.type_edit', $absences_types->id)->with([
             'toast_type' => 'success',
             'toast_message' => '{0} Nothing to add.|[1] Item added successfully.|[2,*] :total items successfully added.',
             'toast_count' => 1,
         ]);
     }
 
-    public function holidayEdit(Request $request, Holiday $holiday): Modal
+    public function typeEdit(Request $request, AbsencesType $absence_type): Response
     {
-        return Inertia::modal('Default', [
-            'form' => $this->__formModal(),
-            'isModal' => true,
-            'tabs' => false,
-            'title' => 'Holiday creation',
+        $this->authorize('access', User::class);
+
+        return Inertia::render('Default', [
+            'form' => $this->__formTypes(),
             'routes' => [
-                'holiday' => [
-                    'route' => route('apps.absences.holiday_update', $holiday->id),
+                'absences_types' => [
+                    'route' => route('apps.absences.type_update', $absence_type->id),
                     'method' => 'patch',
-                    'buttonClass' => 'justify-end',
                 ],
             ],
-            'data' => $holiday,
-        ])
-            ->baseRoute('apps.absences.edit', $holiday->absences()->first()->id)
-            ->refreshBackdrop();
+            'data' => $absence_type,
+        ]);
     }
 
-    public function holidayUpdate(Request $request, Absence $absence, Holiday $holiday): RedirectResponse
+    public function typeUpdate(Request $request, Absence $absence, AbsencesType $absence_type): RedirectResponse
     {
         $this->authorize('access', User::class);
 
         DB::beginTransaction();
 
         try {
-            $holiday->name = $request->name;
-            $holiday->active = $request->active;
-            $holiday->starts_at = $request->starts_at;
-            $holiday->ends_at = $request->ends_at;
+            $absence_type->name = $request->name;
+            $absence_type->active = $request->active;
+            $absence_type->duration = $request->duration;
+            $absence_type->working_days = $request->working_days;
 
-            $holiday->save();
+            $absence_type->save();
         } catch (\Throwable $e) {
             report($e);
 
@@ -543,17 +609,17 @@ class AbsencesController extends Controller
 
         DB::commit();
 
-        return Redirect::route('apps.absences.edit', $holiday->absences()->first()->id)->with([
+        return Redirect::route('apps.absences.type_edit', $absence_type->id)->with([
             'toast_type' => 'success',
             'toast_message' => '{0} Nothing to edit.|[1] Item edited successfully.|[2,*] :total items successfully edited.',
             'toast_count' => 1,
         ]);
     }
 
-    public function holidayDestroy(Request $request): RedirectResponse
+    public function typeDestroy(Request $request): RedirectResponse
     {
         try {
-            $total = Holiday::whereIn('id', $request->list)->delete();
+            $total = AbsencesType::whereIn('id', $request->list)->delete();
 
             return back()->with([
                 'toast_type' => 'success',
@@ -572,10 +638,10 @@ class AbsencesController extends Controller
         }
     }
 
-    public function holidayForceDestroy(Request $request): RedirectResponse
+    public function typeForceDestroy(Request $request): RedirectResponse
     {
         try {
-            $total = Holiday::whereIn('id', $request->list)->forceDelete();
+            $total = AbsencesType::whereIn('id', $request->list)->forceDelete();
 
             return back()->with([
                 'toast_type' => 'success',
@@ -594,10 +660,10 @@ class AbsencesController extends Controller
         }
     }
 
-    public function holidayRestore(Request $request): RedirectResponse
+    public function typeRestore(Request $request): RedirectResponse
     {
         try {
-            $total = Holiday::whereIn('id', $request->list)->restore();
+            $total = AbsencesType::whereIn('id', $request->list)->restore();
 
             return back()->with([
                 'toast_type' => 'success',

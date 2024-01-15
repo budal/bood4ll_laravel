@@ -173,6 +173,18 @@ Route::middleware('auth')->group(function () {
                 Route::delete('/absences/destroy', 'destroy')->name('destroy');
                 Route::delete('/absences/forcedestroy', 'forceDestroy')->name('forcedestroy');
                 Route::post('/absences/restore', 'restore')->name('restore');
+
+                Route::get('/absences/types', 'typesIndex')->name('types_index')->breadcrumb('Absences types', 'apps.absences.index')
+                    ->defaults('title', 'Absences types')
+                    ->defaults('description', "Manage absences types.")
+                    ->defaults('icon', 'mdi:calendar-multiselect-outline');
+                Route::get('/absences/types/create', 'typeCreate')->name('type_create')->breadcrumb('Absence type creation', 'apps.absences.types_index');
+                Route::post('/absences/types/create', 'typeStore')->name('type_store');
+                Route::get('/absences/types/edit/{absence_type}', 'typeEdit')->name('type_edit')->breadcrumb('Absence type edition', 'apps.absences.types_index');
+                Route::patch('/absences/types/edit/{absence_type}', 'typeUpdate')->name('type_update');
+                Route::delete('/absences/types/destroy', 'typeDestroy')->name('type_destroy');
+                Route::delete('/absences/types/forcedestroy', 'typeForceDestroy')->name('type_forcedestroy');
+                Route::post('/absences/types/restore', 'typeRestore')->name('type_restore');
             });
         });
 
