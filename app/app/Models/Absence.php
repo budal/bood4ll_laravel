@@ -13,9 +13,12 @@ class Absence extends Base
 
     protected $fillable = [
         'name',
+        'description',
         'owner',
         'active',
-        'year',
+        'type_id',
+        'starts_at',
+        'ends_at',
     ];
 
     public function users(): BelongsToMany

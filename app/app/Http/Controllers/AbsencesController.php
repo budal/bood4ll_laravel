@@ -5,7 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\RolesRequest;
 use App\Models\Absence;
-use App\Models\Holiday;
+use App\Models\AbsencesType;
+use App\Models\Calendar;
 use App\Models\User;
 use Emargareten\InertiaModal\Modal;
 use Illuminate\Http\RedirectResponse;
@@ -23,7 +24,7 @@ class AbsencesController extends Controller
     {
         $this->authorize('access', User::class);
 
-        $calendars = Absence::filter($request, 'calendar')
+        $absences = Absence::filter($request, 'absence')
             ->select('absence.id', 'absence.name', 'absence.year', 'absence.deleted_at')
             ->withCount('users')
             ->paginate(20)
@@ -33,35 +34,35 @@ class AbsencesController extends Controller
         return Inertia::render('Default', [
             'form' => [
                 [
-                    'id' => 'calendar',
+                    'id' => 'absence',
                     'title' => Route::current()->title,
                     'subtitle' => Route::current()->description,
                     'fields' => [
                         [
                             [
                                 'type' => 'table',
-                                'name' => 'calendar',
+                                'name' => 'absence',
                                 'content' => [
                                     'routes' => [
                                         'createRoute' => [
-                                            'route' => 'apps.calendars.create',
-                                            'showIf' => Gate::allows('apps.calendars.create'),
+                                            'route' => 'apps.absences.create',
+                                            'showIf' => Gate::allows('apps.absences.create'),
                                         ],
                                         'editRoute' => [
-                                            'route' => 'apps.calendars.edit',
-                                            'showIf' => Gate::allows('apps.calendars.edit')
+                                            'route' => 'apps.absences.edit',
+                                            'showIf' => Gate::allows('apps.absences.edit')
                                         ],
                                         'destroyRoute' => [
-                                            'route' => 'apps.calendars.destroy',
-                                            'showIf' => Gate::allows('apps.calendars.destroy'),
+                                            'route' => 'apps.absences.destroy',
+                                            'showIf' => Gate::allows('apps.absences.destroy'),
                                         ],
                                         'forceDestroyRoute' => [
-                                            'route' => 'apps.calendars.forcedestroy',
-                                            'showIf' => Gate::allows('apps.calendars.forcedestroy') && $request->user()->can('isSuperAdmin', User::class),
+                                            'route' => 'apps.absences.forcedestroy',
+                                            'showIf' => Gate::allows('apps.absences.forcedestroy') && $request->user()->can('isSuperAdmin', User::class),
                                         ],
                                         'restoreRoute' => [
-                                            'route' => 'apps.calendars.restore',
-                                            'showIf' => Gate::allows('apps.calendars.restore'),
+                                            'route' => 'apps.absences.restore',
+                                            'showIf' => Gate::allows('apps.absences.restore'),
                                         ],
                                     ],
                                     'titles' => [
@@ -86,7 +87,7 @@ class AbsencesController extends Controller
                                             'field' => 'schedules_count',
                                         ],
                                     ],
-                                    'items' => $calendars,
+                                    'items' => $absences,
                                 ],
                             ],
                         ],
@@ -96,9 +97,9 @@ class AbsencesController extends Controller
         ]);
     }
 
-    public function __form(Request $request, Calendar $calendar): array
+    public function __form(Request $request, Absence $absence): array
     {
-        $holidays = $calendar->holidays()
+        $holidays = $absence->holidays()
             ->filter($request, 'holidays', ['order' => ['start_at']])
             ->paginate(20)
             ->onEachSide(2)
@@ -108,9 +109,9 @@ class AbsencesController extends Controller
 
         return [
             [
-                'id' => 'calendar',
+                'id' => 'absence',
                 'title' => 'Main data',
-                'subtitle' => "Calendar's info.",
+                'subtitle' => "Absence's info.",
                 'cols' => 3,
                 'fields' => [
                     [
@@ -141,7 +142,7 @@ class AbsencesController extends Controller
                 'id' => 'holidays',
                 'title' => 'Holidays',
                 'subtitle' => 'Define which dates will be working days, holidays and optional points.',
-                'showIf' => $calendar->id != null,
+                'showIf' => $absence->id != null,
                 'fields' => [
                     [
                         [
@@ -150,25 +151,25 @@ class AbsencesController extends Controller
                             'content' => [
                                 'routes' => [
                                     'createRoute' => [
-                                        'route' => 'apps.calendars.holiday_create',
-                                        'attributes' => [$calendar->id],
-                                        'showIf' => Gate::allows('apps.calendars.holiday_create'),
+                                        'route' => 'apps.absences.holiday_create',
+                                        'attributes' => [$absence->id],
+                                        'showIf' => Gate::allows('apps.absences.holiday_create'),
                                     ],
                                     'editRoute' => [
-                                        'route' => 'apps.calendars.holiday_edit',
-                                        'showIf' => Gate::allows('apps.calendars.holiday_edit'),
+                                        'route' => 'apps.absences.holiday_edit',
+                                        'showIf' => Gate::allows('apps.absences.holiday_edit'),
                                     ],
                                     'destroyRoute' => [
-                                        'route' => 'apps.calendars.holiday_forcedestroy',
-                                        'showIf' => Gate::allows('apps.calendars.holiday_destroy'),
+                                        'route' => 'apps.absences.holiday_forcedestroy',
+                                        'showIf' => Gate::allows('apps.absences.holiday_destroy'),
                                     ],
                                     'forceDestroyRoute' => [
-                                        'route' => 'apps.calendars.holiday_forcedestroy',
-                                        'showIf' => Gate::allows('apps.calendars.holiday_forcedestroy'),
+                                        'route' => 'apps.absences.holiday_forcedestroy',
+                                        'showIf' => Gate::allows('apps.absences.holiday_forcedestroy'),
                                     ],
                                     'restoreRoute' => [
-                                        'route' => 'apps.calendars.holiday_restore',
-                                        'showIf' => Gate::allows('apps.calendars.holiday_restore'),
+                                        'route' => 'apps.absences.holiday_restore',
+                                        'showIf' => Gate::allows('apps.absences.holiday_restore'),
                                     ],
                                 ],
                                 'titles' => [
@@ -197,15 +198,15 @@ class AbsencesController extends Controller
         ];
     }
 
-    public function create(Request $request, Calendar $calendar): Response
+    public function create(Request $request, Absence $absence): Response
     {
         $this->authorize('access', User::class);
 
         return Inertia::render('Default', [
-            'form' => $this->__form($request, $calendar),
+            'form' => $this->__form($request, $absence),
             'routes' => [
-                'calendar' => [
-                    'route' => route('apps.calendars.store'),
+                'absence' => [
+                    'route' => route('apps.absences.store'),
                     'method' => 'post',
                 ],
             ],
@@ -222,13 +223,13 @@ class AbsencesController extends Controller
         DB::beginTransaction();
 
         try {
-            $calendar = new Calendar();
+            $absence = new Absence();
 
-            $calendar->name = $request->name;
-            $calendar->owner = $request->user()->id;
-            $calendar->active = $request->active;
+            $absence->name = $request->name;
+            $absence->owner = $request->user()->id;
+            $absence->active = $request->active;
 
-            $calendar->save();
+            $absence->save();
         } catch (\Throwable $e) {
             report($e);
 
@@ -243,49 +244,49 @@ class AbsencesController extends Controller
 
         DB::commit();
 
-        return Redirect::route('apps.calendars.edit', $calendar->id)->with([
+        return Redirect::route('apps.absences.edit', $absence->id)->with([
             'toast_type' => 'success',
             'toast_message' => '{0} Nothing to add.|[1] Item added successfully.|[2,*] :total items successfully added.',
             'toast_count' => 1,
         ]);
     }
 
-    public function edit(Request $request, Calendar $calendar): Response
+    public function edit(Request $request, Absence $absence): Response
     {
         $this->authorize('access', User::class);
-        // $this->authorize('isActive', $calendar);
-        // $this->authorize('canEdit', $calendar);
-        // $this->authorize('canEditManagementRoles', $calendar);
+        // $this->authorize('isActive', $absence);
+        // $this->authorize('canEdit', $absence);
+        // $this->authorize('canEditManagementRoles', $absence);
 
         return Inertia::render('Default', [
-            'form' => $this->__form($request, $calendar),
+            'form' => $this->__form($request, $absence),
             'routes' => [
-                'calendar' => [
-                    'route' => route('apps.calendars.edit', $calendar->id),
+                'absence' => [
+                    'route' => route('apps.absences.edit', $absence->id),
                     'method' => 'patch',
                 ],
             ],
-            'data' => $calendar,
+            'data' => $absence,
         ]);
     }
 
-    public function update(Request $request, Calendar $calendar): RedirectResponse
+    public function update(Request $request, Absence $absence): RedirectResponse
     {
         $this->authorize('access', User::class);
-        // $this->authorize('isActive', $calendar);
+        // $this->authorize('isActive', $absence);
         // $this->authorize('isManager', User::class);
-        // $this->authorize('canEdit', $calendar);
-        // $this->authorize('canEditManagementRoles', $calendar);
-        // $this->authorize('isOwner', $calendar);
+        // $this->authorize('canEdit', $absence);
+        // $this->authorize('canEditManagementRoles', $absence);
+        // $this->authorize('isOwner', $absence);
 
         DB::beginTransaction();
 
         try {
-            $calendar->name = $request->name;
-            $calendar->active = $request->active;
-            $calendar->year = $request->year;
+            $absence->name = $request->name;
+            $absence->active = $request->active;
+            $absence->year = $request->year;
 
-            $calendar->save();
+            $absence->save();
         } catch (\Exception $e) {
             report($e);
 
@@ -311,10 +312,10 @@ class AbsencesController extends Controller
     {
         $this->authorize('access', User::class);
         // $this->authorize('isManager', User::class);
-        // $this->authorize('canDestroyOrRestore', [Calendar::class, $request]);
+        // $this->authorize('canDestroyOrRestore', [Absence::class, $request]);
 
         try {
-            $total = Calendar::whereIn('id', $request->list)->delete();
+            $total = Absence::whereIn('id', $request->list)->delete();
 
             return back()->with([
                 'toast_type' => 'success',
@@ -339,7 +340,7 @@ class AbsencesController extends Controller
         // $this->authorize('isSuperAdmin', User::class);
 
         try {
-            $total = Calendar::whereIn('id', $request->list)->forceDelete();
+            $total = Absence::whereIn('id', $request->list)->forceDelete();
 
             return back()->with([
                 'toast_type' => 'success',
@@ -362,10 +363,10 @@ class AbsencesController extends Controller
     {
         $this->authorize('access', User::class);
         // $this->authorize('isManager', User::class);
-        // $this->authorize('canDestroyOrRestore', [Calendar::class, $request]);
+        // $this->authorize('canDestroyOrRestore', [Absence::class, $request]);
 
         try {
-            $total = Calendar::whereIn('id', $request->list)->restore();
+            $total = Absence::whereIn('id', $request->list)->restore();
 
             return back()->with([
                 'toast_type' => 'success',
@@ -424,7 +425,7 @@ class AbsencesController extends Controller
         ];
     }
 
-    public function holidayCreate(Request $request, Calendar $calendar): Modal
+    public function holidayCreate(Request $request, Absence $absence): Modal
     {
         return Inertia::modal('Default', [
             'form' => $this->__formModal(),
@@ -433,7 +434,7 @@ class AbsencesController extends Controller
             'title' => 'Holiday creation',
             'routes' => [
                 'holiday' => [
-                    'route' => route('apps.calendars.holiday_store', $calendar->id),
+                    'route' => route('apps.absences.holiday_store', $absence->id),
                     'method' => 'post',
                     'buttonClass' => 'justify-end',
                 ],
@@ -442,11 +443,11 @@ class AbsencesController extends Controller
                 'active' => true,
             ],
         ])
-            ->baseRoute('apps.calendars.edit', $calendar->id)
+            ->baseRoute('apps.absences.edit', $absence->id)
             ->refreshBackdrop();
     }
 
-    public function holidayStore(Request $request, Calendar $calendar): RedirectResponse
+    public function holidayStore(Request $request, Absence $absence): RedirectResponse
     {
         $this->authorize('access', User::class);
 
@@ -463,7 +464,7 @@ class AbsencesController extends Controller
             $holiday->save();
 
             try {
-                $calendar->holidays()->attach($holiday->id);
+                $absence->holidays()->attach($holiday->id);
             } catch (\Exception $e) {
                 report($e);
 
@@ -471,7 +472,7 @@ class AbsencesController extends Controller
 
                 return Redirect::back()->with([
                     'toast_type' => 'error',
-                    'toast_message' => 'Error when syncing holidays in the calendar.',
+                    'toast_message' => 'Error when syncing holidays in the absence.',
                 ]);
             }
         } catch (\Throwable $e) {
@@ -488,7 +489,7 @@ class AbsencesController extends Controller
 
         DB::commit();
 
-        return Redirect::route('apps.calendars.edit', $calendar->id)->with([
+        return Redirect::route('apps.absences.edit', $absence->id)->with([
             'toast_type' => 'success',
             'toast_message' => '{0} Nothing to add.|[1] Item added successfully.|[2,*] :total items successfully added.',
             'toast_count' => 1,
@@ -504,18 +505,18 @@ class AbsencesController extends Controller
             'title' => 'Holiday creation',
             'routes' => [
                 'holiday' => [
-                    'route' => route('apps.calendars.holiday_update', $holiday->id),
+                    'route' => route('apps.absences.holiday_update', $holiday->id),
                     'method' => 'patch',
                     'buttonClass' => 'justify-end',
                 ],
             ],
             'data' => $holiday,
         ])
-            ->baseRoute('apps.calendars.edit', $holiday->calendars()->first()->id)
+            ->baseRoute('apps.absences.edit', $holiday->absences()->first()->id)
             ->refreshBackdrop();
     }
 
-    public function holidayUpdate(Request $request, Calendar $calendar, Holiday $holiday): RedirectResponse
+    public function holidayUpdate(Request $request, Absence $absence, Holiday $holiday): RedirectResponse
     {
         $this->authorize('access', User::class);
 
@@ -542,7 +543,7 @@ class AbsencesController extends Controller
 
         DB::commit();
 
-        return Redirect::route('apps.calendars.edit', $holiday->calendars()->first()->id)->with([
+        return Redirect::route('apps.absences.edit', $holiday->absences()->first()->id)->with([
             'toast_type' => 'success',
             'toast_message' => '{0} Nothing to edit.|[1] Item edited successfully.|[2,*] :total items successfully edited.',
             'toast_count' => 1,
