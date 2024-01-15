@@ -760,7 +760,10 @@ class AbsencesController extends Controller
         $this->authorize('access', User::class);
 
         $absences = VacationPlan::where('year', $request->year)
-            ->select('vacation_plans.id', 'vacation_plans.period', 'vacation_plans.starts_at', 'vacation_plans.ends_at', 'vacation_plans.implantation', 'vacation_plans.deleted_at')
+            ->select('vacation_plans.id', 'vacation_plans.period', 'vacation_plans.deleted_at')
+            ->selectRaw('vacation_plans.starts_at AS start_at')
+            ->selectRaw('vacation_plans.ends_at AS end_at')
+            ->selectRaw('vacation_plans.implantation_at AS implantation')
             ->paginate(20)
             ->onEachSide(2)
             ->withQueryString();
@@ -808,12 +811,12 @@ class AbsencesController extends Controller
                                         [
                                             'type' => 'text',
                                             'title' => 'Starts at',
-                                            'field' => 'starts_at',
+                                            'field' => 'start_at',
                                         ],
                                         [
                                             'type' => 'text',
                                             'title' => 'Ends at',
-                                            'field' => 'ends_at',
+                                            'field' => 'end_at',
                                         ],
                                         [
                                             'type' => 'text',
@@ -869,7 +872,7 @@ class AbsencesController extends Controller
                         ],
                         [
                             'type' => 'date',
-                            'name' => 'implantation',
+                            'name' => 'implantation_at',
                             'title' => 'Implantation',
                             'required' => true,
                         ],
@@ -910,7 +913,7 @@ class AbsencesController extends Controller
             $vacation_plan->year = $request->year;
             $vacation_plan->starts_at = $request->starts_at;
             $vacation_plan->ends_at = $request->ends_at;
-            $vacation_plan->implantation = $request->implantation;
+            $vacation_plan->implantation_at = $request->implantation_at;
 
             $vacation_plan->save();
         } catch (\Throwable $e) {
@@ -927,7 +930,7 @@ class AbsencesController extends Controller
 
         DB::commit();
 
-        return Redirect::route('apps.absences.vacation_plan_edit', $vacation_plan->id)->with([
+        return Redirect::route('apps.absences.vacation_plan_index_list', $request->year)->with([
             'toast_type' => 'success',
             'toast_message' => '{0} Nothing to add.|[1] Item added successfully.|[2,*] :total items successfully added.',
             'toast_count' => 1,
@@ -939,9 +942,9 @@ class AbsencesController extends Controller
         $this->authorize('access', User::class);
 
         return Inertia::render('Default', [
-            'form' => $this->__formTypes(),
+            'form' => $this->__formVacationPlan(),
             'routes' => [
-                'absences_types' => [
+                'vacation_plan' => [
                     'route' => route('apps.absences.vacation_plan_update', $vacation_plan->id),
                     'method' => 'patch',
                 ],
@@ -957,11 +960,11 @@ class AbsencesController extends Controller
         DB::beginTransaction();
 
         try {
-            $vacation_plan->name = $request->name;
-            $vacation_plan->active = $request->active;
-            $vacation_plan->max_duration = $request->max_duration;
-            $vacation_plan->working_days = $request->working_days;
-            $vacation_plan->acquisition_period = $request->acquisition_period;
+            $vacation_plan->period = $request->period;
+            $vacation_plan->year = $request->year;
+            $vacation_plan->starts_at = $request->starts_at;
+            $vacation_plan->ends_at = $request->ends_at;
+            $vacation_plan->implantation_at = $request->implantation_at;
 
             $vacation_plan->save();
         } catch (\Throwable $e) {
@@ -978,7 +981,7 @@ class AbsencesController extends Controller
 
         DB::commit();
 
-        return Redirect::route('apps.absences.type_edit', $vacation_plan->id)->with([
+        return Redirect::route('apps.absences.vacation_plan_edit', $vacation_plan->id)->with([
             'toast_type' => 'success',
             'toast_message' => '{0} Nothing to edit.|[1] Item edited successfully.|[2,*] :total items successfully edited.',
             'toast_count' => 1,
@@ -988,7 +991,7 @@ class AbsencesController extends Controller
     public function vacationPlanDestroy(Request $request): RedirectResponse
     {
         try {
-            $total = AbsencesType::whereIn('id', $request->list)->delete();
+            $total = VacationPlan::whereIn('id', $request->list)->delete();
 
             return back()->with([
                 'toast_type' => 'success',
@@ -1010,7 +1013,7 @@ class AbsencesController extends Controller
     public function vacationPlanForceDestroy(Request $request): RedirectResponse
     {
         try {
-            $total = AbsencesType::whereIn('id', $request->list)->forceDelete();
+            $total = VacationPlan::whereIn('id', $request->list)->forceDelete();
 
             return back()->with([
                 'toast_type' => 'success',
@@ -1032,7 +1035,7 @@ class AbsencesController extends Controller
     public function vacationPlanRestore(Request $request): RedirectResponse
     {
         try {
-            $total = AbsencesType::whereIn('id', $request->list)->restore();
+            $total = VacationPlan::whereIn('id', $request->list)->restore();
 
             return back()->with([
                 'toast_type' => 'success',

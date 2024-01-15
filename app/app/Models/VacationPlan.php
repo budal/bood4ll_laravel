@@ -20,14 +20,14 @@ class VacationPlan extends Base
         'implantation',
     ];
 
-    protected function startsAt(): Attribute
+    protected function startAt(): Attribute
     {
         return Attribute::make(
             get: fn (string $value) => date_format(date_create($value), "d/m/Y"),
         );
     }
 
-    protected function endsAt(): Attribute
+    protected function endAt(): Attribute
     {
         return Attribute::make(
             get: fn (string $value) => date_format(date_create($value), "d/m/Y"),

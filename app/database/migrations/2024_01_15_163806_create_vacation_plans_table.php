@@ -18,7 +18,7 @@ return new class extends Migration
             $table->integer('year')->default(date("Y"));
             $table->date('starts_at')->nullable();
             $table->date('ends_at')->nullable();
-            $table->date('implantation')->nullable();
+            $table->date('implantation_at')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
