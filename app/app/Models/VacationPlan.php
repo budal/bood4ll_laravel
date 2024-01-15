@@ -17,7 +17,7 @@ class VacationPlan extends Base
         'year',
         'starts_at',
         'ends_at',
-        'implantation',
+        'implantation_at',
     ];
 
     protected function startAt(): Attribute
