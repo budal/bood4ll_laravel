@@ -20,7 +20,6 @@ return new class extends Migration
             $table->boolean('lock_on_expire')->default(false);
             $table->date('starts_at')->nullable();
             $table->date('ends_at')->nullable();
-            $table->boolean('remove_on_change_unit')->default(true);
             $table->timestamps();
             $table->softDeletes();
         });

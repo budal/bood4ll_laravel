@@ -244,8 +244,15 @@
   "The user ':user' was attached in the ':unit'.": "O usuário ':user' foi vinculado à ':unit'.",
   "The user ':user' was detached in the ':unit'.": "O usuário ':user' foi desvinculado de ':unit'.",
 
+  "Absences": "Afastamentos",
+  "Manage your staff's absences, vacations, layoffs and medical certificates.": "Gerencie as ausências do seu efetivo, suas férias, dispensas e atestados médicos.",
+  "Absence creation": "Criação de afastamento",
+  "Absence edition": "Edição de afastamento",
+
   "Schedules": "Agendas",
   "Manage your team's commitments, schedules and events.": "Gerencie a agenda de sua equipe com compromissos e eventos institucionais.",
+  "Schedule creation": "Criação de agenda",
+  "Schedule edition": "Edição de agenda",
 
   "The email has already been taken.": "Esse email já foi registrado.",
   "The password field confirmation does not match.": "A confirmação da senha não confere.",

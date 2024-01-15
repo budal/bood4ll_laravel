@@ -24,27 +24,18 @@ class SchedulesController extends Controller
         $this->authorize('access', User::class);
 
         $schedules = Schedule::filter($request, 'schedules')
-            ->leftjoin('role_user', 'role_user.role_id', '=', 'schedules.id')
-            ->select('schedules.id', 'schedules.name', 'schedules.description', 'schedules.deleted_at')
-            ->groupBy('schedules.id', 'schedules.name', 'schedules.description', 'schedules.deleted_at')
+            ->leftjoin('schedule_user', 'schedule_user.schedule_id', '=', 'schedules.id')
+            ->select('schedules.id', 'schedules.name', 'schedules.description', 'schedules.active', 'schedules.starts_at', 'schedules.ends_at', 'schedules.deleted_at')
+            ->groupBy('schedules.id', 'schedules.name', 'schedules.description', 'schedules.active', 'schedules.starts_at', 'schedules.ends_at', 'schedules.deleted_at')
             ->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
-                $query->where('schedules.superadmin', false);
-                $query->where('schedules.manager', false);
                 $query->where('schedules.active', true);
-                $query->where(function ($query) {
-                    $query->where('schedules.lock_on_expire', false);
-                    $query->orWhere(function ($query) {
-                        $query->where('schedules.lock_on_expire', true);
-                        $query->where('schedules.expires_at', '>=', 'NOW()');
-                    });
-                });
-                $query->where('role_user.user_id', $request->user()->id);
+                $query->where('schedule_user.user_id', $request->user()->id);
             })
             ->withCount([
                 'users' => function ($query) use ($request) {
                     $query->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
                         $query->join('unit_user', function (JoinClause $join) use ($request, $query) {
-                            $join->on('unit_user.user_id', '=', 'role_user.user_id')
+                            $join->on('unit_user.user_id', '=', 'schedule_user.user_id')
                                 ->whereIn('unit_user.unit_id', $request->user()->unitsIds());
 
                             if ($request->user()->cannot('hasFullAccess', User::class)) {

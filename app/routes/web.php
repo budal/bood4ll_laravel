@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AbsencesController;
 use App\Http\Controllers\Authorization\AbilitiesController;
 use App\Http\Controllers\Authorization\RolesController;
 use App\Http\Controllers\Authorization\UnitsController;
@@ -158,6 +159,23 @@ Route::middleware('auth')->group(function () {
             });
         });
 
+        Route::controller(AbsencesController::class)->group(function () {
+            Route::name('absences.')->middleware('verified')->group(function () {
+                Route::get('/absences', 'index')->name('index')->breadcrumb('Absences')
+                    ->defaults('title', 'Absences')
+                    ->defaults('description', "Manage your staff's absences, vacations, layoffs and medical certificates.")
+                    ->defaults('icon', 'mdi:calendar-multiselect-outline');
+                Route::get('/absences/create', 'create')->name('create')->breadcrumb('Absence creation', 'apps.absences.index');
+                Route::post('/absences/create', 'store')->name('store');
+                Route::get('/absences/edit/{role}/{show?}', 'edit')->name('edit')->breadcrumb('Absence edition', 'apps.absences.index');
+                Route::patch('/absences/edit/{role}', 'update')->name('update');
+                Route::post('/absences/authorization/{role}/{mode?}', 'authorization')->name('authorization');
+                Route::delete('/absences/destroy', 'destroy')->name('destroy');
+                Route::delete('/absences/forcedestroy', 'forceDestroy')->name('forcedestroy');
+                Route::post('/absences/restore', 'restore')->name('restore');
+            });
+        });
+
         Route::controller(SchedulesController::class)->group(function () {
             Route::name('schedules.')->middleware('verified')->group(function () {
                 Route::get('/schedules', 'index')->name('index')->breadcrumb('Schedules')
@@ -175,7 +193,6 @@ Route::middleware('auth')->group(function () {
             });
         });
     });
-
     Route::get('/reports', [ProfileController::class, 'edit'])->name('reports')->breadcrumb('Reports')
         ->defaults('title', 'Reports')
         ->defaults('description', 'See all data registered in the system.')
