@@ -95,7 +95,10 @@ services:
 
   postgres:
     container_name: budal_postgres
-    image: postgres:alpine
+    build:
+      context: .
+      dockerfile: ./docker/postgresql/Dockerfile
+    # image: postgres:alpine
     restart: unless-stopped
     networks:
       - budal_laravel_network

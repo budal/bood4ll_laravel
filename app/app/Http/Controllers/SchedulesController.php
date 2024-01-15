@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\RolesRequest;
+use App\Http\Requests\SchedulesRequest;
 use App\Models\Ability;
-use App\Models\Role;
+use App\Models\Schedule;
 use App\Models\User;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Http\RedirectResponse;
@@ -23,25 +23,24 @@ class SchedulesController extends Controller
     {
         $this->authorize('access', User::class);
 
-        $roles = Role::filter($request, 'roles')
-            ->leftjoin('role_user', 'role_user.role_id', '=', 'roles.id')
-            ->select('roles.id', 'roles.name', 'roles.description', 'roles.deleted_at')
-            ->groupBy('roles.id', 'roles.name', 'roles.description', 'roles.deleted_at')
+        $schedules = Schedule::filter($request, 'schedules')
+            ->leftjoin('role_user', 'role_user.role_id', '=', 'schedules.id')
+            ->select('schedules.id', 'schedules.name', 'schedules.description', 'schedules.deleted_at')
+            ->groupBy('schedules.id', 'schedules.name', 'schedules.description', 'schedules.deleted_at')
             ->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
-                $query->where('roles.superadmin', false);
-                $query->where('roles.manager', false);
-                $query->where('roles.active', true);
+                $query->where('schedules.superadmin', false);
+                $query->where('schedules.manager', false);
+                $query->where('schedules.active', true);
                 $query->where(function ($query) {
-                    $query->where('roles.lock_on_expire', false);
+                    $query->where('schedules.lock_on_expire', false);
                     $query->orWhere(function ($query) {
-                        $query->where('roles.lock_on_expire', true);
-                        $query->where('roles.expires_at', '>=', 'NOW()');
+                        $query->where('schedules.lock_on_expire', true);
+                        $query->where('schedules.expires_at', '>=', 'NOW()');
                     });
                 });
                 $query->where('role_user.user_id', $request->user()->id);
             })
             ->withCount([
-                'abilities',
                 'users' => function ($query) use ($request) {
                     $query->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
                         $query->join('unit_user', function (JoinClause $join) use ($request, $query) {
@@ -62,41 +61,41 @@ class SchedulesController extends Controller
         return Inertia::render('Default', [
             'form' => [
                 [
-                    'id' => 'roles',
+                    'id' => 'schedules',
                     'title' => Route::current()->title,
                     'subtitle' => Route::current()->description,
                     'fields' => [
                         [
                             [
                                 'type' => 'table',
-                                'name' => 'roles',
+                                'name' => 'schedules',
                                 'content' => [
                                     'routes' => [
                                         'createRoute' => [
-                                            'route' => 'apps.roles.create',
-                                            'showIf' => Gate::allows('apps.roles.create') && $request->user()->can('isManager', User::class),
+                                            'route' => 'apps.schedules.create',
+                                            'showIf' => Gate::allows('apps.schedules.create') && $request->user()->can('isManager', User::class),
                                         ],
                                         'editRoute' => [
-                                            'route' => 'apps.roles.edit',
-                                            'showIf' => Gate::allows('apps.roles.edit')
+                                            'route' => 'apps.schedules.edit',
+                                            'showIf' => Gate::allows('apps.schedules.edit')
                                         ],
                                         'destroyRoute' => [
-                                            'route' => 'apps.roles.destroy',
-                                            'showIf' => Gate::allows('apps.roles.destroy') && $request->user()->can('isManager', User::class),
+                                            'route' => 'apps.schedules.destroy',
+                                            'showIf' => Gate::allows('apps.schedules.destroy') && $request->user()->can('isManager', User::class),
                                         ],
                                         'forceDestroyRoute' => [
-                                            'route' => 'apps.roles.forcedestroy',
-                                            'showIf' => Gate::allows('apps.roles.forcedestroy') && $request->user()->can('isSuperAdmin', User::class),
+                                            'route' => 'apps.schedules.forcedestroy',
+                                            'showIf' => Gate::allows('apps.schedules.forcedestroy') && $request->user()->can('isSuperAdmin', User::class),
                                         ],
                                         'restoreRoute' => [
-                                            'route' => 'apps.roles.restore',
-                                            'showIf' => Gate::allows('apps.roles.restore') && $request->user()->can('isManager', User::class),
+                                            'route' => 'apps.schedules.restore',
+                                            'showIf' => Gate::allows('apps.schedules.restore') && $request->user()->can('isManager', User::class),
                                         ],
                                     ],
                                     'titles' => [
                                         [
                                             'type' => 'composite',
-                                            'title' => 'Role',
+                                            'title' => 'Schedule',
                                             'field' => 'name',
                                             'values' => [
                                                 [
@@ -119,7 +118,7 @@ class SchedulesController extends Controller
                                             'field' => 'users_count',
                                         ],
                                     ],
-                                    'items' => $roles,
+                                    'items' => $schedules,
                                 ],
                             ],
                         ],
@@ -129,7 +128,7 @@ class SchedulesController extends Controller
         ]);
     }
 
-    public function __form(Request $request, Role $role): array
+    public function __form(Request $request, Schedule $role): array
     {
         $abilities = Ability::select('abilities.*')
             ->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
@@ -162,7 +161,7 @@ class SchedulesController extends Controller
             ->onEachSide(2)
             ->appends(collect($request->query)->toArray())
             ->through(function ($item) use ($role) {
-                $item->checked = $item->roles->pluck('id')->contains($role->id);
+                $item->checked = $item->schedules->pluck('id')->contains($role->id);
 
                 return $item;
             });
@@ -171,7 +170,7 @@ class SchedulesController extends Controller
             [
                 'id' => 'role',
                 'title' => 'Main data',
-                'subtitle' => 'Role name, abilities and settings',
+                'subtitle' => 'Schedule name, abilities and settings',
                 'showIf' => $role->id === null || $request->user()->can('isOwner', $role),
                 'disabledIf' => $role->inalterable == true || $role->id !== null && $request->user()->cannot('isOwner', $role),
                 'cols' => 3,
@@ -260,7 +259,7 @@ class SchedulesController extends Controller
                                         'icon' => 'mdi:plus-circle-outline',
                                         'title' => 'Authorize',
                                         'route' => [
-                                            'route' => 'apps.roles.authorization',
+                                            'route' => 'apps.schedules.authorization',
                                             'attributes' => [
                                                 $role->id,
                                                 'on',
@@ -279,7 +278,7 @@ class SchedulesController extends Controller
                                         'icon' => 'mdi:minus-circle-outline',
                                         'title' => 'Deauthorize',
                                         'route' => [
-                                            'route' => 'apps.roles.authorization',
+                                            'route' => 'apps.schedules.authorization',
                                             'attributes' => [
                                                 $role->id,
                                                 'off',
@@ -306,7 +305,7 @@ class SchedulesController extends Controller
                                                 'icon' => 'mdi:account-key-outline',
                                                 'title' => 'Authorized users',
                                                 'route' => [
-                                                    'route' => 'apps.roles.edit',
+                                                    'route' => 'apps.schedules.edit',
                                                     'attributes' => $role->id,
                                                 ],
                                             ],
@@ -314,7 +313,7 @@ class SchedulesController extends Controller
                                                 'icon' => 'mdi:account-multiple-outline',
                                                 'title' => 'All users',
                                                 'route' => [
-                                                    'route' => 'apps.roles.edit',
+                                                    'route' => 'apps.schedules.edit',
                                                     'attributes' => [$role->id, 'all'],
                                                 ],
                                             ],
@@ -364,7 +363,7 @@ class SchedulesController extends Controller
                                         'field' => 'checked',
                                         'disableSort' => true,
                                         'route' => [
-                                            'route' => 'apps.roles.authorization',
+                                            'route' => 'apps.schedules.authorization',
                                             'attributes' => [
                                                 $role->id,
                                                 'toggle',
@@ -383,21 +382,21 @@ class SchedulesController extends Controller
         ];
     }
 
-    public function authorization(Request $request, Role $role, $mode): RedirectResponse
+    public function authorization(Request $request, Schedule $role, $mode): RedirectResponse
     {
         $this->authorize('access', User::class);
         $this->authorize('fullAccess', [$role, $request]);
 
-        $hasRole = $role->users()->whereIn('user_id', $request->list)->first();
+        $hasSchedule = $role->users()->whereIn('user_id', $request->list)->first();
 
         try {
             if ($mode == 'toggle') {
                 $user = User::whereIn('id', $request->list)->first();
-                $hasRole ? $role->users()->detach($request->list) : $role->users()->attach($request->list);
+                $hasSchedule ? $role->users()->detach($request->list) : $role->users()->attach($request->list);
 
                 return Redirect::back()->with([
                     'toast_type' => 'success',
-                    'toast_message' => $hasRole
+                    'toast_message' => $hasSchedule
                         ? "The user ':user' has been disabled in the ':role' role."
                         : "The user ':user' was enabled in the ':role' role.",
                     'toast_replacements' => ['user' => $user->name, 'role' => $role->name],
@@ -432,7 +431,7 @@ class SchedulesController extends Controller
         }
     }
 
-    public function create(Request $request, Role $role): Response
+    public function create(Request $request, Schedule $role): Response
     {
         $this->authorize('access', User::class);
         $this->authorize('isManager', User::class);
@@ -441,7 +440,7 @@ class SchedulesController extends Controller
             'form' => $this->__form($request, $role),
             'routes' => [
                 'role' => [
-                    'route' => route('apps.roles.store'),
+                    'route' => route('apps.schedules.store'),
                     'method' => 'post',
                 ],
             ],
@@ -452,7 +451,7 @@ class SchedulesController extends Controller
         ]);
     }
 
-    public function store(RolesRequest $request): RedirectResponse
+    public function store(Request $request): RedirectResponse
     {
         $this->authorize('access', User::class);
         $this->authorize('isManager', User::class);
@@ -462,7 +461,7 @@ class SchedulesController extends Controller
         DB::beginTransaction();
 
         try {
-            $role = new Role();
+            $role = new Schedule();
 
             $role->name = $request->name;
             $role->description = $request->description;
@@ -503,19 +502,19 @@ class SchedulesController extends Controller
 
         DB::commit();
 
-        return Redirect::route('apps.roles.edit', $role->id)->with([
+        return Redirect::route('apps.schedules.edit', $role->id)->with([
             'toast_type' => 'success',
             'toast_message' => '{0} Nothing to add.|[1] Item added successfully.|[2,*] :total items successfully added.',
             'toast_count' => 1,
         ]);
     }
 
-    public function edit(Request $request, Role $role): Response
+    public function edit(Request $request, Schedule $role): Response
     {
         $this->authorize('access', User::class);
         $this->authorize('isActive', $role);
         $this->authorize('canEdit', $role);
-        $this->authorize('canEditManagementRoles', $role);
+        $this->authorize('canEditManagementSchedules', $role);
 
         $role['abilities'] = $role->abilities;
 
@@ -523,7 +522,7 @@ class SchedulesController extends Controller
             'form' => $this->__form($request, $role),
             'routes' => [
                 'role' => [
-                    'route' => route('apps.roles.edit', $role->id),
+                    'route' => route('apps.schedules.edit', $role->id),
                     'method' => 'patch',
                     'reset' => true,
                     'fieldsToReset' => ['expires_at'],
@@ -533,13 +532,13 @@ class SchedulesController extends Controller
         ]);
     }
 
-    public function update(Request $request, Role $role): RedirectResponse
+    public function update(Request $request, Schedule $role): RedirectResponse
     {
         $this->authorize('access', User::class);
         $this->authorize('isActive', $role);
         $this->authorize('isManager', User::class);
         $this->authorize('canEdit', $role);
-        $this->authorize('canEditManagementRoles', $role);
+        $this->authorize('canEditManagementSchedules', $role);
         $this->authorize('isOwner', $role);
 
         $abilities = collect($request->abilities)->pluck('id');
@@ -609,10 +608,10 @@ class SchedulesController extends Controller
     {
         $this->authorize('access', User::class);
         $this->authorize('isManager', User::class);
-        $this->authorize('canDestroyOrRestore', [Role::class, $request]);
+        $this->authorize('canDestroyOrRestore', [Schedule::class, $request]);
 
         try {
-            $total = Role::whereIn('id', $request->list)
+            $total = Schedule::whereIn('id', $request->list)
                 ->where(function ($query) {
                     $query->where('inalterable', null);
                     $query->orWhere('inalterable', false);
@@ -641,7 +640,7 @@ class SchedulesController extends Controller
         $this->authorize('isSuperAdmin', User::class);
 
         try {
-            $total = Role::whereIn('id', $request->list)
+            $total = Schedule::whereIn('id', $request->list)
                 ->where(function ($query) {
                     $query->where('inalterable', null);
                     $query->orWhere('inalterable', false);
@@ -668,10 +667,10 @@ class SchedulesController extends Controller
     {
         $this->authorize('access', User::class);
         $this->authorize('isManager', User::class);
-        $this->authorize('canDestroyOrRestore', [Role::class, $request]);
+        $this->authorize('canDestroyOrRestore', [Schedule::class, $request]);
 
         try {
-            $total = Role::whereIn('id', $request->list)->restore();
+            $total = Schedule::whereIn('id', $request->list)->restore();
 
             return back()->with([
                 'toast_type' => 'success',

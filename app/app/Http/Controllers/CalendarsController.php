@@ -114,7 +114,7 @@ class CalendarsController extends Controller
                 'id' => 'calendar',
                 'title' => 'Main data',
                 'subtitle' => "Calendar's info.",
-                'cols' => 2,
+                'cols' => 3,
                 'fields' => [
                     [
                         [
@@ -123,6 +123,12 @@ class CalendarsController extends Controller
                             'title' => 'Name',
                             'required' => true,
                             'autofocus' => true,
+                        ],
+                        [
+                            'type' => 'input',
+                            'name' => 'year',
+                            'title' => 'Year',
+                            'required' => true,
                         ],
                         [
                             'type' => 'toggle',
