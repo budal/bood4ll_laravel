@@ -450,7 +450,7 @@ class AbsencesController extends Controller
                                         ],
                                         [
                                             'type' => 'text',
-                                            'title' => 'Duration',
+                                            'title' => 'Duration (days)',
                                             'field' => 'duration',
                                         ],
                                         [
@@ -496,7 +496,7 @@ class AbsencesController extends Controller
                         [
                             'type' => 'number',
                             'name' => 'duration',
-                            'title' => 'Duration',
+                            'title' => 'Duration (days)',
                             'required' => true,
                         ],
                         [
