@@ -177,7 +177,7 @@ Route::middleware('auth')->group(function () {
                 Route::get('/absences/types', 'typesIndex')->name('types_index')->breadcrumb('Absences types', 'apps.absences.index')
                     ->defaults('title', 'Absences types')
                     ->defaults('description', "Manage absences types.")
-                    ->defaults('icon', 'mdi:calendar-multiselect-outline');
+                    ->defaults('icon', 'mdi:clipboard-text-clock-outline');
                 Route::get('/absences/types/create', 'typeCreate')->name('type_create')->breadcrumb('Absence type creation', 'apps.absences.types_index');
                 Route::post('/absences/types/create', 'typeStore')->name('type_store');
                 Route::get('/absences/types/edit/{absence_type}', 'typeEdit')->name('type_edit')->breadcrumb('Absence type edition', 'apps.absences.types_index');
@@ -185,6 +185,22 @@ Route::middleware('auth')->group(function () {
                 Route::delete('/absences/types/destroy', 'typeDestroy')->name('type_destroy');
                 Route::delete('/absences/types/forcedestroy', 'typeForceDestroy')->name('type_forcedestroy');
                 Route::post('/absences/types/restore', 'typeRestore')->name('type_restore');
+
+                Route::get('/absences/vacation_plan', 'vacationPlanIndex')->name('vacation_plan_index')->breadcrumb('Vacation plans', 'apps.absences.index')
+                    ->defaults('title', 'Vacation plans')
+                    ->defaults('description', "Manage your vacation plans.")
+                    ->defaults('icon', 'mdi:beach');
+                Route::get('/absences/vacation_plan_list/{year}', 'vacationPlanIndexByYear')->name('vacation_plan_index_list')->breadcrumb('Vacation plans', 'apps.absences.index')
+                    ->defaults('title', 'Vacation plans')
+                    ->defaults('description', "Manage your vacation plans.")
+                    ->defaults('icon', 'mdi:beach');
+                Route::get('/absences/vacation_plan/create', 'vacationPlanCreate')->name('vacation_plan_create')->breadcrumb('Vacation plan creation', 'apps.absences.vacation_plan_index');
+                Route::post('/absences/vacation_plan/create', 'vacationPlanStore')->name('vacation_plan_store');
+                Route::get('/absences/vacation_plan/edit/{vacation_plan}', 'vacationPlanEdit')->name('vacation_plan_edit')->breadcrumb('Vacation plan edition', 'apps.absences.vacation_plan_index');
+                Route::patch('/absences/vacation_plan/edit/{vacation_plan}', 'vacationPlanUpdate')->name('vacation_plan_update');
+                Route::delete('/absences/vacation_plan/destroy', 'vacationPlanDestroy')->name('vacation_plan_destroy');
+                Route::delete('/absences/vacation_plan/forcedestroy', 'vacationPlanForceDestroy')->name('vacation_plan_forcedestroy');
+                Route::post('/absences/vacation_plan/restore', 'vacationPlanRestore')->name('vacation_plan_restore');
             });
         });
 

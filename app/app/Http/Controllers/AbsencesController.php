@@ -8,7 +8,7 @@ use App\Models\Absence;
 use App\Models\AbsencesType;
 use App\Models\Calendar;
 use App\Models\User;
-use Emargareten\InertiaModal\Modal;
+use App\Models\VacationPlan;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -72,6 +72,12 @@ class AbsencesController extends Controller
                                             'route' => 'apps.absences.types_index',
                                             'showIf' => $request->user()->can('isSuperAdmin', User::class),
                                         ],
+                                        [
+                                            'icon' => 'mdi:beach',
+                                            'title' => 'Vacation plans',
+                                            'route' => 'apps.absences.vacation_plan_index',
+                                            'showIf' => $request->user()->can('isSuperAdmin', User::class),
+                                        ],
                                     ],
                                     'titles' => [
                                         [
@@ -107,41 +113,48 @@ class AbsencesController extends Controller
 
     public function __form(Request $request, Absence $absence): array
     {
-        // $holidays = $absence->holidays()
-        //     ->filter($request, 'holidays', ['order' => ['start_at']])
-        //     ->paginate(20)
-        //     ->onEachSide(2)
-        //     ->appends(collect($request->query)->toArray());
-
-        // dd($holidays);
+        $absencesTypes = AbsencesType::orderBy('name')
+            ->get();
 
         return [
             [
-                'id' => 'absence',
+                'id' => 'absences',
                 'title' => 'Main data',
                 'subtitle' => "Absence's info.",
                 'cols' => 3,
                 'fields' => [
                     [
                         [
-                            'type' => 'input',
-                            'name' => 'name',
-                            'title' => 'Name',
+                            'type' => 'select',
+                            'name' => 'parent_id',
+                            'title' => 'Absence type',
+                            'content' => $absencesTypes,
                             'required' => true,
                             'autofocus' => true,
                         ],
                         [
-                            'type' => 'input',
+                            'type' => 'number',
                             'name' => 'year',
                             'title' => 'Year',
                             'required' => true,
                         ],
                         [
+                            'type' => 'number',
+                            'name' => 'duration',
+                            'title' => 'Duration (days)',
+                            'required' => true,
+                        ],
+                        [
                             'type' => 'toggle',
                             'name' => 'active',
-                            'title' => 'Active',
-                            'colorOn' => 'success',
-                            'colorOff' => 'danger',
+                            'title' => 'Authorized',
+                            'colorOn' => 'info',
+                        ],
+                        [
+                            'type' => 'toggle',
+                            'name' => 'concluded',
+                            'title' => 'Concluded',
+                            'colorOn' => 'info',
                         ],
                     ],
                 ],
@@ -213,7 +226,7 @@ class AbsencesController extends Controller
         return Inertia::render('Default', [
             'form' => $this->__form($request, $absence),
             'routes' => [
-                'absence' => [
+                'absences' => [
                     'route' => route('apps.absences.store'),
                     'method' => 'post',
                 ],
@@ -269,7 +282,7 @@ class AbsencesController extends Controller
         return Inertia::render('Default', [
             'form' => $this->__form($request, $absence),
             'routes' => [
-                'absence' => [
+                'absences' => [
                     'route' => route('apps.absences.edit', $absence->id),
                     'method' => 'patch',
                 ],
@@ -499,8 +512,7 @@ class AbsencesController extends Controller
                             'type' => 'toggle',
                             'name' => 'working_days',
                             'title' => 'Working days',
-                            'colorOn' => 'success',
-                            'colorOff' => 'danger',
+                            'colorOn' => 'info',
                         ],
                         [
                             'type' => 'number',
@@ -539,15 +551,15 @@ class AbsencesController extends Controller
         DB::beginTransaction();
 
         try {
-            $absences_types = new AbsencesType();
+            $absence_type = new AbsencesType();
 
-            $absences_types->name = $request->name;
-            $absences_types->active = $request->active;
-            $absences_types->max_duration = $request->max_duration;
-            $absences_types->working_days = $request->working_days;
-            $absences_types->acquisition_period = $request->acquisition_period;
+            $absence_type->name = $request->name;
+            $absence_type->active = $request->active;
+            $absence_type->max_duration = $request->max_duration;
+            $absence_type->working_days = $request->working_days;
+            $absence_type->acquisition_period = $request->acquisition_period;
 
-            $absences_types->save();
+            $absence_type->save();
         } catch (\Throwable $e) {
             report($e);
 
@@ -562,7 +574,7 @@ class AbsencesController extends Controller
 
         DB::commit();
 
-        return Redirect::route('apps.absences.type_edit', $absences_types->id)->with([
+        return Redirect::route('apps.absences.type_edit', $absence_type->id)->with([
             'toast_type' => 'success',
             'toast_message' => '{0} Nothing to add.|[1] Item added successfully.|[2,*] :total items successfully added.',
             'toast_count' => 1,
@@ -585,20 +597,20 @@ class AbsencesController extends Controller
         ]);
     }
 
-    public function typeUpdate(Request $request, AbsencesType $absences_types): RedirectResponse
+    public function typeUpdate(Request $request, AbsencesType $absence_type): RedirectResponse
     {
         $this->authorize('access', User::class);
 
         DB::beginTransaction();
 
         try {
-            $absences_types->name = $request->name;
-            $absences_types->active = $request->active;
-            $absences_types->max_duration = $request->max_duration;
-            $absences_types->working_days = $request->working_days;
-            $absences_types->acquisition_period = $request->acquisition_period;
+            $absence_type->name = $request->name;
+            $absence_type->active = $request->active;
+            $absence_type->max_duration = $request->max_duration;
+            $absence_type->working_days = $request->working_days;
+            $absence_type->acquisition_period = $request->acquisition_period;
 
-            $absences_types->save();
+            $absence_type->save();
         } catch (\Throwable $e) {
             report($e);
 
@@ -613,7 +625,7 @@ class AbsencesController extends Controller
 
         DB::commit();
 
-        return Redirect::route('apps.absences.type_edit', $absences_types->id)->with([
+        return Redirect::route('apps.absences.type_edit', $absence_type->id)->with([
             'toast_type' => 'success',
             'toast_message' => '{0} Nothing to edit.|[1] Item edited successfully.|[2,*] :total items successfully edited.',
             'toast_count' => 1,
@@ -665,6 +677,359 @@ class AbsencesController extends Controller
     }
 
     public function typeRestore(Request $request): RedirectResponse
+    {
+        try {
+            $total = AbsencesType::whereIn('id', $request->list)->restore();
+
+            return back()->with([
+                'toast_type' => 'success',
+                'toast_message' => '{0} Nothing to restore.|[1] Item restored successfully.|[2,*] :total items successfully restored.',
+                'toast_count' => $total,
+                'toast_replacements' => ['total' => $total],
+            ]);
+        } catch (\Throwable $e) {
+            report($e);
+
+            return back()->with([
+                'toast_type' => 'error',
+                'toast_message' => 'Error on restore selected item.|Error on restore selected items.',
+                'toast_count' => count($request->list),
+            ]);
+        }
+    }
+
+    public function vacationPlanIndex(Request $request): Response
+    {
+        $this->authorize('access', User::class);
+
+        $vacationPlans = VacationPlan::where('vacation_plans.year', $request->vacation_plan_search ?? date('Y'))
+            ->select('vacation_plans.year')
+            ->selectRaw('vacation_plans.year AS id')
+            ->selectRaw('COUNT(vacation_plans.year) AS periods')
+            ->groupBy('vacation_plans.year')
+            ->paginate(20)
+            ->onEachSide(2)
+            ->withQueryString();
+
+        return Inertia::render('Default', [
+            'form' => [
+                [
+                    'id' => 'vacation_plan',
+                    'title' => Route::current()->title,
+                    'subtitle' => Route::current()->description,
+                    'fields' => [
+                        [
+                            [
+                                'type' => 'table',
+                                'name' => 'vacation_plan',
+                                'content' => [
+                                    'routes' => [
+                                        'createRoute' => [
+                                            'route' => 'apps.absences.vacation_plan_create',
+                                            'showIf' => Gate::allows('apps.absences.vacation_plan_create'),
+                                        ],
+                                        'editRoute' => [
+                                            'route' => 'apps.absences.vacation_plan_index_list',
+                                            'showIf' => Gate::allows('apps.absences.vacation_plan_index_list')
+                                        ],
+                                    ],
+                                    'titles' => [
+                                        [
+                                            'type' => 'text',
+                                            'title' => 'Year',
+                                            'field' => 'year',
+                                        ],
+                                        [
+                                            'type' => 'text',
+                                            'title' => 'Periods',
+                                            'field' => 'periods',
+                                        ],
+                                    ],
+                                    'items' => $vacationPlans,
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ]);
+    }
+
+    public function vacationPlanIndexByYear(Request $request): Response
+    {
+        $this->authorize('access', User::class);
+
+        $absences = VacationPlan::where('year', $request->year)
+            ->select('vacation_plans.id', 'vacation_plans.period', 'vacation_plans.starts_at', 'vacation_plans.ends_at', 'vacation_plans.implantation', 'vacation_plans.deleted_at')
+            ->paginate(20)
+            ->onEachSide(2)
+            ->withQueryString();
+
+        return Inertia::render('Default', [
+            'form' => [
+                [
+                    'id' => 'vacation_plan',
+                    'title' => Route::current()->title,
+                    'subtitle' => Route::current()->description,
+                    'fields' => [
+                        [
+                            [
+                                'type' => 'table',
+                                'name' => 'vacation_plan',
+                                'content' => [
+                                    'routes' => [
+                                        'createRoute' => [
+                                            'route' => 'apps.absences.vacation_plan_create',
+                                            'showIf' => Gate::allows('apps.absences.vacation_plan_create'),
+                                        ],
+                                        'editRoute' => [
+                                            'route' => 'apps.absences.vacation_plan_edit',
+                                            'showIf' => Gate::allows('apps.absences.vacation_plan_edit')
+                                        ],
+                                        'destroyRoute' => [
+                                            'route' => 'apps.absences.vacation_plan_destroy',
+                                            'showIf' => Gate::allows('apps.absences.vacation_plan_destroy'),
+                                        ],
+                                        'forceDestroyRoute' => [
+                                            'route' => 'apps.absences.vacation_plan_forcedestroy',
+                                            'showIf' => Gate::allows('apps.absences.vacation_plan_forcedestroy') && $request->user()->can('isSuperAdmin', User::class),
+                                        ],
+                                        'restoreRoute' => [
+                                            'route' => 'apps.absences.vacation_plan_restore',
+                                            'showIf' => Gate::allows('apps.absences.vacation_plan_restore'),
+                                        ],
+                                    ],
+                                    'titles' => [
+                                        [
+                                            'type' => 'text',
+                                            'title' => 'Period',
+                                            'field' => 'period',
+                                        ],
+                                        [
+                                            'type' => 'text',
+                                            'title' => 'Starts at',
+                                            'field' => 'starts_at',
+                                        ],
+                                        [
+                                            'type' => 'text',
+                                            'title' => 'Ends at',
+                                            'field' => 'ends_at',
+                                        ],
+                                        [
+                                            'type' => 'text',
+                                            'title' => 'Implantation',
+                                            'field' => 'implantation',
+                                        ],
+                                    ],
+                                    'items' => $absences,
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ]);
+    }
+
+    public function __formVacationPlan(): array
+    {
+        return [
+            [
+                'id' => 'vacation_plan',
+                'title' => 'Main data',
+                'subtitle' => 'Absence type management.',
+                'cols' => 3,
+                'fields' => [
+                    [
+                        [
+                            'type' => 'number',
+                            'name' => 'period',
+                            'title' => 'Period',
+                            'span' => 2,
+                            'required' => true,
+                            'autofocus' => true,
+                        ],
+                        [
+                            'type' => 'number',
+                            'name' => 'year',
+                            'title' => 'Year',
+                            'required' => true,
+                        ],
+                        [
+                            'type' => 'date',
+                            'name' => 'starts_at',
+                            'title' => 'Starts at',
+                            'required' => true,
+                        ],
+                        [
+                            'type' => 'date',
+                            'name' => 'ends_at',
+                            'title' => 'Ends at',
+                            'required' => true,
+                        ],
+                        [
+                            'type' => 'date',
+                            'name' => 'implantation',
+                            'title' => 'Implantation',
+                            'required' => true,
+                        ],
+                    ],
+                ],
+            ],
+        ];
+    }
+
+    public function vacationPlanCreate(): Response
+    {
+        $this->authorize('access', User::class);
+
+        return Inertia::render('Default', [
+            'form' => $this->__formVacationPlan(),
+            'routes' => [
+                'vacation_plan' => [
+                    'route' => route('apps.absences.vacation_plan_store'),
+                    'method' => 'post',
+                ],
+            ],
+            'data' => [
+                'active' => true,
+            ],
+        ]);
+    }
+
+    public function vacationPlanStore(Request $request): RedirectResponse
+    {
+        $this->authorize('access', User::class);
+
+        DB::beginTransaction();
+
+        try {
+            $vacation_plan = new VacationPlan();
+
+            $vacation_plan->period = $request->period;
+            $vacation_plan->year = $request->year;
+            $vacation_plan->starts_at = $request->starts_at;
+            $vacation_plan->ends_at = $request->ends_at;
+            $vacation_plan->implantation = $request->implantation;
+
+            $vacation_plan->save();
+        } catch (\Throwable $e) {
+            report($e);
+
+            DB::rollback();
+
+            return Redirect::back()->with([
+                'toast_type' => 'error',
+                'toast_message' => 'Error on add this item.|Error on add the items.',
+                'toast_count' => 1,
+            ]);
+        }
+
+        DB::commit();
+
+        return Redirect::route('apps.absences.vacation_plan_edit', $vacation_plan->id)->with([
+            'toast_type' => 'success',
+            'toast_message' => '{0} Nothing to add.|[1] Item added successfully.|[2,*] :total items successfully added.',
+            'toast_count' => 1,
+        ]);
+    }
+
+    public function vacationPlanEdit(Request $request, VacationPlan $vacation_plan): Response
+    {
+        $this->authorize('access', User::class);
+
+        return Inertia::render('Default', [
+            'form' => $this->__formTypes(),
+            'routes' => [
+                'absences_types' => [
+                    'route' => route('apps.absences.vacation_plan_update', $vacation_plan->id),
+                    'method' => 'patch',
+                ],
+            ],
+            'data' => $vacation_plan,
+        ]);
+    }
+
+    public function vacationPlanUpdate(Request $request, VacationPlan $vacation_plan): RedirectResponse
+    {
+        $this->authorize('access', User::class);
+
+        DB::beginTransaction();
+
+        try {
+            $vacation_plan->name = $request->name;
+            $vacation_plan->active = $request->active;
+            $vacation_plan->max_duration = $request->max_duration;
+            $vacation_plan->working_days = $request->working_days;
+            $vacation_plan->acquisition_period = $request->acquisition_period;
+
+            $vacation_plan->save();
+        } catch (\Throwable $e) {
+            report($e);
+
+            DB::rollback();
+
+            return Redirect::back()->with([
+                'toast_type' => 'error',
+                'toast_message' => 'Error on edit selected item.|Error on edit selected items.',
+                'toast_count' => 1,
+            ]);
+        }
+
+        DB::commit();
+
+        return Redirect::route('apps.absences.type_edit', $vacation_plan->id)->with([
+            'toast_type' => 'success',
+            'toast_message' => '{0} Nothing to edit.|[1] Item edited successfully.|[2,*] :total items successfully edited.',
+            'toast_count' => 1,
+        ]);
+    }
+
+    public function vacationPlanDestroy(Request $request): RedirectResponse
+    {
+        try {
+            $total = AbsencesType::whereIn('id', $request->list)->delete();
+
+            return back()->with([
+                'toast_type' => 'success',
+                'toast_message' => '{0} Nothing to remove.|[1] Item removed successfully.|[2,*] :total items successfully removed.',
+                'toast_count' => $total,
+                'toast_replacements' => ['total' => $total],
+            ]);
+        } catch (\Throwable $e) {
+            report($e);
+
+            return back()->with([
+                'toast_type' => 'error',
+                'toast_message' => 'Error on remove selected item.|Error on remove selected items.',
+                'toast_count' => count($request->list),
+            ]);
+        }
+    }
+
+    public function vacationPlanForceDestroy(Request $request): RedirectResponse
+    {
+        try {
+            $total = AbsencesType::whereIn('id', $request->list)->forceDelete();
+
+            return back()->with([
+                'toast_type' => 'success',
+                'toast_message' => '{0} Nothing to erase.|[1] Item erased successfully.|[2,*] :total items successfully erased.',
+                'toast_count' => $total,
+                'toast_replacements' => ['total' => $total],
+            ]);
+        } catch (\Throwable $e) {
+            report($e);
+
+            return back()->with([
+                'toast_type' => 'error',
+                'toast_message' => 'Error on erase selected item.|Error on erase selected items.',
+                'toast_count' => count($request->list),
+            ]);
+        }
+    }
+
+    public function vacationPlanRestore(Request $request): RedirectResponse
     {
         try {
             $total = AbsencesType::whereIn('id', $request->list)->restore();
