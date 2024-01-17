@@ -461,11 +461,6 @@ class AbsencesController extends Controller
                                             'title' => 'Active',
                                             'field' => 'active',
                                         ],
-                                        [
-                                            'type' => 'text',
-                                            'title' => 'Duration (days)',
-                                            'field' => 'max_duration',
-                                        ],
                                     ],
                                     'items' => $absences,
                                 ],
