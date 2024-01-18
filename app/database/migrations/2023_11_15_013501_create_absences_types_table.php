@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('name', 100);
             $table->uuid('owner')->nullable();
             $table->boolean('active')->default(true);
+            $table->boolean('use_vacation_plan')->default(false);
             $table->integer('max_duration');
             $table->integer('acquisition_period');
             $table->boolean('working_days')->default(false);

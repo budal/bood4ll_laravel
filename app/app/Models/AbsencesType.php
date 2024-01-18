@@ -15,6 +15,7 @@ class AbsencesType extends Base
         'name',
         'owner',
         'active',
+        'use_vacation_plan',
         'max_duration',
         'working_days',
         'acquisition_period',
