@@ -117,7 +117,7 @@ const changeTab = (item: any) => {
                                     field.title &&
                                     field.type != 'checkbox' &&
                                     field.type != 'hidden' &&
-                                    field.showIf !== false
+                                    field.type != 'external_links'
                                 "
                                 as="span"
                                 :for="field.name"
