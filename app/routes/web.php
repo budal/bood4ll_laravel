@@ -40,15 +40,32 @@ Route::post('/email/verification-notification', function (Request $request) {
     return back()->with('message', 'Verification link sent!');
 })->middleware(['auth', 'throttle:6,1'])->name('verification.send');
 
+
+
+
 Route::get('/auth/github/redirect', function () {
     return Socialite::driver('github')->redirect();
-})->name('authProvider');
+})->name('authGithub');
 
 Route::get('/auth/github/callback', function () {
     $user = Socialite::driver('github')->user();
 
     // $user->token
-})->name('redirectProvider');
+})->name('redirectGithub');
+
+Route::get('/auth/google/redirect', function () {
+    return Socialite::driver('google')->redirect();
+})->name('authGoogle');
+
+Route::get('/auth/google/callback', function () {
+    $user = Socialite::driver('google')->user();
+
+    // $user->token
+})->name('redirectGoogle');
+
+
+
+
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');

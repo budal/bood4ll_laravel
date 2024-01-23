@@ -27,7 +27,7 @@ class AuthenticatedSessionController extends Controller
                     'fields' => [
                         [
                             [
-                                'type' => 'links',
+                                'type' => 'external_links',
                                 'title' => 'Login via social networks',
                                 'showIf' => getenv('GITHUB_CLIENT_ID') || getenv('GOOGLE_CLIENT_ID') || getenv('TWITTER_CLIENT_ID') || getenv('FACEBOOK_CLIENT_ID'),
                                 'values' => [
@@ -36,29 +36,29 @@ class AuthenticatedSessionController extends Controller
                                         'type' => 'button',
                                         'showIf' => getenv('GOOGLE_CLIENT_ID'),
                                         'icon' => 'mdi:google',
-                                        'route' => 'loginGithub',
+                                        'route' => 'authGoogle',
                                     ],
-                                    [
-                                        'title' => 'Twitter',
-                                        'type' => 'button',
-                                        'showIf' => getenv('TWITTER_CLIENT_ID'),
-                                        'icon' => 'mdi:twitter',
-                                        'route' => 'register',
-                                    ],
+                                    // [
+                                    //     'title' => 'Twitter',
+                                    //     'type' => 'button',
+                                    //     'showIf' => getenv('TWITTER_CLIENT_ID'),
+                                    //     'icon' => 'mdi:twitter',
+                                    //     'route' => 'register',
+                                    // ],
                                     [
                                         'title' => 'Github',
                                         'type' => 'button',
                                         'showIf' => getenv('GITHUB_CLIENT_ID'),
                                         'icon' => 'mdi:github',
-                                        'route' => 'authProvider',
+                                        'route' => 'authGithub',
                                     ],
-                                    [
-                                        'title' => 'Facebook',
-                                        'type' => 'button',
-                                        'showIf' => getenv('FACEBOOK_CLIENT_ID'),
-                                        'icon' => 'mdi:facebook',
-                                        'route' => 'register',
-                                    ],
+                                    // [
+                                    //     'title' => 'Facebook',
+                                    //     'type' => 'button',
+                                    //     'showIf' => getenv('FACEBOOK_CLIENT_ID'),
+                                    //     'icon' => 'mdi:facebook',
+                                    //     'route' => 'register',
+                                    // ],
                                 ],
                             ],
                             [

@@ -144,38 +144,38 @@ const changeTab = (item: any) => {
                             </label>
 
                             <div
+                                v-if="field.type == 'external_links'"
+                                class="flex justify-between underline text-sm text-zero-light dark:text-zero-dark"
+                            >
+                                <template v-for="link in field.values">
+                                    <a
+                                        v-if="link.showIf !== false"
+                                        :href="isValidUrl(link.route)"
+                                        :method="link.method || 'get'"
+                                        class="focus:outline-none border-b-2 border-transparent hover:border-zero-dark dark:hover:border-zero-white focus:border-zero-dark dark:focus:border-zero-white transition ease-in-out duration-500"
+                                        as="button"
+                                        type="button"
+                                    >
+                                        {{ $t(link.title) }}
+                                    </a>
+                                </template>
+                            </div>
+
+                            <div
                                 v-if="field.type == 'links'"
                                 class="flex justify-between underline text-sm text-zero-light dark:text-zero-dark"
                             >
                                 <template v-for="link in field.values">
-                                    <template v-if="link.showIf !== false">
-                                        <Button
-                                            v-if="link.type == 'button'"
-                                            :type="link.type"
-                                            :color="link.color"
-                                            :link="link.route"
-                                            :title="link.name"
-                                            :startIcon="link.icon"
-                                            :preserveScroll="
-                                                link.preserveScroll
-                                            "
-                                            :disabled="link.disabled"
-                                            class="mt-1"
-                                            v-model="jsForm[link.name]"
-                                            @keydown.enter.prevent
-                                            @click.prevent
-                                        />
-                                        <Link
-                                            v-else
-                                            :href="isValidUrl(link.route)"
-                                            :method="link.method || 'get'"
-                                            class="focus:outline-none border-b-2 border-transparent hover:border-zero-dark dark:hover:border-zero-white focus:border-zero-dark dark:focus:border-zero-white transition ease-in-out duration-500"
-                                            as="button"
-                                            type="button"
-                                        >
-                                            {{ $t(link.title) }}
-                                        </Link>
-                                    </template>
+                                    <Link
+                                        v-if="link.showIf !== false"
+                                        :href="isValidUrl(link.route)"
+                                        :method="link.method || 'get'"
+                                        class="focus:outline-none border-b-2 border-transparent hover:border-zero-dark dark:hover:border-zero-white focus:border-zero-dark dark:focus:border-zero-white transition ease-in-out duration-500"
+                                        as="button"
+                                        type="button"
+                                    >
+                                        {{ $t(link.title) }}
+                                    </Link>
                                 </template>
                             </div>
 
