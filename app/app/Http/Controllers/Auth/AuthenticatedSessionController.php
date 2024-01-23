@@ -27,6 +27,45 @@ class AuthenticatedSessionController extends Controller
                     'fields' => [
                         [
                             [
+                                'type' => 'links',
+                                'title' => 'Login via social networks',
+                                'showIf' => getenv('GITHUB_CLIENT_ID') || getenv('GOOGLE_CLIENT_ID') || getenv('TWITTER_CLIENT_ID') || getenv('FACEBOOK_CLIENT_ID'),
+                                'values' => [
+                                    [
+                                        'title' => 'Google',
+                                        'type' => 'button',
+                                        'showIf' => getenv('GOOGLE_CLIENT_ID'),
+                                        'icon' => 'mdi:google',
+                                        'route' => 'loginGithub',
+                                    ],
+                                    [
+                                        'title' => 'Twitter',
+                                        'type' => 'button',
+                                        'showIf' => getenv('TWITTER_CLIENT_ID'),
+                                        'icon' => 'mdi:twitter',
+                                        'route' => 'register',
+                                    ],
+                                    [
+                                        'title' => 'Github',
+                                        'type' => 'button',
+                                        'showIf' => getenv('GITHUB_CLIENT_ID'),
+                                        'icon' => 'mdi:github',
+                                        'route' => 'loginGithub',
+                                    ],
+                                    [
+                                        'title' => 'Facebook',
+                                        'type' => 'button',
+                                        'showIf' => getenv('FACEBOOK_CLIENT_ID'),
+                                        'icon' => 'mdi:facebook',
+                                        'route' => 'register',
+                                    ],
+                                ],
+                            ],
+                            [
+                                'type' => 'separator',
+                                'showIf' => getenv('GITHUB_CLIENT_ID') || getenv('GOOGLE_CLIENT_ID') || getenv('TWITTER_CLIENT_ID') || getenv('FACEBOOK_CLIENT_ID'),
+                            ],
+                            [
                                 'type' => 'email',
                                 'name' => 'email',
                                 'title' => 'Email',
@@ -57,44 +96,6 @@ class AuthenticatedSessionController extends Controller
                                         'title' => 'Forgot your password?',
                                         'route' => 'password.request',
                                         'showIf' => Route::has('password.request'),
-                                    ],
-                                ],
-                            ],
-                            [
-                                'type' => 'links',
-                                'title' => 'Social medial login',
-                                'values' => [
-                                    [
-                                        'title' => 'Google',
-                                        'type' => 'button',
-                                        'showIf' => getenv('GITHUB_CLIENT_ID'),
-                                        'icon' => 'mdi:google',
-                                        'route' => 'register',
-                                        'showIf' => Route::has('register'),
-                                    ],
-                                    [
-                                        'title' => 'Twitter',
-                                        'type' => 'button',
-                                        'showIf' => getenv('GOOGLE_CLIENT_ID'),
-                                        'icon' => 'mdi:twitter',
-                                        'route' => 'register',
-                                        'showIf' => Route::has('register'),
-                                    ],
-                                    [
-                                        'title' => 'Github',
-                                        'type' => 'button',
-                                        'showIf' => getenv('TWITTER_CLIENT_ID'),
-                                        'icon' => 'mdi:github',
-                                        'route' => 'register',
-                                        'showIf' => Route::has('register'),
-                                    ],
-                                    [
-                                        'title' => 'Facebook',
-                                        'type' => 'button',
-                                        'showIf' => getenv('FACEBOOK_CLIENT_ID'),
-                                        'icon' => 'mdi:facebook',
-                                        'route' => 'register',
-                                        'showIf' => Route::has('register'),
                                     ],
                                 ],
                             ],

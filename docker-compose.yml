@@ -54,11 +54,11 @@ services:
       - MAIL_FROM_ADDRESS=${MAIL_FROM_ADDRESS:-"hello@example.com"}
       - MAIL_FROM_NAME=${MAIL_FROM_NAME:-"Bood4ll"}
 
-      - GITHUB_CLIENT_ID=
-      - GITHUB_CLIENT_SECRET=
+      - GITHUB_CLIENT_ID=b8f469fb67f48e79d640
+      - GITHUB_CLIENT_SECRET=23e5422a490984b0ced7c0c90cbe18a1603b8f69
 
-      - GOOGLE_CLIENT_ID=
-      - GOOGLE_CLIENT_SECRET=
+      - GOOGLE_CLIENT_ID=711520212788-oonio0t1uci5i26ju2md3aejrgvohssd.apps.googleusercontent.com
+      - GOOGLE_CLIENT_SECRET=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
 
       - TWITTER_CLIENT_ID=
       - TWITTER_CLIENT_SECRET=
@@ -107,10 +107,10 @@ services:
 
   postgres:
     container_name: budal_postgres
-    build:
-      context: .
-      dockerfile: ./docker/postgresql/Dockerfile
-    # image: postgres:alpine
+    # build:
+    #   context: .
+    #   dockerfile: ./docker/postgresql/Dockerfile
+    image: postgres:alpine
     restart: unless-stopped
     networks:
       - budal_laravel_network

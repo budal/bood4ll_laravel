@@ -13,6 +13,7 @@ use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use Laravel\Socialite\Facades\Socialite;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -38,6 +39,16 @@ Route::post('/email/verification-notification', function (Request $request) {
 
     return back()->with('message', 'Verification link sent!');
 })->middleware(['auth', 'throttle:6,1'])->name('verification.send');
+
+Route::get('/auth/github/redirect', function () {
+    return Socialite::driver('github')->redirect();
+})->name('loginGithub');
+
+Route::get('/auth/github/callback', function () {
+    $user = Socialite::driver('github')->user();
+
+    dd($user);
+})->name('redirectGithub');
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');

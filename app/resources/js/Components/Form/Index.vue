@@ -5,6 +5,7 @@ import Checkbox from "@/Components/Checkbox.vue";
 import InputError from "@/Components/InputError.vue";
 import InputLabel from "@/Components/InputLabel.vue";
 import Select from "@/Components/Select.vue";
+import Separator from "@/Components/Separator.vue";
 import Table from "@/Components/Table/Index.vue";
 import TextInput from "@/Components/TextInput.vue";
 import Tabs from "@/Components/Tabs.vue";
@@ -115,7 +116,8 @@ const changeTab = (item: any) => {
                                 v-if="
                                     field.title &&
                                     field.type != 'checkbox' &&
-                                    field.type != 'hidden'
+                                    field.type != 'hidden' &&
+                                    field.showIf !== false
                                 "
                                 as="span"
                                 :for="field.name"
@@ -146,18 +148,41 @@ const changeTab = (item: any) => {
                                 class="flex justify-between underline text-sm text-zero-light dark:text-zero-dark"
                             >
                                 <template v-for="link in field.values">
-                                    <Link
-                                        v-if="link.showIf !== false"
-                                        :href="isValidUrl(link.route)"
-                                        :method="link.method || 'get'"
-                                        class="focus:outline-none border-b-2 border-transparent hover:border-zero-dark dark:hover:border-zero-white focus:border-zero-dark dark:focus:border-zero-white transition ease-in-out duration-500"
-                                        as="button"
-                                        type="button"
-                                    >
-                                        {{ $t(link.title) }}
-                                    </Link>
+                                    <template v-if="link.showIf !== false">
+                                        <Button
+                                            v-if="link.type == 'button'"
+                                            :type="link.type"
+                                            :color="link.color"
+                                            :link="link.route"
+                                            :title="link.name"
+                                            :startIcon="link.icon"
+                                            :preserveScroll="
+                                                link.preserveScroll
+                                            "
+                                            :disabled="link.disabled"
+                                            class="mt-1"
+                                            v-model="jsForm[link.name]"
+                                            @keydown.enter.prevent
+                                            @click.prevent
+                                        />
+                                        <Link
+                                            v-else
+                                            :href="isValidUrl(link.route)"
+                                            :method="link.method || 'get'"
+                                            class="focus:outline-none border-b-2 border-transparent hover:border-zero-dark dark:hover:border-zero-white focus:border-zero-dark dark:focus:border-zero-white transition ease-in-out duration-500"
+                                            as="button"
+                                            type="button"
+                                        >
+                                            {{ $t(link.title) }}
+                                        </Link>
+                                    </template>
                                 </template>
                             </div>
+
+                            <Separator
+                                v-if="field.type == 'separator'"
+                                :showIf="field.showIf"
+                            />
 
                             <input
                                 v-if="field.type == 'hidden'"
