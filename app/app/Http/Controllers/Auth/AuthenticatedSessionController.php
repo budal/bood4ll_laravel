@@ -50,7 +50,7 @@ class AuthenticatedSessionController extends Controller
                                         'type' => 'button',
                                         'showIf' => getenv('GITHUB_CLIENT_ID'),
                                         'icon' => 'mdi:github',
-                                        'route' => 'loginGithub',
+                                        'route' => 'authProvider',
                                     ],
                                     [
                                         'title' => 'Facebook',

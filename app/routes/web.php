@@ -42,13 +42,13 @@ Route::post('/email/verification-notification', function (Request $request) {
 
 Route::get('/auth/github/redirect', function () {
     return Socialite::driver('github')->redirect();
-})->name('loginGithub');
+})->name('authProvider');
 
 Route::get('/auth/github/callback', function () {
     $user = Socialite::driver('github')->user();
 
-    dd($user);
-})->name('redirectGithub');
+    // $user->token
+})->name('redirectProvider');
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
