@@ -222,9 +222,9 @@ const onClick = () => {
     <button
         @click="onClick"
         :type="type"
-        :class="`group/edit hover:scale-105 min-h-[41px] inline-flex items-center px-${padding} bg-${color}-light dark:bg-${color}-dark hover:bg-${color}-light-hover dark:hover:bg-${color}-dark-hover border border-${color}-light dark:border-${color}-dark ${rounded} font-semibold ${textSize} text-${color}-light dark:text-${color}-dark ${transform} tracking-widest focus:outline-none focus:ring-2 focus:ring-primary-light dark:focus:ring-primary-dark focus:ring-offset-2 focus:ring-offset-primary-light dark:focus:ring-offset-primary-dark disabled:opacity-25 transition ease-in-out duration-500`"
+        :class="`hover:scale-105 min-h-[41px] inline-flex items-center px-${padding} bg-${color}-light dark:bg-${color}-dark hover:bg-${color}-light-hover dark:hover:bg-${color}-dark-hover border border-${color}-light dark:border-${color}-dark ${rounded} font-semibold ${textSize} text-${color}-light dark:text-${color}-dark ${transform} tracking-widest focus:outline-none focus:ring-2 focus:ring-primary-light dark:focus:ring-primary-dark focus:ring-offset-2 focus:ring-offset-primary-light dark:focus:ring-offset-primary-dark disabled:opacity-25 transition ease-in-out duration-500`"
     >
-        <div class="group-hover/edit:scale-110 flex gap-1 items-center">
+        <div class="flex gap-1 items-center">
             <Icon v-if="startIcon" :icon="startIcon" class="h-5 w-5" />
             <slot />
             <span v-if="srOnly" class="sr-only">{{ srOnly }}</span>

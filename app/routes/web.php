@@ -97,16 +97,6 @@ Route::middleware('auth')->group(function () {
         ->defaults('icon', 'mdi:cog-outline');
 
     Route::prefix('apps')->name('apps.')->group(function () {
-        Route::controller(AbilitiesController::class)->group(function () {
-            Route::name('abilities.')->middleware('verified', 'password.confirm')->group(function () {
-                Route::get('/abilities', 'index')->name('index')->breadcrumb('Abilities')
-                    ->defaults('title', 'Abilities')
-                    ->defaults('description', 'Define which abilities will be showed in the roles management.')
-                    ->defaults('icon', 'mdi:book-cog-outline');
-                Route::post('/abilities/update/{mode?}', 'update')->name('update')->whereIn('mode', ['toggle', 'on', 'off']);
-            });
-        });
-
         Route::controller(RolesController::class)->group(function () {
             Route::name('roles.')->middleware('verified', 'password.confirm')->group(function () {
                 Route::get('/roles', 'index')->name('index')->breadcrumb('Roles')
@@ -121,6 +111,12 @@ Route::middleware('auth')->group(function () {
                 Route::delete('/roles/destroy', 'destroy')->name('destroy');
                 Route::delete('/roles/forcedestroy', 'forceDestroy')->name('forcedestroy');
                 Route::post('/roles/restore', 'restore')->name('restore');
+
+                Route::get('/roles/abilities', 'abilitiesIndex')->name('abilities_index')->breadcrumb('Abilities', 'apps.roles.index')
+                    ->defaults('title', 'Abilities')
+                    ->defaults('description', 'Define which abilities will be showed in the roles management.')
+                    ->defaults('icon', 'mdi:book-cog-outline');
+                Route::post('/roles/abilities/update/{mode?}', 'abilitiesUpdate')->name('abilities_update')->whereIn('mode', ['toggle', 'on', 'off']);
             });
         });
 
