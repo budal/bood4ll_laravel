@@ -136,6 +136,27 @@ Route::middleware('auth')->group(function () {
             });
         });
 
+        Route::controller(UsersController::class)->group(function () {
+            Route::name('users.')->middleware('verified', 'password.confirm')->group(function () {
+                Route::get('/users', 'index')->name('index')->breadcrumb('Users')
+                    ->defaults('title', 'Users')
+                    ->defaults('description', 'Manage users informations and authorizations.')
+                    ->defaults('icon', 'mdi:account-multiple');
+                Route::post('/users/changeuser/{user}', 'changeUser')->name('change_user');
+                Route::post('/users/returnToMyUser', 'returnToMyUser')->name('return_to_my_user');
+                Route::post('/users/activate/{user}/{mode?}', 'activate')->name('activate');
+                Route::get('/users/create', 'create')->name('create')->breadcrumb('User creation', 'apps.users.index');
+                Route::post('/users/create', 'store')->name('store');
+                Route::get('/users/edit/{user}/{show?}', 'edit')->name('edit')->breadcrumb('User edition', 'apps.users.index');
+                Route::patch('/users/edit/{user}', 'update')->name('update');
+                Route::post('/users/authorize_unit/{user}/{mode?}', 'authorizeUnit')->name('authorize_unit');
+                Route::post('/users/authorize_role/{user}/{mode?}', 'authorizeRole')->name('authorize_role');
+                Route::delete('/users/destroy', 'destroy')->name('destroy');
+                Route::delete('/users/forcedestroy', 'forceDestroy')->name('forcedestroy');
+                Route::post('/users/restore', 'restore')->name('restore');
+            });
+        });
+
         Route::controller(CalendarsController::class)->group(function () {
             Route::name('calendars.')->middleware('verified', 'password.confirm')->group(function () {
                 Route::get('/calendars', 'index')->name('index')->breadcrumb('Calendars')
@@ -157,27 +178,6 @@ Route::middleware('auth')->group(function () {
                 Route::delete('/calendars/holiday/destroy', 'holidayDestroy')->name('holiday_destroy');
                 Route::delete('/calendars/holiday/forcedestroy', 'holidayForceDestroy')->name('holiday_forcedestroy');
                 Route::post('/calendars/holiday/restore', 'holidayRestore')->name('holiday_restore');
-            });
-        });
-
-        Route::controller(UsersController::class)->group(function () {
-            Route::name('users.')->middleware('verified', 'password.confirm')->group(function () {
-                Route::get('/users', 'index')->name('index')->breadcrumb('Users')
-                    ->defaults('title', 'Users')
-                    ->defaults('description', 'Manage users informations and authorizations.')
-                    ->defaults('icon', 'mdi:account-multiple');
-                Route::post('/users/changeuser/{user}', 'changeUser')->name('change_user');
-                Route::post('/users/returnToMyUser', 'returnToMyUser')->name('return_to_my_user');
-                Route::post('/users/activate/{user}/{mode?}', 'activate')->name('activate');
-                Route::get('/users/create', 'create')->name('create')->breadcrumb('User creation', 'apps.users.index');
-                Route::post('/users/create', 'store')->name('store');
-                Route::get('/users/edit/{user}/{show?}', 'edit')->name('edit')->breadcrumb('User edition', 'apps.users.index');
-                Route::patch('/users/edit/{user}', 'update')->name('update');
-                Route::post('/users/authorize_unit/{user}/{mode?}', 'authorizeUnit')->name('authorize_unit');
-                Route::post('/users/authorize_role/{user}/{mode?}', 'authorizeRole')->name('authorize_role');
-                Route::delete('/users/destroy', 'destroy')->name('destroy');
-                Route::delete('/users/forcedestroy', 'forceDestroy')->name('forcedestroy');
-                Route::post('/users/restore', 'restore')->name('restore');
             });
         });
 
