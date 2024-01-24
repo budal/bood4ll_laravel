@@ -93,6 +93,6 @@ RUN php artisan key:generate
 
 # RUN npm install
 
-# ENTRYPOINT ["/tmp/run.sh"]
+# RUN ["/tmp/run.sh"]
 
 # CMD ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisor/supervisord.conf"]

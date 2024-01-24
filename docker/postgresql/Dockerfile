@@ -1,3 +1,3 @@
 FROM postgres:alpine
 
-COPY ./scripts/Easter.sql /docker-entrypoint-initdb.d/
+COPY ./docker/postgresql/scripts/ /docker-entrypoint-initdb.d/
