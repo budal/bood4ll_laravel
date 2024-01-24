@@ -8,9 +8,11 @@ use App\Http\Controllers\Authorization\UsersController;
 use App\Http\Controllers\CalendarsController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SchedulesController;
+use App\Models\User;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Socialite\Facades\Socialite;
@@ -40,32 +42,28 @@ Route::post('/email/verification-notification', function (Request $request) {
     return back()->with('message', 'Verification link sent!');
 })->middleware(['auth', 'throttle:6,1'])->name('verification.send');
 
+Route::get('/auth/{provider}/redirect', function (string $provider) {
+    return Socialite::driver($provider)->redirect();
+})->name('authRedirect');
 
+Route::get('/auth/{provider}/callback', function (string $provider) {
+    $providerUser = Socialite::driver($provider)->user();
 
+    $user = User::updateOrCreate([
+        'email' => $providerUser->email,
+    ], [
+        'name' => $providerUser->getName(),
+        'provider_name' => $provider,
+        'provider_id' => $providerUser->getId(),
+        'provider_avatar' => $providerUser->getAvatar(),
+        'provider_token' => $providerUser->token,
+        'provider_refresh_token' => $providerUser->refreshToken,
+    ]);
 
-Route::get('/auth/github/redirect', function () {
-    return Socialite::driver('github')->redirect();
-})->name('authGithub');
+    Auth::login($user);
 
-Route::get('/auth/github/callback', function () {
-    $user = Socialite::driver('github')->user();
-
-    // $user->token
-})->name('redirectGithub');
-
-Route::get('/auth/google/redirect', function () {
-    return Socialite::driver('google')->redirect();
-})->name('authGoogle');
-
-Route::get('/auth/google/callback', function () {
-    $user = Socialite::driver('google')->user();
-
-    // $user->token
-})->name('redirectGoogle');
-
-
-
-
+    return redirect('/dashboard');
+})->name('authCallback');
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');

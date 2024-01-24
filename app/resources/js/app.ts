@@ -31,6 +31,7 @@ createInertiaApp({
                     ),
             })
             .use(plugin)
+            // .use(cors)
             .use(Vue3Toasity, {
                 autoClose: 3000,
                 limit: 5,

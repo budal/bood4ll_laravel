@@ -34,29 +34,41 @@ class AuthenticatedSessionController extends Controller
                                         'title' => 'Google',
                                         'type' => 'button',
                                         'showIf' => getenv('GOOGLE_CLIENT_ID') != null,
-                                        'icon' => 'mdi:google',
-                                        'route' => 'authGoogle',
+                                        'startIcon' => 'mdi:google',
+                                        'route' => [
+                                            'route' => 'authRedirect',
+                                            'attributes' => ['google']
+                                        ],
                                     ],
                                     [
                                         'title' => 'Twitter',
                                         'type' => 'button',
                                         'showIf' => getenv('TWITTER_CLIENT_ID') != null,
-                                        'icon' => 'mdi:twitter',
-                                        'route' => 'register',
+                                        'startIcon' => 'mdi:twitter',
+                                        'route' => [
+                                            'route' => 'authRedirect',
+                                            'attributes' => ['twitter']
+                                        ],
                                     ],
                                     [
                                         'title' => 'Github',
                                         'type' => 'button',
                                         'showIf' => getenv('GITHUB_CLIENT_ID') != null,
-                                        'icon' => 'mdi:github',
-                                        'route' => 'authGithub',
+                                        'startIcon' => 'mdi:github',
+                                        'route' => [
+                                            'route' => 'authRedirect',
+                                            'attributes' => ['github']
+                                        ],
                                     ],
                                     [
                                         'title' => 'Facebook',
                                         'type' => 'button',
                                         'showIf' => getenv('FACEBOOK_CLIENT_ID') != null,
-                                        'icon' => 'mdi:facebook',
-                                        'route' => 'register',
+                                        'startIcon' => 'mdi:facebook',
+                                        'route' => [
+                                            'route' => 'authRedirect',
+                                            'attributes' => ['facebook']
+                                        ],
                                     ],
                                 ],
                             ],

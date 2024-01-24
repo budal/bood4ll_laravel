@@ -12,6 +12,7 @@ import Tabs from "@/Components/Tabs.vue";
 import Toggle from "@/Components/Toggle.vue";
 import { Link, useForm } from "@inertiajs/vue3";
 import { ref } from "vue";
+import LinkGroup from "../LinkGroup.vue";
 
 const props = withDefaults(
     defineProps<{
@@ -143,23 +144,10 @@ const changeTab = (item: any) => {
                                 >
                             </label>
 
-                            <div
+                            <LinkGroup
                                 v-if="field.type == 'external_links'"
-                                class="flex justify-between underline text-sm text-zero-light dark:text-zero-dark"
-                            >
-                                <template v-for="link in field.values">
-                                    <a
-                                        v-if="link.showIf !== false"
-                                        :href="isValidUrl(link.route)"
-                                        :method="link.method || 'get'"
-                                        class="focus:outline-none border-b-2 border-transparent hover:border-zero-dark dark:hover:border-zero-white focus:border-zero-dark dark:focus:border-zero-white transition ease-in-out duration-500"
-                                        as="button"
-                                        type="button"
-                                    >
-                                        {{ $t(link.title) }}
-                                    </a>
-                                </template>
-                            </div>
+                                :values="field.values"
+                            />
 
                             <div
                                 v-if="field.type == 'links'"
