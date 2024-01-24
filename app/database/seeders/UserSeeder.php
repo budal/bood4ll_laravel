@@ -22,6 +22,7 @@ class UserSeeder extends Seeder
             'name' => 'Thiago Philipe Budal',
             'email' => 'budal.thiago@gmail.com',
             'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
+            'active' => true,
         ]);
 
         \App\Models\User::factory(rand(18000, 20000))->afterCreating(function (\App\Models\User $user) {

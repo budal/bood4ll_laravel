@@ -158,7 +158,7 @@ const changeTab = (item: any) => {
                                         v-if="link.showIf !== false"
                                         :href="isValidUrl(link.route)"
                                         :method="link.method || 'get'"
-                                        class="focus:outline-none border-b-2 border-transparent hover:border-zero-dark dark:hover:border-zero-white focus:border-zero-dark dark:focus:border-zero-white transition ease-in-out duration-500"
+                                        class="focus:outline-none underline decoration-indigo-500/30 border-transparent hover:border-zero-dark dark:hover:border-zero-white focus:border-zero-dark dark:focus:border-zero-white transition ease-in-out duration-500"
                                         as="button"
                                         type="button"
                                     >
