@@ -385,19 +385,15 @@ class UsersController extends Controller
             [
                 'id' => 'profile',
                 'title' => 'Main data',
-                'subtitle' => 'User account profile information',
-                'cols' => 3,
+                'subtitle' => 'User account profile information.',
+                'cols' => 4,
                 'fields' => [
                     [
                         [
                             'type' => 'input',
                             'name' => 'name',
                             'title' => 'Name',
-                        ],
-                        [
-                            'type' => 'input',
-                            'name' => 'email',
-                            'title' => 'Email',
+                            'span' => 3,
                         ],
                         [
                             'type' => 'toggle',
@@ -406,47 +402,33 @@ class UsersController extends Controller
                             'colorOn' => 'success',
                             'colorOff' => 'danger',
                         ],
-                    ],
-                    [
-                        [
-                            'type' => 'date',
-                            'name' => 'birthday',
-                            'title' => 'Birthday',
-                        ],
                         [
                             'type' => 'input',
-                            'name' => 'naturalness',
-                            'title' => 'Naturalness',
+                            'name' => 'email',
+                            'title' => 'Email',
+                            'span' => 2,
                         ],
                         [
-                            'type' => 'input',
-                            'name' => 'nationality',
-                            'title' => 'Nationality',
+                            'type' => 'text',
+                            'name' => 'email_verified_at',
+                            'title' => 'Email verified at',
+                            'readonly' => true,
                         ],
-                    ]
-                ],
-                [
-                    [
-                        'type' => 'date',
-                        'name' => 'birthday',
-                        'title' => 'Birthday',
-                    ],
-                    [
-                        'type' => 'input',
-                        'name' => 'naturalness',
-                        'title' => 'Naturalness',
-                    ],
-                    [
-                        'type' => 'input',
-                        'name' => 'nationality',
-                        'title' => 'Nationality',
+                        [
+                            'type' => 'toggle',
+                            'name' => 'password',
+                            'title' => 'Reset password',
+                            'colorOn' => 'success',
+                            'colorOff' => 'danger',
+                            'span' => 1,
+                        ],
                     ],
                 ]
             ],
             [
                 'id' => 'units',
                 'title' => 'Units',
-                'subtitle' => "Users' units management.",
+                'subtitle' => "User units management.",
                 'showIf' => $user->id != null && $request->user()->can('canManageNestedData', User::class),
                 'fields' => [
                     [
@@ -561,7 +543,7 @@ class UsersController extends Controller
             [
                 'id' => 'roles',
                 'title' => 'Roles',
-                'subtitle' => "Users' roles management.",
+                'subtitle' => "User roles management.",
                 'showIf' => $user->id != null && $request->user()->can('canManageNestedData', User::class),
                 'fields' => [
                     [

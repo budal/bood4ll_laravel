@@ -8,11 +8,11 @@ withDefaults(
         type?: string;
         mask?: string;
         modelValue?: string | number;
-        autocomplete: boolean;
+        autocomplete?: boolean | string;
     }>(),
     {
         type: "text",
-        autocomplete: false,
+        autocomplete: "off",
     },
 );
 

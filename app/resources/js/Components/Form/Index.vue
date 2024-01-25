@@ -196,6 +196,7 @@ const changeTab = (item: any) => {
                                 :mask="field.mask"
                                 class="mt-1"
                                 v-model="jsForm[field.name]"
+                                :readonly="field.readonly"
                                 :disabled="
                                     field.disabled
                                         ? field.disabled
