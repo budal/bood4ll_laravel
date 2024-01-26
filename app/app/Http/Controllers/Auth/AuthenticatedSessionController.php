@@ -27,7 +27,7 @@ class AuthenticatedSessionController extends Controller
                     'fields' => [
                         [
                             [
-                                'type' => 'external_links',
+                                'type' => 'linkGroup',
                                 'showIf' => getenv('GITHUB_CLIENT_ID') || getenv('GOOGLE_CLIENT_ID') || getenv('TWITTER_CLIENT_ID') || getenv('FACEBOOK_CLIENT_ID'),
                                 'values' => [
                                     [

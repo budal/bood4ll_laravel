@@ -386,14 +386,14 @@ class UsersController extends Controller
                 'id' => 'profile',
                 'title' => 'Main data',
                 'subtitle' => 'User account profile information.',
-                'cols' => 4,
+                'cols' => 3,
                 'fields' => [
                     [
                         [
                             'type' => 'input',
                             'name' => 'name',
                             'title' => 'Name',
-                            'span' => 3,
+                            'span' => 2,
                         ],
                         [
                             'type' => 'toggle',
@@ -414,15 +414,15 @@ class UsersController extends Controller
                             'title' => 'Email verified at',
                             'readonly' => true,
                         ],
-                        [
-                            'type' => 'toggle',
-                            'name' => 'password',
-                            'title' => 'Reset password',
-                            'colorOn' => 'success',
-                            'colorOff' => 'danger',
-                            'span' => 1,
-                        ],
                     ],
+                    [
+                        [
+                            'type' => 'modal',
+                            'title' => 'Reset password',
+                            'description' => "By clicking the button below, an email will be sent to the user to reset their password.",
+                            'span' => 3,
+                        ],
+                    ]
                 ]
             ],
             [

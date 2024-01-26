@@ -118,7 +118,8 @@ const changeTab = (item: any) => {
                                     field.title &&
                                     field.type != 'checkbox' &&
                                     field.type != 'hidden' &&
-                                    field.type != 'external_links'
+                                    field.type != 'linkGroup' &&
+                                    field.type != 'modal'
                                 "
                                 as="span"
                                 :for="field.name"
@@ -126,69 +127,15 @@ const changeTab = (item: any) => {
                                 :required="field.required"
                             />
 
-                            <label
-                                v-if="field.type == 'checkbox'"
-                                class="flex items-center"
-                            >
-                                <Checkbox
-                                    name="remember"
-                                    :checked="
-                                        jsForm[field.name] == 'true'
-                                            ? true
-                                            : false
-                                    "
-                                />
-                                <span
-                                    class="ml-2 text-sm text-zero-light dark:text-zero-dark"
-                                    >{{ $t("Remember me") }}</span
-                                >
-                            </label>
-
-                            <LinkGroup
-                                v-if="field.type == 'external_links'"
-                                :values="field.values"
-                            />
-
-                            <div
-                                v-if="field.type == 'links'"
-                                class="flex justify-between underline text-sm text-zero-light dark:text-zero-dark"
-                            >
-                                <template v-for="link in field.values">
-                                    <Link
-                                        v-if="link.showIf !== false"
-                                        :href="isValidUrl(link.route)"
-                                        :method="link.method || 'get'"
-                                        class="focus:outline-none underline decoration-indigo-500/30 border-transparent hover:border-zero-dark dark:hover:border-zero-white focus:border-zero-dark dark:focus:border-zero-white transition ease-in-out duration-500"
-                                        as="button"
-                                        type="button"
-                                    >
-                                        {{ $t(link.title) }}
-                                    </Link>
-                                </template>
-                            </div>
-
-                            <Separator
-                                v-if="field.type == 'separator'"
-                                :showIf="field.showIf"
-                            />
-
-                            <input
-                                v-if="field.type == 'hidden'"
-                                :id="field.name"
-                                :name="field.name"
-                                :type="field.type"
-                                v-model="jsForm[field.name]"
-                            />
-
                             <TextInput
                                 v-if="
-                                    field.type == 'input' ||
-                                    field.type == 'text' ||
-                                    field.type == 'number' ||
-                                    field.type == 'password' ||
                                     field.type == 'date' ||
                                     field.type == 'datetime-local' ||
-                                    field.type == 'email'
+                                    field.type == 'email' ||
+                                    field.type == 'input' ||
+                                    field.type == 'number' ||
+                                    field.type == 'password' ||
+                                    field.type == 'text'
                                 "
                                 :id="field.name"
                                 :name="field.name"
@@ -205,25 +152,6 @@ const changeTab = (item: any) => {
                                 :required="field.required"
                                 :autocomplete="field.autocomplete"
                                 :autofocus="field.autofocus"
-                            />
-
-                            <Toggle
-                                v-if="field.type == 'toggle'"
-                                :id="field.name"
-                                :name="field.name"
-                                :type="field.type"
-                                :colorOn="field.colorOn"
-                                :colorOff="field.colorOff"
-                                :rotate="field.rotate"
-                                :disabled="
-                                    field.disabled
-                                        ? field.disabled
-                                        : mkForm.disabledIf === true
-                                "
-                                class="mt-1"
-                                v-model="jsForm[field.name]"
-                                @keydown.enter.prevent
-                                @click.prevent
                             />
 
                             <Button
@@ -247,6 +175,78 @@ const changeTab = (item: any) => {
                                 @click.prevent
                             />
 
+                            <label
+                                v-if="field.type == 'checkbox'"
+                                class="flex items-center"
+                            >
+                                <Checkbox
+                                    name="remember"
+                                    :checked="
+                                        jsForm[field.name] == 'true'
+                                            ? true
+                                            : false
+                                    "
+                                />
+                                <span
+                                    class="ml-2 text-sm text-zero-light dark:text-zero-dark"
+                                    >{{ $t("Remember me") }}</span
+                                >
+                            </label>
+
+                            <input
+                                v-if="field.type == 'hidden'"
+                                :id="field.name"
+                                :name="field.name"
+                                :type="field.type"
+                                v-model="jsForm[field.name]"
+                            />
+
+                            <LinkGroup
+                                v-if="field.type == 'linkGroup'"
+                                :values="field.values"
+                            />
+
+                            <div
+                                v-if="field.type == 'links'"
+                                class="flex justify-between underline text-sm text-zero-light dark:text-zero-dark"
+                            >
+                                <template v-for="link in field.values">
+                                    <Link
+                                        v-if="link.showIf !== false"
+                                        :href="isValidUrl(link.route)"
+                                        :method="link.method || 'get'"
+                                        class="focus:outline-none underline decoration-indigo-500/30 border-transparent hover:border-zero-dark dark:hover:border-zero-white focus:border-zero-dark dark:focus:border-zero-white transition ease-in-out duration-500"
+                                        as="button"
+                                        type="button"
+                                    >
+                                        {{ $t(link.title) }}
+                                    </Link>
+                                </template>
+                            </div>
+
+                            <template
+                                v-if="
+                                    field.type == 'modal' &&
+                                    field.showIf !== false
+                                "
+                            >
+                                <div
+                                    class="p-4 rounded-md border border-zero-light dark:border-zero-dark shadow-primary-light/20 dark:shadow-primary-dark/20 shadow-[0_2px_10px]"
+                                >
+                                    <h2
+                                        class="text-lg font-medium text-zero-light dark:text-zero-dark"
+                                    >
+                                        {{ $t(field.title) }}
+                                    </h2>
+                                    <p
+                                        class="text-sm text-zero-light dark:text-zero-dark"
+                                    >
+                                        {{ $t(field.description) }}
+                                    </p>
+                                    <template> </template>
+                                </div>
+                            </template>
+
                             <Select
                                 v-if="field.type == 'select'"
                                 :id="field.name"
@@ -268,6 +268,11 @@ const changeTab = (item: any) => {
                                 @keydown.enter.prevent
                             />
 
+                            <Separator
+                                v-if="field.type == 'separator'"
+                                :showIf="field.showIf"
+                            />
+
                             <Table
                                 v-if="field.type == 'table'"
                                 :prefix="mkForm.id"
@@ -279,6 +284,25 @@ const changeTab = (item: any) => {
                                 :routes="field.content.routes"
                                 :items="field.content.items"
                                 :titles="field.content.titles"
+                            />
+
+                            <Toggle
+                                v-if="field.type == 'toggle'"
+                                :id="field.name"
+                                :name="field.name"
+                                :type="field.type"
+                                :colorOn="field.colorOn"
+                                :colorOff="field.colorOff"
+                                :rotate="field.rotate"
+                                :disabled="
+                                    field.disabled
+                                        ? field.disabled
+                                        : mkForm.disabledIf === true
+                                "
+                                class="mt-1"
+                                v-model="jsForm[field.name]"
+                                @keydown.enter.prevent
+                                @click.prevent
                             />
 
                             <InputError
