@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\AbsencesController;
-use App\Http\Controllers\Authorization\AbilitiesController;
 use App\Http\Controllers\Authorization\RolesController;
 use App\Http\Controllers\Authorization\UnitsController;
 use App\Http\Controllers\Authorization\UsersController;

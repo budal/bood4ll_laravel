@@ -166,6 +166,7 @@
   "This is a secure area of the application. Please confirm your password before continuing.": "Esta é uma área segura do aplicativo. Por favor, confirme sua senha antes de continuar.",
   "Profile Information": "Informações de perfil",
   "Update your account's profile information and email address.": "Atualize as informações de perfil e endereço de e-mail da sua conta.",
+  "Your email address is unverified.": "Seu endereço de e-mail não foi verificado.",
   "Click here to re-send the verification email.": "Clique aqui para reenviar o e-mail de verificação.",
   "A new verification link has been sent to your email address.": "Um novo link de verificação foi enviado para seu endereço de e-mail.",
   "Ensure your account is using a long, random password to stay secure.": "Certifique-se de que sua conta esteja usando uma senha longa e aleatória para permanecer segura.",

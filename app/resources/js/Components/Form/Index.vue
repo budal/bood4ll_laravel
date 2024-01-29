@@ -243,6 +243,18 @@ const changeTab = (item: any) => {
                                     >
                                         {{ $t(field.description) }}
                                     </p>
+                                    <Link
+                                        :href="route('verification.send')"
+                                        method="post"
+                                        as="button"
+                                        class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800"
+                                    >
+                                        {{
+                                            $t(
+                                                "Click here to re-send the verification email.",
+                                            )
+                                        }}
+                                    </Link>
                                     <template> </template>
                                 </div>
                             </template>

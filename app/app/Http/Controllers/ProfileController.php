@@ -37,9 +37,9 @@ class ProfileController extends Controller
                     [
                         [
                             'type' => 'modal',
-                            'title' => 'Reset password',
-                            'showIf' => $request->user() instanceof MustVerifyEmail && $request->user()['email_verified_at'] === null,
-                            'description' => "By clicking the button below, an email will be sent to the user to reset their password.",
+                            'title' => 'Your email address is unverified.',
+                            'description' => "Click here to re-send the verification email.",
+                            'showIf' => $request->user() instanceof MustVerifyEmail && $request->user()['email_verified_at'] == '---',
                         ],
                     ]
                 ]
