@@ -75,7 +75,7 @@ class ProfileController extends Controller
                             'route' => 'verification.send',
                             'method' => 'post',
                             'title' => 'Click here to re-send the verification email',
-                            'preserveScroll' > true,
+                            'preserveScroll' => true,
                         ],
                     ],
                 ]

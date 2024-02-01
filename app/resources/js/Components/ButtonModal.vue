@@ -1,7 +1,10 @@
 <script setup lang="ts">
+import Modal from "@/Components/Modal.vue";
 import { isValidUrl, toast } from "@/helpers";
 import { Icon } from "@iconify/vue";
-import { router } from "@inertiajs/vue3";
+import { router, useForm } from "@inertiajs/vue3";
+import { transChoice } from "laravel-vue-i18n";
+import { ref } from "vue";
 
 const props = withDefaults(
     defineProps<{
@@ -216,9 +219,82 @@ const onClick = () => {
         });
     }
 };
+
+// modal
+const confirmingDeletionModal = ref(false);
+
+let modalInfo = ref();
+
+let clear = () => {
+    modalInfo.value = null;
+};
+
+const openModal = (item: any) => {
+    modalInfo.value = item;
+    confirmingDeletionModal.value = true;
+};
+
+const closeModal = () => (confirmingDeletionModal.value = false);
+
+const modalForm = useForm({ list: [] });
+
+const submitModal = () => {
+    modalInfo.value.list.forEach((id: any) => modalForm.list.push(id as never));
+
+    modalForm.submit(
+        modalInfo.value.method,
+        isValidUrl(modalInfo.value.route),
+        {
+            preserveScroll: true,
+            preserveState: modalInfo.value.preserveState,
+
+            onSuccess: () => {
+                toast();
+                clear();
+                modalForm.list = [];
+                closeModal();
+            },
+            onError: () => {
+                toast();
+                clear();
+                modalForm.list = [];
+                closeModal();
+            },
+        },
+    );
+};
 </script>
 
 <template>
+    <Modal
+        v-if="modalInfo"
+        :open="confirmingDeletionModal"
+        :title="$t(modalInfo.modalTitle)"
+        :subTitle="$t(modalInfo.modalSubTitle)"
+        :items="modalInfo.list.size"
+        :theme="modalInfo?.modalTheme || 'secondary'"
+        @close="closeModal"
+    >
+        <template #buttons>
+            <Button
+                color="secondary"
+                @click="closeModal"
+                start-icon="mdi:cancel-outline"
+            >
+                {{ $t("Cancel") }}
+            </Button>
+            <Button
+                :color="modalInfo.buttonTheme"
+                @click="submitModal"
+                :start-icon="modalInfo.buttonIcon"
+                class="ml-3"
+                :class="{ 'opacity-25': modalForm.processing }"
+                :disabled="modalForm.processing"
+            >
+                {{ transChoice(modalInfo.buttonTitle, modalInfo.list.size) }}
+            </Button>
+        </template>
+    </Modal>
     <button
         @click="onClick"
         :type="type"

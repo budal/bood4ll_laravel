@@ -10,9 +10,9 @@ import Table from "@/Components/Table/Index.vue";
 import TextInput from "@/Components/TextInput.vue";
 import Tabs from "@/Components/Tabs.vue";
 import Toggle from "@/Components/Toggle.vue";
+import LinkGroup from "@/Components/LinkGroup.vue";
 import { Link, useForm } from "@inertiajs/vue3";
 import { ref } from "vue";
-import LinkGroup from "../LinkGroup.vue";
 
 const props = withDefaults(
     defineProps<{
