@@ -15,7 +15,8 @@ class EmailVerificationNotificationController extends Controller
             return back()->with(
                 [
                     'toast_type' => 'success',
-                    'toast_message' => 'This email is already verified.',
+                    'toast_message' => "The email address ':email' is verified.",
+                    'toast_replacements' => ['email' => $request->user()->email],
                 ]
             );
         }
