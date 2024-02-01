@@ -22,40 +22,39 @@ class UnitsController extends Controller
     {
         $this->authorize('access', User::class);
 
-        // $un  = Unit::where('id', 1)
-        //     ->selectRaw("descendants(1) as local_users")
-        //     ->first();
-        // dd($un);
+        // $results = DB::select("
+        //     WITH RECURSIVE cte AS (
+        //         SELECT m.id as start_id,
+        //             m.id,
+        //             m.parent_id,
+        //             m.name,
+        //             1 AS level
+        //         FROM public.units AS m
 
-        // WITH RECURSIVE cte AS (
-        //     SELECT m.id as start_id,
-        //         m.id,
-        //         m.parent_id,
+        //         UNION ALL
+
+        //         SELECT cte.start_id,
+        //             m.id,
+        //             m.parent_id,
+        //             m.name,
+        //             cte.level + 1 AS level
+        //         FROM public.units AS m
+        //         INNER JOIN cte ON cte.id = m.parent_id
+        //     ),
+        //     cte_distinct AS (
+        //         SELECT DISTINCT start_id, id 
+        //         FROM cte
+        //     )
+        //     SELECT cte_distinct.start_id,
         //         m.name,
-        //         1 AS level
-        //     FROM public.units AS m
+        //         COUNT(*)-1 AS descendants_count
+        //     FROM cte_distinct
+        //     INNER JOIN public.units AS m ON m.id = cte_distinct.start_id
+        //     GROUP BY cte_distinct.start_id, m.name
+        //     ORDER BY cte_distinct.start_id
+        // ");
 
-        //     UNION ALL
-
-        //     SELECT cte.start_id,
-        //         m.id,
-        //         m.parent_id,
-        //         m.name,
-        //         cte.level + 1 AS level
-        //     FROM public.units AS m
-        //     INNER JOIN cte ON cte.id = m.parent_id
-        // ),
-        // cte_distinct AS (
-        //     SELECT DISTINCT start_id, id 
-        //     FROM cte
-        // )
-        // SELECT cte_distinct.start_id,
-        //     m.name,
-        //     COUNT(*)-1 AS descendants_count
-        // FROM cte_distinct
-        // INNER JOIN public.units AS m ON m.id = cte_distinct.start_id
-        // GROUP BY cte_distinct.start_id, m.name
-        // ORDER BY cte_distinct.start_id
+        // dd($results);
 
         $unitsUsers = Unit::leftJoin('unit_user', 'unit_user.unit_id', '=', 'units.id')
             ->groupBy('units.id')

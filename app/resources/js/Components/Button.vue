@@ -228,7 +228,7 @@ const onClick = () => {
             <Icon v-if="startIcon" :icon="startIcon" class="h-5 w-5" />
             <slot />
             <span v-if="srOnly" class="sr-only">{{ srOnly }}</span>
-            <span v-if="title">{{ title }}</span>
+            <span v-if="title">{{ $t(title) }}</span>
             <Icon v-if="endIcon" :icon="endIcon" class="h-5 w-5" />
         </div>
     </button>

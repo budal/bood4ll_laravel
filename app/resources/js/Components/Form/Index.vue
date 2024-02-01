@@ -116,6 +116,7 @@ const changeTab = (item: any) => {
                             <InputLabel
                                 v-if="
                                     field.title &&
+                                    field.type != 'button' &&
                                     field.type != 'checkbox' &&
                                     field.type != 'hidden' &&
                                     field.type != 'linkGroup' &&
@@ -161,7 +162,7 @@ const changeTab = (item: any) => {
                                 :type="field.type"
                                 :color="field.color"
                                 :link="field.route"
-                                :title="field.name"
+                                :title="field.title"
                                 :startIcon="field.icon"
                                 :preserveScroll="field.preserveScroll"
                                 :disabled="

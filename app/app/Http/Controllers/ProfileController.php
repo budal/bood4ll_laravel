@@ -21,6 +21,7 @@ class ProfileController extends Controller
                 'id' => 'profile',
                 'title' => 'Main data',
                 'subtitle' => 'User account profile information.',
+                'cols' => 2,
                 'fields' => [
                     [
                         [
@@ -34,20 +35,13 @@ class ProfileController extends Controller
                             'title' => 'Email',
                         ],
                     ],
-                    [
-                        [
-                            'type' => 'modal',
-                            'title' => 'Your email address is unverified.',
-                            'description' => "Click here to re-send the verification email.",
-                            'showIf' => $request->user() instanceof MustVerifyEmail && $request->user()['email_verified_at'] == '---',
-                        ],
-                    ]
                 ]
             ],
             [
                 'id' => 'resetPassword',
                 'title' => 'Update Password',
                 'subtitle' => 'Ensure your account is using a long, random password to stay secure.',
+                'cols' => 3,
                 'fields' => [
                     [
                         [
@@ -68,6 +62,40 @@ class ProfileController extends Controller
                     ],
                 ]
             ],
+            [
+                'id' => 'verifyEmail',
+                'title' => 'Email Verification',
+                'subtitle' => 'Your email address is unverified.',
+                'showIf' => $request->user() instanceof MustVerifyEmail && $request->user()['email_verified_at'] == '---',
+                'fields' => [
+                    [
+                        [
+                            'type' => 'button',
+                            'name' => 'sendReverificationEmail',
+                            'link' => 'verification.send',
+                            'title' => 'Click here to re-send the verification email',
+                            'preserveScroll' > true,
+                        ],
+                    ],
+                ]
+            ],
+            [
+                'id' => 'deleteAccount',
+                'title' => 'Delete Account',
+                'subtitle' => 'Once your account is deleted, all of its resources and data will be permanently deleted. Before deleting your account, please download any data or information that you wish to retain.',
+                'fields' => [
+                    [
+                        [
+                            'type' => 'button',
+                            'name' => 'deleteAccountConfirmation',
+                            'link' => 'profile',
+                            'color' => 'danger',
+                            'title' => 'Click here to delete your account',
+                            'preserveScroll' > true,
+                        ],
+                    ],
+                ]
+            ],
         ];
     }
 
@@ -83,6 +111,7 @@ class ProfileController extends Controller
 
         return Inertia::render('Default', [
             'form' => $this->__form($request),
+            'tabs' => false,
             'routes' => [
                 'profile' => [
                     'route' => route('apps.users.store'),

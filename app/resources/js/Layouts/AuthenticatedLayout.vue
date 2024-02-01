@@ -18,7 +18,7 @@ import { Link } from "@inertiajs/vue3";
         <nav class="bg-zero-light dark:bg-zero-dark sm:sticky sm:top-0 z-[10]">
             <div
                 v-if="$page.props.auth.previousUser === true"
-                :class="`font-medium bg-danger-light dark:bg-danger-dark text-xs text-center text-danger-light dark:text-danger-dark`"
+                class="font-medium bg-danger-light dark:bg-danger-dark text-xs text-center text-danger-light dark:text-danger-dark"
             >
                 {{
                     $t(
