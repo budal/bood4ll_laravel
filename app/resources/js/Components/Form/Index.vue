@@ -162,6 +162,7 @@ const changeTab = (item: any) => {
                                 :type="field.type"
                                 :color="field.color"
                                 :link="field.route"
+                                :method="field.method"
                                 :title="field.title"
                                 :startIcon="field.icon"
                                 :preserveScroll="field.preserveScroll"
@@ -224,41 +225,6 @@ const changeTab = (item: any) => {
                                     </Link>
                                 </template>
                             </div>
-
-                            <template
-                                v-if="
-                                    field.type == 'modal' &&
-                                    field.showIf !== false
-                                "
-                            >
-                                <div
-                                    class="p-4 rounded-md border border-zero-light dark:border-zero-dark shadow-primary-light/20 dark:shadow-primary-dark/20 shadow-[0_2px_10px]"
-                                >
-                                    <h2
-                                        class="text-lg font-medium text-zero-light dark:text-zero-dark"
-                                    >
-                                        {{ $t(field.title) }}
-                                    </h2>
-                                    <p
-                                        class="text-sm text-zero-light dark:text-zero-dark"
-                                    >
-                                        {{ $t(field.description) }}
-                                    </p>
-                                    <Link
-                                        :href="route('verification.send')"
-                                        method="post"
-                                        as="button"
-                                        class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800"
-                                    >
-                                        {{
-                                            $t(
-                                                "Click here to re-send the verification email.",
-                                            )
-                                        }}
-                                    </Link>
-                                    <template> </template>
-                                </div>
-                            </template>
 
                             <Select
                                 v-if="field.type == 'select'"
