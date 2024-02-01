@@ -167,10 +167,10 @@ class User extends Authenticatable implements MustVerifyEmail
         return $units;
     }
 
-    protected function emailVerifiedAt(): Attribute
-    {
-        return Attribute::make(
-            get: fn (string $value = null) => $value ? date_format(date_create($value), "d/m/Y H:i:s") : '---',
-        );
-    }
+    // protected function emailVerifiedAt(): Attribute
+    // {
+    //     return Attribute::make(
+    //         get: fn (string $value = null) => $value ? date_format(date_create($value), "d/m/Y H:i:s") : '---',
+    //     );
+    // }
 }

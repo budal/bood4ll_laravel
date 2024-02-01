@@ -66,7 +66,7 @@ class ProfileController extends Controller
                 'id' => 'verifyEmail',
                 'title' => 'Email Verification',
                 'subtitle' => 'Your email address is unverified.',
-                'showIf' => $request->user() instanceof MustVerifyEmail && $request->user()['email_verified_at'] == '---',
+                'showIf' => $request->user() instanceof MustVerifyEmail && !$request->user()['email_verified_at'],
                 'fields' => [
                     [
                         [

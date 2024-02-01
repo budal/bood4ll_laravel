@@ -8,9 +8,8 @@ use App\Http\Controllers\CalendarsController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SchedulesController;
 use App\Models\User;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Foundation\Application;
-use Illuminate\Foundation\Auth\EmailVerificationRequest;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -24,22 +23,6 @@ Route::get('/', function () {
         'phpVersion' => PHP_VERSION,
     ]);
 })->name('home')->breadcrumb('Home');
-
-Route::get('/email/verify', function () {
-    return Inertia::render('Auth/VerifyEmail');
-})->middleware('auth')->name('verification.notice')->breadcrumb('Verify EMail');
-
-Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
-    $request->fulfill();
-
-    return redirect('/dashboard');
-})->middleware(['auth', 'signed'])->name('verification.verify')->breadcrumb('Verify EMail');
-
-Route::post('/email/verification-notification', function (Request $request) {
-    $request->user()->sendEmailVerificationNotification();
-
-    return back()->with('message', 'Verification link sent!');
-})->middleware(['auth', 'throttle:6,1'])->name('verification.send');
 
 Route::get('/auth/{provider}/redirect', function (string $provider) {
     return Socialite::driver($provider)->redirect();
@@ -59,24 +42,29 @@ Route::get('/auth/{provider}/callback', function (string $provider) {
         'provider_refresh_token' => $providerUser->refreshToken,
     ]);
 
+    event(new Registered($user));
+
     Auth::login($user);
 
     return redirect('/dashboard');
 })->name('authCallback');
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth'])->name('dashboard')->breadcrumb('Dashboard')
-    ->defaults('title', 'Dashboard')
-    ->defaults('description', 'See all your related data in one place.')
-    ->defaults('icon', 'mdi:monitor-dashboard');
 
 Route::middleware('auth')->group(function () {
+    Route::get('/dashboard', function () {
+        return Inertia::render('Dashboard');
+    })->name('dashboard')->breadcrumb('Dashboard')
+        ->defaults('title', 'Dashboard')
+        ->defaults('description', 'See all your related data in one place.')
+        ->defaults('icon', 'mdi:monitor-dashboard');
+
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit')->breadcrumb('Profile')
         ->defaults('title', 'Profile')
         ->defaults('description', 'Manage your personal data.')
         ->defaults('icon', 'mdi:account-details');
+
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::get('/messages', [ProfileController::class, 'edit'])->name('messages')->breadcrumb('Messages')
@@ -85,7 +73,6 @@ Route::middleware('auth')->group(function () {
         ->defaults('icon', 'mdi:chat-outline');
 
     Route::get('/schedule', [ProfileController::class, 'edit'])->name('schedule')->breadcrumb('Schedule')
-
         ->defaults('title', 'Schedule')
         ->defaults('description', 'Manage all your appointments.')
         ->defaults('icon', 'mdi:calendar-multiselect-outline');
@@ -242,6 +229,7 @@ Route::middleware('auth')->group(function () {
             });
         });
     });
+
     Route::get('/reports', [ProfileController::class, 'edit'])->name('reports')->breadcrumb('Reports')
         ->defaults('title', 'Reports')
         ->defaults('description', 'See all data registered in the system.')

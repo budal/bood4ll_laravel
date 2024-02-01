@@ -12,11 +12,22 @@ class EmailVerificationNotificationController extends Controller
     public function store(Request $request): RedirectResponse
     {
         if ($request->user()->hasVerifiedEmail()) {
-            return redirect()->intended(RouteServiceProvider::HOME);
+            return back()->with(
+                [
+                    'toast_type' => 'success',
+                    'toast_message' => 'This email is already verified.',
+                ]
+            );
         }
 
         $request->user()->sendEmailVerificationNotification();
 
-        return back()->with('status', 'verification-link-sent');
+        return back()->with(
+            [
+                'toast_type' => 'success',
+                'toast_message' => "A new verification link has been sent to the email ':email'.",
+                'toast_replacements' => ['email' => $request->user()->email],
+            ]
+        );
     }
 }
