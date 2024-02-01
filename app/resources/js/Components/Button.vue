@@ -217,50 +217,6 @@ const onClick = () => {
         });
     }
 };
-
-// modal
-const confirmingDeletionModal = ref(false);
-
-let modalInfo = ref();
-
-let clear = () => {
-    modalInfo.value = null;
-};
-
-const openModal = (item: any) => {
-    modalInfo.value = item;
-    confirmingDeletionModal.value = true;
-};
-
-const closeModal = () => (confirmingDeletionModal.value = false);
-
-const modalForm = useForm({ list: [] });
-
-const submitModal = () => {
-    modalInfo.value.list.forEach((id: any) => modalForm.list.push(id as never));
-
-    modalForm.submit(
-        modalInfo.value.method,
-        isValidUrl(modalInfo.value.route),
-        {
-            preserveScroll: true,
-            preserveState: modalInfo.value.preserveState,
-
-            onSuccess: () => {
-                toast();
-                clear();
-                modalForm.list = [];
-                closeModal();
-            },
-            onError: () => {
-                toast();
-                clear();
-                modalForm.list = [];
-                closeModal();
-            },
-        },
-    );
-};
 </script>
 
 <template>

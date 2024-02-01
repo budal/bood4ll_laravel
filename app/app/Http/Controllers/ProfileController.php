@@ -118,6 +118,10 @@ class ProfileController extends Controller
                     'route' => route('apps.users.store'),
                     'method' => 'post',
                 ],
+                'resetPassword' => [
+                    'route' => route('apps.users.store'),
+                    'method' => 'post',
+                ],
             ],
             'data' => $user,
         ]);

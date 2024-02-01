@@ -32,7 +32,7 @@ Route::get('/auth/{provider}/callback', function (string $provider) {
     $providerUser = Socialite::driver($provider)->user();
 
     $user = User::updateOrCreate([
-        'email' => $providerUser->email,
+        'email' => $providerUser->getEmail(),
     ], [
         'name' => $providerUser->getName(),
         'provider_name' => $provider,
@@ -48,7 +48,6 @@ Route::get('/auth/{provider}/callback', function (string $provider) {
 
     return redirect('/dashboard');
 })->name('authCallback');
-
 
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', function () {
