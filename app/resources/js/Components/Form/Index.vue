@@ -1,16 +1,17 @@
 <script setup lang="ts">
 import { isValidUrl, toast } from "@/helpers";
 import Button from "@/Components/Button.vue";
+import ButtonModal from "@/Components/ButtonModal.vue";
 import Checkbox from "@/Components/Checkbox.vue";
 import InputError from "@/Components/InputError.vue";
 import InputLabel from "@/Components/InputLabel.vue";
+import LinkGroup from "@/Components/LinkGroup.vue";
 import Select from "@/Components/Select.vue";
 import Separator from "@/Components/Separator.vue";
 import Table from "@/Components/Table/Index.vue";
 import TextInput from "@/Components/TextInput.vue";
 import Tabs from "@/Components/Tabs.vue";
 import Toggle from "@/Components/Toggle.vue";
-import LinkGroup from "@/Components/LinkGroup.vue";
 import { Link, useForm } from "@inertiajs/vue3";
 import { ref } from "vue";
 
@@ -157,6 +158,28 @@ const changeTab = (item: any) => {
 
                             <Button
                                 v-if="field.type == 'button'"
+                                :id="field.name"
+                                :name="field.name"
+                                :type="field.type"
+                                :color="field.color"
+                                :link="field.route"
+                                :method="field.method"
+                                :title="field.title"
+                                :startIcon="field.icon"
+                                :preserveScroll="field.preserveScroll"
+                                :disabled="
+                                    field.disabled
+                                        ? field.disabled
+                                        : mkForm.disabledIf === true
+                                "
+                                class="mt-1"
+                                v-model="jsForm[field.name]"
+                                @keydown.enter.prevent
+                                @click.prevent
+                            />
+
+                            <ButtonModal
+                                v-if="field.type == 'buttonModal'"
                                 :id="field.name"
                                 :name="field.name"
                                 :type="field.type"

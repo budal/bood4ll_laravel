@@ -87,7 +87,7 @@ class ProfileController extends Controller
                 'fields' => [
                     [
                         [
-                            'type' => 'button',
+                            'type' => 'buttonModal',
                             'name' => 'deleteAccountConfirmation',
                             'route' => 'dashboard',
                             'color' => 'danger',
