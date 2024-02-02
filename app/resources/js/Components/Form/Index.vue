@@ -118,10 +118,12 @@ const changeTab = (item: any) => {
                                 v-if="
                                     field.title &&
                                     field.type != 'button' &&
+                                    field.type != 'buttonModal' &&
                                     field.type != 'checkbox' &&
                                     field.type != 'hidden' &&
                                     field.type != 'linkGroup' &&
-                                    field.type != 'modal'
+                                    field.type != 'modal' &&
+                                    field.type != 'separator'
                                 "
                                 as="span"
                                 :for="field.name"
@@ -167,6 +169,7 @@ const changeTab = (item: any) => {
                                 :title="field.title"
                                 :startIcon="field.icon"
                                 :preserveScroll="field.preserveScroll"
+                                :modal="field.modal"
                                 :disabled="
                                     field.disabled
                                         ? field.disabled
@@ -185,10 +188,10 @@ const changeTab = (item: any) => {
                                 :type="field.type"
                                 :color="field.color"
                                 :link="field.route"
-                                :method="field.method"
                                 :title="field.title"
                                 :startIcon="field.icon"
                                 :preserveScroll="field.preserveScroll"
+                                :modal="field.modal"
                                 :disabled="
                                     field.disabled
                                         ? field.disabled
@@ -196,8 +199,6 @@ const changeTab = (item: any) => {
                                 "
                                 class="mt-1"
                                 v-model="jsForm[field.name]"
-                                @keydown.enter.prevent
-                                @click.prevent
                             />
 
                             <label

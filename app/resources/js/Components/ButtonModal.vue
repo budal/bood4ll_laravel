@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import Button from "@/Components/Button.vue";
 import Modal from "@/Components/Modal.vue";
 import { isValidUrl, toast } from "@/helpers";
 import { Icon } from "@iconify/vue";
@@ -8,6 +9,11 @@ import { ref } from "vue";
 
 const props = withDefaults(
     defineProps<{
+        id?: string;
+        name?: string;
+        modelValue?: any;
+        disabled?: boolean;
+        class?: string;
         type?: "button" | "submit" | "reset";
         color?:
             | "zero"
@@ -189,6 +195,14 @@ const props = withDefaults(
                   attributes: [];
               }
             | string;
+        modal: {
+            theme: string;
+            title: string;
+            subTitle: string;
+            buttonTitle?: string;
+            buttonIcon?: string;
+            buttonTheme?: string;
+        };
     }>(),
     {
         type: "submit",
@@ -203,6 +217,8 @@ const props = withDefaults(
     },
 );
 
+const confirmingDeletionModal = ref(false);
+
 const onClick = () => {
     if (props.link) {
         let indexRoute = new URL(window.location.href);
@@ -211,68 +227,46 @@ const onClick = () => {
         const route = new URL(isValidUrl(props.link));
         __tab ? route.searchParams.set("__tab", __tab) : false;
 
-        router.visit(route, {
-            method: props.method,
-            preserveState: props.preserveState,
-            preserveScroll: props.preserveScroll,
-            onSuccess: () => toast(),
-        });
+        confirmingDeletionModal.value = true;
+
+        // router.visit(route, {
+        //     method: props.method,
+        //     preserveState: props.preserveState,
+        //     preserveScroll: props.preserveScroll,
+        //     onSuccess: () => toast(),
+        // });
     }
 };
 
 // modal
-const confirmingDeletionModal = ref(false);
-
-let modalInfo = ref();
-
-let clear = () => {
-    modalInfo.value = null;
-};
-
-const openModal = (item: any) => {
-    modalInfo.value = item;
-    confirmingDeletionModal.value = true;
-};
-
 const closeModal = () => (confirmingDeletionModal.value = false);
 
-const modalForm = useForm({ list: [] });
+// const modalForm = useForm({ list: [] });
 
-const submitModal = () => {
-    modalInfo.value.list.forEach((id: any) => modalForm.list.push(id as never));
+// const submitModal = () => {
+//     // modalForm.submit(props.method, isValidUrl(modalInfo.value.route), {
+//     //     preserveScroll: true,
+//     //     preserveState: modalInfo.value.preserveState,
+//     //     onSuccess: () => {
+//     //         toast();
+//     //         closeModal();
+//     //     },
+//     //     onError: () => {
+//     //         toast();
+//     //         closeModal();
+//     //     },
+//     // });
+// };
 
-    modalForm.submit(
-        modalInfo.value.method,
-        isValidUrl(modalInfo.value.route),
-        {
-            preserveScroll: true,
-            preserveState: modalInfo.value.preserveState,
-
-            onSuccess: () => {
-                toast();
-                clear();
-                modalForm.list = [];
-                closeModal();
-            },
-            onError: () => {
-                toast();
-                clear();
-                modalForm.list = [];
-                closeModal();
-            },
-        },
-    );
-};
+console.log(props.modal.title);
 </script>
 
 <template>
     <Modal
-        v-if="modalInfo"
         :open="confirmingDeletionModal"
-        :title="$t(modalInfo.modalTitle)"
-        :subTitle="$t(modalInfo.modalSubTitle)"
-        :items="modalInfo.list.size"
-        :theme="modalInfo?.modalTheme || 'secondary'"
+        :title="$t(modal.title)"
+        :subTitle="$t(modal.subTitle)"
+        :theme="'secondary'"
         @close="closeModal"
     >
         <template #buttons>
@@ -283,29 +277,10 @@ const submitModal = () => {
             >
                 {{ $t("Cancel") }}
             </Button>
-            <Button
-                :color="modalInfo.buttonTheme"
-                @click="submitModal"
-                :start-icon="modalInfo.buttonIcon"
-                class="ml-3"
-                :class="{ 'opacity-25': modalForm.processing }"
-                :disabled="modalForm.processing"
-            >
-                {{ transChoice(modalInfo.buttonTitle, modalInfo.list.size) }}
-            </Button>
         </template>
     </Modal>
-    <button
-        @click="onClick"
-        :type="type"
-        :class="`hover:scale-105 min-h-[41px] inline-flex items-center px-${padding} bg-${color}-light dark:bg-${color}-dark hover:bg-${color}-light-hover dark:hover:bg-${color}-dark-hover border border-${color}-light dark:border-${color}-dark ${rounded} font-semibold ${textSize} text-${color}-light dark:text-${color}-dark ${transform} tracking-widest focus:outline-none focus:ring-2 focus:ring-primary-light dark:focus:ring-primary-dark focus:ring-offset-2 focus:ring-offset-primary-light dark:focus:ring-offset-primary-dark disabled:opacity-25 transition ease-in-out duration-500`"
-    >
-        <div class="flex gap-1 items-center">
-            <Icon v-if="startIcon" :icon="startIcon" class="h-5 w-5" />
-            <slot />
-            <span v-if="srOnly" class="sr-only">{{ srOnly }}</span>
-            <span v-if="title">{{ $t(title) }}</span>
-            <Icon v-if="endIcon" :icon="endIcon" class="h-5 w-5" />
-        </div>
-    </button>
+
+    <Button color="secondary" @click="onClick" start-icon="mdi:cancel-outline">
+        {{ $t("Cancel") }}
+    </Button>
 </template>
