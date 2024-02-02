@@ -147,6 +147,7 @@ const submitModal = () => {
             <Button
                 :color="modalInfo.modal.buttonTheme"
                 @click="submitModal"
+                :start-icon="modalInfo.modal.buttonIcon"
                 class="ml-3"
                 :class="{ 'opacity-25': modalForm.processing }"
                 :disabled="modalForm.processing"
