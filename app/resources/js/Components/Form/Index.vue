@@ -94,12 +94,9 @@ const showModal = ref(false);
 
 let modalInfo = ref();
 
-const openModal = (
-    route: string,
-    method: "get" | "post" | "put" | "patch" | "delete",
-    item: any,
-) => {
-    modalInfo.value = item;
+const openModal = (field: any) => {
+    modalInfo.value = field;
+    console.log(field);
     showModal.value = true;
 };
 
@@ -134,9 +131,9 @@ const submitModal = () => {
     <Modal
         v-if="modalInfo"
         :open="showModal"
-        :title="$t(modalInfo.title)"
-        :subTitle="$t(modalInfo.subTitle)"
-        :theme="modalInfo?.theme || 'secondary'"
+        :title="$t(modalInfo.modal.title)"
+        :subTitle="$t(modalInfo.modal.subTitle)"
+        :theme="modalInfo?.modal.theme || 'secondary'"
         @close="closeModal"
     >
         <template #buttons>
@@ -148,13 +145,13 @@ const submitModal = () => {
                 {{ $t("Cancel") }}
             </Button>
             <Button
-                :color="modalInfo.buttonTheme"
+                :color="modalInfo.modal.buttonTheme"
                 @click="submitModal"
                 class="ml-3"
                 :class="{ 'opacity-25': modalForm.processing }"
                 :disabled="modalForm.processing"
             >
-                {{ $t(modalInfo.buttonTitle) }}
+                {{ $t(modalInfo.modal.buttonTitle) }}
             </Button>
         </template>
     </Modal>
@@ -246,14 +243,7 @@ const submitModal = () => {
                                 v-model="jsForm[field.name]"
                                 @keydown.enter.prevent
                                 @click.prevent
-                                @show-modal="
-                                    (item) =>
-                                        openModal(
-                                            field.route,
-                                            field.method,
-                                            item,
-                                        )
-                                "
+                                @show-modal="openModal(field)"
                             />
 
                             <label
