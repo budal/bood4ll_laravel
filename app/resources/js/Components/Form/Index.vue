@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { isValidUrl, toast } from "@/helpers";
 import Button from "@/Components/Button.vue";
-import ButtonModal from "@/Components/ButtonModal.vue";
 import Checkbox from "@/Components/Checkbox.vue";
 import InputError from "@/Components/InputError.vue";
 import InputLabel from "@/Components/InputLabel.vue";
 import LinkGroup from "@/Components/LinkGroup.vue";
+import Modal from "@/Components/Modal.vue";
 import Select from "@/Components/Select.vue";
 import Separator from "@/Components/Separator.vue";
 import Table from "@/Components/Table/Index.vue";
@@ -14,6 +14,7 @@ import Tabs from "@/Components/Tabs.vue";
 import Toggle from "@/Components/Toggle.vue";
 import { Link, useForm } from "@inertiajs/vue3";
 import { ref } from "vue";
+import { transChoice } from "laravel-vue-i18n";
 
 const props = withDefaults(
     defineProps<{
@@ -87,9 +88,77 @@ let tab = ref("");
 const changeTab = (item: any) => {
     tab.value = item || null;
 };
+
+// modal
+const showModal = ref(false);
+
+let modalInfo = ref();
+
+const openModal = (
+    route: string,
+    method: "get" | "post" | "put" | "patch" | "delete",
+    item: any,
+) => {
+    modalInfo.value = item;
+    showModal.value = true;
+};
+
+const closeModal = () => (showModal.value = false);
+
+const modalForm = useForm({ list: [] });
+
+const submitModal = () => {
+    modalForm.submit(
+        modalInfo.value.method,
+        isValidUrl(modalInfo.value.route),
+        {
+            preserveScroll: true,
+            preserveState: modalInfo.value.preserveState,
+
+            onSuccess: () => {
+                toast();
+                // clear();
+                closeModal();
+            },
+            onError: () => {
+                toast();
+                // clear();
+                closeModal();
+            },
+        },
+    );
+};
 </script>
 
 <template>
+    <Modal
+        v-if="modalInfo"
+        :open="showModal"
+        :title="$t(modalInfo.title)"
+        :subTitle="$t(modalInfo.subTitle)"
+        :theme="modalInfo?.theme || 'secondary'"
+        @close="closeModal"
+    >
+        <template #buttons>
+            <Button
+                color="secondary"
+                @click="closeModal"
+                start-icon="mdi:cancel-outline"
+            >
+                {{ $t("Cancel") }}
+            </Button>
+            <Button
+                :color="modalInfo.buttonTheme"
+                @click="submitModal"
+                class="ml-3"
+                :class="{ 'opacity-25': modalForm.processing }"
+                :disabled="modalForm.processing"
+            >
+                {{ $t(modalInfo.buttonTitle) }}
+            </Button>
+        </template>
+    </Modal>
+
     <div
         v-if="status"
         :class="`mb-4 rounded-md font-medium bg-${statusTheme}-light dark:bg-${statusTheme}-dark text-sm text-center text-${statusTheme}-light dark:text-${statusTheme}-dark`"
@@ -118,11 +187,9 @@ const changeTab = (item: any) => {
                                 v-if="
                                     field.title &&
                                     field.type != 'button' &&
-                                    field.type != 'buttonModal' &&
                                     field.type != 'checkbox' &&
                                     field.type != 'hidden' &&
                                     field.type != 'linkGroup' &&
-                                    field.type != 'modal' &&
                                     field.type != 'separator'
                                 "
                                 as="span"
@@ -179,26 +246,14 @@ const changeTab = (item: any) => {
                                 v-model="jsForm[field.name]"
                                 @keydown.enter.prevent
                                 @click.prevent
-                            />
-
-                            <ButtonModal
-                                v-if="field.type == 'buttonModal'"
-                                :id="field.name"
-                                :name="field.name"
-                                :type="field.type"
-                                :color="field.color"
-                                :link="field.route"
-                                :title="field.title"
-                                :startIcon="field.icon"
-                                :preserveScroll="field.preserveScroll"
-                                :modal="field.modal"
-                                :disabled="
-                                    field.disabled
-                                        ? field.disabled
-                                        : mkForm.disabledIf === true
+                                @show-modal="
+                                    (item) =>
+                                        openModal(
+                                            field.route,
+                                            field.method,
+                                            item,
+                                        )
                                 "
-                                class="mt-1"
-                                v-model="jsForm[field.name]"
                             />
 
                             <label

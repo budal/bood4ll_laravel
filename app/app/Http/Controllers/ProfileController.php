@@ -87,7 +87,7 @@ class ProfileController extends Controller
                 'fields' => [
                     [
                         [
-                            'type' => 'buttonModal',
+                            'type' => 'button',
                             'name' => 'deleteAccountConfirmation',
                             'route' => 'dashboard',
                             'method' => 'post',
@@ -96,10 +96,9 @@ class ProfileController extends Controller
                             'preserveScroll' > true,
                             'modal' => [
                                 'theme' => "danger",
-                                'title' => "Are you sure you want to erase the selected item?",
-                                'subTitle' => "The selected item will be erased from the database. This action can't be undone. Do you want to continue?",
-                                'buttonTitle' => "Erase",
-                                'buttonIcon' => "mdi:delete-sweep-outline",
+                                'title' => "Are you sure you want to delete your account?",
+                                'subTitle' => "Once your account is deleted, all of its resources and data will be permanently deleted. Please enter your password to confirm you would like to permanently delete your account.",
+                                'buttonTitle' => "Delete Account",
                                 'buttonTheme' => "danger",
                             ],
                         ],

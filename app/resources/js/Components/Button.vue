@@ -50,6 +50,14 @@ const props = withDefaults(
                   attributes: [];
               }
             | string;
+        modal?: {
+            theme: string;
+            title: string;
+            subTitle: string;
+            buttonTitle?: string;
+            buttonIcon?: string;
+            buttonTheme?: string;
+        };
     }>(),
     {
         type: "submit",
@@ -63,8 +71,10 @@ const props = withDefaults(
     },
 );
 
+const emit = defineEmits(["showModal"]);
+
 const onClick = () => {
-    if (props.link) {
+    if (props.link && !props.modal) {
         let indexRoute = new URL(window.location.href);
         const __tab = indexRoute.searchParams.get("__tab");
 
@@ -77,6 +87,8 @@ const onClick = () => {
             preserveScroll: props.preserveScroll,
             onSuccess: () => toast(),
         });
+    } else {
+        emit("showModal", props.modal);
     }
 };
 </script>
