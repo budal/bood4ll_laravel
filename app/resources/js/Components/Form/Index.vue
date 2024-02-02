@@ -136,9 +136,9 @@ const submitModal = () => {
             v-if="modalInfo.modal.confirm"
             as="span"
             class="mt-4"
+            :theme="modalInfo?.modal.theme"
             for="confirmPassword"
             :value="$t('Confirm your password')"
-            :required="true"
         />
         <TextInput
             v-if="modalInfo.modal.confirm"

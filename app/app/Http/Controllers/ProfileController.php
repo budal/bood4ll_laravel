@@ -90,7 +90,7 @@ class ProfileController extends Controller
                             'type' => 'button',
                             'name' => 'deleteAccountConfirmation',
                             'route' => 'dashboard',
-                            'method' => 'post',
+                            'method' => 'get',
                             'color' => 'danger',
                             'title' => 'Click here to delete your account',
                             'preserveScroll' > true,
