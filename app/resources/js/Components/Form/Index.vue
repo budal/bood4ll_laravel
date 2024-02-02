@@ -14,7 +14,6 @@ import Tabs from "@/Components/Tabs.vue";
 import Toggle from "@/Components/Toggle.vue";
 import { Link, useForm } from "@inertiajs/vue3";
 import { ref } from "vue";
-import { transChoice } from "laravel-vue-i18n";
 
 const props = withDefaults(
     defineProps<{
@@ -96,7 +95,6 @@ let modalInfo = ref();
 
 const openModal = (field: any) => {
     modalInfo.value = field;
-    console.log(field);
     showModal.value = true;
 };
 
@@ -114,12 +112,10 @@ const submitModal = () => {
 
             onSuccess: () => {
                 toast();
-                // clear();
                 closeModal();
             },
             onError: () => {
                 toast();
-                // clear();
                 closeModal();
             },
         },
@@ -136,6 +132,24 @@ const submitModal = () => {
         :theme="modalInfo?.modal.theme || 'secondary'"
         @close="closeModal"
     >
+        <InputLabel
+            v-if="modalInfo.modal.confirm"
+            as="span"
+            class="mt-4"
+            for="confirmPassword"
+            :value="$t('Confirm your password')"
+            :required="true"
+        />
+        <TextInput
+            v-if="modalInfo.modal.confirm"
+            id="confirmPassword"
+            name="confirmPassword"
+            type="password"
+            class="mt-1"
+            :autofocus="true"
+            :required="true"
+        />
+
         <template #buttons>
             <Button
                 color="secondary"
@@ -193,7 +207,7 @@ const submitModal = () => {
                                 as="span"
                                 :for="field.name"
                                 :value="$t(field.title)"
-                                :required="field.required"
+                                :required="true"
                             />
 
                             <TextInput

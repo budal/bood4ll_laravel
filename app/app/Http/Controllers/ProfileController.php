@@ -95,6 +95,7 @@ class ProfileController extends Controller
                             'title' => 'Click here to delete your account',
                             'preserveScroll' > true,
                             'modal' => [
+                                'confirm' => true,
                                 'theme' => "danger",
                                 'title' => "Are you sure you want to delete your account?",
                                 'subTitle' => "Once your account is deleted, all of its resources and data will be permanently deleted. Please enter your password to confirm you would like to permanently delete your account.",
