@@ -278,16 +278,16 @@ const updateFormToogle = async (
 };
 
 // modal
-const confirmingDeletionModal = ref(false);
+const confirmingModal = ref(false);
 
 let modalInfo = ref();
 
 const openModal = (item: any) => {
     modalInfo.value = item;
-    confirmingDeletionModal.value = true;
+    confirmingModal.value = true;
 };
 
-const closeModal = () => (confirmingDeletionModal.value = false);
+const closeModal = () => (confirmingModal.value = false);
 
 const modalForm = useForm({ list: [] });
 
@@ -321,7 +321,7 @@ const submitModal = () => {
 <template>
     <Modal
         v-if="modalInfo"
-        :open="confirmingDeletionModal"
+        :open="confirmingModal"
         :title="$t(modalInfo.modalTitle)"
         :subTitle="$t(modalInfo.modalSubTitle)"
         :items="modalInfo.list.size"
