@@ -177,7 +177,7 @@ class UsersController extends Controller
                     'toast_replacements' => ['user' => $user->name],
                 ]);
             } else {
-                return Redirect::route('dashboard')->with([
+                return Redirect::route('dashboard.index')->with([
                     'toast_type' => 'warning',
                     'toast_message' => "Logged as ':user'.",
                     'toast_replacements' => ['user' => $user->name],

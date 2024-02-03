@@ -5,6 +5,7 @@ use App\Http\Controllers\Authorization\RolesController;
 use App\Http\Controllers\Authorization\UnitsController;
 use App\Http\Controllers\Authorization\UsersController;
 use App\Http\Controllers\CalendarsController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SchedulesController;
 use App\Models\User;
@@ -50,21 +51,26 @@ Route::get('/auth/{provider}/callback', function (string $provider) {
 })->name('authCallback');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/dashboard', function () {
-        return Inertia::render('Dashboard');
-    })->name('dashboard')->breadcrumb('Dashboard')
-        ->defaults('title', 'Dashboard')
-        ->defaults('description', 'See all your related data in one place.')
-        ->defaults('icon', 'mdi:monitor-dashboard');
+    Route::name('dashboard.')->group(function () {
+        Route::controller(DashboardController::class)->group(function () {
+            Route::get('/dashboard', 'index')->name('index')->breadcrumb('Dashboard')
+                ->defaults('title', 'Dashboard')
+                ->defaults('description', 'See all your related data in one place.')
+                ->defaults('icon', 'mdi:monitor-dashboard');
+            // Route::delete('/profile', 'destroy')->name('destroy');
+        });
+    });
 
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit')->breadcrumb('Profile')
-        ->defaults('title', 'Profile')
-        ->defaults('description', 'Manage your personal data.')
-        ->defaults('icon', 'mdi:account-details');
-
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::name('profile.')->group(function () {
+        Route::controller(ProfileController::class)->group(function () {
+            Route::get('/profile', 'edit')->name('edit')->breadcrumb('Profile')
+                ->defaults('title', 'Profile')
+                ->defaults('description', 'Manage your personal data.')
+                ->defaults('icon', 'mdi:account-details');
+            Route::patch('/profile', 'update')->name('update');
+            Route::delete('/profile', 'destroy')->name('destroy');
+        });
+    });
 
     Route::get('/messages', [ProfileController::class, 'edit'])->name('messages')->breadcrumb('Messages')
         ->defaults('title', 'Messages')

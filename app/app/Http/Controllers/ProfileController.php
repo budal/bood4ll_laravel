@@ -89,7 +89,7 @@ class ProfileController extends Controller
                         [
                             'type' => 'button',
                             'name' => 'deleteAccountConfirmation',
-                            'route' => 'dashboard',
+                            'route' => 'dashboard.index',
                             'method' => 'get',
                             'color' => 'danger',
                             'title' => 'Click here to delete your account',
@@ -124,12 +124,12 @@ class ProfileController extends Controller
             'tabs' => false,
             'routes' => [
                 'profile' => [
-                    'route' => route('apps.users.store'),
-                    'method' => 'post',
+                    'route' => route('profile.update'),
+                    'method' => 'patch',
                 ],
                 'resetPassword' => [
-                    'route' => route('apps.users.store'),
-                    'method' => 'post',
+                    'route' => route('password.update'),
+                    'method' => 'put',
                 ],
             ],
             'data' => $user,

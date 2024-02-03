@@ -35,7 +35,7 @@ class HandleInertiaRequests extends Middleware
             'appEnv' => config('app.env'),
             'appName' => config('app.name'),
             'appNavMenu' => app(\App\Services\Menu\Menu::class)->menu([
-                'dashboard',
+                'dashboard.index',
                 [
                     'route' => 'apps',
                     'title' => 'Apps',
