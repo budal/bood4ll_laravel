@@ -96,14 +96,14 @@ let modalInfo = ref();
 const passwordInput = ref<HTMLInputElement | null>(null);
 
 const modalForm = useForm({
-    password: passwordInput,
+    password: "",
 });
 
 const openModal = (field: any) => {
     modalInfo.value = field;
-    showModal.value = true;
-
     nextTick(() => passwordInput.value?.focus());
+
+    showModal.value = true;
 };
 
 const closeModal = () => (showModal.value = false);
