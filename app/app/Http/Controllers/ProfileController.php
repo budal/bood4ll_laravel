@@ -89,8 +89,8 @@ class ProfileController extends Controller
                         [
                             'type' => 'button',
                             'name' => 'deleteAccountConfirmation',
-                            'route' => 'dashboard.index',
-                            'method' => 'get',
+                            'route' => 'profile.destroy',
+                            'method' => 'delete',
                             'color' => 'danger',
                             'title' => 'Click here to delete your account',
                             'preserveScroll' > true,
@@ -151,9 +151,13 @@ class ProfileController extends Controller
 
     public function destroy(Request $request): RedirectResponse
     {
+        dd($request);
+
         $request->validate([
             'password' => ['required', 'current_password'],
         ]);
+
+        // Hash::make($validated['password']
 
         $user = $request->user();
 

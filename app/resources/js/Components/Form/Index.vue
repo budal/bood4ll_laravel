@@ -13,7 +13,7 @@ import TextInput from "@/Components/TextInput.vue";
 import Tabs from "@/Components/Tabs.vue";
 import Toggle from "@/Components/Toggle.vue";
 import { Link, useForm } from "@inertiajs/vue3";
-import { ref } from "vue";
+import { nextTick, ref } from "vue";
 
 const props = withDefaults(
     defineProps<{
@@ -93,14 +93,20 @@ const showModal = ref(false);
 
 let modalInfo = ref();
 
+const passwordInput = ref<HTMLInputElement | null>(null);
+
+const modalForm = useForm({
+    password: passwordInput,
+});
+
 const openModal = (field: any) => {
     modalInfo.value = field;
     showModal.value = true;
+
+    nextTick(() => passwordInput.value?.focus());
 };
 
 const closeModal = () => (showModal.value = false);
-
-const modalForm = useForm({ list: [] });
 
 const submitModal = () => {
     modalForm.submit(
@@ -118,6 +124,9 @@ const submitModal = () => {
                 toast();
                 closeModal();
             },
+            onFinish: () => {
+                modalForm.reset();
+            },
         },
     );
 };
@@ -134,6 +143,7 @@ const submitModal = () => {
     >
         <InputLabel
             v-if="modalInfo.modal.confirm"
+            ref="passwordInput"
             as="span"
             class="mt-4"
             :theme="modalInfo?.modal.theme"
