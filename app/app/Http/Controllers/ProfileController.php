@@ -8,6 +8,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -151,15 +152,15 @@ class ProfileController extends Controller
 
     public function destroy(Request $request): RedirectResponse
     {
-        dd($request->password);
+        $user = $request->user();
+
+        $validPassord = Hash::check($request->password, $user->password);
+
+        dd($validPassord);
 
         $request->validate([
             'password' => ['required', 'current_password'],
         ]);
-
-        // Hash::make($validated['password']
-
-        $user = $request->user();
 
         Auth::logout();
 
