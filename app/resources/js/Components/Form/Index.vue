@@ -89,9 +89,9 @@ const changeTab = (item: any) => {
 };
 
 // modal
-const showModal = ref(false);
-
 let modalInfo = ref();
+
+const showModal = ref(false);
 
 const passwordInput = ref<HTMLInputElement | null>(null);
 
@@ -101,12 +101,16 @@ const modalForm = useForm({
 
 const openModal = (field: any) => {
     modalInfo.value = field;
-    nextTick(() => passwordInput.value?.focus());
-
     showModal.value = true;
+
+    nextTick(() => passwordInput.value?.focus());
 };
 
-const closeModal = () => (showModal.value = false);
+const closeModal = () => {
+    showModal.value = false;
+
+    modalForm.reset();
+};
 
 const submitModal = () => {
     modalForm.submit(
@@ -122,7 +126,7 @@ const submitModal = () => {
             },
             onError: () => {
                 toast();
-                closeModal();
+                () => passwordInput.value?.focus();
             },
             onFinish: () => {
                 modalForm.reset();
@@ -143,21 +147,21 @@ const submitModal = () => {
     >
         <InputLabel
             v-if="modalInfo.modal.confirm"
-            ref="passwordInput"
-            as="span"
             class="mt-4"
             :theme="modalInfo?.modal.theme"
-            for="confirmPassword"
+            for="password"
             :value="$t('Confirm your password')"
         />
         <TextInput
             v-if="modalInfo.modal.confirm"
-            id="confirmPassword"
-            name="confirmPassword"
+            ref="passwordInput"
+            v-model="modalForm.password"
+            id="password"
+            name="password"
             type="password"
             class="mt-1"
-            :autofocus="true"
             :required="true"
+            @keyup.enter="submitModal"
         />
 
         <template #buttons>
