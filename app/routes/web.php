@@ -34,6 +34,7 @@ Route::get('/auth/{provider}/callback', function (string $provider) {
 
     $user = User::updateOrCreate([
         'email' => $providerUser->getEmail(),
+        'active' => true,
     ], [
         'name' => $providerUser->getName(),
         'provider_name' => $provider,
@@ -43,11 +44,13 @@ Route::get('/auth/{provider}/callback', function (string $provider) {
         'provider_refresh_token' => $providerUser->refreshToken,
     ]);
 
-    event(new Registered($user));
+    dd($user);
 
-    Auth::login($user);
+    // event(new Registered($user));
 
-    return redirect('/dashboard');
+    // Auth::login($user);
+
+    // return redirect('/dashboard');
 })->name('authCallback');
 
 Route::middleware('auth')->group(function () {

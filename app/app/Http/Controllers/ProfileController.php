@@ -154,21 +154,24 @@ class ProfileController extends Controller
     {
         $user = $request->user();
 
-        $validPassord = Hash::check($request->password, $user->password);
+        if (Hash::check($request->password, $user->password)) {
+            // $request->validate([
+            //     'password' => ['required', 'current_password'],
+            // ]);
 
-        dd($validPassord);
+            Auth::logout();
 
-        $request->validate([
-            'password' => ['required', 'current_password'],
-        ]);
+            $user->delete();
 
-        Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
 
-        $user->delete();
-
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-
-        return Redirect::to('/');
+            return Redirect::to('/');
+        } else {
+            return Redirect::back()->with([
+                'toast_type' => 'warning',
+                'toast_message' => "The provided password is incorrect.",
+            ]);
+        }
     }
 }
