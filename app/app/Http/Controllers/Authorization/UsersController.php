@@ -10,6 +10,7 @@ use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Route;
@@ -707,11 +708,33 @@ class UsersController extends Controller
         ]);
     }
 
-    public function update(ProfileUpdateRequest $request, User $user): RedirectResponse
+    public function update(Request $request, User $user): RedirectResponse
     {
         $this->authorize('access', User::class);
         $this->authorize('fullAccess', $user);
         $this->authorize('allowedUnits', $user);
+
+        DB::beginTransaction();
+
+        try {
+            $user->name = $request->name;
+            $user->email = $request->email;
+            $user->active = $request->active;
+
+            $user->save();
+        } catch (\Throwable $e) {
+            report($e);
+
+            DB::rollback();
+
+            return Redirect::back()->with([
+                'toast_type' => 'error',
+                'toast_message' => 'Error on edit selected item.|Error on edit selected items.',
+                'toast_count' => 1,
+            ]);
+        }
+
+        DB::commit();
 
         // dd($request);
         // $request->user()->fill($request->validated());
@@ -724,7 +747,7 @@ class UsersController extends Controller
 
         return Redirect::back()->with([
             'toast_type' => 'success',
-            'toast_message' => 'Item edited.|Items edited.',
+            'toast_message' => '{0} Nothing to edit.|[1] Item edited successfully.|[2,*] :total items successfully edited.',
             'toast_count' => 1,
         ]);
     }

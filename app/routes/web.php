@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AbsencesController;
+use App\Http\Controllers\Auth\AuthenticateByProviderController;
 use App\Http\Controllers\Authorization\RolesController;
 use App\Http\Controllers\Authorization\UnitsController;
 use App\Http\Controllers\Authorization\UsersController;
@@ -8,13 +9,9 @@ use App\Http\Controllers\CalendarsController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SchedulesController;
-use App\Models\User;
-use Illuminate\Auth\Events\Registered;
 use Illuminate\Foundation\Application;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use Laravel\Socialite\Facades\Socialite;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -25,33 +22,9 @@ Route::get('/', function () {
     ]);
 })->name('home')->breadcrumb('Home');
 
-Route::get('/auth/{provider}/redirect', function (string $provider) {
-    return Socialite::driver($provider)->redirect();
-})->name('authRedirect');
+Route::get('/auth/{provider}/redirect', [AuthenticateByProviderController::class, 'redirect'])->name('authRedirect');
 
-Route::get('/auth/{provider}/callback', function (string $provider) {
-    $providerUser = Socialite::driver($provider)->user();
-
-    $user = User::updateOrCreate([
-        'email' => $providerUser->getEmail(),
-        'active' => true,
-    ], [
-        'name' => $providerUser->getName(),
-        'provider_name' => $provider,
-        'provider_id' => $providerUser->getId(),
-        'provider_avatar' => $providerUser->getAvatar(),
-        'provider_token' => $providerUser->token,
-        'provider_refresh_token' => $providerUser->refreshToken,
-    ]);
-
-    dd($user);
-
-    // event(new Registered($user));
-
-    // Auth::login($user);
-
-    // return redirect('/dashboard');
-})->name('authCallback');
+Route::get('/auth/{provider}/callback', [AuthenticateByProviderController::class, 'callback'])->name('authCallback');
 
 Route::middleware('auth')->group(function () {
     Route::name('dashboard.')->group(function () {

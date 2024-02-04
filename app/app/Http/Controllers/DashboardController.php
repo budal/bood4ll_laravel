@@ -22,20 +22,7 @@ class DashboardController extends Controller
                 'title' => 'Main data',
                 'subtitle' => 'User account profile information.',
                 'cols' => 2,
-                'fields' => [
-                    [
-                        [
-                            'type' => 'input',
-                            'name' => 'name',
-                            'title' => 'Name',
-                        ],
-                        [
-                            'type' => 'input',
-                            'name' => 'email',
-                            'title' => 'Email',
-                        ],
-                    ],
-                ]
+                'fields' => []
             ],
         ];
     }

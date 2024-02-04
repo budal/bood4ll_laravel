@@ -44,15 +44,17 @@ class Menu
 
         $tree = collect();
 
-        collect($source)->map(function ($value) use ($routes, $tree) {
+        $isSuperAdmin = $this->user?->isSuperAdmin();
+
+        collect($source)->map(function ($value) use ($routes, $tree, $isSuperAdmin) {
             return is_array($value)
                 ? $tree->push(
                     [
                         'title' => $value['title'],
                         'icon' => $value['icon'],
                         'route' => $value['route'],
-                        'links' => $routes->filter(function ($item, $route) use ($value) {
-                            if ($this->user?->isSuperAdmin()) {
+                        'links' => $routes->filter(function ($item, $route) use ($value, $isSuperAdmin) {
+                            if ($isSuperAdmin) {
                                 return Str::contains($route, $value['route']);
                             } else {
                                 return Str::contains($route, $value['route']) && collect($this->abilities)->contains($route);
