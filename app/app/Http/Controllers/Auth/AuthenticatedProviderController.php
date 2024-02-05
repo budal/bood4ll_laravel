@@ -9,7 +9,7 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 
-class AuthenticateByProviderController extends Controller
+class AuthenticatedProviderController extends Controller
 {
     public function redirect(string $provider)
     {
@@ -20,15 +20,15 @@ class AuthenticateByProviderController extends Controller
     {
         $providerUser = Socialite::driver($provider)->user();
 
-        $user = User::where('email', $providerUser->getEmail())->first();
+        $user = User::withTrashed()->where('email', $providerUser->getEmail())->first();
 
-        if ($user == null) {
+        if ($user->deleted_at) {
             return Redirect::route('login')->with([
-                'status' => 'These credentials do not match our records.',
+                'status' => 'This account was deleted. Contact our support.',
             ]);
         } elseif ($user->active === false) {
             return Redirect::route('login')->with([
-                'status' => 'This account is inactivated.',
+                'status' => 'This account is inactivated. Contact our support.',
             ]);
         } else {
             $user = User::updateOrCreate([

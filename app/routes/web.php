@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\AbsencesController;
-use App\Http\Controllers\Auth\AuthenticateByProviderController;
+use App\Http\Controllers\Auth\AuthenticatedProviderController;
 use App\Http\Controllers\Authorization\RolesController;
 use App\Http\Controllers\Authorization\UnitsController;
 use App\Http\Controllers\Authorization\UsersController;
@@ -22,9 +22,9 @@ Route::get('/', function () {
     ]);
 })->name('home')->breadcrumb('Home');
 
-Route::get('/auth/{provider}/redirect', [AuthenticateByProviderController::class, 'redirect'])->name('authRedirect');
+Route::get('/auth/{provider}/redirect', [AuthenticatedProviderController::class, 'redirect'])->name('authRedirect');
 
-Route::get('/auth/{provider}/callback', [AuthenticateByProviderController::class, 'callback'])->name('authCallback');
+Route::get('/auth/{provider}/callback', [AuthenticatedProviderController::class, 'callback'])->name('authCallback');
 
 Route::middleware('auth')->group(function () {
     Route::name('dashboard.')->group(function () {

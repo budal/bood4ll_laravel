@@ -721,6 +721,12 @@ class UsersController extends Controller
             $user->email = $request->email;
             $user->active = $request->active;
 
+            // $user->fill($request->validated());
+
+            if ($user->isDirty('email')) {
+                $user->email_verified_at = null;
+            }
+
             $user->save();
         } catch (\Throwable $e) {
             report($e);
@@ -735,15 +741,6 @@ class UsersController extends Controller
         }
 
         DB::commit();
-
-        // dd($request);
-        // $request->user()->fill($request->validated());
-
-        // if ($request->user()->isDirty('email')) {
-        //     $request->user()->email_verified_at = null;
-        // }
-
-        // $request->user()->save();
 
         return Redirect::back()->with([
             'toast_type' => 'success',
