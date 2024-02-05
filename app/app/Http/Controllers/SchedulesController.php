@@ -595,6 +595,22 @@ class SchedulesController extends Controller
         ]);
     }
 
+    public function show(Request $request): Response
+    {
+        return Inertia::render('Default', [
+            'form' => [
+                [
+                    'id' => 'profile',
+                    'title' => 'Main data',
+                    'subtitle' => 'User account profile information.',
+                    'cols' => 2,
+                    'fields' => []
+                ],
+            ],
+            // 'data' => $role,
+        ]);
+    }
+
     public function destroy(Request $request): RedirectResponse
     {
         $this->authorize('access', User::class);

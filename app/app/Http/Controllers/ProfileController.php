@@ -84,7 +84,7 @@ class ProfileController extends Controller
             [
                 'id' => 'deleteAccount',
                 'title' => 'Delete Account',
-                'subtitle' => 'Once your account is deleted, all of its resources and data will be permanently deleted. Before deleting your account, please download any data or information that you wish to retain.',
+                'subtitle' => 'Before deleting your account, please download any data or information that you wish to retain.',
                 'fields' => [
                     [
                         [
@@ -99,7 +99,7 @@ class ProfileController extends Controller
                                 'confirm' => true,
                                 'theme' => "danger",
                                 'title' => "Are you sure you want to delete your account?",
-                                'subTitle' => "Once your account is deleted, all of its resources and data will be permanently deleted. Please enter your password to confirm you would like to permanently delete your account.",
+                                'subTitle' => "Once your account is deleted, all of its resources and data will be deleted. Please enter your password to confirm you would like to delete your account.",
                                 'buttonTitle' => "Delete Account",
                                 'buttonTheme' => "danger",
                             ],

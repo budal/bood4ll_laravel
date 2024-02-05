@@ -53,7 +53,7 @@ Route::middleware('auth')->group(function () {
         ->defaults('description', 'See all chats between you and other users.')
         ->defaults('icon', 'mdi:chat-outline');
 
-    Route::get('/schedule', [ProfileController::class, 'edit'])->name('schedule')->breadcrumb('Schedule')
+    Route::get('/schedule', [SchedulesController::class, 'show'])->name('schedule')->breadcrumb('Schedule')
         ->defaults('title', 'Schedule')
         ->defaults('description', 'Manage all your appointments.')
         ->defaults('icon', 'mdi:calendar-multiselect-outline');
