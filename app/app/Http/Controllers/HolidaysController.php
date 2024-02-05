@@ -229,7 +229,7 @@ class HolidaysController extends Controller
             ],
             'data' => $holiday,
         ])
-            ->baseRoute('apps.holidays.index', $holiday->calendars()->first()->id)
+            ->baseRoute('apps.holidays.index')
             // ->refreshBackdrop()
         ;
     }
@@ -261,7 +261,7 @@ class HolidaysController extends Controller
 
         DB::commit();
 
-        return Redirect::route('apps.holidays.edit', $holiday->calendars()->first()->id)->with([
+        return Redirect::route('apps.holidays.edit')->with([
             'toast_type' => 'success',
             'toast_message' => '{0} Nothing to edit.|[1] Item edited successfully.|[2,*] :total items successfully edited.',
             'toast_count' => 1,
