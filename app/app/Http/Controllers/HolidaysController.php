@@ -31,6 +31,7 @@ class HolidaysController extends Controller
             ->withQueryString();
 
         return Inertia::render('Default', [
+            'tabs' => false,
             'form' => [
                 [
                     'id' => 'holiday',
@@ -141,7 +142,7 @@ class HolidaysController extends Controller
         ];
     }
 
-    public function create(Request $request, Calendar $calendar): Modal
+    public function create(Request $request): Modal
     {
         return Inertia::modal('Default', [
             'form' => $this->__form(),
@@ -150,7 +151,7 @@ class HolidaysController extends Controller
             'title' => 'Holiday creation',
             'routes' => [
                 'holiday' => [
-                    'route' => route('apps.holidays.store', $calendar->id),
+                    'route' => route('apps.holidays.store'),
                     'method' => 'post',
                     'buttonClass' => 'justify-end',
                 ],
@@ -164,7 +165,7 @@ class HolidaysController extends Controller
         ;
     }
 
-    public function store(Request $request, Calendar $calendar): RedirectResponse
+    public function store(Request $request): RedirectResponse
     {
         $this->authorize('access', User::class);
 
@@ -179,19 +180,6 @@ class HolidaysController extends Controller
             $holiday->ends_at = $request->ends_at;
 
             $holiday->save();
-
-            try {
-                $calendar->holidays()->attach($holiday->id);
-            } catch (\Exception $e) {
-                report($e);
-
-                DB::rollback();
-
-                return Redirect::back()->with([
-                    'toast_type' => 'error',
-                    'toast_message' => 'Error when syncing holidays in the calendar.',
-                ]);
-            }
         } catch (\Throwable $e) {
             report($e);
 
@@ -206,7 +194,7 @@ class HolidaysController extends Controller
 
         DB::commit();
 
-        return Redirect::route('apps.holidays.edit', $calendar->id)->with([
+        return Redirect::route('apps.holidays.edit', $holiday->id)->with([
             'toast_type' => 'success',
             'toast_message' => '{0} Nothing to add.|[1] Item added successfully.|[2,*] :total items successfully added.',
             'toast_count' => 1,
@@ -230,11 +218,10 @@ class HolidaysController extends Controller
             'data' => $holiday,
         ])
             ->baseRoute('apps.holidays.index')
-            // ->refreshBackdrop()
-        ;
+            ->refreshBackdrop();
     }
 
-    public function update(Request $request, Calendar $calendar, Holiday $holiday): RedirectResponse
+    public function update(Request $request, Holiday $holiday): RedirectResponse
     {
         $this->authorize('access', User::class);
 

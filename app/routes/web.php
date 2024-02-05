@@ -7,6 +7,7 @@ use App\Http\Controllers\Authorization\UnitsController;
 use App\Http\Controllers\Authorization\UsersController;
 use App\Http\Controllers\CalendarsController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\HolidaysController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SchedulesController;
 use Illuminate\Foundation\Application;
@@ -119,31 +120,6 @@ Route::middleware('auth')->group(function () {
             });
         });
 
-        Route::controller(CalendarsController::class)->group(function () {
-            Route::name('calendars.')->middleware('verified', 'password.confirm')->group(function () {
-                Route::get('/calendars', 'index')->name('index')->breadcrumb('Calendars')
-                    ->defaults('title', 'Calendars')
-                    ->defaults('description', "Manage calendars with working days, holidays and optional points.")
-                    ->defaults('icon', 'mdi:calendars-multiselect-outline');
-                Route::get('/calendars/create', 'create')->name('create')->breadcrumb('Calendar creation', 'apps.calendars.index');
-                Route::post('/calendars/create', 'store')->name('store');
-                Route::get('/calendars/edit/{calendar}', 'edit')->name('edit')->breadcrumb('Calendar edition', 'apps.calendars.index');
-                Route::patch('/calendars/edit/{calendar}', 'update')->name('update');
-                Route::delete('/calendars/destroy', 'destroy')->name('destroy');
-                Route::delete('/calendars/forcedestroy', 'forceDestroy')->name('forcedestroy');
-                Route::post('/calendars/restore', 'restore')->name('restore');
-
-                Route::get('/calendars/holiday/create/{calendar}', 'holidayCreate')->name('holiday_create')->breadcrumb('Holiday creation', 'apps.calendars.index');
-                Route::post('/calendars/holiday/create/{calendar}', 'holidayStore')->name('holiday_store');
-                Route::get('/calendars/holiday/edit/{holiday}', 'holidayEdit')->name('holiday_edit')->breadcrumb('Holiday edition', 'apps.calendars.index');
-                Route::patch('/calendars/holiday/edit/{holiday}', 'holidayUpdate')->name('holiday_update');
-                Route::delete('/calendars/holiday/destroy', 'holidayDestroy')->name('holiday_destroy');
-                Route::delete('/calendars/holiday/forcedestroy', 'holidayForceDestroy')->name('holiday_forcedestroy');
-                Route::post('/calendars/holiday/restore', 'holidayRestore')->name('holiday_restore');
-            });
-        });
-
-        /*
         Route::controller(HolidaysController::class)->group(function () {
             Route::name('holidays.')->middleware('verified', 'password.confirm')->group(function () {
                 Route::get('/holidays', 'index')->name('index')->breadcrumb('Holidays')
@@ -159,8 +135,7 @@ Route::middleware('auth')->group(function () {
                 Route::delete('/holidays/forcedestroy', 'forceDestroy')->name('forcedestroy');
                 Route::post('/holidays/restore', 'restore')->name('restore');
             });
-        });        
-        */
+        });
 
         Route::controller(AbsencesController::class)->group(function () {
             Route::name('absences.')->middleware('verified')->group(function () {
