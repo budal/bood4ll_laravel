@@ -37,4 +37,24 @@ class Holiday extends Base
             get: fn (string $value) => date_format(date_create($value), "d/m/Y H:i:s"),
         );
     }
+
+    public function scopeGetDates($query, $year = null): void
+    {
+        $year = $year ?? date("Y");
+
+        $query->selectRaw("
+        CASE
+            WHEN holidays.easter = true AND holidays.operator = '-' THEN Easter(" . $year . ") - holidays.difference_start::interval
+            WHEN holidays.easter = true AND holidays.operator = '+' THEN Easter(" . $year . ") + holidays.difference_start::interval
+            ELSE TO_TIMESTAMP(" . $year . " || '-' || holidays.month || '-' || holidays.day || ' ' || holidays.start_time, 'YYYY-MM-DD HH24:MI:SS')
+        END start_at
+    ")
+            ->selectRaw("
+        CASE
+            WHEN holidays.easter = true AND holidays.operator = '-' THEN Easter(" . $year . ") - holidays.difference_end::interval
+            WHEN holidays.easter = true AND holidays.operator = '+' THEN Easter(" . $year . ") + holidays.difference_end::interval
+            ELSE TO_TIMESTAMP(" . $year . " || '-' || holidays.month || '-' || holidays.day || ' ' || holidays.end_time, 'YYYY-MM-DD HH24:MI:SS')
+        END end_at
+    ");
+    }
 }

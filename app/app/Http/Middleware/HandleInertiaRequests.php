@@ -46,13 +46,12 @@ class HandleInertiaRequests extends Middleware
                     'title' => 'Reports',
                     'icon' => 'mdi:chart-areaspline',
                 ],
-                'help'
+                'help.index'
             ]),
             'appUserMenu' => app(\App\Services\Menu\Menu::class)->menu([
                 'profile.edit',
-                'messages',
-                'schedule',
-                'settings',
+                'messages.show',
+                'schedule.show',
             ]),
             'auth' => [
                 'user' => $request->user(),

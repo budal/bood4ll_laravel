@@ -7,6 +7,7 @@ use App\Http\Controllers\Authorization\UnitsController;
 use App\Http\Controllers\Authorization\UsersController;
 use App\Http\Controllers\CalendarsController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\HolidaysController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SchedulesController;
 use Illuminate\Foundation\Application;
@@ -48,20 +49,15 @@ Route::middleware('auth')->group(function () {
         });
     });
 
-    Route::get('/messages', [ProfileController::class, 'edit'])->name('messages')->breadcrumb('Messages')
+    Route::get('/messages', [SchedulesController::class, 'show'])->name('messages.show')->breadcrumb('Messages')
         ->defaults('title', 'Messages')
         ->defaults('description', 'See all chats between you and other users.')
         ->defaults('icon', 'mdi:chat-outline');
 
-    Route::get('/schedule', [SchedulesController::class, 'show'])->name('schedule')->breadcrumb('Schedule')
+    Route::get('/schedule', [SchedulesController::class, 'show'])->name('schedule.show')->breadcrumb('Schedule')
         ->defaults('title', 'Schedule')
         ->defaults('description', 'Manage all your appointments.')
         ->defaults('icon', 'mdi:calendar-multiselect-outline');
-
-    Route::get('/settings', [ProfileController::class, 'edit'])->name('settings')->breadcrumb('Settings')
-        ->defaults('title', 'Settings')
-        ->defaults('description', 'Personalize how the system is showed to you.')
-        ->defaults('icon', 'mdi:cog-outline');
 
     Route::prefix('apps')->name('apps.')->group(function () {
         Route::controller(RolesController::class)->group(function () {
@@ -124,27 +120,20 @@ Route::middleware('auth')->group(function () {
             });
         });
 
-        Route::controller(CalendarsController::class)->group(function () {
-            Route::name('calendars.')->middleware('verified', 'password.confirm')->group(function () {
-                Route::get('/calendars', 'index')->name('index')->breadcrumb('Calendars')
-                    ->defaults('title', 'Calendars')
-                    ->defaults('description', "Manage calendars with working days, holidays and optional points.")
+        Route::controller(HolidaysController::class)->group(function () {
+            Route::name('holidays.')->middleware('verified', 'password.confirm')->group(function () {
+                Route::get('/holidays', 'index')->name('index')->breadcrumb('Holidays')
+                    ->defaults('title', 'Holidays')
+                    ->defaults('description', "Define which dates will be holidays and optional points.")
                     ->defaults('icon', 'mdi:calendars-multiselect-outline');
-                Route::get('/calendars/create', 'create')->name('create')->breadcrumb('Calendar creation', 'apps.calendars.index');
-                Route::post('/calendars/create', 'store')->name('store');
-                Route::get('/calendars/edit/{calendar}', 'edit')->name('edit')->breadcrumb('Calendar edition', 'apps.calendars.index');
-                Route::patch('/calendars/edit/{calendar}', 'update')->name('update');
-                Route::delete('/calendars/destroy', 'destroy')->name('destroy');
-                Route::delete('/calendars/forcedestroy', 'forceDestroy')->name('forcedestroy');
-                Route::post('/calendars/restore', 'restore')->name('restore');
 
-                Route::get('/calendars/holiday/create/{calendar}', 'holidayCreate')->name('holiday_create')->breadcrumb('Holiday creation', 'apps.calendars.index');
-                Route::post('/calendars/holiday/create/{calendar}', 'holidayStore')->name('holiday_store');
-                Route::get('/calendars/holiday/edit/{holiday}', 'holidayEdit')->name('holiday_edit')->breadcrumb('Holiday edition', 'apps.calendars.index');
-                Route::patch('/calendars/holiday/edit/{holiday}', 'holidayUpdate')->name('holiday_update');
-                Route::delete('/calendars/holiday/destroy', 'holidayDestroy')->name('holiday_destroy');
-                Route::delete('/calendars/holiday/forcedestroy', 'holidayForceDestroy')->name('holiday_forcedestroy');
-                Route::post('/calendars/holiday/restore', 'holidayRestore')->name('holiday_restore');
+                Route::get('/holidays/create', 'create')->name('create')->breadcrumb('Holiday creation', 'apps.holidays.index');
+                Route::post('/holidays/create', 'store')->name('store');
+                Route::get('/holidays/edit/{holiday}', 'edit')->name('edit')->breadcrumb('Holiday edition', 'apps.holidays.index');
+                Route::patch('/holidays/edit/{holiday}', 'update')->name('update');
+                Route::delete('/holidays/destroy', 'destroy')->name('destroy');
+                Route::delete('/holidays/forcedestroy', 'forceDestroy')->name('forcedestroy');
+                Route::post('/holidays/restore', 'restore')->name('restore');
             });
         });
 
@@ -216,7 +205,7 @@ Route::middleware('auth')->group(function () {
         ->defaults('description', 'See all data registered in the system.')
         ->defaults('icon', 'mdi:chart-areaspline');
 
-    Route::get('/help', [ProfileController::class, 'edit'])->name('help')->breadcrumb('Help')
+    Route::get('/help', [ProfileController::class, 'edit'])->name('help.index')->breadcrumb('Help')
         ->defaults('title', 'Help')
         ->defaults('description', 'System manual.')
         ->defaults('icon', 'mdi:help-circle-outline');

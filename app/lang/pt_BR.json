@@ -81,6 +81,7 @@
   "Classified": "Classificado em",
   "Working": "Trabalhando em",
   "Concluded": "Concluído",
+  "Authority": "Autoridade",
   
   "Add": "Adicionar",
   "Are you sure you want to add the selected item?|Are you sure you want to add the selected items?": "Você tem certeza que deseja adicionar o item selecionado?|Você tem certeza que deseja adicionar os itens selecionados?",
@@ -255,7 +256,8 @@
   "Calendar creation": "Criação de calendário",
   "Calendar edition": "Edição de calendário",
   "Holidays": "Feriados",
-  "Define which dates will be working days, holidays and optional points.": "Defina que datas serão dias uteis, feriados e pontos opcionais.",
+  "Day off": "Folga",
+  "Define which dates will be holidays and optional points.": "Defina que datas serão feriados e pontos facultativos.",
   "Holiday creation": "Criação de feriado",
   "Holiday edition": "Edição de feriado",
   "Error when syncing holidays in the calendar.": "Error ao sincronizar os feriados no calendário.",
