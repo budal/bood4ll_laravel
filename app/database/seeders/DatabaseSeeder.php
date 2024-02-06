@@ -16,7 +16,7 @@ class DatabaseSeeder extends Seeder
             UnitSeeder::class,
             UserSeeder::class,
             SuperadminUserSeeder::class,
-            CalendarSeeder::class,
+            HolidaySeeder::class,
             AbsencesTypesSeeder::class,
             VacationPlansSeeder::class,
         ]);
