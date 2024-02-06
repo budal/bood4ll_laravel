@@ -207,7 +207,7 @@ class HolidaysController extends Controller
             'form' => $this->__form(),
             'isModal' => true,
             'tabs' => false,
-            'title' => 'Holiday creation',
+            'title' => 'Holiday edition',
             'routes' => [
                 'holiday' => [
                     'route' => route('apps.holidays.update', $holiday->id),
@@ -218,7 +218,8 @@ class HolidaysController extends Controller
             'data' => $holiday,
         ])
             ->baseRoute('apps.holidays.index')
-            ->refreshBackdrop();
+            // ->refreshBackdrop()
+        ;
     }
 
     public function update(Request $request, Holiday $holiday): RedirectResponse

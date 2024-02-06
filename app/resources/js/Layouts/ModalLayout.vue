@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import Modal from "@/Components/Modal.vue";
-import { useDark } from "@vueuse/core";
 // @ts-expect-error
 import { useModal } from "/vendor/emargareten/inertia-modal";
 
@@ -12,8 +11,7 @@ withDefaults(
         title: "",
     },
 );
-const isDark = useDark();
-const { show, close, redirect } = useModal();
+const { show, redirect } = useModal();
 </script>
 
 <template>
