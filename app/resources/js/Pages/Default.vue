@@ -43,7 +43,7 @@ withDefaults(
             :form="form"
             :routes="routes"
             :data="data"
-            :tabs="tabs"
+            :tabs="false"
             :status="status"
             :statusTheme="statusTheme"
         />

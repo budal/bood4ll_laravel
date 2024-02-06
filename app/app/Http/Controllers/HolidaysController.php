@@ -72,11 +72,6 @@ class HolidaysController extends Controller
                                             'field' => 'name',
                                         ],
                                         [
-                                            'type' => 'text',
-                                            'title' => 'Authority',
-                                            'field' => 'authority',
-                                        ],
-                                        [
                                             'type' => 'active',
                                             'title' => 'Day off',
                                             'field' => 'day_off',
@@ -147,7 +142,6 @@ class HolidaysController extends Controller
         return Inertia::modal('Default', [
             'form' => $this->__form(),
             'isModal' => true,
-            'tabs' => false,
             'title' => 'Holiday creation',
             'routes' => [
                 'holiday' => [
@@ -206,7 +200,6 @@ class HolidaysController extends Controller
         return Inertia::modal('Default', [
             'form' => $this->__form(),
             'isModal' => true,
-            'tabs' => false,
             'title' => 'Holiday edition',
             'routes' => [
                 'holiday' => [
