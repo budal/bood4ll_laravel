@@ -230,9 +230,15 @@ const submitModal = () => {
                                     field.type == 'datetime-local' ||
                                     field.type == 'email' ||
                                     field.type == 'input' ||
+                                    field.type == 'month' ||
                                     field.type == 'number' ||
                                     field.type == 'password' ||
-                                    field.type == 'text'
+                                    field.type == 'search' ||
+                                    field.type == 'tel' ||
+                                    field.type == 'text' ||
+                                    field.type == 'time' ||
+                                    field.type == 'url' ||
+                                    field.type == 'week'
                                 "
                                 :id="field.name"
                                 :name="field.name"

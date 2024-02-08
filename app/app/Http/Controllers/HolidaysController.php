@@ -67,9 +67,18 @@ class HolidaysController extends Controller
                                     ],
                                     'titles' => [
                                         [
-                                            'type' => 'text',
+                                            'type' => 'composite',
                                             'title' => 'Name',
                                             'field' => 'name',
+                                            'values' => [
+                                                [
+                                                    'field' => 'name',
+                                                ],
+                                                [
+                                                    'field' => 'authority',
+                                                    'class' => 'text-xs',
+                                                ],
+                                            ],
                                         ],
                                         [
                                             'type' => 'active',
@@ -77,14 +86,19 @@ class HolidaysController extends Controller
                                             'field' => 'day_off',
                                         ],
                                         [
-                                            'type' => 'text',
-                                            'title' => 'Starts at',
+                                            'type' => 'composite',
+                                            'title' => 'Duration',
                                             'field' => 'start_at',
-                                        ],
-                                        [
-                                            'type' => 'text',
-                                            'title' => 'Ends at',
-                                            'field' => 'end_at',
+                                            'values' => [
+                                                [
+                                                    'field' => 'start_at',
+                                                    'class' => 'text-xs',
+                                                ],
+                                                [
+                                                    'field' => 'end_at',
+                                                    'class' => 'text-xs',
+                                                ],
+                                            ],
                                         ],
                                     ],
                                     'items' => $holidays,
@@ -102,13 +116,14 @@ class HolidaysController extends Controller
         return [
             [
                 'id' => 'holiday',
-                'cols' => 2,
+                'cols' => 6,
                 'fields' => [
                     [
                         [
                             'type' => 'input',
                             'name' => 'name',
                             'title' => 'Name',
+                            'span' => 5,
                             'required' => true,
                             'autofocus' => true,
                         ],
@@ -120,15 +135,63 @@ class HolidaysController extends Controller
                             'colorOff' => 'danger',
                         ],
                         [
-                            'type' => 'datetime-local',
-                            'name' => 'starts_at',
-                            'title' => 'Starts at',
+                            'type' => 'text',
+                            'name' => 'authority',
+                            'title' => 'Authority',
+                            'span' => 4,
                             'required' => true,
                         ],
                         [
-                            'type' => 'datetime-local',
-                            'name' => 'ends_at',
-                            'title' => 'Ends at',
+                            'type' => 'toggle',
+                            'name' => 'day_off',
+                            'title' => 'Day off',
+                            'colorOn' => 'success',
+                            'colorOff' => 'danger',
+                        ],
+                        [
+                            'type' => 'toggle',
+                            'name' => 'easter',
+                            'title' => 'Easter',
+                            'colorOn' => 'info',
+                        ],
+                        [
+                            'type' => 'number',
+                            'name' => 'day',
+                            'title' => 'Day',
+                            'required' => true,
+                        ],
+                        [
+                            'type' => 'number',
+                            'name' => 'month',
+                            'title' => 'Month',
+                            'required' => true,
+                        ],
+                        [
+                            'type' => 'time',
+                            'name' => 'start_time',
+                            'title' => 'Start at',
+                            'span' => 2,
+                            'required' => true,
+                        ],
+                        [
+                            'type' => 'time',
+                            'name' => 'end_time',
+                            'title' => 'End at',
+                            'span' => 2,
+                            'required' => true,
+                        ],
+                        [
+                            'type' => 'text',
+                            'name' => 'difference_start',
+                            'title' => 'Difference start',
+                            'span' => 3,
+                            'required' => true,
+                        ],
+                        [
+                            'type' => 'text',
+                            'name' => 'difference_end',
+                            'title' => 'Difference end',
+                            'span' => 3,
                             'required' => true,
                         ],
                     ],
