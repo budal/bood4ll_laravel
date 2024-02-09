@@ -252,7 +252,7 @@ const action = (item: any) => {
 // toggle
 const updateFormToogle = async (
     method: "get" | "post" | "put" | "patch" | "delete",
-    route: any,
+    route: string,
     ids: any,
 ) => {
     const toggleForm = useForm({ list: [] });

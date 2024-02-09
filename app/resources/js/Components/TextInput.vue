@@ -8,7 +8,7 @@ withDefaults(
         type?: string;
         mask?: string;
         modelValue?: string | number;
-        autocomplete?: boolean | string;
+        autocomplete?: boolean | "off";
     }>(),
     {
         type: "text",

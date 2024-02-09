@@ -60,10 +60,6 @@ Route::middleware('auth')->group(function () {
         ->defaults('icon', 'mdi:calendar-multiselect-outline');
 
     Route::prefix('apps')->name('apps.')->group(function () {
-        Route::get('/', function () {
-            return redirect(route('dashboard.index'));
-        });
-
         Route::controller(RolesController::class)->group(function () {
             Route::name('roles.')->middleware('verified', 'password.confirm')->group(function () {
                 Route::get('/roles', 'index')->name('index')->breadcrumb('Roles')
