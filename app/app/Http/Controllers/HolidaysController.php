@@ -116,14 +116,14 @@ class HolidaysController extends Controller
         return [
             [
                 'id' => 'holiday',
-                'cols' => 6,
+                'cols' => 8,
                 'fields' => [
                     [
                         [
                             'type' => 'input',
                             'name' => 'name',
                             'title' => 'Name',
-                            'span' => 5,
+                            'span' => 6,
                             'required' => true,
                             'autofocus' => true,
                         ],
@@ -131,6 +131,7 @@ class HolidaysController extends Controller
                             'type' => 'toggle',
                             'name' => 'active',
                             'title' => 'Active',
+                            'span' => 2,
                             'colorOn' => 'success',
                             'colorOff' => 'danger',
                         ],
@@ -145,6 +146,7 @@ class HolidaysController extends Controller
                             'type' => 'toggle',
                             'name' => 'day_off',
                             'title' => 'Day off',
+                            'span' => 2,
                             'colorOn' => 'success',
                             'colorOff' => 'danger',
                         ],
@@ -152,18 +154,14 @@ class HolidaysController extends Controller
                             'type' => 'toggle',
                             'name' => 'easter',
                             'title' => 'Easter',
+                            'span' => 2,
                             'colorOn' => 'info',
                         ],
                         [
-                            'type' => 'number',
-                            'name' => 'day',
-                            'title' => 'Day',
-                            'required' => true,
-                        ],
-                        [
-                            'type' => 'number',
-                            'name' => 'month',
-                            'title' => 'Month',
+                            'type' => 'date',
+                            'name' => 'date',
+                            'title' => 'Date',
+                            'span' => 4,
                             'required' => true,
                         ],
                         [
@@ -177,6 +175,13 @@ class HolidaysController extends Controller
                             'type' => 'time',
                             'name' => 'end_time',
                             'title' => 'End at',
+                            'span' => 2,
+                            'required' => true,
+                        ],
+                        [
+                            'type' => 'text',
+                            'name' => 'operator',
+                            'title' => 'Operator',
                             'span' => 2,
                             'required' => true,
                         ],
