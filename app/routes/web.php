@@ -1,11 +1,9 @@
 <?php
 
 use App\Http\Controllers\AbsencesController;
-use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Authorization\RolesController;
 use App\Http\Controllers\Authorization\UnitsController;
 use App\Http\Controllers\Authorization\UsersController;
-use App\Http\Controllers\CalendarsController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HolidaysController;
 use App\Http\Controllers\ProfileController;
@@ -22,10 +20,6 @@ Route::get('/', function () {
         'phpVersion' => PHP_VERSION,
     ]);
 })->name('home')->breadcrumb('Home');
-
-Route::get('/auth/{provider}/redirect', [AuthenticatedSessionController::class, 'redirect'])->name('authRedirect');
-
-Route::get('/auth/{provider}/callback', [AuthenticatedSessionController::class, 'callback'])->name('authCallback');
 
 Route::middleware('auth')->group(function () {
     Route::name('dashboard.')->group(function () {
