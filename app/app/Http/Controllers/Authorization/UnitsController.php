@@ -22,39 +22,91 @@ class UnitsController extends Controller
     {
         $this->authorize('access', User::class);
 
-        // $results = DB::select("
-        //     WITH RECURSIVE cte AS (
-        //         SELECT m.id as start_id,
-        //             m.id,
-        //             m.parent_id,
-        //             m.name,
-        //             1 AS level
-        //         FROM public.units AS m
+        $results = DB::select("
+            WITH RECURSIVE cte AS (
+                SELECT m.id as start_id,
+                    m.id,
+                    m.parent_id,
+                    m.name,
+                    1 AS level
+                FROM public.units AS m
 
-        //         UNION ALL
+                UNION ALL
 
-        //         SELECT cte.start_id,
-        //             m.id,
-        //             m.parent_id,
-        //             m.name,
-        //             cte.level + 1 AS level
-        //         FROM public.units AS m
-        //         INNER JOIN cte ON cte.id = m.parent_id
-        //     ),
-        //     cte_distinct AS (
-        //         SELECT DISTINCT start_id, id 
-        //         FROM cte
-        //     )
-        //     SELECT cte_distinct.start_id,
-        //         m.name,
-        //         COUNT(*)-1 AS descendants_count
-        //     FROM cte_distinct
-        //     INNER JOIN public.units AS m ON m.id = cte_distinct.start_id
-        //     GROUP BY cte_distinct.start_id, m.name
-        //     ORDER BY cte_distinct.start_id
-        // ");
+                SELECT cte.start_id,
+                    m.id,
+                    m.parent_id,
+                    m.name,
+                    cte.level + 1 AS level
+                FROM public.units AS m
+                INNER JOIN cte ON cte.id = m.parent_id
+            ),
+            cte_distinct AS (
+                SELECT DISTINCT start_id, id 
+                FROM cte
+            )
+            SELECT cte_distinct.start_id,
+                m.name,
+                COUNT(*)-1 AS descendants_count
+            FROM cte_distinct
+            INNER JOIN public.units AS m ON m.id = cte_distinct.start_id
+            GROUP BY cte_distinct.start_id, m.name
+            ORDER BY cte_distinct.start_id
+        ");
 
-        // dd($results);
+
+
+
+
+
+        /////////////////////////////////////
+
+        // $posts = DB::table('p')
+        //     ->select('p.*', 'u.name')
+        //     ->withExpression('p', DB::table('users_infos'))
+        //     ->withExpression('u', function ($query) {
+        //         $query->from('users');
+        //     })
+        //     ->join('u', 'u.id', '=', 'p.id')
+        //     ->get();
+
+
+
+
+
+        // $query = DB::table('units')
+        //     ->whereNull('parent_id')
+        //     ->unionAll(
+        //         DB::table('units')
+        //             ->select('units.*')
+        //             ->join('tree', 'tree.id', '=', 'units.parent_id')
+        //     );
+
+        // $tree = DB::table('tree')
+        //     ->withRecursiveExpression('tree', $query)
+        //     ->get();
+
+
+        $unit = Unit::orderBy('parent_id')
+            ->orderBy('name')
+            ->with('descendantsAndSelf')
+            ->paginate(20);
+
+        $unit = Unit::where('id', 1)
+            ->orderBy('name')
+            ->with('descendantsAndSelf')
+            ->first()->descendantsAndSelf->pluck('id');
+
+
+        dd($unit);
+
+
+        ////////////////////////////////////////
+
+
+
+
+
 
         $unitsUsers = Unit::leftJoin('unit_user', 'unit_user.unit_id', '=', 'units.id')
             ->groupBy('units.id')

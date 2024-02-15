@@ -12,7 +12,7 @@ class Unit extends Base
 {
     use HasFactory;
     use SoftDeletes;
-    // use \Staudenmeir\LaravelAdjacencyList\Eloquent\HasRecursiveRelationships;
+    use \Staudenmeir\LaravelAdjacencyList\Eloquent\HasRecursiveRelationships;
 
     protected $fillable = [
         'name',
@@ -40,25 +40,25 @@ class Unit extends Base
         return $this->belongsToMany(User::class);
     }
 
-    public function children(): HasMany
-    {
-        return $this->hasMany(Self::class, 'parent_id', 'id');
-    }
+    // public function children(): HasMany
+    // {
+    //     return $this->hasMany(Self::class, 'parent_id', 'id');
+    // }
 
-    public function childrenRecursive()
-    {
-        return $this->children()->with('childrenRecursive');
-    }
+    // public function descendants()
+    // {
+    //     return $this->children()->with('descendants');
+    // }
 
-    public function parent(): BelongsTo
-    {
-        return $this->belongsTo(Self::class, 'parent_id');
-    }
+    // public function parent(): BelongsTo
+    // {
+    //     return $this->belongsTo(Self::class, 'parent_id');
+    // }
 
-    public function parentRecursive()
-    {
-        return $this->parent()->with('parentRecursive');
-    }
+    // public function ancestors()
+    // {
+    //     return $this->parent()->with('ancestors');
+    // }
 
     public function hasChildren()
     {
