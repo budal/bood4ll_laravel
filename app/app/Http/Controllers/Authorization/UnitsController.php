@@ -99,7 +99,12 @@ class UnitsController extends Controller
             ])
             ->first(20);
 
-        dd($unit);
+
+        $unit = Unit::find(1);
+        $totalUsers = $unit->getTotalUsers();
+
+        // dd($unit);
+        dd($totalUsers);
 
         ////////////////////////////////////////
 

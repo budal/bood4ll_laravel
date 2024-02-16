@@ -43,6 +43,15 @@ class Unit extends Base
         return $this->descendantsAndSelf->pluck('id');
     }
 
+    public function getTotalUsers()
+    {
+        $totalUsers = Unit::join('unit_user', 'units.id', '=', 'unit_user.unit_id')
+            ->whereIn('units.id', $this->descendantsAndSelf->pluck('id'))
+            ->count('unit_user.user_id');
+
+        return $totalUsers;
+    }
+
     public function getParentsNames()
     {
         if ($this->parent) {
