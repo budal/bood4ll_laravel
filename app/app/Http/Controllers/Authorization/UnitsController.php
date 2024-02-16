@@ -54,11 +54,6 @@ class UnitsController extends Controller
             ORDER BY cte_distinct.start_id
         ");
 
-
-
-
-
-
         /////////////////////////////////////
 
         // $posts = DB::table('p')
@@ -89,24 +84,29 @@ class UnitsController extends Controller
 
         $unit = Unit::orderBy('parent_id')
             ->orderBy('name')
-            ->with('descendantsAndSelf')
-            ->paginate(20);
+            ->withCount([
+                'users',
+                'descendantsAndSelf' => function ($query) use ($request) {
 
-        $unit = Unit::where('id', 1)
-            ->orderBy('name')
-            ->with('descendantsAndSelf')
-            ->first()->descendantsAndSelf->pluck('id');
+                    // dd($query->toSql());
 
+                    $query->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
+                        $query->join('unit_user', function (JoinClause $join) use ($request, $query) {
+                            $join->on('unit_user.user_id', '=', 'role_user.user_id')
+                                ->whereIn('unit_user.unit_id', $request->user()->unitsIds());
+
+                            if ($request->user()->cannot('hasFullAccess', User::class)) {
+                                $query->where('unit_user.user_id', $request->user()->id);
+                            }
+                        });
+                    });
+                }
+            ])
+            ->first(20);
 
         dd($unit);
 
-
         ////////////////////////////////////////
-
-
-
-
-
 
         $unitsUsers = Unit::leftJoin('unit_user', 'unit_user.unit_id', '=', 'units.id')
             ->groupBy('units.id')
