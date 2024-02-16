@@ -188,14 +188,14 @@ class HolidaysController extends Controller
                         [
                             'type' => 'text',
                             'name' => 'difference_start',
-                            'title' => 'Difference start',
+                            'title' => 'Start of difference',
                             'span' => 3,
                             'required' => true,
                         ],
                         [
                             'type' => 'text',
                             'name' => 'difference_end',
-                            'title' => 'Difference end',
+                            'title' => 'End of difference',
                             'span' => 3,
                             'required' => true,
                         ],

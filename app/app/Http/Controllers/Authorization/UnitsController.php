@@ -65,10 +65,6 @@ class UnitsController extends Controller
         //     ->join('u', 'u.id', '=', 'p.id')
         //     ->get();
 
-
-
-
-
         // $query = DB::table('units')
         //     ->whereNull('parent_id')
         //     ->unionAll(
@@ -80,7 +76,6 @@ class UnitsController extends Controller
         // $tree = DB::table('tree')
         //     ->withRecursiveExpression('tree', $query)
         //     ->get();
-
 
         $unit = Unit::orderBy('parent_id')
             ->orderBy('name')
