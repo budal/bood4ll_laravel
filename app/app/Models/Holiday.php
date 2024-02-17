@@ -21,14 +21,14 @@ class Holiday extends Base
     protected function startAt(): Attribute
     {
         return Attribute::make(
-            get: fn (string $value) => date_format(date_create($value), "d/m/Y H:i:s"),
+            get: fn (string $value) => "Start: " . date_format(date_create($value), "d/m/y H:i"),
         );
     }
 
     protected function endAt(): Attribute
     {
         return Attribute::make(
-            get: fn (string $value) => date_format(date_create($value), "d/m/Y H:i:s"),
+            get: fn (string $value) => "End: " . date_format(date_create($value), "d/m/y H:i"),
         );
     }
 
