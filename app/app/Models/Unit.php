@@ -45,11 +45,9 @@ class Unit extends Base
 
     public function getTotalUsers()
     {
-        $totalUsers = Unit::join('unit_user', 'units.id', '=', 'unit_user.unit_id')
+        return Unit::join('unit_user', 'units.id', '=', 'unit_user.unit_id')
             ->whereIn('units.id', $this->descendantsAndSelf->pluck('id'))
             ->count('unit_user.user_id');
-
-        return $totalUsers;
     }
 
     public function getParentsNames()

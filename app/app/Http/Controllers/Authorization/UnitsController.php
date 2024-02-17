@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Authorization;
 use App\Http\Controllers\Controller;
 use App\Models\Unit;
 use App\Models\User;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -22,133 +23,15 @@ class UnitsController extends Controller
     {
         $this->authorize('access', User::class);
 
-        $results = DB::select("
-            WITH RECURSIVE cte AS (
-                SELECT m.id as start_id,
-                    m.id,
-                    m.parent_id,
-                    m.name,
-                    1 AS level
-                FROM public.units AS m
-
-                UNION ALL
-
-                SELECT cte.start_id,
-                    m.id,
-                    m.parent_id,
-                    m.name,
-                    cte.level + 1 AS level
-                FROM public.units AS m
-                INNER JOIN cte ON cte.id = m.parent_id
-            ),
-            cte_distinct AS (
-                SELECT DISTINCT start_id, id 
-                FROM cte
-            )
-            SELECT cte_distinct.start_id,
-                m.name,
-                COUNT(*)-1 AS descendants_count
-            FROM cte_distinct
-            INNER JOIN public.units AS m ON m.id = cte_distinct.start_id
-            GROUP BY cte_distinct.start_id, m.name
-            ORDER BY cte_distinct.start_id
-        ");
-
-        /////////////////////////////////////
-
-        // $posts = DB::table('p')
-        //     ->select('p.*', 'u.name')
-        //     ->withExpression('p', DB::table('users_infos'))
-        //     ->withExpression('u', function ($query) {
-        //         $query->from('users');
-        //     })
-        //     ->join('u', 'u.id', '=', 'p.id')
-        //     ->get();
-
-        // $query = DB::table('units')
-        //     ->whereNull('parent_id')
-        //     ->unionAll(
-        //         DB::table('units')
-        //             ->select('units.*')
-        //             ->join('tree', 'tree.id', '=', 'units.parent_id')
-        //     );
-
-        // $tree = DB::table('tree')
-        //     ->withRecursiveExpression('tree', $query)
-        //     ->get();
-
-        $unit = Unit::orderBy('parent_id')
-            ->orderBy('name')
+        $units = Unit::filter($request, 'units', ['where' => ['name'], 'order' => ['shortpath']])
             ->withCount([
-                'users',
-                'descendantsAndSelf' => function ($query) use ($request) {
-
-                    // dd($query->toSql());
-
-                    $query->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
-                        $query->join('unit_user', function (JoinClause $join) use ($request, $query) {
-                            $join->on('unit_user.user_id', '=', 'role_user.user_id')
-                                ->whereIn('unit_user.unit_id', $request->user()->unitsIds());
-
-                            if ($request->user()->cannot('hasFullAccess', User::class)) {
-                                $query->where('unit_user.user_id', $request->user()->id);
-                            }
-                        });
-                    });
+                'children', 'users',
+                'users as all_users' => function ($query) {
+                    $query->orWhereRaw('unit_id IN (
+                        SELECT (json_array_elements(u.children_id::json)::text)::bigint FROM units u WHERE u.id = units.id
+                    )');
                 }
             ])
-            ->first(20);
-
-
-        $unit = Unit::find(1);
-        $totalUsers = $unit->getTotalUsers();
-
-        // dd($unit);
-        dd($totalUsers);
-
-        ////////////////////////////////////////
-
-        $unitsUsers = Unit::leftJoin('unit_user', 'unit_user.unit_id', '=', 'units.id')
-            ->groupBy('units.id')
-            ->select('units.id as unit_id')
-            ->selectRaw('COUNT(unit_user.unit_id) as local_users')
-            // ->selectRaw('0 as all_users')
-            ->selectRaw("
-                (SELECT COUNT(suu.unit_id) FROM unit_user suu 
-                    INNER JOIN units u ON u.id = suu.unit_id
-                    WHERE 
-                        unit_id IN (
-                            SELECT (json_array_elements(u.children_id::json)::text)::bigint FROM units u WHERE u.id = units.id
-                        ) 
-                        AND suu.primary = true
-                ) as all_users
-            ")
-            ->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
-                if ($request->user()->cannot('hasFullAccess', User::class)) {
-                    $query->where('unit_user.user_id', $request->user()->id);
-                }
-
-                $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
-            });
-
-        $units = Unit::leftJoin('unit_user', 'unit_user.unit_id', '=', 'units.id')
-            ->filter($request, 'units', [
-                'where' => ['name'],
-                'order' => ['shortpath']
-            ])
-            ->leftJoinSub($unitsUsers, 'units_users', function (JoinClause $join) {
-                $join->on('units.id', '=', 'units_users.unit_id');
-            })
-            ->groupBy('units.id', 'units.shortpath', 'units_users.local_users', 'units_users.all_users', 'units.deleted_at')
-            ->select('units.id', 'units.shortpath as name', 'units_users.local_users', 'units_users.all_users', 'units.deleted_at')
-            ->withCount('children')
-            ->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
-                if ($request->user()->cannot('hasFullAccess', User::class)) {
-                    $query->where('unit_user.user_id', $request->user()->id);
-                }
-
-                $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
-            })
             ->paginate(20)
             ->onEachSide(2)
             ->withQueryString();
@@ -200,7 +83,7 @@ class UnitsController extends Controller
                                         [
                                             'type' => 'text',
                                             'title' => 'Name',
-                                            'field' => 'name',
+                                            'field' => 'shortpath',
                                         ],
                                         [
                                             'type' => 'text',
@@ -211,7 +94,7 @@ class UnitsController extends Controller
                                         [
                                             'type' => 'text',
                                             'title' => 'Local staff',
-                                            'field' => 'local_users',
+                                            'field' => 'users_count',
                                         ],
                                         [
                                             'type' => 'text',
