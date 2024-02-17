@@ -52,6 +52,8 @@ class RolesController extends Controller
                             if ($request->user()->cannot('hasFullAccess', User::class)) {
                                 $query->where('unit_user.user_id', $request->user()->id);
                             }
+
+                            // $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
                         });
                     });
                 }

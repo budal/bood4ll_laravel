@@ -31,8 +31,6 @@ class Unit extends Base
         'geo',
     ];
 
-    private $descendants;
-
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class);

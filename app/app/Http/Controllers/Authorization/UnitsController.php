@@ -24,14 +24,27 @@ class UnitsController extends Controller
         $this->authorize('access', User::class);
 
         $units = Unit::filter($request, 'units', ['where' => ['name'], 'order' => ['shortpath']])
+            ->leftJoin('unit_user', 'unit_user.unit_id', '=', 'units.id')
+            ->select('units.id', 'units.shortpath', 'units.deleted_at')
+            ->groupBy('units.id', 'units.shortpath', 'units.deleted_at')
             ->withCount([
                 'children', 'users',
                 'users as all_users' => function ($query) {
-                    $query->orWhereRaw('unit_id IN (
-                        SELECT (json_array_elements(u.children_id::json)::text)::bigint FROM units u WHERE u.id = units.id
-                    )');
+                    $query->orWhere(function ($query) {
+                        $query->where('primary', true);
+                        $query->whereRaw('unit_id IN (
+                            SELECT (json_array_elements(u.children_id::json)::text)::bigint FROM units u WHERE u.id = units.id
+                        )');
+                    });
                 }
             ])
+            ->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
+                if ($request->user()->cannot('hasFullAccess', User::class)) {
+                    $query->where('unit_user.user_id', $request->user()->id);
+                }
+
+                $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
+            })
             ->paginate(20)
             ->onEachSide(2)
             ->withQueryString();
