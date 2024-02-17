@@ -107,6 +107,7 @@ class UnitsController extends Controller
                                             'type' => 'composite',
                                             'title' => 'Staff',
                                             'field' => 'users_all_count',
+                                            'showIf' => $request->user()->can('hasFullAccess', User::class),
                                             'values' => [
                                                 [
                                                     'field' => 'users_all_count',
@@ -329,6 +330,7 @@ class UnitsController extends Controller
                                                 $unit->id,
                                             ]
                                         ],
+                                        'showIf' => $request->user()->can('canManageNestedData', User::class),
                                     ],
                                     [
                                         'icon' => 'mdi:account-group-outline',

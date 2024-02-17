@@ -354,7 +354,7 @@ const submitModal = () => {
     >
         <div class="flex gap-2 w-full">
             <Dropdown
-                v-if="menuItems"
+                v-if="menuItems.size > 1"
                 :prefix="prefix"
                 :content="menuItems"
                 @select="(item) => action(item)"
@@ -514,6 +514,7 @@ const submitModal = () => {
                                         v-for="subitem in content.values"
                                     >
                                         <p
+                                            v-if="subitem.showIf !== false"
                                             class="truncate text-secondary-light dark:text-secondary-dark text-center"
                                             :class="subitem.class"
                                         >
