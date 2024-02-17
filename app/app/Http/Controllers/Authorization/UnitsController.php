@@ -29,14 +29,13 @@ class UnitsController extends Controller
             ->groupBy('units.id', 'units.shortpath', 'units.deleted_at')
             ->withCount([
                 'children', 'users',
-                'users as all_users' => function ($query) {
+                'users as users_all_count' => function ($query) {
                     $query->orWhere(function ($query) {
-                        $query->where('primary', true);
                         $query->whereRaw('unit_id IN (
                             SELECT (json_array_elements(u.children_id::json)::text)::bigint FROM units u WHERE u.id = units.id
                         )');
                     });
-                }
+                },
             ])
             ->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
                 if ($request->user()->cannot('hasFullAccess', User::class)) {
@@ -105,15 +104,20 @@ class UnitsController extends Controller
                                             'showIf' => $request->user()->can('canManageNestedData', User::class),
                                         ],
                                         [
-                                            'type' => 'text',
-                                            'title' => 'Local staff',
-                                            'field' => 'users_count',
-                                        ],
-                                        [
-                                            'type' => 'text',
-                                            'title' => 'Total staff',
-                                            'field' => 'all_users',
-                                            'showIf' => $request->user()->can('canManageNestedData', User::class),
+                                            'type' => 'composite',
+                                            'title' => 'Staff',
+                                            'field' => 'users_all_count',
+                                            'values' => [
+                                                [
+                                                    'field' => 'users_all_count',
+                                                    'class' => 'text-xs',
+                                                    'showIf' => $request->user()->can('canManageNestedData', User::class),
+                                                ],
+                                                [
+                                                    'field' => 'users_count',
+                                                    'class' => 'text-xs',
+                                                ],
+                                            ],
                                         ],
                                     ],
                                     'items' => $units,

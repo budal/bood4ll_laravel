@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -64,5 +65,19 @@ class Unit extends Base
         } else {
             return $this->nickname;
         }
+    }
+
+    protected function usersCount(): Attribute
+    {
+        return Attribute::make(
+            get: fn (string $value) => "Local: " . $value,
+        );
+    }
+
+    protected function usersAllCount(): Attribute
+    {
+        return Attribute::make(
+            get: fn (string $value) => "Total: " . $value,
+        );
     }
 }

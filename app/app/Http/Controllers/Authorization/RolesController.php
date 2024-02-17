@@ -45,6 +45,17 @@ class RolesController extends Controller
                 'abilities',
                 'users' => function ($query) use ($request) {
                     $query->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
+
+
+                        // ->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
+                        //     if ($request->user()->cannot('hasFullAccess', User::class)) {
+                        //         $query->where('unit_user.user_id', $request->user()->id);
+                        //     }
+                        //     $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
+                        // })
+
+
+
                         $query->join('unit_user', function (JoinClause $join) use ($request, $query) {
                             $join->on('unit_user.user_id', '=', 'role_user.user_id')
                                 ->whereIn('unit_user.unit_id', $request->user()->unitsIds());
