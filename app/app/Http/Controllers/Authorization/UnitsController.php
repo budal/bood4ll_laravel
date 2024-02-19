@@ -5,8 +5,6 @@ namespace App\Http\Controllers\Authorization;
 use App\Http\Controllers\Controller;
 use App\Models\Unit;
 use App\Models\User;
-use Illuminate\Contracts\Database\Eloquent\Builder;
-use Illuminate\Database\Query\JoinClause;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -44,9 +42,13 @@ class UnitsController extends Controller
 
                 $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
             })
-            ->paginate(20)
-            ->onEachSide(2)
-            ->withQueryString();
+            // ->paginate(20)
+            // ->onEachSide(2)
+            // ->withQueryString()
+            ->cursorPaginate(20);
+
+
+        // dd($units);
 
         return Inertia::render('Default', [
             'form' => [

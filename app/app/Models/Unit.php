@@ -81,3 +81,19 @@ class Unit extends Base
         );
     }
 }
+
+// return $query->select('units.*')
+// ->selectSub(function ($subquery) {
+//     $subquery->selectRaw('COUNT(unit_user.user_id)')
+//         ->from('unit_user')
+//         ->leftjoin('units', 'unit_user.unit_id', '=', 'units.id')
+//         ->whereIn('units.id', function ($query) {
+//             $query->select('id')
+//                 ->from('units')
+//                 ->whereRaw('units.id = units.id OR units.parent_id = units.id');
+//         })
+//         // ->whereRaw('unit_id IN (
+//         //     SELECT (json_array_elements(u.children_id::json)::text)::bigint FROM units u WHERE u.id = units.id
+//         // )')
+//         ->whereRaw('units.id = units.id OR units.parent_id = units.id');
+// }, 'all_users');
