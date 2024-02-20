@@ -139,7 +139,7 @@ const toggle = (event: MouseEvent) => {
                                     "
                                     :method="item.method"
                                     class="flex align-items-center"
-                                    as="button"
+                                    as="span"
                                     v-bind="props.action"
                                     v-ripple
                                 >
