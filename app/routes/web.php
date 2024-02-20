@@ -60,8 +60,8 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::name('system.')->group(function () {
-        Route::get('/configuration', [SchedulesController::class, 'show'])->name('configuration.index')->breadcrumb('Configuration')
-            ->defaults('title', 'Configuration')
+        Route::get('/settings', [SchedulesController::class, 'show'])->name('settings.index')->breadcrumb('Settings')
+            ->defaults('title', 'Settings')
             ->defaults('description', 'Manage all your appointments.')
             ->defaults('icon', 'material-symbols-light:calendar-month-outline');
     });

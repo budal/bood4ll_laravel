@@ -185,9 +185,12 @@
   "Help": "Ajuda",
 
   "Profile": "Perfil",
-  "Settings": "Configurações",
+  "Personal": "Pessoal",
   "Messages": "Mensagens",
   "Schedule": "Agenda",
+  "Notifications": "Notificações",
+  "System": "Sistema",
+  "Settings": "Configurações",
   
   "Abilities": "Abilitações",
   "Ability": "Abilitação",
