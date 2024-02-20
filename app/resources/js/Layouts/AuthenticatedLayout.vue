@@ -1,15 +1,17 @@
 <script setup lang="ts">
-import TailwindIndicator from "@/Components/TailwindIndicator.vue";
 import { Link } from "@inertiajs/vue3";
 import ScrollTop from "primevue/scrolltop";
+import NavBar from "@/Components/NavBar.vue";
+import TailwindIndicator from "@/Components/TailwindIndicator.vue";
 // @ts-expect-error
 import { Modal } from "/vendor/emargareten/inertia-modal";
-import NavBar from "@/Components/NavBar.vue";
 </script>
 
 <template>
     <div class="relative min-h-screen bg-zero-white dark:bg-zero-black">
-        <nav class="bg-zero-light dark:bg-zero-dark sm:sticky sm:top-0 z-[10]">
+        <nav
+            class="bg-zero-light dark:bg-zero-dark sm:sticky sm:top-0 z-[10] border-b"
+        >
             <div
                 v-if="$page.props.auth.previousUser === true"
                 class="font-medium bg-danger-light dark:bg-danger-dark text-xs text-center text-danger-light dark:text-danger-dark"
@@ -26,25 +28,17 @@ import NavBar from "@/Components/NavBar.vue";
                     >[ {{ $t("Log out") }} ]
                 </Link>
             </div>
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="max-w-7xl mx-auto py-1 px-2 sm:px-6 lg:px-8">
                 <NavBar />
             </div>
         </nav>
-        <!-- <div class="sm:sticky sm:top-[65px] z-[5]"> -->
-        <!-- </div> -->
-        <div class="py-12">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+        <div class="pt-8">
+            <div class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 space-y-6">
                 <slot />
             </div>
         </div>
     </div>
     <Modal />
     <TailwindIndicator />
-
-    <ScrollTop
-        :pt="{
-            root: { class: 'w-2rem h-2rem bg-primary' },
-            icon: { class: 'w-1rem h-1rem' },
-        }"
-    />
+    <ScrollTop />
 </template>
