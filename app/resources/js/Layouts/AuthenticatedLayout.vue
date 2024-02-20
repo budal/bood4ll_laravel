@@ -1,14 +1,7 @@
 <script setup lang="ts">
-import ApplicationLogo from "@/Components/ApplicationLogo.vue";
-import Avatar from "@/Components/Avatar.vue";
-import Bullet from "@/Components/Bullet.vue";
-import Breadcrumbs from "@/Components/Breadcrumbs.vue";
-import NavMenu from "@/Components/NavMenu.vue";
-import NavUser from "@/Components/NavUser.vue";
-import ScrollToTop from "@/Components/ScrollToTop.vue";
 import TailwindIndicator from "@/Components/TailwindIndicator.vue";
-import ToggleTheme from "@/Components/ToggleTheme.vue";
-import { Link, usePage } from "@inertiajs/vue3";
+import { Link } from "@inertiajs/vue3";
+import ScrollTop from "primevue/scrolltop";
 // @ts-expect-error
 import { Modal } from "/vendor/emargareten/inertia-modal";
 import NavBar from "@/Components/NavBar.vue";
@@ -47,5 +40,11 @@ import NavBar from "@/Components/NavBar.vue";
     </div>
     <Modal />
     <TailwindIndicator />
-    <ScrollToTop />
+
+    <ScrollTop
+        :pt="{
+            root: { class: 'w-2rem h-2rem bg-primary' },
+            icon: { class: 'w-1rem h-1rem' },
+        }"
+    />
 </template>
