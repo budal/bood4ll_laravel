@@ -42,7 +42,7 @@ Route::middleware('auth')->group(function () {
         });
     });
 
-    Route::prefix('personal')->name('personal.')->group(function () {
+    Route::name('personal.')->group(function () {
         Route::get('/messages', [SchedulesController::class, 'show'])->name('messages.index')->breadcrumb('Messages')
             ->defaults('title', 'Messages')
             ->defaults('description', 'See all chats between you and other users.')
@@ -59,7 +59,7 @@ Route::middleware('auth')->group(function () {
             ->defaults('icon', 'material-symbols-light:calendar-month-outline');
     });
 
-    Route::prefix('system')->name('system.')->group(function () {
+    Route::name('system.')->group(function () {
         Route::get('/configuration', [SchedulesController::class, 'show'])->name('configuration.index')->breadcrumb('Configuration')
             ->defaults('title', 'Configuration')
             ->defaults('description', 'Manage all your appointments.')

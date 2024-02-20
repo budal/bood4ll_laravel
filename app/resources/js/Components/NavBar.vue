@@ -1,17 +1,15 @@
 <script setup lang="ts">
 import { Icon } from "@iconify/vue";
 import { ref } from "vue";
-import { Link, usePage } from "@inertiajs/vue3";
+import { Head, Link } from "@inertiajs/vue3";
 import Avatar from "primevue/avatar";
 import Badge from "primevue/badge";
 import Breadcrumb from "primevue/breadcrumb";
-import InputText from "primevue/inputtext";
+import Button from "primevue/button";
+import Menu from "primevue/menu";
 import Menubar from "primevue/menubar";
 import ApplicationLogo from "@/Components/ApplicationLogo.vue";
 import ToggleTheme from "@/Components/ToggleTheme.vue";
-
-import Menu from "primevue/menu";
-import Button from "primevue/button";
 
 const routeCurrent = window.location.href;
 
@@ -24,7 +22,15 @@ const toggle = (event: MouseEvent) => {
 
 <template>
     <div>
-        <Menubar :model="$page.props.appNavMenu as any">
+        <Head
+            :title="
+                $t(
+                    $page.props.breadcrumbs[$page.props.breadcrumbs.length - 1]
+                        ?.title || $page.props.appName,
+                )
+            "
+        />
+        <Menubar :model="$page.props.appNavMenu">
             <template #start>
                 <ApplicationLogo
                     class="block h-9 mr-5 w-auto fill-current text-zero-light dark:text-zero-dark"
@@ -43,10 +49,10 @@ const toggle = (event: MouseEvent) => {
                     v-bind="props.action"
                     v-ripple
                 >
-                    <Icon :icon="item.icon as string" class="h-5 w-5 mr-1" />
-                    <span class="ml-2 text-sm">{{
-                        $t(item.label as string)
-                    }}</span>
+                    <Icon :icon="item.icon || ''" class="h-5 w-5 mr-1" />
+                    <span class="ml-2 text-sm">
+                        {{ $t(item.label as string) }}
+                    </span>
                     <Badge
                         v-if="item.badge"
                         :class="{ 'ml-auto': !root, 'ml-2': root }"
@@ -84,11 +90,10 @@ const toggle = (event: MouseEvent) => {
                             class="shadow-[0_2px_10px]"
                         />
                     </button>
-
                     <Menu
                         ref="menu"
                         id="overlay_menu"
-                        :model="$page.props.appUserMenu as any"
+                        :model="$page.props.appUserMenu"
                         :popup="true"
                         class="text-sm"
                     >
@@ -155,5 +160,29 @@ const toggle = (event: MouseEvent) => {
                 </div>
             </template>
         </Menubar>
+        <Breadcrumb :model="$page.props.breadcrumbs" class="text-xs">
+            <template #item="{ item, props }">
+                <Link
+                    as="button"
+                    v-bind="props.action"
+                    :href="item.url || ''"
+                    :disabled="item.current === true"
+                >
+                    <Icon
+                        v-if="item.icon"
+                        :icon="item.icon || ''"
+                        class="h-5 w-5"
+                    />
+                    <span
+                        :class="{
+                            'text-primary font-semibold': item.current === true,
+                        }"
+                    >
+                        {{ $t(item.title) }}
+                    </span>
+                </Link>
+            </template>
+            <template #separator> / </template>
+        </Breadcrumb>
     </div>
 </template>

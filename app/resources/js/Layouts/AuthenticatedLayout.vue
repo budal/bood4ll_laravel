@@ -2,7 +2,6 @@
 import ApplicationLogo from "@/Components/ApplicationLogo.vue";
 import Avatar from "@/Components/Avatar.vue";
 import Bullet from "@/Components/Bullet.vue";
-import Breadcrumb from "@/Components/Breadcrumb.vue";
 import Breadcrumbs from "@/Components/Breadcrumbs.vue";
 import NavMenu from "@/Components/NavMenu.vue";
 import NavUser from "@/Components/NavUser.vue";
@@ -36,7 +35,6 @@ import NavBar from "@/Components/NavBar.vue";
             </div>
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <NavBar />
-                <Breadcrumbs />
             </div>
         </nav>
         <!-- <div class="sm:sticky sm:top-[65px] z-[5]"> -->

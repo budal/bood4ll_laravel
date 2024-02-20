@@ -12,4 +12,7 @@ export type PageProps<
         user: User;
         previousUser: boolean;
     };
+    appNavMenu: MenuItem[];
+    appUserMenu: MenuItem[];
+    breadcrumbs: MenuItem[];
 };
