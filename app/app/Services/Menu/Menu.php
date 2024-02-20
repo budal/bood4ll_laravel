@@ -53,6 +53,7 @@ class Menu
                         'label' => $value['title'],
                         'icon' => $value['icon'],
                         'route' => $value['route'],
+                        'method' => $value['route'] ?? 'get',
                         'items' => $routes->filter(function ($item, $route) use ($value, $isSuperAdmin) {
                             if ($isSuperAdmin) {
                                 return Str::contains($route, $value['route']);
@@ -65,6 +66,7 @@ class Menu
                                 'description' => $item->defaults['description'],
                                 'icon' => isset($item->defaults['icon']) ? $item->defaults['icon'] : null,
                                 'route' => $item->action['as'],
+                                'method' => $item->action['route'] ?? 'get',
                             ];
                         })->values(),
                     ],
