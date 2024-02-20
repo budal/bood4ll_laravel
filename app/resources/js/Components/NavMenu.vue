@@ -14,6 +14,8 @@ import {
 import { Link } from "@inertiajs/vue3";
 
 import MegaMenu from "primevue/megamenu";
+import Menubar from "primevue/menubar";
+import ApplicationLogo from "./ApplicationLogo.vue";
 
 defineProps<{
     content: any;
@@ -28,170 +30,59 @@ const items = ref([
         icon: "pi pi-home",
     },
     {
-        label: "Furniture",
-        icon: "pi pi-box",
+        label: "Features",
+        icon: "pi pi-star",
+    },
+    {
+        label: "Projects",
+        icon: "pi pi-search",
         items: [
-            [
-                {
-                    label: "Living Room",
-                    items: [
-                        { label: "Accessories" },
-                        { label: "Armchair" },
-                        { label: "Coffee Table" },
-                        { label: "Couch" },
-                        { label: "TV Stand" },
-                    ],
-                },
-            ],
-            [
-                {
-                    label: "Kitchen",
-                    items: [
-                        { label: "Bar stool" },
-                        { label: "Chair" },
-                        { label: "Table" },
-                    ],
-                },
-                {
-                    label: "Bathroom",
-                    items: [{ label: "Accessories" }],
-                },
-            ],
-            [
-                {
-                    label: "Bedroom",
-                    items: [
-                        { label: "Bed" },
-                        { label: "Chaise lounge" },
-                        { label: "Cupboard" },
-                        { label: "Dresser" },
-                        { label: "Wardrobe" },
-                    ],
-                },
-            ],
-            [
-                {
-                    label: "Office",
-                    items: [
-                        { label: "Bookcase" },
-                        { label: "Cabinet" },
-                        { label: "Chair" },
-                        { label: "Desk" },
-                        { label: "Executive Chair" },
-                    ],
-                },
-            ],
+            {
+                label: "Core",
+                icon: "pi pi-bolt",
+                shortcut: "⌘+S",
+            },
+            {
+                label: "Blocks",
+                icon: "pi pi-server",
+                shortcut: "⌘+B",
+            },
+            {
+                label: "UI Kit",
+                icon: "pi pi-pencil",
+                shortcut: "⌘+U",
+            },
+            {
+                separator: true,
+            },
+            {
+                label: "Templates",
+                icon: "pi pi-palette",
+                items: [
+                    {
+                        label: "Apollo",
+                        icon: "pi pi-palette",
+                        badge: 2,
+                    },
+                    {
+                        label: "Ultima",
+                        icon: "pi pi-palette",
+                        badge: 3,
+                    },
+                ],
+            },
         ],
     },
     {
-        label: "Electronics",
-        icon: "pi pi-mobile",
-        items: [
-            [
-                {
-                    label: "Computer",
-                    items: [
-                        { label: "Monitor" },
-                        { label: "Mouse" },
-                        { label: "Notebook" },
-                        { label: "Keyboard" },
-                        { label: "Printer" },
-                        { label: "Storage" },
-                    ],
-                },
-            ],
-            [
-                {
-                    label: "Home Theather",
-                    items: [
-                        { label: "Projector" },
-                        { label: "Speakers" },
-                        { label: "TVs" },
-                    ],
-                },
-            ],
-            [
-                {
-                    label: "Gaming",
-                    items: [
-                        { label: "Accessories" },
-                        { label: "Console" },
-                        { label: "PC" },
-                        { label: "Video Games" },
-                    ],
-                },
-            ],
-            [
-                {
-                    label: "Appliances",
-                    items: [
-                        { label: "Coffee Machine" },
-                        { label: "Fridge" },
-                        { label: "Oven" },
-                        { label: "Vaccum Cleaner" },
-                        { label: "Washing Machine" },
-                    ],
-                },
-            ],
-        ],
-    },
-    {
-        label: "Sports",
-        icon: "pi pi-clock",
-        items: [
-            [
-                {
-                    label: "Football",
-                    items: [
-                        { label: "Kits" },
-                        { label: "Shoes" },
-                        { label: "Shorts" },
-                        { label: "Training" },
-                    ],
-                },
-            ],
-            [
-                {
-                    label: "Running",
-                    items: [
-                        { label: "Accessories" },
-                        { label: "Shoes" },
-                        { label: "T-Shirts" },
-                        { label: "Shorts" },
-                    ],
-                },
-            ],
-            [
-                {
-                    label: "Swimming",
-                    items: [
-                        { label: "Kickboard" },
-                        { label: "Nose Clip" },
-                        { label: "Swimsuits" },
-                        { label: "Paddles" },
-                    ],
-                },
-            ],
-            [
-                {
-                    label: "Tennis",
-                    items: [
-                        { label: "Balls" },
-                        { label: "Rackets" },
-                        { label: "Shoes" },
-                        { label: "Training" },
-                    ],
-                },
-            ],
-        ],
+        label: "Contact",
+        icon: "pi pi-envelope",
+        badge: 3,
     },
 ]);
 </script>
 
 <template>
     <div>
-        <MegaMenu :model="items" />
-
         <NavigationMenuRoot
             v-model="currentTrigger"
             class="z-[100] flex w-full justify-center"

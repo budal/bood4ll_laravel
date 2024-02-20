@@ -50,10 +50,10 @@ class Menu
             return is_array($value)
                 ? $tree->push(
                     [
-                        'title' => $value['title'],
+                        'label' => $value['title'],
                         'icon' => $value['icon'],
                         'route' => $value['route'],
-                        'links' => $routes->filter(function ($item, $route) use ($value, $isSuperAdmin) {
+                        'items' => $routes->filter(function ($item, $route) use ($value, $isSuperAdmin) {
                             if ($isSuperAdmin) {
                                 return Str::contains($route, $value['route']);
                             } else {
@@ -61,7 +61,7 @@ class Menu
                             }
                         })->map(function ($item) {
                             return [
-                                'title' => $item->defaults['title'],
+                                'label' => $item->defaults['title'],
                                 'description' => $item->defaults['description'],
                                 'icon' => isset($item->defaults['icon']) ? $item->defaults['icon'] : null,
                                 'route' => $item->action['as'],
@@ -71,7 +71,7 @@ class Menu
                 )
                 : $tree->push(
                     [
-                        'title' => $routes[$value]->defaults['title'],
+                        'label' => $routes[$value]->defaults['title'],
                         'description' => $routes[$value]->defaults['description'],
                         'icon' => isset($routes[$value]->defaults['icon']) ? $routes[$value]->defaults['icon'] : null,
                         'route' => $routes[$value]->action['as'],

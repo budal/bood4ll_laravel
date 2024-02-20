@@ -7,7 +7,9 @@ import { resolvePageComponent } from "laravel-vite-plugin/inertia-helpers";
 import { ZiggyVue } from "../../vendor/tightenco/ziggy/dist/vue.m";
 import { i18nVue } from "laravel-vue-i18n";
 import PrimeVue from "primevue/config";
+import Ripple from "primevue/ripple";
 import "primevue/resources/themes/aura-light-blue/theme.css";
+import "material-icons/iconfont/material-icons.css";
 import Vue3Toasity, { type ToastContainerOptions } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
 // @ts-expect-error
@@ -33,7 +35,8 @@ createInertiaApp({
                     ),
             })
             .use(plugin)
-            .use(PrimeVue)
+            .use(PrimeVue, { ripple: true })
+            .directive("ripple", Ripple)
             .use(Vue3Toasity, {
                 autoClose: 3000,
                 limit: 5,

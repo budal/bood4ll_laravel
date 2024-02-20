@@ -2,15 +2,17 @@
 import ApplicationLogo from "@/Components/ApplicationLogo.vue";
 import Avatar from "@/Components/Avatar.vue";
 import Bullet from "@/Components/Bullet.vue";
+import Breadcrumb from "@/Components/Breadcrumb.vue";
 import Breadcrumbs from "@/Components/Breadcrumbs.vue";
 import NavMenu from "@/Components/NavMenu.vue";
 import NavUser from "@/Components/NavUser.vue";
 import ScrollToTop from "@/Components/ScrollToTop.vue";
 import TailwindIndicator from "@/Components/TailwindIndicator.vue";
 import ToggleTheme from "@/Components/ToggleTheme.vue";
-import { Link } from "@inertiajs/vue3";
+import { Link, usePage } from "@inertiajs/vue3";
 // @ts-expect-error
 import { Modal } from "/vendor/emargareten/inertia-modal";
+import NavBar from "@/Components/NavBar.vue";
 </script>
 
 <template>
@@ -33,6 +35,10 @@ import { Modal } from "/vendor/emargareten/inertia-modal";
                 </Link>
             </div>
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <NavBar :items="$page.props.appNavMenu" />
+                <!-- <Breadcrumbs :content="usePage().props.breadcrumbs" /> -->
+            </div>
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between h-16">
                     <div class="flex">
                         <div class="shrink-0 flex items-center">
@@ -46,7 +52,7 @@ import { Modal } from "/vendor/emargareten/inertia-modal";
                             </Link>
                         </div>
                         <div class="space-x-8 sm:-my-px sm:ml-6">
-                            <NavMenu :content="$page.props.appNavMenu" />
+                            <!-- <NavMenu :content="$page.props.appNavMenu" /> -->
                         </div>
                     </div>
                     <div class="xs:-mr-2 flex items-center sm:ml-6">
