@@ -37,10 +37,7 @@ const toggle = (event: MouseEvent) => {
                         class="block h-9 mr-5 w-auto fill-current text-zero-light dark:text-zero-dark"
                     />
                 </template>
-                <template
-                    #item="{ item, props, hasSubmenu, root }"
-                    class="ml-5"
-                >
+                <template #item="{ item, props, hasSubmenu, root }">
                     <component
                         v-if="
                             route().has(item.route) ||
@@ -55,7 +52,7 @@ const toggle = (event: MouseEvent) => {
                         v-bind="props.action"
                         v-ripple
                     >
-                        <Icon :icon="item.icon || ''" class="h-5 w-5 mr-1" />
+                        <Icon :icon="item.icon || ''" class="h-6 w-6 mr-1" />
                         <span class="ml-2 text-sm">
                             {{ $t(item.label as string) }}
                         </span>
@@ -93,7 +90,7 @@ const toggle = (event: MouseEvent) => {
                                 "
                                 shape="circle"
                                 size="large"
-                                class="shadow-[0_2px_10px]"
+                                class="shadow-[0_2px_15px]"
                             />
                         </button>
                         <Menu
@@ -112,7 +109,7 @@ const toggle = (event: MouseEvent) => {
                                         class="mr-2"
                                         shape="circle"
                                     />
-                                    <span class="">
+                                    <span>
                                         <p class="font-bold">
                                             {{ $page.props.auth.user.name }}
                                         </p>
