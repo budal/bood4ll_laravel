@@ -51,11 +51,11 @@ class Menu
                 ? $tree->push(
                     [
                         'label' => $value['title'],
-                        'icon' => $value['icon'],
+                        'icon' => $value['icon'] ?? null,
+                        'shortcut' => $value['shortcut'] ?? null,
                         'route' => $value['route'],
-                        'method' => $value['route'] ?? 'get',
                         'items' => $routes->filter(function ($item, $route) use ($value, $isSuperAdmin) {
-                            if ($isSuperAdmin) {
+                            if ($isSuperAdmin || Str::contains($route, 'personal') || Str::contains($route, 'system')) {
                                 return Str::contains($route, $value['route']);
                             } else {
                                 return Str::contains($route, $value['route']) && collect($this->abilities)->contains($route);
@@ -63,10 +63,11 @@ class Menu
                         })->map(function ($item) {
                             return [
                                 'label' => $item->defaults['title'],
-                                'description' => $item->defaults['description'],
+                                'description' => $item->defaults['description'] ?? null,
                                 'icon' => isset($item->defaults['icon']) ? $item->defaults['icon'] : null,
+                                'shortcut' => $value['shortcut'] ?? null,
                                 'route' => $item->action['as'],
-                                'method' => $item->action['route'] ?? 'get',
+                                'method' => $item->action['method'] ?? 'get',
                             ];
                         })->values(),
                     ],
@@ -74,9 +75,11 @@ class Menu
                 : $tree->push(
                     [
                         'label' => $routes[$value]->defaults['title'],
-                        'description' => $routes[$value]->defaults['description'],
+                        'description' => $routes[$value]->defaults['description'] ?? null,
                         'icon' => isset($routes[$value]->defaults['icon']) ? $routes[$value]->defaults['icon'] : null,
+                        'shortcut' => $value['shortcut'] ?? null,
                         'route' => $routes[$value]->action['as'],
+                        'method' => $routes[$value]->defaults['method'] ?? 'get',
                     ],
                 );
         });

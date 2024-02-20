@@ -50,8 +50,15 @@ class HandleInertiaRequests extends Middleware
             ]),
             'appUserMenu' => app(\App\Services\Menu\Menu::class)->menu([
                 'profile.edit',
-                'messages.show',
-                'schedule.show',
+                [
+                    'route' => 'personal',
+                    'title' => 'Personal',
+                ],
+                [
+                    'route' => 'system',
+                    'title' => 'System',
+                ],
+                'logout',
             ]),
             'auth' => [
                 'user' => $request->user(),

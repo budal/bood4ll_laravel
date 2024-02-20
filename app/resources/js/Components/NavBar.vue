@@ -16,49 +16,6 @@ import Button from "primevue/button";
 const routeCurrent = window.location.href;
 
 const menu = ref();
-const menuItems = ref([
-    {
-        separator: true,
-    },
-    {
-        label: "Documents",
-        items: [
-            {
-                label: "New",
-                icon: "pi pi-plus",
-                shortcut: "⌘+N",
-            },
-            {
-                label: "Search",
-                icon: "pi pi-search",
-                shortcut: "⌘+S",
-            },
-        ],
-    },
-    {
-        label: "Profile",
-        items: [
-            {
-                label: "Settings",
-                icon: "pi pi-cog",
-                shortcut: "⌘+O",
-            },
-            {
-                label: "Messages",
-                icon: "pi pi-inbox",
-                badge: 2,
-            },
-            {
-                label: "Logout",
-                icon: "pi pi-sign-out",
-                shortcut: "⌘+Q",
-            },
-        ],
-    },
-    {
-        separator: true,
-    },
-]);
 
 const toggle = (event: MouseEvent) => {
     menu.value.toggle(event);
@@ -124,6 +81,7 @@ const toggle = (event: MouseEvent) => {
                             "
                             shape="circle"
                             size="large"
+                            class="shadow-[0_2px_10px]"
                         />
                     </button>
 
@@ -159,10 +117,22 @@ const toggle = (event: MouseEvent) => {
                             </span>
                         </template>
                         <template #item="{ item, props }">
-                            <a
-                                v-ripple
+                            <component
+                                v-if="
+                                    route().has(item.route) ||
+                                    (!route().has(item.route) &&
+                                        (item.items ?? []).length !== 0)
+                                "
+                                :is="route().has(item.route) ? Link : 'a'"
+                                :href="
+                                    route().has(item.route)
+                                        ? route(item.route)
+                                        : '#'
+                                "
+                                :method="item.method"
                                 class="flex align-items-center"
                                 v-bind="props.action"
+                                v-ripple
                             >
                                 <span :class="item.icon" />
                                 <span class="ml-2">
@@ -179,12 +149,11 @@ const toggle = (event: MouseEvent) => {
                                 >
                                     {{ item.shortcut }}
                                 </span>
-                            </a>
+                            </component>
                         </template>
                     </Menu>
                 </div>
             </template>
         </Menubar>
     </div>
-    {{ console.log($page.props.appUserMenu) }}
 </template>

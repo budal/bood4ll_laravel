@@ -42,15 +42,29 @@ Route::middleware('auth')->group(function () {
         });
     });
 
-    Route::get('/messages', [SchedulesController::class, 'show'])->name('messages.show')->breadcrumb('Messages')
-        ->defaults('title', 'Messages')
-        ->defaults('description', 'See all chats between you and other users.')
-        ->defaults('icon', 'material-symbols-light:chat-outline');
+    Route::prefix('personal')->name('personal.')->group(function () {
+        Route::get('/messages', [SchedulesController::class, 'show'])->name('messages.index')->breadcrumb('Messages')
+            ->defaults('title', 'Messages')
+            ->defaults('description', 'See all chats between you and other users.')
+            ->defaults('icon', 'material-symbols-light:chat-outline');
 
-    Route::get('/schedule', [SchedulesController::class, 'show'])->name('schedule.show')->breadcrumb('Schedule')
-        ->defaults('title', 'Schedule')
-        ->defaults('description', 'Manage all your appointments.')
-        ->defaults('icon', 'material-symbols-light:calendar-month-outline');
+        Route::get('/schedule', [SchedulesController::class, 'show'])->name('schedule.index')->breadcrumb('Schedule')
+            ->defaults('title', 'Schedule')
+            ->defaults('description', 'Manage all your appointments.')
+            ->defaults('icon', 'material-symbols-light:calendar-month-outline');
+
+        Route::get('/notifications', [SchedulesController::class, 'show'])->name('notifications.index')->breadcrumb('Notifications')
+            ->defaults('title', 'Notifications')
+            ->defaults('description', 'Manage all your appointments.')
+            ->defaults('icon', 'material-symbols-light:calendar-month-outline');
+    });
+
+    Route::prefix('system')->name('system.')->group(function () {
+        Route::get('/configuration', [SchedulesController::class, 'show'])->name('configuration.index')->breadcrumb('Configuration')
+            ->defaults('title', 'Configuration')
+            ->defaults('description', 'Manage all your appointments.')
+            ->defaults('icon', 'material-symbols-light:calendar-month-outline');
+    });
 
     Route::prefix('apps')->name('apps.')->group(function () {
         Route::controller(RolesController::class)->group(function () {
