@@ -4,8 +4,11 @@ import { Link } from "@inertiajs/vue3";
 import ScrollTop from "primevue/scrolltop";
 import TabView from "primevue/tabview";
 import TabPanel from "primevue/tabpanel";
-import TreeTable from "primevue/treetable";
+import DataTable from "primevue/datatable";
 import Column from "primevue/column";
+import ColumnGroup from "primevue/columngroup";
+import Row from "primevue/row";
+import Button from "primevue/button";
 
 import NavBar from "@/Components/NavBar.vue";
 import TailwindIndicator from "@/Components/TailwindIndicator.vue";
@@ -58,45 +61,58 @@ withDefaults(
                 <NavBar />
             </div>
         </nav>
-        {{ console.log(data) }}
         <div class="pt-8">
             <div class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 space-y-6">
                 <div class="border rounded-lg text-sm">
-                    <TabView>
-                        <TabPanel
-                            v-for="item in data"
-                            :key="item.id"
-                            :header="$t(item.label)"
-                        >
-                            <span class="m-0 text-xs">
-                                {{ $t(item.description) }}
-                            </span>
+                    <template v-for="content in data">
+                        <TabView>
+                            <TabPanel
+                                :key="content.id"
+                                :header="$t(content.label)"
+                            >
+                                <span class="m-0 text-xs">
+                                    {{ $t(content.description) }}
+                                </span>
+                                <template v-for="items in content.items">
+                                    <template v-for="item in items">
+                                        <DataTable
+                                            v-if="item.type == 'table'"
+                                            :value="item.content.items.data"
+                                            class="text-sm"
+                                        >
+                                            <template #header>
+                                                <div
+                                                    class="flex flex-wrap align-items-center justify-content-between gap-2"
+                                                >
+                                                    <Button
+                                                        icon="pi pi-refresh"
+                                                        rounded
+                                                        raised
+                                                    />
+                                                </div>
+                                            </template>
+                                            <Column
+                                                v-for="column in item.content
+                                                    .titles"
+                                                :field="column.field"
+                                                :header="$t(column.title)"
+                                            >
+                                                <template #body="slotProps">
+                                                    {{ console.log(slotProps) }}
 
-                            <template v-for="subitem in item.fields">
-                                <template v-for="element in subitem">
-                                    <TreeTable
-                                        v-if="element.type == 'table'"
-                                        :value="nodes"
-                                        class="text-sm"
-                                    >
-                                        <Column
-                                            field="name"
-                                            header="Name"
-                                            expander
-                                        ></Column>
-                                        <Column
-                                            field="size"
-                                            header="Size"
-                                        ></Column>
-                                        <Column
-                                            field="type"
-                                            header="Type"
-                                        ></Column>
-                                    </TreeTable>
+                                                    {{
+                                                        slotProps.data[
+                                                            column.field
+                                                        ]
+                                                    }}
+                                                </template>
+                                            </Column>
+                                        </DataTable>
+                                    </template>
                                 </template>
-                            </template>
-                        </TabPanel>
-                    </TabView>
+                            </TabPanel>
+                        </TabView>
+                    </template>
                 </div>
 
                 <!-- <Form

@@ -57,7 +57,7 @@ class UnitsController extends Controller
                     'id' => 'units',
                     'label' => Route::current()->title,
                     'description' => Route::current()->description,
-                    'fields' => [
+                    'items' => [
                         [
                             [
                                 'type' => 'table',
