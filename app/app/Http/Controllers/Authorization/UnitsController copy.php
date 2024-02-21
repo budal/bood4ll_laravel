@@ -51,12 +51,11 @@ class UnitsController extends Controller
         // dd($units);
 
         return Inertia::render('Bood4ll', [
-            'tabs' => true,
-            'data' => [
+            'form' => [
                 [
                     'id' => 'units',
-                    'label' => Route::current()->title,
-                    'description' => Route::current()->description,
+                    'title' => Route::current()->title,
+                    'subtitle' => Route::current()->description,
                     'fields' => [
                         [
                             [

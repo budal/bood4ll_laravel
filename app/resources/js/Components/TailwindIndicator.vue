@@ -5,7 +5,7 @@ import { usePage } from "@inertiajs/vue3";
 <template>
     <div
         v-if="usePage().props.appName !== 'production'"
-        className="fixed bottom-1 right-1 flex h-6 w-6 items-center justify-center rounded-full bg-primary-light dark:bg-primary-dark p-3 font-mono text-xs text-primary-light dark:text-primary-dark"
+        className="fixed top-1 z-[20] right-1 flex h-6 w-6 items-center justify-center rounded-full bg-primary-light dark:bg-primary-dark p-3 font-mono text-xs text-primary-light dark:text-primary-dark"
     >
         <div className="block sm:hidden">xs</div>
         <div className="hidden sm:block md:hidden">sm</div>
