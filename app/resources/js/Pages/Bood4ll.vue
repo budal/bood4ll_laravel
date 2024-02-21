@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { Link } from "@inertiajs/vue3";
-
 import ScrollTop from "primevue/scrolltop";
 import TabView from "primevue/tabview";
 import TabPanel from "primevue/tabpanel";
@@ -9,11 +7,20 @@ import Column from "primevue/column";
 import ColumnGroup from "primevue/columngroup";
 import Row from "primevue/row";
 import Button from "primevue/button";
+import { FilterMatchMode } from "primevue/api";
+import InputIcon from "primevue/inputicon";
+import InputText from "primevue/inputtext";
+import IconField from "primevue/iconfield";
 
 import NavBar from "@/Components/NavBar.vue";
 import TailwindIndicator from "@/Components/TailwindIndicator.vue";
+
 // @ts-expect-error
 import { Modal } from "/vendor/emargareten/inertia-modal";
+
+import { ref } from "vue";
+import { Link } from "@inertiajs/vue3";
+import { onMounted } from "vue";
 
 withDefaults(
     defineProps<{
@@ -34,6 +41,28 @@ withDefaults(
         tabs: true,
     },
 );
+
+const filters = ref({
+    global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+    name: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+    "country.name": { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+    representative: { value: null, matchMode: FilterMatchMode.IN },
+    status: { value: null, matchMode: FilterMatchMode.EQUALS },
+    verified: { value: null, matchMode: FilterMatchMode.EQUALS },
+});
+
+const loading = ref(true);
+
+const selectedProduct = ref();
+
+const expandedRows = ref([]);
+
+onMounted(() => {
+    // CustomerService.getCustomersMedium().then((data) => {
+    //     customers.value = getCustomers(data);
+    loading.value = false;
+    // });
+});
 </script>
 
 <template>
@@ -78,28 +107,74 @@ withDefaults(
                                         <DataTable
                                             v-if="item.type == 'table'"
                                             :value="item.content.items.data"
+                                            :loading="loading"
+                                            v-model:selection="selectedProduct"
+                                            v-model:expandedRows="expandedRows"
+                                            stripedRows
+                                            sortMode="multiple"
+                                            removableSort
+                                            dataKey="id"
                                             class="text-sm"
                                         >
                                             <template #header>
                                                 <div
-                                                    class="flex flex-wrap align-items-center justify-content-between gap-2"
+                                                    class="flex flex-wrap align-items-center justify-content-end justify-content-between gap-2"
                                                 >
                                                     <Button
                                                         icon="pi pi-refresh"
                                                         rounded
                                                         raised
                                                     />
+                                                    <IconField
+                                                        iconPosition="left"
+                                                    >
+                                                        <InputIcon>
+                                                            <i
+                                                                class="pi pi-search"
+                                                            />
+                                                        </InputIcon>
+                                                        <InputText
+                                                            v-model="
+                                                                filters[
+                                                                    'global'
+                                                                ].value
+                                                            "
+                                                            :placeholder="
+                                                                $t('search')
+                                                            "
+                                                            class="rounded-lg"
+                                                        />
+                                                    </IconField>
                                                 </div>
                                             </template>
+                                            <template #empty>
+                                                No customers found.
+                                            </template>
+                                            <template #loading>
+                                                Loading customers data. Please
+                                                wait.
+                                            </template>
+                                            <Column
+                                                selectionMode="multiple"
+                                                headerStyle="width: 3rem "
+                                                class="border-b"
+                                            />
+                                            <Column
+                                                expander
+                                                style="width: 5rem"
+                                                class="border-b"
+                                            />
                                             <Column
                                                 v-for="column in item.content
                                                     .titles"
                                                 :field="column.field"
                                                 :header="$t(column.title)"
+                                                sortable
+                                                :showFilterMenu="true"
+                                                class="border-b"
                                             >
                                                 <template #body="slotProps">
-                                                    {{ console.log(slotProps) }}
-
+                                                    <!-- {{ console.log(slotProps) }} -->
                                                     {{
                                                         slotProps.data[
                                                             column.field
@@ -107,6 +182,16 @@ withDefaults(
                                                     }}
                                                 </template>
                                             </Column>
+                                            <template #expansion="slotProps">
+                                                <div class="p-3">
+                                                    <h5>
+                                                        Orders for
+                                                        {{
+                                                            slotProps.data.name
+                                                        }}
+                                                    </h5>
+                                                </div>
+                                            </template>
                                         </DataTable>
                                     </template>
                                 </template>
