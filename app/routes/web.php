@@ -92,7 +92,7 @@ Route::middleware('auth')->group(function () {
 
         Route::controller(UnitsController::class)->group(function () {
             Route::name('units.')->middleware('verified', 'password.confirm')->group(function () {
-                Route::get('/units', 'index')->name('index')->breadcrumb('Units')
+                Route::get('/units/{out?}', 'index')->name('index')->breadcrumb('Units')
                     ->defaults('title', 'Units')
                     ->defaults('description', 'Manage units registered in the system, their subunits and users.')
                     ->defaults('icon', 'material-symbols-light:apartment-rounded');;

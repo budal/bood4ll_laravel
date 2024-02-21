@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { FilterMatchMode } from "primevue/api";
 import ScrollTop from "primevue/scrolltop";
 import TabView from "primevue/tabview";
 import TabPanel from "primevue/tabpanel";
@@ -7,10 +8,10 @@ import Column from "primevue/column";
 import ColumnGroup from "primevue/columngroup";
 import Row from "primevue/row";
 import Button from "primevue/button";
-import { FilterMatchMode } from "primevue/api";
 import InputIcon from "primevue/inputicon";
 import InputText from "primevue/inputtext";
 import IconField from "primevue/iconfield";
+import VirtualScroller from "primevue/virtualscroller";
 
 import NavBar from "@/Components/NavBar.vue";
 import TailwindIndicator from "@/Components/TailwindIndicator.vue";
@@ -53,15 +54,28 @@ const filters = ref({
 
 const loading = ref(true);
 
-const selectedProduct = ref();
+const contentItems = ref();
+// item.content.items.data
+
+const selectedItems = ref();
 
 const expandedRows = ref([]);
 
+async function getData(cursor: string | null) {
+    try {
+        const response = await fetch("http://localhost/apps/units/json");
+        return await response.json();
+    } catch (error) {
+        console.error(error);
+    }
+}
+
 onMounted(() => {
-    // CustomerService.getCustomersMedium().then((data) => {
-    //     customers.value = getCustomers(data);
-    loading.value = false;
-    // });
+    getData(null).then((content) => {
+        console.log(content.data);
+        contentItems.value = content.data;
+        loading.value = false;
+    });
 });
 </script>
 
@@ -106,14 +120,15 @@ onMounted(() => {
                                     <template v-for="item in items">
                                         <DataTable
                                             v-if="item.type == 'table'"
-                                            :value="item.content.items.data"
+                                            :value="contentItems"
+                                            dataKey="id"
                                             :loading="loading"
-                                            v-model:selection="selectedProduct"
+                                            v-model:selection="selectedItems"
                                             v-model:expandedRows="expandedRows"
                                             stripedRows
                                             sortMode="multiple"
                                             removableSort
-                                            dataKey="id"
+                                            scrollable
                                             class="text-sm"
                                         >
                                             <template #header>
@@ -148,20 +163,11 @@ onMounted(() => {
                                                 </div>
                                             </template>
                                             <template #empty>
-                                                No customers found.
-                                            </template>
-                                            <template #loading>
-                                                Loading customers data. Please
-                                                wait.
+                                                {{ $t("No items to show.") }}
                                             </template>
                                             <Column
                                                 selectionMode="multiple"
                                                 headerStyle="width: 3rem "
-                                                class="border-b"
-                                            />
-                                            <Column
-                                                expander
-                                                style="width: 5rem"
                                                 class="border-b"
                                             />
                                             <Column
@@ -182,6 +188,13 @@ onMounted(() => {
                                                     }}
                                                 </template>
                                             </Column>
+                                            <Column
+                                                expander
+                                                frozen
+                                                alignFrozen="right"
+                                                style="width: 5rem"
+                                                class="border-b"
+                                            />
                                             <template #expansion="slotProps">
                                                 <div class="p-3">
                                                     <h5>

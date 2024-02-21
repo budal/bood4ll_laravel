@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Authorization;
 use App\Http\Controllers\Controller;
 use App\Models\Unit;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -17,38 +18,37 @@ use Inertia\Response;
 
 class UnitsController extends Controller
 {
-    public function index(Request $request): Response
+    public function index(Request $request, string $cursor): Response | JsonResponse
     {
         $this->authorize('access', User::class);
 
-        $units = Unit::filter($request, 'units', ['where' => ['name'], 'order' => ['shortpath']])
-            ->leftJoin('unit_user', 'unit_user.unit_id', '=', 'units.id')
-            ->select('units.id', 'units.shortpath', 'units.deleted_at')
-            ->groupBy('units.id', 'units.shortpath', 'units.deleted_at')
-            ->withCount([
-                'children', 'users',
-                'users as users_all_count' => function ($query) {
-                    $query->orWhere(function ($query) {
-                        $query->whereRaw('unit_id IN (
+        if ($cursor == 'json') {
+            $units = Unit::filter($request, 'units', ['where' => ['name'], 'order' => ['shortpath']])
+                ->withCount([
+                    'children', 'users',
+                    'users as users_all_count' => function ($query) {
+                        $query->orWhere(function ($query) {
+                            $query->whereRaw('unit_id IN (
                             SELECT (json_array_elements(u.children_id::json)::text)::bigint FROM units u WHERE u.id = units.id
                         )');
-                    });
-                },
-            ])
-            ->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
-                if ($request->user()->cannot('hasFullAccess', User::class)) {
-                    $query->where('unit_user.user_id', $request->user()->id);
-                }
+                        });
+                    },
+                ])
+                ->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
+                    if ($request->user()->cannot('hasFullAccess', User::class)) {
+                        $query->where('unit_user.user_id', $request->user()->id);
+                    }
 
-                $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
-            })
-            // ->paginate(20)
-            // ->onEachSide(2)
-            // ->withQueryString()
-            ->cursorPaginate(30);
+                    $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
+                })
+                // ->paginate(20)
+                // ->onEachSide(2)
+                // ->withQueryString()
+                ->cursorPaginate(30);
 
 
-        // dd($units);
+            return response()->json($units);
+        }
 
         return Inertia::render('Bood4ll', [
             'tabs' => true,
@@ -124,7 +124,7 @@ class UnitsController extends Controller
                                             ],
                                         ],
                                     ],
-                                    'items' => $units,
+                                    // 'items' => $units,
                                 ],
                             ],
                         ],
