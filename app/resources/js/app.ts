@@ -10,7 +10,7 @@ import PrimeVue from "primevue/config";
 import Ripple from "primevue/ripple";
 import ToastService from "primevue/toastservice";
 import "primevue/resources/themes/aura-light-blue/theme.css";
-import "material-icons/iconfont/material-icons.css";
+import "primeicons/primeicons.css";
 import Vue3Toasity, { type ToastContainerOptions } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
 // @ts-expect-error
