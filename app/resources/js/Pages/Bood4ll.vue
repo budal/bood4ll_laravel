@@ -52,7 +52,7 @@ const filters = ref({
     verified: { value: null, matchMode: FilterMatchMode.EQUALS },
 });
 
-const last = ref(false);
+const lastIntersection = ref(null);
 
 const nextPage = ref(null);
 
@@ -76,7 +76,7 @@ async function getData(cursor: string | null) {
     }
 }
 
-useIntersectionObserver(last, ([{ isIntersecting }]) => {
+useIntersectionObserver(lastIntersection, ([{ isIntersecting }]) => {
     if (isIntersecting && contentItems.value != undefined) {
         if (nextPage.value !== null) {
             getData(nextPage.value).then((content) => {
@@ -224,7 +224,7 @@ onMounted(() => {
                                             </template>
                                         </DataTable>
                                         <div
-                                            ref="last"
+                                            ref="lastIntersection"
                                             class="-translate-y-96"
                                         />
                                     </template>

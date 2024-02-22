@@ -41,12 +41,7 @@ class UnitsController extends Controller
 
                     $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
                 })
-                // ->paginate(20)
-                // ->onEachSide(2)
-                // ->withQueryString()
-                ->cursorPaginate(30)
-                //
-            ;
+                ->cursorPaginate(30);
 
             return response()->json($units);
         }
