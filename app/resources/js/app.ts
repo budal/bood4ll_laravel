@@ -3,10 +3,10 @@ import "../css/app.css";
 
 import { createApp, h, DefineComponent } from "vue";
 import { createInertiaApp } from "@inertiajs/vue3";
-import { Link } from "@inertiajs/vue3";
 import { resolvePageComponent } from "laravel-vite-plugin/inertia-helpers";
 import { ZiggyVue } from "../../vendor/tightenco/ziggy/dist/vue.m";
 import { i18nVue } from "laravel-vue-i18n";
+
 import PrimeVue from "primevue/config";
 import Ripple from "primevue/ripple";
 import ToastService from "primevue/toastservice";
@@ -15,6 +15,8 @@ import "primeicons/primeicons.css";
 import InputIcon from "primevue/inputicon";
 import IconField from "primevue/iconfield";
 import Toast from "primevue/toast";
+
+import { Icon } from "@iconify/vue";
 
 import Vue3Toasity, { type ToastContainerOptions } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
@@ -42,12 +44,22 @@ createInertiaApp({
                 ),
         })
             .use(plugin)
-            .component("Link", Link)
+            .use(ZiggyVue, Ziggy)
+            .use(i18nVue, {
+                lang: "pt_BR",
+                resolve: (lang: string) => {
+                    const langs = import.meta.glob("../../lang/*.json", {
+                        eager: true,
+                    });
+                    return (langs[`../../lang/${lang}.json`] as any).default;
+                },
+            })
             .use(PrimeVue, { ripple: true })
             .directive("ripple", Ripple)
             .component("InputIcon", InputIcon)
             .component("IconField", IconField)
             .component("Toast", Toast)
+            .component("Icon", Icon)
             .use(ToastService)
             .use(Vue3Toasity, {
                 autoClose: 3000,
@@ -62,16 +74,6 @@ createInertiaApp({
                     fontFamily: "Figtree",
                 },
             } as ToastContainerOptions)
-            .use(i18nVue, {
-                lang: "pt_BR",
-                resolve: (lang: string) => {
-                    const langs = import.meta.glob("../../lang/*.json", {
-                        eager: true,
-                    });
-                    return (langs[`../../lang/${lang}.json`] as any).default;
-                },
-            })
-            .use(ZiggyVue, Ziggy)
             .mount(el);
     },
 });

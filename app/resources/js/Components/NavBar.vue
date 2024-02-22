@@ -1,13 +1,7 @@
 <script setup lang="ts">
-import { Icon } from "@iconify/vue";
 import { ref } from "vue";
 import { Head, Link } from "@inertiajs/vue3";
-import Avatar from "primevue/avatar";
-import Badge from "primevue/badge";
-import Breadcrumb from "primevue/breadcrumb";
-import Button from "primevue/button";
-import Menu from "primevue/menu";
-import Menubar from "primevue/menubar";
+
 import ApplicationLogo from "@/Components/ApplicationLogo.vue";
 import ToggleTheme from "@/Components/ToggleTheme.vue";
 

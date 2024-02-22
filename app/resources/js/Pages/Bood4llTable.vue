@@ -9,6 +9,7 @@ import TailwindIndicator from "@/Components/TailwindIndicator.vue";
 
 import { ref, onMounted } from "vue";
 import { useIntersectionObserver } from "@vueuse/core";
+import { Link } from "@inertiajs/vue3";
 
 const props = withDefaults(
     defineProps<{
