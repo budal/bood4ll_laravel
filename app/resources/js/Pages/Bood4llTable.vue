@@ -150,8 +150,18 @@ onMounted(() => {
                         @rowReorder="onRowReorder"
                     >
                         <template #header>
+                            <div>
+                                <span class="text-xl font-bold">
+                                    {{ $t(data.label || "") }}
+                                </span>
+                            </div>
+                            <div>
+                                <span>
+                                    {{ $t(data.description || "") }}
+                                </span>
+                            </div>
                             <div
-                                class="border rounded-lg p-2 flex flex-wrap items-center justify-content-end justify-between gap-2"
+                                class="border rounded-lg p-2 mt-2 flex flex-wrap items-center justify-content-end justify-between gap-2"
                             >
                                 <div>
                                     <Button
