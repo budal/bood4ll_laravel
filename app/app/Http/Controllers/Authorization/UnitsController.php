@@ -24,6 +24,9 @@ class UnitsController extends Controller
 
         if ($cursor == 'json') {
             $units = Unit::filter($request, 'units', ['where' => ['shortpath'], 'order' => ['shortpath']])
+                ->leftJoin('unit_user', 'unit_user.unit_id', '=', 'units.id')
+                ->select('units.id', 'units.shortpath', 'units.deleted_at')
+                ->groupBy('units.id', 'units.shortpath', 'units.deleted_at')
                 ->withCount([
                     'children', 'users',
                     'users as users_all_count' => function ($query) {

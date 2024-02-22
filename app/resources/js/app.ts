@@ -3,6 +3,7 @@ import "../css/app.css";
 
 import { createApp, h, DefineComponent } from "vue";
 import { createInertiaApp } from "@inertiajs/vue3";
+import { Link } from "@inertiajs/vue3";
 import { resolvePageComponent } from "laravel-vite-plugin/inertia-helpers";
 import { ZiggyVue } from "../../vendor/tightenco/ziggy/dist/vue.m";
 import { i18nVue } from "laravel-vue-i18n";
@@ -11,12 +12,16 @@ import Ripple from "primevue/ripple";
 import ToastService from "primevue/toastservice";
 import "primevue/resources/themes/aura-light-blue/theme.css";
 import "primeicons/primeicons.css";
+import InputIcon from "primevue/inputicon";
+import IconField from "primevue/iconfield";
+import Toast from "primevue/toast";
+
 import Vue3Toasity, { type ToastContainerOptions } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
 // @ts-expect-error
 import { modal } from "/vendor/emargareten/inertia-modal";
 
-const appName = import.meta.env.VITE_APP_NAME || "Laravel";
+const appName = import.meta.env.VITE_APP_NAME || "Bood4ll";
 
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,
@@ -27,17 +32,22 @@ createInertiaApp({
             import.meta.glob<DefineComponent>("./Pages/**/*.vue"),
         ),
     setup({ el, App, props, plugin }) {
-        createApp({ render: () => h(App, props) })
-            .use(modal, {
-                resolve: (name: string) =>
-                    resolvePageComponent(
-                        `./Pages/${name}.vue`,
-                        import.meta.glob("./Pages/**/*.vue"),
-                    ),
-            })
+        const app = createApp({ render: () => h(App, props) });
+
+        app.use(modal, {
+            resolve: (name: string) =>
+                resolvePageComponent(
+                    `./Pages/${name}.vue`,
+                    import.meta.glob("./Pages/**/*.vue"),
+                ),
+        })
             .use(plugin)
+            .component("Link", Link)
             .use(PrimeVue, { ripple: true })
             .directive("ripple", Ripple)
+            .component("InputIcon", InputIcon)
+            .component("IconField", IconField)
+            .component("Toast", Toast)
             .use(ToastService)
             .use(Vue3Toasity, {
                 autoClose: 3000,

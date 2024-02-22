@@ -31,7 +31,7 @@ const toggle = (event: MouseEvent) => {
             "
         />
         <div>
-            <Menubar :model="$page.props.appNavMenu" class="py-2 px-5 border">
+            <Menubar :model="$page.props.appNavMenu">
                 <template #start>
                     <ApplicationLogo
                         class="block h-9 mr-5 w-auto fill-current text-zero-light dark:text-zero-dark"
@@ -166,7 +166,7 @@ const toggle = (event: MouseEvent) => {
             </Menubar>
             <Breadcrumb
                 :model="$page.props.breadcrumbs"
-                class="text-xs py-1 px-10 mt-1 border"
+                class="text-xs py-1 px-10 mt-1"
             >
                 <template #item="{ item, props }">
                     <Link

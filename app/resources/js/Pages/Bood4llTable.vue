@@ -1,27 +1,13 @@
 <script setup lang="ts">
 import { FilterMatchMode } from "primevue/api";
-import { useToast } from "primevue/usetoast";
 
-import Button from "primevue/button";
-import Column from "primevue/column";
-import DataTable, { DataTableRowReorderEvent } from "primevue/datatable";
-import InputIcon from "primevue/inputicon";
-import IconField from "primevue/iconfield";
-import InputText from "primevue/inputtext";
-import MultiSelect from "primevue/multiselect";
-import ScrollTop from "primevue/scrolltop";
-import TabPanel from "primevue/tabpanel";
-import TabView from "primevue/tabview";
-import Toast from "primevue/toast";
+import { useToast } from "primevue/usetoast";
+import { DataTableRowReorderEvent } from "primevue/datatable";
 
 import NavBar from "@/Components/NavBar.vue";
 import TailwindIndicator from "@/Components/TailwindIndicator.vue";
 
-// @ts-expect-error
-import { Modal } from "/vendor/emargareten/inertia-modal";
-
 import { ref, onMounted } from "vue";
-import { Link } from "@inertiajs/vue3";
 import { useIntersectionObserver } from "@vueuse/core";
 
 const props = withDefaults(
@@ -74,7 +60,12 @@ async function getData(cursor: string | null) {
 
 const onRowReorder = (event: DataTableRowReorderEvent) => {
     contentItems.value = event.value;
-    toast.add({ severity: "success", summary: "Rows Reordered", life: 3000 });
+    toast.add({
+        severity: "success",
+        summary: "Rows Reordered",
+        detail: "This is a success toast message",
+        life: 3000,
+    });
 };
 
 const columns = ref(props.data.content.titles);
@@ -156,24 +147,30 @@ onMounted(() => {
                     >
                         <template #header>
                             <div
-                                class="border rounded-lg p-2 flex flex-wrap align-items-center justify-content-end justify-content-between gap-2"
+                                class="border rounded-lg p-2 flex flex-wrap items-center justify-content-end justify-between gap-2"
                             >
-                                <Button icon="pi pi-refresh" rounded raised />
+                                <div>
+                                    <Button
+                                        icon="pi pi-refresh"
+                                        rounded
+                                        raised
+                                    />
 
-                                <Button
-                                    icon="pi pi-external-link"
-                                    label="Export"
-                                    @click="exportCSV()"
-                                />
+                                    <Button
+                                        icon="pi pi-external-link"
+                                        label="Export"
+                                        @click="exportCSV()"
+                                    />
 
-                                <MultiSelect
-                                    :modelValue="selectedColumns"
-                                    :options="data.content.titles"
-                                    optionLabel="header"
-                                    @update:modelValue="onToggle"
-                                    display="chip"
-                                    :placeholder="$t('Select columns')"
-                                />
+                                    <MultiSelect
+                                        :modelValue="selectedColumns"
+                                        :options="data.content.titles"
+                                        optionLabel="header"
+                                        @update:modelValue="onToggle"
+                                        display="chip"
+                                        :placeholder="$t('Select columns')"
+                                    />
+                                </div>
 
                                 <IconField iconPosition="left">
                                     <InputIcon>
@@ -182,7 +179,7 @@ onMounted(() => {
                                     <InputText
                                         v-model="filters['global'].value"
                                         :placeholder="$t('search')"
-                                        class="rounded-lg"
+                                        class="pl-8 rounded-lg"
                                     />
                                 </IconField>
                             </div>
@@ -235,7 +232,6 @@ onMounted(() => {
             </div>
         </div>
     </div>
-    <Modal />
     <ScrollTop />
     <TailwindIndicator />
     <Toast class="text-sm" />
