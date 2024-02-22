@@ -1,17 +1,14 @@
 <script setup lang="ts">
 import { FilterMatchMode } from "primevue/api";
-import ScrollTop from "primevue/scrolltop";
-import TabView from "primevue/tabview";
-import TabPanel from "primevue/tabpanel";
-import DataTable from "primevue/datatable";
-import Column from "primevue/column";
-import ColumnGroup from "primevue/columngroup";
-import Row from "primevue/row";
 import Button from "primevue/button";
+import Column from "primevue/column";
+import DataTable from "primevue/datatable";
 import InputIcon from "primevue/inputicon";
-import InputText from "primevue/inputtext";
 import IconField from "primevue/iconfield";
-import VirtualScroller from "primevue/virtualscroller";
+import InputText from "primevue/inputtext";
+import ScrollTop from "primevue/scrolltop";
+import TabPanel from "primevue/tabpanel";
+import TabView from "primevue/tabview";
 
 import NavBar from "@/Components/NavBar.vue";
 import TailwindIndicator from "@/Components/TailwindIndicator.vue";
@@ -67,9 +64,7 @@ const expandedRows = ref([]);
 
 async function getData(cursor: string | null) {
     try {
-        const response = await fetch(
-            cursor ?? "http://localhost/apps/units/json",
-        );
+        const response = await fetch(cursor ?? window.location.href + "/json");
         return await response.json();
     } catch (error) {
         console.error(error);
