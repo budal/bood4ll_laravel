@@ -55,15 +55,10 @@ const filters = ref({
 });
 
 const lastIntersection = ref(null);
-
-const nextPage = ref(null);
-
-const loading = ref(true);
-
+const nextPageURL = ref(null);
+const loadingTable = ref(true);
 const contentItems = ref();
-
 const selectedItems = ref();
-
 const expandedRows = ref([]);
 
 async function getData(cursor: string | null) {
@@ -82,9 +77,9 @@ const onRowReorder = (event: DataTableRowReorderEvent) => {
 
 useIntersectionObserver(lastIntersection, ([{ isIntersecting }]) => {
     if (isIntersecting && contentItems.value != undefined) {
-        if (nextPage.value !== null) {
-            getData(nextPage.value).then((content) => {
-                nextPage.value = content.next_page_url;
+        if (nextPageURL.value !== null) {
+            getData(nextPageURL.value).then((content) => {
+                nextPageURL.value = content.next_page_url;
                 contentItems.value = [...contentItems.value, ...content.data];
             });
         }
@@ -94,8 +89,8 @@ useIntersectionObserver(lastIntersection, ([{ isIntersecting }]) => {
 onMounted(() => {
     getData(null).then((content) => {
         contentItems.value = content.data;
-        nextPage.value = content.next_page_url;
-        loading.value = false;
+        nextPageURL.value = content.next_page_url;
+        loadingTable.value = false;
     });
 });
 </script>
@@ -149,7 +144,7 @@ onMounted(() => {
                                             sortMode="multiple"
                                             removableSort
                                             scrollable
-                                            :loading="loading"
+                                            :loading="loadingTable"
                                             :reorderableColumns="true"
                                             @rowReorder="onRowReorder"
                                             class="text-sm"
