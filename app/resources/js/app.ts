@@ -8,6 +8,7 @@ import { ZiggyVue } from "../../vendor/tightenco/ziggy/dist/vue.m";
 import { i18nVue } from "laravel-vue-i18n";
 import PrimeVue from "primevue/config";
 import Ripple from "primevue/ripple";
+import ToastService from "primevue/toastservice";
 import "primevue/resources/themes/aura-light-blue/theme.css";
 import "material-icons/iconfont/material-icons.css";
 import Vue3Toasity, { type ToastContainerOptions } from "vue3-toastify";
@@ -37,6 +38,7 @@ createInertiaApp({
             .use(plugin)
             .use(PrimeVue, { ripple: true })
             .directive("ripple", Ripple)
+            .use(ToastService)
             .use(Vue3Toasity, {
                 autoClose: 3000,
                 limit: 5,

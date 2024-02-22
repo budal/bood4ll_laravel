@@ -1,14 +1,17 @@
 <script setup lang="ts">
 import { FilterMatchMode } from "primevue/api";
+import { useToast } from "primevue/usetoast";
+
 import Button from "primevue/button";
 import Column from "primevue/column";
-import DataTable from "primevue/datatable";
+import DataTable, { DataTableRowReorderEvent } from "primevue/datatable";
 import InputIcon from "primevue/inputicon";
 import IconField from "primevue/iconfield";
 import InputText from "primevue/inputtext";
 import ScrollTop from "primevue/scrolltop";
 import TabPanel from "primevue/tabpanel";
 import TabView from "primevue/tabview";
+import Toast from "primevue/toast";
 
 import NavBar from "@/Components/NavBar.vue";
 import TailwindIndicator from "@/Components/TailwindIndicator.vue";
@@ -40,6 +43,8 @@ withDefaults(
     },
 );
 
+const toast = useToast();
+
 const filters = ref({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
     name: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
@@ -56,7 +61,6 @@ const nextPage = ref(null);
 const loading = ref(true);
 
 const contentItems = ref();
-// item.content.items.data
 
 const selectedItems = ref();
 
@@ -70,6 +74,11 @@ async function getData(cursor: string | null) {
         console.error(error);
     }
 }
+
+const onRowReorder = (event: DataTableRowReorderEvent) => {
+    contentItems.value = event.value;
+    toast.add({ severity: "success", summary: "Rows Reordered", life: 3000 });
+};
 
 useIntersectionObserver(lastIntersection, ([{ isIntersecting }]) => {
     if (isIntersecting && contentItems.value != undefined) {
@@ -141,6 +150,8 @@ onMounted(() => {
                                             removableSort
                                             scrollable
                                             :loading="loading"
+                                            :reorderableColumns="true"
+                                            @rowReorder="onRowReorder"
                                             class="text-sm"
                                         >
                                             <template #header>
@@ -177,6 +188,12 @@ onMounted(() => {
                                             <template #empty>
                                                 {{ $t("No items to show.") }}
                                             </template>
+                                            <Column
+                                                rowReorder
+                                                headerStyle="width: 3rem"
+                                                class="border-b"
+                                                :reorderableColumn="false"
+                                            />
                                             <Column
                                                 selectionMode="multiple"
                                                 headerStyle="width: 3rem "
@@ -228,19 +245,11 @@ onMounted(() => {
                         </TabView>
                     </template>
                 </div>
-
-                <!-- <Form
-                    :form="form"
-                    :routes="routes"
-                    :data="data"
-                    :tabs="tabs"
-                    :status="status"
-                    :statusTheme="statusTheme"
-                /> -->
             </div>
         </div>
     </div>
     <Modal />
-    <TailwindIndicator />
     <ScrollTop />
+    <TailwindIndicator />
+    <Toast class="text-sm" />
 </template>
