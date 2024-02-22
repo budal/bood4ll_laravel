@@ -44,7 +44,7 @@ class UnitsController extends Controller
                 // ->paginate(20)
                 // ->onEachSide(2)
                 // ->withQueryString()
-                ->cursorPaginate(20)
+                ->cursorPaginate(30)
                 //
             ;
 

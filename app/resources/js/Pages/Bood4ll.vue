@@ -225,8 +225,8 @@ onMounted(() => {
                                         </DataTable>
                                         <div
                                             ref="last"
-                                            class="-translate-y-200"
-                                        ></div>
+                                            class="-translate-y-96"
+                                        />
                                     </template>
                                 </template>
                             </TabPanel>
