@@ -47,7 +47,7 @@ const toggle = (event: MouseEvent) => {
                         v-ripple
                     >
                         <Icon :icon="item.icon || ''" class="h-6 w-6 mr-1" />
-                        <span class="ml-2 text-sm">
+                        <span class="ml-2">
                             {{ $t(item.label as string) }}
                         </span>
                         <Badge
@@ -92,7 +92,6 @@ const toggle = (event: MouseEvent) => {
                             id="overlay_menu"
                             :model="$page.props.appUserMenu"
                             :popup="true"
-                            class="text-sm"
                         >
                             <template #start>
                                 <span
@@ -107,7 +106,7 @@ const toggle = (event: MouseEvent) => {
                                         <p class="font-bold">
                                             {{ $page.props.auth.user.name }}
                                         </p>
-                                        <p class="text-xs">
+                                        <p class="text-sm">
                                             {{ $page.props.auth.user.email }}
                                         </p>
                                     </span>
@@ -160,7 +159,7 @@ const toggle = (event: MouseEvent) => {
             </Menubar>
             <Breadcrumb
                 :model="$page.props.breadcrumbs"
-                class="text-xs py-1 px-10 mt-1"
+                class="text-sm py-1 px-10 mt-1"
             >
                 <template #item="{ item, props }">
                     <Link

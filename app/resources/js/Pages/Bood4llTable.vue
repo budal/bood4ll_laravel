@@ -13,12 +13,13 @@ import { Link } from "@inertiajs/vue3";
 
 const props = withDefaults(
     defineProps<{
+        data?: any;
+        items?: any;
         isGuest?: boolean;
         isModal?: boolean;
         title?: string;
         form?: any;
         routes?: any;
-        data?: any;
         tabs?: boolean;
         status?: string;
         statusTheme?: string | null;
@@ -42,11 +43,12 @@ const filters = ref({
     verified: { value: null, matchMode: FilterMatchMode.EQUALS },
 });
 
+const contentItems = ref(props.items?.data ?? []);
+
 const dt = ref();
 const lastIntersection = ref(null);
 const nextPageURL = ref(null);
-const loadingTable = ref(true);
-const contentItems = ref();
+const loadingTable = ref(contentItems.value.length === 0);
 const selectedItems = ref();
 const expandedRows = ref([]);
 
@@ -95,11 +97,13 @@ useIntersectionObserver(lastIntersection, ([{ isIntersecting }]) => {
 });
 
 onMounted(() => {
-    getData(null).then((content) => {
-        contentItems.value = content.data;
-        nextPageURL.value = content.next_page_url;
-        loadingTable.value = false;
-    });
+    if (contentItems.value) {
+        getData(null).then((content) => {
+            contentItems.value = content.data;
+            nextPageURL.value = content.next_page_url;
+            loadingTable.value = false;
+        });
+    }
 });
 </script>
 
@@ -130,7 +134,7 @@ onMounted(() => {
         </nav>
         <div class="pt-8">
             <div class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 space-y-6">
-                <div class="border rounded-lg text-sm">
+                <div class="border rounded-lg">
                     <DataTable
                         ref="dt"
                         :value="contentItems"
@@ -144,7 +148,6 @@ onMounted(() => {
                         :loading="loadingTable"
                         :reorderableColumns="true"
                         @rowReorder="onRowReorder"
-                        class="text-sm"
                     >
                         <template #header>
                             <div
@@ -223,7 +226,7 @@ onMounted(() => {
                             <div class="p-3">
                                 <h5>
                                     Orders for
-                                    {{ slotProps.data.name }}
+                                    {{ slotProps.data.shortpath }}
                                 </h5>
                             </div>
                         </template>
@@ -235,5 +238,5 @@ onMounted(() => {
     </div>
     <ScrollTop />
     <TailwindIndicator />
-    <Toast class="text-sm" />
+    <Toast />
 </template>

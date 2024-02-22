@@ -22,30 +22,30 @@ class UnitsController extends Controller
     {
         $this->authorize('access', User::class);
 
-        if ($cursor == 'json') {
-            $units = Unit::filter($request, 'units', ['where' => ['shortpath'], 'order' => ['shortpath']])
-                ->leftJoin('unit_user', 'unit_user.unit_id', '=', 'units.id')
-                ->select('units.id', 'units.shortpath', 'units.deleted_at')
-                ->groupBy('units.id', 'units.shortpath', 'units.deleted_at')
-                ->withCount([
-                    'children', 'users',
-                    'users as users_all_count' => function ($query) {
-                        $query->orWhere(function ($query) {
-                            $query->whereRaw('unit_id IN (
+        $units = Unit::filter($request, 'units', ['where' => ['shortpath'], 'order' => ['shortpath']])
+            ->leftJoin('unit_user', 'unit_user.unit_id', '=', 'units.id')
+            ->select('units.id', 'units.shortpath', 'units.deleted_at')
+            ->groupBy('units.id', 'units.shortpath', 'units.deleted_at')
+            ->withCount([
+                'children', 'users',
+                'users as users_all_count' => function ($query) {
+                    $query->orWhere(function ($query) {
+                        $query->whereRaw('unit_id IN (
                             SELECT (json_array_elements(u.children_id::json)::text)::bigint FROM units u WHERE u.id = units.id
                         )');
-                        });
-                    },
-                ])
-                ->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
-                    if ($request->user()->cannot('hasFullAccess', User::class)) {
-                        $query->where('unit_user.user_id', $request->user()->id);
-                    }
+                    });
+                },
+            ])
+            ->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
+                if ($request->user()->cannot('hasFullAccess', User::class)) {
+                    $query->where('unit_user.user_id', $request->user()->id);
+                }
 
-                    $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
-                })
-                ->cursorPaginate(30);
+                $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
+            })
+            ->cursorPaginate(30);
 
+        if ($cursor == 'json') {
             return response()->json($units);
         }
 
@@ -117,9 +117,9 @@ class UnitsController extends Controller
                             ],
                         ],
                     ],
-                    // 'items' => $units,
                 ],
             ],
+            'items' => $units,
         ]);
     }
 
