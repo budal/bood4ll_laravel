@@ -23,7 +23,7 @@ class UnitsController extends Controller
         $this->authorize('access', User::class);
 
         if ($cursor == 'json') {
-            $units = Unit::filter($request, 'units', ['where' => ['name'], 'order' => ['shortpath']])
+            $units = Unit::filter($request, 'units', ['where' => ['shortpath'], 'order' => ['shortpath']])
                 ->withCount([
                     'children', 'users',
                     'users as users_all_count' => function ($query) {
@@ -44,8 +44,9 @@ class UnitsController extends Controller
                 // ->paginate(20)
                 // ->onEachSide(2)
                 // ->withQueryString()
-                ->cursorPaginate(30);
-
+                ->cursorPaginate(20)
+                //
+            ;
 
             return response()->json($units);
         }

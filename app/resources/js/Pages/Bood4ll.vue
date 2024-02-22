@@ -19,9 +19,9 @@ import TailwindIndicator from "@/Components/TailwindIndicator.vue";
 // @ts-expect-error
 import { Modal } from "/vendor/emargareten/inertia-modal";
 
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { Link } from "@inertiajs/vue3";
-import { onMounted } from "vue";
+import { useIntersectionObserver } from "@vueuse/core";
 
 withDefaults(
     defineProps<{
@@ -52,6 +52,10 @@ const filters = ref({
     verified: { value: null, matchMode: FilterMatchMode.EQUALS },
 });
 
+const last = ref(false);
+
+const nextPage = ref(null);
+
 const loading = ref(true);
 
 const contentItems = ref();
@@ -63,17 +67,30 @@ const expandedRows = ref([]);
 
 async function getData(cursor: string | null) {
     try {
-        const response = await fetch("http://localhost/apps/units/json");
+        const response = await fetch(
+            cursor ?? "http://localhost/apps/units/json",
+        );
         return await response.json();
     } catch (error) {
         console.error(error);
     }
 }
 
+useIntersectionObserver(last, ([{ isIntersecting }]) => {
+    if (isIntersecting && contentItems.value != undefined) {
+        if (nextPage.value !== null) {
+            getData(nextPage.value).then((content) => {
+                nextPage.value = content.next_page_url;
+                contentItems.value = [...contentItems.value, ...content.data];
+            });
+        }
+    }
+});
+
 onMounted(() => {
     getData(null).then((content) => {
-        console.log(content.data);
         contentItems.value = content.data;
+        nextPage.value = content.next_page_url;
         loading.value = false;
     });
 });
@@ -122,18 +139,18 @@ onMounted(() => {
                                             v-if="item.type == 'table'"
                                             :value="contentItems"
                                             dataKey="id"
-                                            :loading="loading"
                                             v-model:selection="selectedItems"
                                             v-model:expandedRows="expandedRows"
                                             stripedRows
                                             sortMode="multiple"
                                             removableSort
                                             scrollable
+                                            :loading="loading"
                                             class="text-sm"
                                         >
                                             <template #header>
                                                 <div
-                                                    class="flex flex-wrap align-items-center justify-content-end justify-content-between gap-2"
+                                                    class="border rounded-lg p-2 flex flex-wrap align-items-center justify-content-end justify-content-between gap-2"
                                                 >
                                                     <Button
                                                         icon="pi pi-refresh"
@@ -206,6 +223,10 @@ onMounted(() => {
                                                 </div>
                                             </template>
                                         </DataTable>
+                                        <div
+                                            ref="last"
+                                            class="-translate-y-200"
+                                        ></div>
                                     </template>
                                 </template>
                             </TabPanel>
