@@ -8,6 +8,7 @@ import { ZiggyVue } from "../../vendor/tightenco/ziggy/dist/vue.m";
 import { i18nVue } from "laravel-vue-i18n";
 
 import PrimeVue from "primevue/config";
+import ConfirmationService from "primevue/confirmationservice";
 import FocusTrap from "primevue/focustrap";
 import Ripple from "primevue/ripple";
 import StyleClass from "primevue/styleclass";
@@ -15,6 +16,8 @@ import ToastService from "primevue/toastservice";
 import "primevue/resources/themes/aura-light-blue/theme.css";
 // import "primevue/resources/themes/aura-dark-blue/theme.css";
 import "primeicons/primeicons.css";
+import ConfirmDialog from "primevue/confirmdialog";
+import ConfirmPopup from "primevue/confirmpopup";
 import InputIcon from "primevue/inputicon";
 import IconField from "primevue/iconfield";
 import Toast from "primevue/toast";
@@ -61,10 +64,13 @@ createInertiaApp({
             .directive("focustrap", FocusTrap)
             .directive("ripple", Ripple)
             .directive("styleclass", StyleClass)
+            .component("ConfirmDialog", ConfirmDialog)
+            .component("ConfirmPopup", ConfirmPopup)
             .component("InputIcon", InputIcon)
             .component("IconField", IconField)
             .component("Toast", Toast)
             .component("Icon", Icon)
+            .use(ConfirmationService)
             .use(ToastService)
             .use(Vue3Toasity, {
                 autoClose: 3000,
