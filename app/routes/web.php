@@ -103,6 +103,7 @@ Route::middleware('auth')->group(function () {
                 Route::post('/units/hierarchy', 'hierarchy')->name('hierarchy');
                 Route::delete('/units/destroy', 'destroy')->name('destroy');
                 Route::post('/units/restore', 'restore')->name('restore');
+                Route::post('/units/reorder', 'restore')->name('reorder');
             });
         });
 

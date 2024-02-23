@@ -55,6 +55,7 @@ class UnitsController extends Controller
                 'id' => 'units',
                 'label' => Route::current()->title,
                 'description' => Route::current()->description,
+                'exportCSV' => true,
                 'routes' => [
                     'createRoute' => [
                         'route' => 'apps.units.create',
@@ -75,6 +76,10 @@ class UnitsController extends Controller
                     'restoreRoute' => [
                         'route' => 'apps.units.restore',
                         'showIf' => Gate::allows('apps.units.restore') && $request->user()->can('isManager', User::class),
+                    ],
+                    'reorderRoute' => [
+                        'route' => 'apps.units.reorder',
+                        'showIf' => Gate::allows('apps.units.reorder') && $request->user()->can('isManager', User::class),
                     ],
                 ],
                 'menu' => [

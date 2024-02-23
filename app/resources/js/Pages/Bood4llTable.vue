@@ -12,7 +12,8 @@ import { DataTableRowReorderEvent } from "primevue/datatable";
 
 import NavBar from "@/Components/NavBar.vue";
 import TailwindIndicator from "@/Components/TailwindIndicator.vue";
-import { trans } from "laravel-vue-i18n";
+import { trans, transChoice } from "laravel-vue-i18n";
+import { watch } from "vue";
 
 const props = withDefaults(
     defineProps<{
@@ -51,36 +52,18 @@ const tableMenu = ref();
 const columnsView = ref(false);
 const columns = ref(props.component.titles);
 const selectedColumns = ref(columns.value);
-const tableMenuItem = ref();
 
 const tableMenuToggle = (event: MouseEvent) => {
     tableMenu.value.toggle(event);
 };
 
-const exportCSV = () => {
-    dt.value.exportCSV();
-};
-
-const onToggleColumns = (val: string | any[]) => {
-    selectedColumns.value = columns.value.filter((col: any) =>
-        val.includes(col),
-    );
-};
-
-///////////////
-
-const filters = ref({
-    global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-    name: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
-    "country.name": { value: null, matchMode: FilterMatchMode.STARTS_WITH },
-    representative: { value: null, matchMode: FilterMatchMode.IN },
-    status: { value: null, matchMode: FilterMatchMode.EQUALS },
-    verified: { value: null, matchMode: FilterMatchMode.EQUALS },
+watch(selectedItems, () => {
+    console.log(selectedItems.value.length);
 });
 
 console.log(props.component);
 
-const items = ref([
+const tableMenuItems = ref([
     {
         label: "Add",
         url: isValidUrl(props.component.routes.createRoute?.route),
@@ -93,14 +76,32 @@ const items = ref([
         url: isValidUrl(props.component.routes.destroyRoute?.route),
         visible: props.component.routes.destroyRoute?.showIf === true,
         icon: "pi pi-trash",
-        command: () => {},
+        command: () => {
+            confirmDialog({
+                header: "Remove",
+                message:
+                    "Are you sure you want to remove the selected item?|Are you sure you want to remove the selected items?",
+                icon: "pi pi-trash",
+                acceptClass: "p-button-warning",
+                acceptLabel: "Remove",
+            });
+        },
     },
     {
         label: "Restore",
         url: isValidUrl(props.component.routes.restoreRoute?.route),
         visible: props.component.routes.restoreRoute?.showIf === true,
         icon: "pi pi-replay",
-        command: () => {},
+        command: () => {
+            confirmDialog({
+                header: "Restore",
+                message:
+                    "Are you sure you want to restore the selected item?|Are you sure you want to restore the selected items?",
+                icon: "pi pi-replay",
+                acceptClass: "p-button-info",
+                acceptLabel: "Restore",
+            });
+        },
     },
     {
         label: "Erase",
@@ -109,13 +110,12 @@ const items = ref([
         icon: "pi pi-times",
         command: () => {
             confirmDialog({
-                message: "",
-                header: "",
-                icon: "",
-                rejectClass: "",
-                rejectLabel: "",
-                acceptClass: "",
-                acceptLabel: "",
+                header: "Erase",
+                message:
+                    "Are you sure you want to erase the selected item?|Are you sure you want to erase the selected items?",
+                icon: "pi pi-times",
+                acceptClass: "p-button-danger",
+                acceptLabel: "Erase",
             });
         },
     },
@@ -165,44 +165,55 @@ const items = ref([
             exportCSV();
         },
     },
-    // {
-    //     separator: true,
-    // },
-    // {
-    //     label: "Share",
-    //     icon: "pi pi-share-alt",
-    //     items: [
-    //         {
-    //             label: "Slack",
-    //             icon: "pi pi-slack",
-    //         },
-    //         {
-    //             label: "Whatsapp",
-    //             icon: "pi pi-whatsapp",
-    //         },
-    //     ],
-    // },
 ]);
+
+const onToggleColumns = (val: string | any[]) => {
+    selectedColumns.value = columns.value.filter((col: any) =>
+        val.includes(col),
+    );
+};
+
+const exportCSV = () => {
+    dt.value.exportCSV();
+};
+
+///////////////
+
+const filters = ref({
+    global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+    name: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+    "country.name": { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+    representative: { value: null, matchMode: FilterMatchMode.IN },
+    status: { value: null, matchMode: FilterMatchMode.EQUALS },
+    verified: { value: null, matchMode: FilterMatchMode.EQUALS },
+});
 
 const confirmDialog = (options: {
     message: string;
     header?: string;
     icon?: string;
+    rejectIcon?: string;
     rejectClass?: string;
     rejectLabel?: string;
+    acceptIcon?: string;
     acceptClass?: string;
     acceptLabel?: string;
 }) => {
     confirm.require({
         group: "dialog",
-        message: options.message || trans("Are you sure you want to proceed?"),
+        message:
+            transChoice(options.message, 1) ||
+            trans("Are you sure you want to proceed?"),
         header: trans(options.header || "Confirmation"),
         icon: options.icon || "pi pi-exclamation-triangle",
+        rejectIcon: options.rejectIcon,
         rejectClass:
             options.rejectClass || "p-button-secondary p-button-outlined",
         rejectLabel: trans(options.rejectLabel || "Cancel"),
+        acceptIcon: options.acceptIcon || "pi pi-check",
         acceptClass: options.acceptClass || "p-button-primary",
         acceptLabel: trans(options.acceptLabel || "Confirm"),
+        defaultFocus: "reject",
         accept: () => {
             toast.add({
                 severity: "info",
@@ -361,8 +372,7 @@ const onRowReorder = (event: DataTableRowReorderEvent) => {
                                         />
                                         <TieredMenu
                                             ref="tableMenu"
-                                            id="overlay_tmenu"
-                                            :model="items"
+                                            :model="tableMenuItems"
                                             popup
                                         >
                                             <template #item="{ item, props }">
@@ -486,7 +496,7 @@ const onRowReorder = (event: DataTableRowReorderEvent) => {
         </div>
     </div>
     <Toast />
-    <ConfirmDialog group="dialog" />
+    <ConfirmDialog group="dialog" :draggable="false" />
     <ConfirmPopup group="popup" />
     <ScrollTop />
     <TailwindIndicator />
