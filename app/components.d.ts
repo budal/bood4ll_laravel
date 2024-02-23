@@ -22,7 +22,9 @@ declare module 'vue' {
     MultiSelect: typeof import('primevue/multiselect')['default']
     Panel: typeof import('primevue/panel')['default']
     ScrollTop: typeof import('primevue/scrolltop')['default']
+    Sidebar: typeof import('primevue/sidebar')['default']
     SpeedDial: typeof import('primevue/speeddial')['default']
     TieredMenu: typeof import('primevue/tieredmenu')['default']
+    Tree: typeof import('primevue/tree')['default']
   }
 }

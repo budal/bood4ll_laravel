@@ -7,6 +7,7 @@ import ApplicationLogo from "@/Components/ApplicationLogo.vue";
 const routeCurrent = window.location.href;
 
 const menu = ref();
+const visible = ref(false);
 
 const toggle = (event: MouseEvent) => {
     menu.value.toggle(event);
@@ -82,7 +83,7 @@ const toggle = (event: MouseEvent) => {
                                 class="pl-8"
                             />
                         </IconField>
-                        <button @click="toggle">
+                        <button @click="visible = true">
                             <Avatar
                                 :label="
                                     $page.props.auth.user.name
@@ -94,13 +95,8 @@ const toggle = (event: MouseEvent) => {
                                 class="shadow-[0_2px_15px]"
                             />
                         </button>
-                        <Menu
-                            ref="menu"
-                            id="overlay_menu"
-                            :model="$page.props.appUserMenu"
-                            :popup="true"
-                        >
-                            <template #start>
+                        <Sidebar v-model:visible="visible" position="right">
+                            <template #header>
                                 <span
                                     class="inline-flex align-items-center gap-1 px-2 py-2"
                                 >
@@ -119,48 +115,53 @@ const toggle = (event: MouseEvent) => {
                                     </span>
                                 </span>
                             </template>
-                            <template #submenuheader="{ item }">
-                                <span class="text-primary font-bold">
-                                    {{ $t(item.label as string) }}
-                                </span>
-                            </template>
-                            <template #item="{ item, props }">
-                                <component
-                                    v-if="
-                                        route().has(item.route) ||
-                                        (!route().has(item.route) &&
-                                            (item.items ?? []).length !== 0)
-                                    "
-                                    :is="route().has(item.route) ? Link : 'a'"
-                                    :href="
-                                        route().has(item.route)
-                                            ? route(item.route)
-                                            : '#'
-                                    "
-                                    :method="item.method"
-                                    class="flex align-items-center"
-                                    as="span"
-                                    v-bind="props.action"
-                                    v-ripple
-                                >
-                                    <span :class="item.icon" />
-                                    <span class="ml-2">
+                            <Menu :model="$page.props.appUserMenu">
+                                <template #start> </template>
+                                <template #submenuheader="{ item }">
+                                    <span class="text-primary font-bold">
                                         {{ $t(item.label as string) }}
                                     </span>
-                                    <Badge
-                                        v-if="item.badge"
-                                        class="ml-auto"
-                                        :value="item.badge"
-                                    />
-                                    <span
-                                        v-if="item.shortcut"
-                                        class="ml-auto border-1 surface-border border-round surface-100 text-xs p-1"
+                                </template>
+                                <template #item="{ item, props }">
+                                    <component
+                                        v-if="
+                                            route().has(item.route) ||
+                                            (!route().has(item.route) &&
+                                                (item.items ?? []).length !== 0)
+                                        "
+                                        :is="
+                                            route().has(item.route) ? Link : 'a'
+                                        "
+                                        :href="
+                                            route().has(item.route)
+                                                ? route(item.route)
+                                                : '#'
+                                        "
+                                        :method="item.method"
+                                        class="flex align-items-center"
+                                        as="span"
+                                        v-bind="props.action"
+                                        v-ripple
                                     >
-                                        {{ item.shortcut }}
-                                    </span>
-                                </component>
-                            </template>
-                        </Menu>
+                                        <span :class="item.icon" />
+                                        <span class="ml-2">
+                                            {{ $t(item.label as string) }}
+                                        </span>
+                                        <Badge
+                                            v-if="item.badge"
+                                            class="ml-auto"
+                                            :value="item.badge"
+                                        />
+                                        <span
+                                            v-if="item.shortcut"
+                                            class="ml-auto border-1 surface-border border-round surface-100 text-xs p-1"
+                                        >
+                                            {{ item.shortcut }}
+                                        </span>
+                                    </component>
+                                </template>
+                            </Menu>
+                        </Sidebar>
                     </div>
                 </template>
             </Menubar>
