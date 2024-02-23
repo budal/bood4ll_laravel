@@ -12,6 +12,7 @@ import { useIntersectionObserver } from "@vueuse/core";
 import { Link } from "@inertiajs/vue3";
 
 import { useConfirm } from "primevue/useconfirm";
+import { computed } from "vue";
 
 const props = withDefaults(
     defineProps<{
@@ -49,6 +50,7 @@ const tableMenu = ref();
 const columnsView = ref(false);
 const columns = ref(props.data.content.titles);
 const selectedColumns = ref(columns.value);
+const tableMenuItem = ref();
 
 const tableMenuToggle = (event: MouseEvent) => {
     tableMenu.value.toggle(event);
@@ -77,18 +79,29 @@ const filters = ref({
 
 const items = ref([
     {
+        key: "new",
         label: "New",
+        url: "/dashboard",
         icon: "pi pi-plus",
         command: () => {},
     },
     {
+        key: "delete",
         label: "Delete",
         icon: "pi pi-trash",
         command: () => {},
     },
     {
+        key: "restore",
+        label: "Restore",
+        icon: "pi pi-replay",
+        command: () => {},
+    },
+    {
+        key: "erase",
         label: "Erase",
         icon: "pi pi-times",
+        visible: false,
         command: () => {
             confirm1();
         },
@@ -101,19 +114,23 @@ const items = ref([
         icon: "pi pi-filter",
         items: [
             {
+                key: "active_records",
                 label: "Active records",
                 icon: "pi pi-check text-xs",
             },
             {
+                key: "trashed_records",
                 label: "Trashed records",
             },
             {
+                key: "all_records",
                 label: "All records",
                 icon: "",
             },
         ],
     },
     {
+        key: "columns",
         label: "Columns",
         icon: "pi pi-list",
         command: () => {
@@ -124,6 +141,7 @@ const items = ref([
         separator: true,
     },
     {
+        key: "export_csv",
         label: "Export CSV",
         icon: "pi pi-file-export",
         disabled: true,
@@ -149,6 +167,15 @@ const items = ref([
     //     ],
     // },
 ]);
+
+computed(() => {
+    console.log(tableMenuItem);
+});
+
+const menuClick = (item) => {
+    console.log(item.key);
+    // console.log(event.currentTarget.getAttribute("data_id"));
+};
 
 const confirm1 = () => {
     confirm.require({
@@ -334,6 +361,7 @@ const onRowReorder = (event: DataTableRowReorderEvent) => {
                                                     v-ripple
                                                     class="flex align-items-center"
                                                     v-bind="props.action"
+                                                    @click="menuClick(item)"
                                                 >
                                                     <span :class="item.icon" />
                                                     <span class="ml-2">
