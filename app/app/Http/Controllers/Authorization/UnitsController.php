@@ -51,10 +51,10 @@ class UnitsController extends Controller
 
         return Inertia::render('Bood4llTable', [
             'data' => [
+                'type' => 'table',
                 'id' => 'units',
                 'label' => Route::current()->title,
                 'description' => Route::current()->description,
-                'type' => 'table',
                 'content' => [
                     'routes' => [
                         'createRoute' => [
