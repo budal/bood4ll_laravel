@@ -4,12 +4,14 @@ import { ReplacementsInterface } from "laravel-vue-i18n/interfaces/replacements"
 import { ToastType, toast as toasty } from "vue3-toastify";
 
 const isValidUrl = (url: any) => {
-    try {
-        if (Boolean(new URL(url))) return url;
-    } catch (e) {
-        const link =
-            typeof url === "string" ? { route: url, attributes: [] } : url;
-        return route(link.route, link.attributes);
+    if (url) {
+        try {
+            if (Boolean(new URL(url))) return url;
+        } catch (e) {
+            const link =
+                typeof url === "string" ? { route: url, attributes: [] } : url;
+            return route(link.route, link.attributes);
+        }
     }
 };
 

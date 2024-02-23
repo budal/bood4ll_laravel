@@ -12,6 +12,7 @@ import { DataTableRowReorderEvent } from "primevue/datatable";
 
 import NavBar from "@/Components/NavBar.vue";
 import TailwindIndicator from "@/Components/TailwindIndicator.vue";
+import { trans } from "laravel-vue-i18n";
 
 const props = withDefaults(
     defineProps<{
@@ -83,31 +84,39 @@ const items = ref([
     {
         label: "Add",
         url: isValidUrl(props.component.routes.createRoute?.route),
-        visible: props.component.routes.createRoute?.showIf,
+        visible: props.component.routes.createRoute?.showIf === true,
         icon: "pi pi-plus",
         command: () => {},
     },
     {
         label: "Remove",
         url: isValidUrl(props.component.routes.destroyRoute?.route),
-        visible: props.component.routes.destroyRoute?.showIf,
+        visible: props.component.routes.destroyRoute?.showIf === true,
         icon: "pi pi-trash",
         command: () => {},
     },
     {
         label: "Restore",
         url: isValidUrl(props.component.routes.restoreRoute?.route),
-        visible: props.component.routes.restoreRoute?.showIf,
+        visible: props.component.routes.restoreRoute?.showIf === true,
         icon: "pi pi-replay",
         command: () => {},
     },
     {
         label: "Erase",
         url: isValidUrl(props.component.routes.forceDestroyRoute?.route),
-        visible: props.component.routes.forceDestroyRoute?.showIf,
+        visible: props.component.routes.forceDestroyRoute?.showIf === true,
         icon: "pi pi-times",
         command: () => {
-            confirm1();
+            confirmDialog({
+                message: "",
+                header: "",
+                icon: "",
+                rejectClass: "",
+                rejectLabel: "",
+                acceptClass: "",
+                acceptLabel: "",
+            });
         },
     },
     {
@@ -175,32 +184,30 @@ const items = ref([
     // },
 ]);
 
-computed(() => {
-    console.log(tableMenuItem);
-});
-
-const confirm1 = () => {
+const confirmDialog = (options: {
+    message: string;
+    header?: string;
+    icon?: string;
+    rejectClass?: string;
+    rejectLabel?: string;
+    acceptClass?: string;
+    acceptLabel?: string;
+}) => {
     confirm.require({
         group: "dialog",
-        message: "Are you sure you want to proceed?",
-        header: "Confirmation",
-        icon: "pi pi-exclamation-triangle",
-        rejectClass: "p-button-secondary p-button-outlined",
-        rejectLabel: "Cancel",
-        acceptLabel: "Save",
+        message: options.message || trans("Are you sure you want to proceed?"),
+        header: trans(options.header || "Confirmation"),
+        icon: options.icon || "pi pi-exclamation-triangle",
+        rejectClass:
+            options.rejectClass || "p-button-secondary p-button-outlined",
+        rejectLabel: trans(options.rejectLabel || "Cancel"),
+        acceptClass: options.acceptClass || "p-button-primary",
+        acceptLabel: trans(options.acceptLabel || "Confirm"),
         accept: () => {
             toast.add({
                 severity: "info",
                 summary: "Confirmed",
                 detail: "You have accepted",
-                life: 3000,
-            });
-        },
-        reject: () => {
-            toast.add({
-                severity: "error",
-                summary: "Rejected",
-                detail: "You have rejected",
                 life: 3000,
             });
         },
@@ -320,9 +327,9 @@ const onRowReorder = (event: DataTableRowReorderEvent) => {
                 aria-label="Content loaded after page scrolled down"
             >
                 <Card>
-                    <template #title>{{ $t(data.label || "") }}</template>
+                    <template #title>{{ $t(component.label || "") }}</template>
                     <template #subtitle>{{
-                        $t(data.description || "")
+                        $t(component.description || "")
                     }}</template>
                     <template #content>
                         <DataTable
@@ -336,7 +343,7 @@ const onRowReorder = (event: DataTableRowReorderEvent) => {
                             removableSort
                             scrollable
                             :loading="loadingTable"
-                            :reorderableColumns="true"
+                            :rowReorder="true"
                             @rowReorder="onRowReorder"
                         >
                             <template #header>
