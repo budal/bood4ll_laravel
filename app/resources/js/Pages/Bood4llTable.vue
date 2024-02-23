@@ -35,6 +35,36 @@ const props = withDefaults(
 );
 
 const toast = useToast();
+const confirm = useConfirm();
+
+const contentItems = ref(props.items?.data ?? []);
+
+const dt = ref();
+const lastIntersection = ref(null);
+const nextPageURL = ref(null);
+const loadingTable = ref(contentItems.value.length === 0);
+const selectedItems = ref();
+const expandedRows = ref([]);
+const tableMenu = ref();
+const columnsView = ref(false);
+const columns = ref(props.data.content.titles);
+const selectedColumns = ref(columns.value);
+
+const tableMenuToggle = (event: MouseEvent) => {
+    tableMenu.value.toggle(event);
+};
+
+const exportCSV = () => {
+    dt.value.exportCSV();
+};
+
+const onToggleColumns = (val: string | any[]) => {
+    selectedColumns.value = columns.value.filter((col: any) =>
+        val.includes(col),
+    );
+};
+
+///////////////
 
 const filters = ref({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -45,85 +75,6 @@ const filters = ref({
     verified: { value: null, matchMode: FilterMatchMode.EQUALS },
 });
 
-const contentItems = ref(props.items?.data ?? []);
-
-const dt = ref();
-const lastIntersection = ref(null);
-const nextPageURL = ref(null);
-const loadingTable = ref(contentItems.value.length === 0);
-const selectedItems = ref();
-const expandedRows = ref([]);
-const menu = ref();
-const visible = ref(false);
-
-const toggle = (event: MouseEvent) => {
-    menu.value.toggle(event);
-};
-
-async function getData(cursor: string | null) {
-    try {
-        const response = await fetch(cursor ?? window.location.href + "/json");
-        return await response.json();
-    } catch (error) {
-        console.error(error);
-    }
-}
-
-const onRowReorder = (event: DataTableRowReorderEvent) => {
-    contentItems.value = event.value;
-    toast.add({
-        severity: "success",
-        summary: "Rows Reordered",
-        detail: "This is a success toast message",
-        life: 3000,
-    });
-};
-
-const columns = ref(props.data.content.titles);
-
-const selectedColumns = ref(columns.value);
-
-const onToggle = (val: string | any[]) => {
-    selectedColumns.value = columns.value.filter((col: any) =>
-        val.includes(col),
-    );
-};
-
-const exportCSV = () => {
-    dt.value.exportCSV();
-};
-
-useIntersectionObserver(lastIntersection, ([{ isIntersecting }]) => {
-    if (isIntersecting && contentItems.value != undefined) {
-        if (nextPageURL.value !== null) {
-            getData(nextPageURL.value).then((content) => {
-                nextPageURL.value = content.next_page_url;
-                contentItems.value = [...contentItems.value, ...content.data];
-            });
-        }
-    }
-});
-
-onMounted(() => {
-    if (contentItems.value) {
-        getData(null).then((content) => {
-            contentItems.value = content.data;
-            nextPageURL.value = content.next_page_url;
-            loadingTable.value = false;
-        });
-    }
-});
-
-const onDataLoad = () => {
-    if (contentItems.value) {
-        getData(null).then((content) => {
-            contentItems.value = content.data;
-            nextPageURL.value = content.next_page_url;
-            loadingTable.value = false;
-        });
-    }
-};
-
 const items = ref([
     {
         label: "New",
@@ -132,12 +83,12 @@ const items = ref([
     },
     {
         label: "Delete",
-        icon: "pi pi-times",
+        icon: "pi pi-trash",
         command: () => {},
     },
     {
-        label: "Exclude",
-        icon: "pi pi-trash",
+        label: "Erase",
+        icon: "pi pi-times",
         command: () => {
             confirm1();
         },
@@ -166,7 +117,7 @@ const items = ref([
         label: "Columns",
         icon: "pi pi-list",
         command: () => {
-            visible.value = true;
+            columnsView.value = true;
         },
     },
     {
@@ -198,8 +149,6 @@ const items = ref([
     //     ],
     // },
 ]);
-
-const confirm = useConfirm();
 
 const confirm1 = () => {
     confirm.require({
@@ -257,11 +206,61 @@ const confirm2 = (event: any) => {
         },
     });
 };
+
+///////////////
+
+async function getData(cursor: string | null) {
+    try {
+        const response = await fetch(cursor ?? window.location.href + "/json");
+        return await response.json();
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+onMounted(() => {
+    if (contentItems.value) {
+        getData(null).then((content) => {
+            contentItems.value = content.data;
+            nextPageURL.value = content.next_page_url;
+            loadingTable.value = false;
+        });
+    }
+});
+
+const onDataLoad = () => {
+    if (contentItems.value) {
+        getData(null).then((content) => {
+            contentItems.value = content.data;
+            nextPageURL.value = content.next_page_url;
+            loadingTable.value = false;
+        });
+    }
+};
+
+useIntersectionObserver(lastIntersection, ([{ isIntersecting }]) => {
+    if (isIntersecting && contentItems.value != undefined) {
+        if (nextPageURL.value !== null) {
+            getData(nextPageURL.value).then((content) => {
+                nextPageURL.value = content.next_page_url;
+                contentItems.value = [...contentItems.value, ...content.data];
+            });
+        }
+    }
+});
+
+const onRowReorder = (event: DataTableRowReorderEvent) => {
+    contentItems.value = event.value;
+    toast.add({
+        severity: "success",
+        summary: "Rows Reordered",
+        detail: "This is a success toast message",
+        life: 3000,
+    });
+};
 </script>
 
 <template>
-    <ConfirmDialog group="dialog" />
-    <ConfirmPopup group="popup" />
     <div class="card relative min-h-screen">
         <nav
             class="bg-zero-light dark:bg-zero-dark sm:sticky sm:top-0 z-[10] border-b"
@@ -320,12 +319,12 @@ const confirm2 = (event: any) => {
                                             icon="pi pi-ellipsis-v"
                                             rounded
                                             raised
-                                            @click="toggle"
+                                            @click="tableMenuToggle"
                                             aria-haspopup="true"
                                             aria-controls="overlay_tmenu"
                                         />
                                         <TieredMenu
-                                            ref="menu"
+                                            ref="tableMenu"
                                             id="overlay_tmenu"
                                             :model="items"
                                             popup
@@ -364,7 +363,7 @@ const confirm2 = (event: any) => {
                                             </template>
                                         </TieredMenu>
                                         <Dialog
-                                            v-model:visible="visible"
+                                            v-model:visible="columnsView"
                                             modal
                                             header="Header"
                                             :style="{ width: '25rem' }"
@@ -373,7 +372,9 @@ const confirm2 = (event: any) => {
                                                 :modelValue="selectedColumns"
                                                 :options="data.content.titles"
                                                 optionLabel="header"
-                                                @update:modelValue="onToggle"
+                                                @update:modelValue="
+                                                    onToggleColumns
+                                                "
                                                 display="chip"
                                                 :placeholder="
                                                     $t('Select columns')
@@ -448,7 +449,9 @@ const confirm2 = (event: any) => {
             </DeferredContent>
         </div>
     </div>
+    <Toast />
+    <ConfirmDialog group="dialog" />
+    <ConfirmPopup group="popup" />
     <ScrollTop />
     <TailwindIndicator />
-    <Toast />
 </template>

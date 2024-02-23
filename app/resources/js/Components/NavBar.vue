@@ -4,14 +4,7 @@ import { Head, Link } from "@inertiajs/vue3";
 
 import ApplicationLogo from "@/Components/ApplicationLogo.vue";
 
-const routeCurrent = window.location.href;
-
-const menu = ref();
-const visible = ref(false);
-
-const toggle = (event: MouseEvent) => {
-    menu.value.toggle(event);
-};
+const menu = ref(false);
 </script>
 
 <template>
@@ -83,7 +76,7 @@ const toggle = (event: MouseEvent) => {
                                 class="pl-8"
                             />
                         </IconField>
-                        <button @click="visible = true">
+                        <button @click="menu = true">
                             <Avatar
                                 :label="
                                     $page.props.auth.user.name
@@ -95,7 +88,7 @@ const toggle = (event: MouseEvent) => {
                                 class="shadow-[0_2px_15px]"
                             />
                         </button>
-                        <Sidebar v-model:visible="visible" position="right">
+                        <Sidebar v-model:visible="menu" position="right">
                             <template #header>
                                 <span
                                     class="inline-flex align-items-center gap-1 px-2 py-2"
