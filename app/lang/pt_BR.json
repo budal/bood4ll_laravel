@@ -51,9 +51,11 @@
   "Confirm your password": "Confirme sua senha",
   
   "Filters": "Filtros",
-  "Only active": "Apenas ativos",
-  "Only trashed": "Apenas removidos",
-  "Active and trashed": "Ativos e removidos",
+  "Active only": "Apenas ativos",
+  "Trashed only": "Apenas removidos",
+  "All records": "Todos os registros",
+
+  "Columns": "Colunas",
 
   "Content": "Conteúdo",
   "Nickname": "Apelido",

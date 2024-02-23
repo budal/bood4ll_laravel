@@ -1,21 +1,21 @@
 <script setup lang="ts">
-import { FilterMatchMode } from "primevue/api";
+import { ref, onMounted, computed } from "vue";
+import { Link } from "@inertiajs/vue3";
+import { useIntersectionObserver } from "@vueuse/core";
 
+import { useConfirm } from "primevue/useconfirm";
+import { isValidUrl, formatRouteWithID } from "@/helpers";
+
+import { FilterMatchMode } from "primevue/api";
 import { useToast } from "primevue/usetoast";
 import { DataTableRowReorderEvent } from "primevue/datatable";
 
 import NavBar from "@/Components/NavBar.vue";
 import TailwindIndicator from "@/Components/TailwindIndicator.vue";
 
-import { ref, onMounted } from "vue";
-import { useIntersectionObserver } from "@vueuse/core";
-import { Link } from "@inertiajs/vue3";
-
-import { useConfirm } from "primevue/useconfirm";
-import { computed } from "vue";
-
 const props = withDefaults(
     defineProps<{
+        component?: any;
         data?: any;
         items?: any;
         isGuest?: boolean;
@@ -38,7 +38,7 @@ const props = withDefaults(
 const toast = useToast();
 const confirm = useConfirm();
 
-const contentItems = ref(props.items?.data ?? []);
+const contentItems = ref(props.data?.data ?? []);
 
 const dt = ref();
 const lastIntersection = ref(null);
@@ -48,7 +48,7 @@ const selectedItems = ref();
 const expandedRows = ref([]);
 const tableMenu = ref();
 const columnsView = ref(false);
-const columns = ref(props.data.content.titles);
+const columns = ref(props.component.titles);
 const selectedColumns = ref(columns.value);
 const tableMenuItem = ref();
 
@@ -77,53 +77,59 @@ const filters = ref({
     verified: { value: null, matchMode: FilterMatchMode.EQUALS },
 });
 
+console.log(props.component);
+
 const items = ref([
     {
-        key: "new",
-        label: "New",
-        url: "/dashboard",
+        label: "Add",
+        url: isValidUrl(props.component.routes.createRoute?.route),
+        visible: props.component.routes.createRoute?.showIf,
         icon: "pi pi-plus",
         command: () => {},
     },
     {
-        key: "delete",
-        label: "Delete",
+        label: "Remove",
+        url: isValidUrl(props.component.routes.destroyRoute?.route),
+        visible: props.component.routes.destroyRoute?.showIf,
         icon: "pi pi-trash",
         command: () => {},
     },
     {
-        key: "restore",
         label: "Restore",
+        url: isValidUrl(props.component.routes.restoreRoute?.route),
+        visible: props.component.routes.restoreRoute?.showIf,
         icon: "pi pi-replay",
         command: () => {},
     },
     {
-        key: "erase",
         label: "Erase",
+        url: isValidUrl(props.component.routes.forceDestroyRoute?.route),
+        visible: props.component.routes.forceDestroyRoute?.showIf,
         icon: "pi pi-times",
-        visible: false,
         command: () => {
             confirm1();
         },
     },
     {
         separator: true,
+        visible:
+            props.component.routes.createRoute?.showIf === true ||
+            props.component.routes.destroyRoute?.showIf === true ||
+            props.component.routes.restoreRoute?.showIf === true ||
+            props.component.routes.forceDestroyRoute?.showIf === true,
     },
     {
-        label: "Filter",
+        label: "Filters",
         icon: "pi pi-filter",
         items: [
             {
-                key: "active_records",
-                label: "Active records",
+                label: "Active only",
                 icon: "pi pi-check text-xs",
             },
             {
-                key: "trashed_records",
-                label: "Trashed records",
+                label: "Trashed only",
             },
             {
-                key: "all_records",
                 label: "All records",
                 icon: "",
             },
@@ -139,12 +145,13 @@ const items = ref([
     },
     {
         separator: true,
+        visible: props.component.exportCSV === true,
     },
     {
         key: "export_csv",
         label: "Export CSV",
         icon: "pi pi-file-export",
-        disabled: true,
+        visible: props.component.exportCSV === true,
         command: () => {
             exportCSV();
         },
@@ -171,11 +178,6 @@ const items = ref([
 computed(() => {
     console.log(tableMenuItem);
 });
-
-const menuClick = (item) => {
-    console.log(item.key);
-    // console.log(event.currentTarget.getAttribute("data_id"));
-};
 
 const confirm1 = () => {
     confirm.require({
@@ -361,7 +363,6 @@ const onRowReorder = (event: DataTableRowReorderEvent) => {
                                                     v-ripple
                                                     class="flex align-items-center"
                                                     v-bind="props.action"
-                                                    @click="menuClick(item)"
                                                 >
                                                     <span :class="item.icon" />
                                                     <span class="ml-2">

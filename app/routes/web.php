@@ -102,7 +102,7 @@ Route::middleware('auth')->group(function () {
                 Route::patch('/units/edit/{unit}', 'update')->name('update');
                 Route::post('/units/hierarchy', 'hierarchy')->name('hierarchy');
                 Route::delete('/units/destroy', 'destroy')->name('destroy');
-                Route::post('/units/restore/{unit}', 'restore')->name('restore');
+                Route::post('/units/restore', 'restore')->name('restore');
             });
         });
 
