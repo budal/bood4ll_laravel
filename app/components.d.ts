@@ -14,6 +14,7 @@ declare module 'vue' {
     Card: typeof import('primevue/card')['default']
     Column: typeof import('primevue/column')['default']
     DataTable: typeof import('primevue/datatable')['default']
+    Dialog: typeof import('primevue/dialog')['default']
     InputText: typeof import('primevue/inputtext')['default']
     Menu: typeof import('primevue/menu')['default']
     Menubar: typeof import('primevue/menubar')['default']

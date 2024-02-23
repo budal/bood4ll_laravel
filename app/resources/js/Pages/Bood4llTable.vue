@@ -52,6 +52,7 @@ const loadingTable = ref(contentItems.value.length === 0);
 const selectedItems = ref();
 const expandedRows = ref([]);
 const menu = ref();
+const visible = ref(false);
 
 const toggle = (event: MouseEvent) => {
     menu.value.toggle(event);
@@ -151,7 +152,7 @@ const items = ref([
         label: "Columns",
         icon: "pi pi-list",
         command: () => {
-            exportCSV();
+            visible.value = true;
         },
     },
     {
@@ -277,6 +278,13 @@ const items = ref([
                                             </a>
                                         </template>
                                     </TieredMenu>
+                                    <Dialog
+                                        v-model:visible="visible"
+                                        modal
+                                        header="Header"
+                                        :style="{ width: '25rem' }"
+                                    >
+                                    </Dialog>
                                     <MultiSelect
                                         :modelValue="selectedColumns"
                                         :options="data.content.titles"
