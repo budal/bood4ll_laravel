@@ -8,9 +8,12 @@ import { ZiggyVue } from "../../vendor/tightenco/ziggy/dist/vue.m";
 import { i18nVue } from "laravel-vue-i18n";
 
 import PrimeVue from "primevue/config";
+import FocusTrap from "primevue/focustrap";
 import Ripple from "primevue/ripple";
+import StyleClass from "primevue/styleclass";
 import ToastService from "primevue/toastservice";
 import "primevue/resources/themes/aura-light-blue/theme.css";
+// import "primevue/resources/themes/aura-dark-blue/theme.css";
 import "primeicons/primeicons.css";
 import InputIcon from "primevue/inputicon";
 import IconField from "primevue/iconfield";
@@ -55,7 +58,9 @@ createInertiaApp({
                 },
             })
             .use(PrimeVue, { ripple: true })
+            .directive("focustrap", FocusTrap)
             .directive("ripple", Ripple)
+            .directive("styleclass", StyleClass)
             .component("InputIcon", InputIcon)
             .component("IconField", IconField)
             .component("Toast", Toast)

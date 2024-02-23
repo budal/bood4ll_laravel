@@ -108,7 +108,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <div class="relative min-h-screen bg-zero-white dark:bg-zero-black">
+    <div class="card relative min-h-screen">
         <nav
             class="bg-zero-light dark:bg-zero-dark sm:sticky sm:top-0 z-[10] border-b"
         >
@@ -132,9 +132,11 @@ onMounted(() => {
                 <NavBar />
             </div>
         </nav>
-        <div class="pt-8">
-            <div class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 space-y-6">
-                <div class="border rounded-lg">
+        <div class="max-w-7xl mx-auto pt-8 px-2 sm:px-6 lg:px-8 space-y-6">
+            <Card>
+                <template #title>{{ $t(data.label || "") }}</template>
+                <template #subtitle>{{ $t(data.description || "") }}</template>
+                <template #content>
                     <DataTable
                         ref="dt"
                         :value="contentItems"
@@ -150,18 +152,8 @@ onMounted(() => {
                         @rowReorder="onRowReorder"
                     >
                         <template #header>
-                            <div>
-                                <span class="text-xl font-bold">
-                                    {{ $t(data.label || "") }}
-                                </span>
-                            </div>
-                            <div>
-                                <span>
-                                    {{ $t(data.description || "") }}
-                                </span>
-                            </div>
                             <div
-                                class="border rounded-lg p-2 mt-2 flex flex-wrap items-center justify-content-end justify-between gap-2"
+                                class="flex flex-wrap items-center justify-content-end justify-between gap-2"
                             >
                                 <div>
                                     <Button
@@ -169,13 +161,11 @@ onMounted(() => {
                                         rounded
                                         raised
                                     />
-
                                     <Button
                                         icon="pi pi-external-link"
                                         label="Export"
                                         @click="exportCSV()"
                                     />
-
                                     <MultiSelect
                                         :modelValue="selectedColumns"
                                         :options="data.content.titles"
@@ -185,14 +175,13 @@ onMounted(() => {
                                         :placeholder="$t('Select columns')"
                                     />
                                 </div>
-
                                 <IconField iconPosition="left">
                                     <InputIcon>
                                         <i class="pi pi-search" />
                                     </InputIcon>
                                     <InputText
                                         v-model="filters['global'].value"
-                                        :placeholder="$t('search')"
+                                        :placeholder="$t('Search...')"
                                         class="pl-8 rounded-lg"
                                     />
                                 </IconField>
@@ -241,9 +230,11 @@ onMounted(() => {
                             </div>
                         </template>
                     </DataTable>
+                </template>
+                <template #footer>
                     <div ref="lastIntersection" class="-translate-y-96" />
-                </div>
-            </div>
+                </template>
+            </Card>
         </div>
     </div>
     <ScrollTop />

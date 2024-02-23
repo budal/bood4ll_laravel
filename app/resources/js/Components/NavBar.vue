@@ -3,7 +3,6 @@ import { ref } from "vue";
 import { Head, Link } from "@inertiajs/vue3";
 
 import ApplicationLogo from "@/Components/ApplicationLogo.vue";
-import ToggleTheme from "@/Components/ToggleTheme.vue";
 
 const routeCurrent = window.location.href;
 
@@ -74,7 +73,6 @@ const toggle = (event: MouseEvent) => {
                 </template>
                 <template #end>
                     <div class="xs:-mr-2 flex items-center sm:ml-6">
-                        <ToggleTheme />
                         <button @click="toggle">
                             <Avatar
                                 :label="
