@@ -55,7 +55,7 @@ class UnitsController extends Controller
                 'id' => 'units',
                 'label' => Route::current()->title,
                 'description' => Route::current()->description,
-                'exportCSV' => true,
+                // 'exportCSV' => true,
                 'routes' => [
                     'createRoute' => [
                         'route' => 'apps.units.create',
@@ -84,8 +84,8 @@ class UnitsController extends Controller
                 ],
                 'menu' => [
                     [
-                        'icon' => 'mdi:source-branch-refresh',
-                        'title' => 'Refresh units hierarchy',
+                        'icon' => 'pi pi-replay',
+                        'label' => 'Refresh units hierarchy',
                         'route' => 'apps.units.hierarchy',
                         'method' => 'post',
                         'showIf' => $request->user()->can('isSuperAdmin', User::class),

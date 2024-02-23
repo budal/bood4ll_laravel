@@ -14,6 +14,7 @@ import NavBar from "@/Components/NavBar.vue";
 import TailwindIndicator from "@/Components/TailwindIndicator.vue";
 import { trans, transChoice } from "laravel-vue-i18n";
 import { watch } from "vue";
+import { MenuItem } from "primevue/menuitem";
 
 const props = withDefaults(
     defineProps<{
@@ -46,7 +47,7 @@ const dt = ref();
 const lastIntersection = ref(null);
 const nextPageURL = ref(null);
 const loadingTable = ref(contentItems.value.length === 0);
-const selectedItems = ref();
+const selectedItems = ref([]);
 const expandedRows = ref([]);
 const tableMenu = ref();
 const columnsView = ref(false);
@@ -57,13 +58,13 @@ const tableMenuToggle = (event: MouseEvent) => {
     tableMenu.value.toggle(event);
 };
 
-watch(selectedItems, () => {
-    console.log(selectedItems.value.length);
+const selectedItemsTotal = computed(() => selectedItems.value);
+
+watch(selectedItemsTotal, () => {
+    console.log(selectedItemsTotal.value.length < 1);
 });
 
-console.log(props.component);
-
-const tableMenuItems = ref([
+const _tableMenuItemsEdit: MenuItem[] = [
     {
         label: "Add",
         url: isValidUrl(props.component.routes.createRoute?.route),
@@ -127,6 +128,9 @@ const tableMenuItems = ref([
             props.component.routes.restoreRoute?.showIf === true ||
             props.component.routes.forceDestroyRoute?.showIf === true,
     },
+];
+
+const _tableMenuItemsShow: MenuItem[] = [
     {
         label: "Filters",
         icon: "pi pi-filter",
@@ -165,6 +169,40 @@ const tableMenuItems = ref([
             exportCSV();
         },
     },
+];
+
+console.log(props.component.menu);
+
+let _tableMenuItemsComplementar: MenuItem[] = [];
+
+props.component.menu.forEach(
+    (item: {
+        label: string;
+        route: string;
+        method: string;
+        showIf: boolean;
+        icon: string;
+    }) =>
+        _tableMenuItemsComplementar.push({
+            label: item.label,
+            url: isValidUrl(item.route),
+            method: item.method,
+            visible: item.showIf === true,
+            icon: item.icon,
+        }),
+);
+
+_tableMenuItemsComplementar.push({
+    separator: true,
+    visible:
+        _tableMenuItemsComplementar.filter((item) => item.visible === true)
+            .length > 0,
+});
+
+const tableMenuItems = ref([
+    ..._tableMenuItemsEdit,
+    ..._tableMenuItemsComplementar,
+    ..._tableMenuItemsShow,
 ]);
 
 const onToggleColumns = (val: string | any[]) => {
@@ -176,17 +214,6 @@ const onToggleColumns = (val: string | any[]) => {
 const exportCSV = () => {
     dt.value.exportCSV();
 };
-
-///////////////
-
-const filters = ref({
-    global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-    name: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
-    "country.name": { value: null, matchMode: FilterMatchMode.STARTS_WITH },
-    representative: { value: null, matchMode: FilterMatchMode.IN },
-    status: { value: null, matchMode: FilterMatchMode.EQUALS },
-    verified: { value: null, matchMode: FilterMatchMode.EQUALS },
-});
 
 const confirmDialog = (options: {
     message: string;
@@ -224,6 +251,17 @@ const confirmDialog = (options: {
         },
     });
 };
+
+///////////////
+
+const filters = ref({
+    global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+    name: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+    "country.name": { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+    representative: { value: null, matchMode: FilterMatchMode.IN },
+    status: { value: null, matchMode: FilterMatchMode.EQUALS },
+    verified: { value: null, matchMode: FilterMatchMode.EQUALS },
+});
 
 const confirm2 = (event: any) => {
     confirm.require({
@@ -354,7 +392,10 @@ const onRowReorder = (event: DataTableRowReorderEvent) => {
                             removableSort
                             scrollable
                             :loading="loadingTable"
-                            :rowReorder="true"
+                            :rowReorder="
+                                props.component.routes.reorderRoute?.showIf ===
+                                true
+                            "
                             @rowReorder="onRowReorder"
                         >
                             <template #header>
@@ -416,7 +457,7 @@ const onRowReorder = (event: DataTableRowReorderEvent) => {
                                         >
                                             <MultiSelect
                                                 :modelValue="selectedColumns"
-                                                :options="data.content.titles"
+                                                :options="component.titles"
                                                 optionLabel="header"
                                                 @update:modelValue="
                                                     onToggleColumns
@@ -448,6 +489,10 @@ const onRowReorder = (event: DataTableRowReorderEvent) => {
                                 {{ $t("No items to show.") }}
                             </template>
                             <Column
+                                v-if="
+                                    props.component.routes.reorderRoute
+                                        ?.showIf === true
+                                "
                                 rowReorder
                                 headerStyle="width: 3rem"
                                 class="border-b"
