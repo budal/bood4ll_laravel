@@ -21,5 +21,6 @@ declare module 'vue' {
     Panel: typeof import('primevue/panel')['default']
     ScrollTop: typeof import('primevue/scrolltop')['default']
     SpeedDial: typeof import('primevue/speeddial')['default']
+    TieredMenu: typeof import('primevue/tieredmenu')['default']
   }
 }

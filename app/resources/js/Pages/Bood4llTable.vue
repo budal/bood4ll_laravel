@@ -51,6 +51,11 @@ const nextPageURL = ref(null);
 const loadingTable = ref(contentItems.value.length === 0);
 const selectedItems = ref();
 const expandedRows = ref([]);
+const menu = ref();
+
+const toggle = (event: MouseEvent) => {
+    menu.value.toggle(event);
+};
 
 async function getData(cursor: string | null) {
     try {
@@ -105,6 +110,79 @@ onMounted(() => {
         });
     }
 });
+
+const items = ref([
+    {
+        label: "New",
+        icon: "pi pi-plus",
+        command: () => {},
+    },
+    {
+        label: "Delete",
+        icon: "pi pi-times",
+        command: () => {},
+    },
+    {
+        label: "Exclude",
+        icon: "pi pi-trash",
+        command: () => {},
+    },
+    {
+        separator: true,
+    },
+    {
+        label: "Filter",
+        icon: "pi pi-filter",
+        items: [
+            {
+                label: "Active records",
+                icon: "pi pi-check text-xs",
+            },
+            {
+                label: "Trashed records",
+            },
+            {
+                label: "All records",
+                icon: "",
+            },
+        ],
+    },
+    {
+        label: "Columns",
+        icon: "pi pi-list",
+        command: () => {
+            exportCSV();
+        },
+    },
+    {
+        separator: true,
+    },
+    {
+        label: "Export CSV",
+        icon: "pi pi-file-export",
+        disabled: true,
+        command: () => {
+            exportCSV();
+        },
+    },
+    // {
+    //     separator: true,
+    // },
+    // {
+    //     label: "Share",
+    //     icon: "pi pi-share-alt",
+    //     items: [
+    //         {
+    //             label: "Slack",
+    //             icon: "pi pi-slack",
+    //         },
+    //         {
+    //             label: "Whatsapp",
+    //             icon: "pi pi-whatsapp",
+    //         },
+    //     ],
+    // },
+]);
 </script>
 
 <template>
@@ -157,15 +235,48 @@ onMounted(() => {
                             >
                                 <div>
                                     <Button
-                                        icon="pi pi-refresh"
+                                        icon="pi pi-ellipsis-v"
                                         rounded
                                         raised
+                                        @click="toggle"
+                                        aria-haspopup="true"
+                                        aria-controls="overlay_tmenu"
                                     />
-                                    <Button
-                                        icon="pi pi-external-link"
-                                        label="Export"
-                                        @click="exportCSV()"
-                                    />
+                                    <TieredMenu
+                                        ref="menu"
+                                        id="overlay_tmenu"
+                                        :model="items"
+                                        popup
+                                    >
+                                        <template #item="{ item, props }">
+                                            <a
+                                                v-ripple
+                                                class="flex align-items-center"
+                                                v-bind="props.action"
+                                            >
+                                                <span :class="item.icon" />
+                                                <span class="ml-2">
+                                                    {{
+                                                        $t(item.label as string)
+                                                    }}
+                                                </span>
+                                                <Badge
+                                                    v-if="item.badge"
+                                                    class="ml-auto"
+                                                    :value="item.badge"
+                                                />
+                                                <span
+                                                    v-if="item.shortcut"
+                                                    class="ml-auto border-1 surface-border border-round surface-100 text-xs p-1"
+                                                    >{{ item.shortcut }}</span
+                                                >
+                                                <span
+                                                    v-if="item.items"
+                                                    class="pi pi-chevron-right ml-auto border-1 surface-border border-round surface-100 text-xs p-1"
+                                                />
+                                            </a>
+                                        </template>
+                                    </TieredMenu>
                                     <MultiSelect
                                         :modelValue="selectedColumns"
                                         :options="data.content.titles"
@@ -175,16 +286,18 @@ onMounted(() => {
                                         :placeholder="$t('Select columns')"
                                     />
                                 </div>
-                                <IconField iconPosition="left">
-                                    <InputIcon>
-                                        <i class="pi pi-search" />
-                                    </InputIcon>
-                                    <InputText
-                                        v-model="filters['global'].value"
-                                        :placeholder="$t('Search...')"
-                                        class="pl-8 rounded-lg"
-                                    />
-                                </IconField>
+                                <div class="flex gap-2">
+                                    <IconField iconPosition="left">
+                                        <InputIcon>
+                                            <i class="pi pi-search" />
+                                        </InputIcon>
+                                        <InputText
+                                            v-model="filters['global'].value"
+                                            :placeholder="$t('Search...')"
+                                            class="pl-8 rounded-lg"
+                                        />
+                                    </IconField>
+                                </div>
                             </div>
                         </template>
                         <template #empty>
