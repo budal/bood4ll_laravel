@@ -365,7 +365,7 @@ const onRowReorder = (event: DataTableRowReorderEvent) => {
                                         <Dialog
                                             v-model:visible="columnsView"
                                             modal
-                                            header="Header"
+                                            header="Columns"
                                             :style="{ width: '25rem' }"
                                         >
                                             <MultiSelect
