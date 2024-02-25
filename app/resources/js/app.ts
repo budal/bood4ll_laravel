@@ -9,6 +9,8 @@ import { i18nVue } from "laravel-vue-i18n";
 
 import PrimeVue from "primevue/config";
 import ConfirmationService from "primevue/confirmationservice";
+import DialogService from "primevue/dialogservice";
+import DynamicDialog from "primevue/dynamicdialog";
 import FocusTrap from "primevue/focustrap";
 import Ripple from "primevue/ripple";
 import StyleClass from "primevue/styleclass";
@@ -64,6 +66,7 @@ createInertiaApp({
             .directive("focustrap", FocusTrap)
             .directive("ripple", Ripple)
             .directive("styleclass", StyleClass)
+            .component("DynamicDialog", DynamicDialog)
             .component("ConfirmDialog", ConfirmDialog)
             .component("ConfirmPopup", ConfirmPopup)
             .component("InputIcon", InputIcon)
@@ -71,6 +74,7 @@ createInertiaApp({
             .component("Toast", Toast)
             .component("Icon", Icon)
             .use(ConfirmationService)
+            .use(DialogService)
             .use(ToastService)
             .use(Vue3Toasity, {
                 autoClose: 3000,

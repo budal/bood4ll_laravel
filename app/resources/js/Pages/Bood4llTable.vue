@@ -550,6 +550,7 @@ const onRowReorder = (event: DataTableRowReorderEvent) => {
         </div>
     </div>
     <Toast />
+    <DynamicDialog />
     <ConfirmDialog group="dialog" :draggable="false" />
     <ConfirmPopup group="popup" />
     <ScrollTop />
