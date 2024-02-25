@@ -57,6 +57,10 @@ class UnitsController extends Controller
                 'description' => Route::current()->description,
                 // 'exportCSV' => true,
                 'routes' => [
+                    'indexRoute' => [
+                        'route' => 'apps.units.index',
+                        'attributes' => ['json'],
+                    ],
                     'createRoute' => [
                         'route' => 'apps.units.create',
                         'showIf' => Gate::allows('apps.units.create') && $request->user()->can('isManager', User::class) && $request->user()->can('canManageNestedData', User::class),

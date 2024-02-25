@@ -3,10 +3,10 @@ import { transChoice } from "laravel-vue-i18n";
 import { ReplacementsInterface } from "laravel-vue-i18n/interfaces/replacements";
 import { ToastType, toast as toasty } from "vue3-toastify";
 
-const isValidUrl = (url: any) => {
+const isValidUrl = (url: string | { route: string; attributes: string[] }) => {
     if (url) {
         try {
-            if (Boolean(new URL(url))) return url;
+            if (Boolean(new URL(url as string | URL))) return url;
         } catch (e) {
             const link =
                 typeof url === "string" ? { route: url, attributes: [] } : url;

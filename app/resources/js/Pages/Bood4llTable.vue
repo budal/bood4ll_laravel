@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from "vue";
-import { Link } from "@inertiajs/vue3";
+import { Link, router } from "@inertiajs/vue3";
 import { useIntersectionObserver } from "@vueuse/core";
 
 import { useConfirm } from "primevue/useconfirm";
@@ -61,7 +61,7 @@ const tableMenuToggle = (event: MouseEvent) => {
 const selectedItemsTotal = computed(() => selectedItems.value);
 
 watch(selectedItemsTotal, () => {
-    console.log(selectedItemsTotal.value.length < 1);
+    // console.log(selectedItemsTotal.value.length < 1);
 });
 
 const _tableMenuItemsEdit: MenuItem[] = [
@@ -70,7 +70,16 @@ const _tableMenuItemsEdit: MenuItem[] = [
         url: isValidUrl(props.component.routes.createRoute?.route),
         visible: props.component.routes.createRoute?.showIf === true,
         icon: "pi pi-plus",
-        command: () => {},
+        command: () => {
+            // console.log(props.component.routes.createRoute?.route)
+            // router.visit(
+            //     isValidUrl(props.component.routes.createRoute?.route),
+            //     {
+            //         preserveState: true,
+            //         preserveScroll: true,
+            //     },
+            // );
+        },
     },
     {
         label: "Remove",
@@ -170,8 +179,6 @@ const _tableMenuItemsShow: MenuItem[] = [
         },
     },
 ];
-
-console.log(props.component.menu);
 
 let _tableMenuItemsComplementar: MenuItem[] = [];
 
@@ -294,43 +301,32 @@ const confirm2 = (event: any) => {
 
 ///////////////
 
-async function getData(cursor: string | null) {
+async function getData(route: any) {
     try {
-        const response = await fetch(cursor ?? window.location.href + "/json");
+        const response = await fetch(isValidUrl(route) as string);
         return await response.json();
     } catch (error) {
         console.error(error);
     }
 }
 
-onMounted(() => {
-    if (contentItems.value) {
-        getData(null).then((content) => {
-            contentItems.value = content.data;
-            nextPageURL.value = content.next_page_url;
-            loadingTable.value = false;
-        });
-    }
-});
-
 const onDataLoad = () => {
-    if (contentItems.value) {
-        getData(null).then((content) => {
-            contentItems.value = content.data;
-            nextPageURL.value = content.next_page_url;
-            loadingTable.value = false;
-        });
-    }
+    getData(props.component.routes.indexRoute).then((content) => {
+        contentItems.value = content.data;
+        nextPageURL.value = content.next_page_url;
+        loadingTable.value = false;
+    });
 };
 
 useIntersectionObserver(lastIntersection, ([{ isIntersecting }]) => {
-    if (isIntersecting && contentItems.value != undefined) {
-        if (nextPageURL.value !== null) {
-            getData(nextPageURL.value).then((content) => {
-                nextPageURL.value = content.next_page_url;
-                contentItems.value = [...contentItems.value, ...content.data];
-            });
-        }
+    if (isIntersecting && nextPageURL.value !== null) {
+        loadingTable.value = true;
+
+        getData(nextPageURL.value).then((content) => {
+            nextPageURL.value = content.next_page_url;
+            contentItems.value = [...contentItems.value, ...content.data];
+            loadingTable.value = false;
+        });
     }
 });
 
@@ -417,7 +413,12 @@ const onRowReorder = (event: DataTableRowReorderEvent) => {
                                             popup
                                         >
                                             <template #item="{ item, props }">
-                                                <a
+                                                <Link
+                                                    as="span"
+                                                    :href="item.url ?? '#'"
+                                                    :method="
+                                                        item.method ?? 'get'
+                                                    "
                                                     v-ripple
                                                     class="flex align-items-center"
                                                     v-bind="props.action"
@@ -446,7 +447,7 @@ const onRowReorder = (event: DataTableRowReorderEvent) => {
                                                         v-if="item.items"
                                                         class="pi pi-chevron-right ml-auto border-1 surface-border border-round surface-100 text-xs p-1"
                                                     />
-                                                </a>
+                                                </Link>
                                             </template>
                                         </TieredMenu>
                                         <Dialog
