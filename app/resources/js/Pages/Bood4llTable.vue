@@ -1,5 +1,12 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from "vue";
+import {
+    ref,
+    onMounted,
+    computed,
+    watch,
+    markRaw,
+    defineAsyncComponent,
+} from "vue";
 import { Link, router } from "@inertiajs/vue3";
 import { useIntersectionObserver } from "@vueuse/core";
 
@@ -9,11 +16,11 @@ import { isValidUrl, formatRouteWithID } from "@/helpers";
 import { FilterMatchMode } from "primevue/api";
 import { useToast } from "primevue/usetoast";
 import { DataTableRowReorderEvent } from "primevue/datatable";
+import { useDialog } from "primevue/usedialog";
 
 import NavBar from "@/Components/NavBar.vue";
 import TailwindIndicator from "@/Components/TailwindIndicator.vue";
 import { trans, transChoice } from "laravel-vue-i18n";
-import { watch } from "vue";
 import { MenuItem } from "primevue/menuitem";
 
 const props = withDefaults(
@@ -38,6 +45,7 @@ const props = withDefaults(
     },
 );
 
+const dialog = useDialog();
 const toast = useToast();
 const confirm = useConfirm();
 
@@ -67,13 +75,15 @@ watch(selectedItemsTotal, () => {
 const _tableMenuItemsEdit: MenuItem[] = [
     {
         label: "Add",
-        url: isValidUrl(props.component.routes.createRoute?.route) as string,
+        // url: isValidUrl(props.component.routes.createRoute?.route) as string,
         disabled: isValidUrl(props.component.routes.createRoute?.route)
             ? false
             : true,
         visible: props.component.routes.createRoute?.showIf === true,
         icon: "pi pi-plus",
         command: () => {
+            showProducts();
+
             // console.log(props.component.routes.createRoute?.route)
             // router.visit(
             //     isValidUrl(props.component.routes.createRoute?.route),
@@ -350,6 +360,52 @@ const onRowReorder = (event: DataTableRowReorderEvent) => {
         summary: "Rows Reordered",
         detail: "This is a success toast message",
         life: 3000,
+    });
+};
+
+//////////////////
+
+const ProductListDemo = defineAsyncComponent(
+    () => import("@/Components/_useless/ProductListDemo.vue"),
+);
+const FooterDemo = defineAsyncComponent(
+    () => import("@/Components/_useless/FooterDemo.vue"),
+);
+
+const showProducts = () => {
+    const dialogRef = dialog.open(ProductListDemo, {
+        props: {
+            header: "Product List",
+            style: {
+                width: "50vw",
+            },
+            breakpoints: {
+                "960px": "75vw",
+                "640px": "90vw",
+            },
+            modal: true,
+        },
+        templates: {
+            footer: markRaw(FooterDemo),
+        },
+        onClose: (options: any) => {
+            const data = options.data;
+            if (data) {
+                const buttonType = data.buttonType;
+                const summary_and_detail = buttonType
+                    ? {
+                          summary: "No Product Selected",
+                          detail: `Pressed '${buttonType}' button`,
+                      }
+                    : { summary: "Product Selected", detail: data.name };
+
+                toast.add({
+                    severity: "info",
+                    ...summary_and_detail,
+                    life: 3000,
+                });
+            }
+        },
     });
 };
 </script>
