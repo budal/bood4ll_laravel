@@ -10,7 +10,10 @@ const isValidUrl = (url: string | { route: string; attributes: string[] }) => {
         } catch (e) {
             const link =
                 typeof url === "string" ? { route: url, attributes: [] } : url;
-            return route(link.route, link.attributes);
+
+            if (route().has(link.route))
+                return route(link.route, link.attributes);
+            else console.log(`Error: route '${link.route}' doesn't exist.`);
         }
     }
 };

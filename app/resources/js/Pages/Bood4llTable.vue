@@ -67,7 +67,10 @@ watch(selectedItemsTotal, () => {
 const _tableMenuItemsEdit: MenuItem[] = [
     {
         label: "Add",
-        url: isValidUrl(props.component.routes.createRoute?.route),
+        url: isValidUrl(props.component.routes.createRoute?.route) as string,
+        disabled: isValidUrl(props.component.routes.createRoute?.route)
+            ? false
+            : true,
         visible: props.component.routes.createRoute?.showIf === true,
         icon: "pi pi-plus",
         command: () => {
@@ -83,7 +86,10 @@ const _tableMenuItemsEdit: MenuItem[] = [
     },
     {
         label: "Remove",
-        url: isValidUrl(props.component.routes.destroyRoute?.route),
+        url: isValidUrl(props.component.routes.destroyRoute?.route) as string,
+        disabled: isValidUrl(props.component.routes.createRoute?.route)
+            ? false
+            : true,
         visible: props.component.routes.destroyRoute?.showIf === true,
         icon: "pi pi-trash",
         command: () => {
@@ -99,7 +105,10 @@ const _tableMenuItemsEdit: MenuItem[] = [
     },
     {
         label: "Restore",
-        url: isValidUrl(props.component.routes.restoreRoute?.route),
+        url: isValidUrl(props.component.routes.restoreRoute?.route) as string,
+        disabled: isValidUrl(props.component.routes.createRoute?.route)
+            ? false
+            : true,
         visible: props.component.routes.restoreRoute?.showIf === true,
         icon: "pi pi-replay",
         command: () => {
@@ -115,7 +124,12 @@ const _tableMenuItemsEdit: MenuItem[] = [
     },
     {
         label: "Erase",
-        url: isValidUrl(props.component.routes.forceDestroyRoute?.route),
+        url: isValidUrl(
+            props.component.routes.forceDestroyRoute?.route,
+        ) as string,
+        disabled: isValidUrl(props.component.routes.createRoute?.route)
+            ? false
+            : true,
         visible: props.component.routes.forceDestroyRoute?.showIf === true,
         icon: "pi pi-times",
         command: () => {
@@ -158,7 +172,6 @@ const _tableMenuItemsShow: MenuItem[] = [
         ],
     },
     {
-        key: "columns",
         label: "Columns",
         icon: "pi pi-list",
         command: () => {
@@ -170,7 +183,6 @@ const _tableMenuItemsShow: MenuItem[] = [
         visible: props.component.exportCSV === true,
     },
     {
-        key: "export_csv",
         label: "Export CSV",
         icon: "pi pi-file-export",
         visible: props.component.exportCSV === true,
@@ -192,8 +204,9 @@ props.component.menu.forEach(
     }) =>
         _tableMenuItemsComplementar.push({
             label: item.label,
-            url: isValidUrl(item.route),
+            url: isValidUrl(item.route) as string,
             method: item.method,
+            disabled: isValidUrl(item.route) ? false : true,
             visible: item.showIf === true,
             icon: item.icon,
         }),
@@ -413,15 +426,10 @@ const onRowReorder = (event: DataTableRowReorderEvent) => {
                                             popup
                                         >
                                             <template #item="{ item, props }">
-                                                <Link
-                                                    as="span"
-                                                    :href="item.url ?? '#'"
-                                                    :method="
-                                                        item.method ?? 'get'
-                                                    "
-                                                    v-ripple
+                                                <a
                                                     class="flex align-items-center"
                                                     v-bind="props.action"
+                                                    v-ripple
                                                 >
                                                     <span :class="item.icon" />
                                                     <span class="ml-2">
@@ -447,7 +455,7 @@ const onRowReorder = (event: DataTableRowReorderEvent) => {
                                                         v-if="item.items"
                                                         class="pi pi-chevron-right ml-auto border-1 surface-border border-round surface-100 text-xs p-1"
                                                     />
-                                                </Link>
+                                                </a>
                                             </template>
                                         </TieredMenu>
                                         <Dialog
