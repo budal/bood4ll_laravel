@@ -384,6 +384,8 @@ const showProducts = () => {
                 "640px": "90vw",
             },
             modal: true,
+            maximizable: true,
+            draggable: false,
         },
         templates: {
             footer: markRaw(FooterDemo),
