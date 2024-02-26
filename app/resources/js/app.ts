@@ -20,9 +20,11 @@ import "primevue/resources/themes/aura-light-blue/theme.css";
 import "primeicons/primeicons.css";
 import ConfirmDialog from "primevue/confirmdialog";
 import ConfirmPopup from "primevue/confirmpopup";
+import FloatLabel from "primevue/floatlabel";
 import InputIcon from "primevue/inputicon";
 import IconField from "primevue/iconfield";
 import Toast from "primevue/toast";
+import Tooltip from "primevue/tooltip";
 
 import { Icon } from "@iconify/vue";
 
@@ -66,9 +68,11 @@ createInertiaApp({
             .directive("focustrap", FocusTrap)
             .directive("ripple", Ripple)
             .directive("styleclass", StyleClass)
+            .directive("tooltip", Tooltip)
             .component("DynamicDialog", DynamicDialog)
             .component("ConfirmDialog", ConfirmDialog)
             .component("ConfirmPopup", ConfirmPopup)
+            .component("FloatLabel", FloatLabel)
             .component("InputIcon", InputIcon)
             .component("IconField", IconField)
             .component("Toast", Toast)

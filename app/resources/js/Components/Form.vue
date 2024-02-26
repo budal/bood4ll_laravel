@@ -132,6 +132,8 @@ const submitModal = () => {
 };
 
 let tabs = ref(dialogRef.value.data);
+
+const value = ref(null);
 </script>
 
 <template>
@@ -149,14 +151,24 @@ let tabs = ref(dialogRef.value.data);
                 @submit.prevent="sendForm(tab.id)"
                 class="space-y-6"
             >
-                <div :class="`grid sm:grid-cols-${tab.cols} sm:gap-4`">
+                <div :class="`grid sm:grid-cols-${tab.cols} sm:gap-2`">
                     <div
                         v-for="field in tab.fields"
-                        :class="`${
+                        :class="`pt-6 ${
                             field.span ? `sm:col-span-${field.span}` : ''
                         }`"
                     >
-                        {{ field.label }}
+                        <div class="flex justify-content-center">
+                            <FloatLabel class="w-full">
+                                <InputText
+                                    id="username"
+                                    v-model="value"
+                                    class="w-full"
+                                    v-tooltip="'Enter your username'"
+                                />
+                                <label for="username">{{ field.label }}</label>
+                            </FloatLabel>
+                        </div>
                     </div>
                 </div>
 
