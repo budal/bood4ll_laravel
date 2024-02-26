@@ -31,17 +31,21 @@ interface FormItems {
     [key: string]: string;
 }
 
+const tabs = ref(dialogRef.value.data);
+const fields = ref([]);
+
 let formItems: FormItems = {};
 
-// props.form.forEach((forms: any) => {
-//     forms.fields.forEach((fields: any) => {
-//         fields.forEach((field: any) => {
-//             formItems[field.name] = props.data
-//                 ? props?.data[field.name] || ""
-//                 : "";
-//         });
-//     });
-// });
+tabs.value.forEach((form: any) => {
+    form.fields.forEach((field: any) => {
+        // console.log(field);
+        // fields.forEach((field: any) => {
+        //         formItems[field.name] = props.data
+        //             ? props?.data[field.name] || ""
+        //             : "";
+        // });
+    });
+});
 
 const jsForm = useForm(formItems);
 
@@ -131,55 +135,88 @@ const submitModal = () => {
     );
 };
 
-let tabs = ref(dialogRef.value.data);
-
 const value = ref(null);
+const checked = ref(false);
 </script>
 
 <template>
-    <div
-        v-if="status"
-        :class="`mb-4 rounded-md font-medium bg-${statusTheme}-light dark:bg-${statusTheme}-dark text-sm text-center text-${statusTheme}-light dark:text-${statusTheme}-dark`"
-    >
-        {{ $t(status) }}
-    </div>
-
-    <TabView>
-        <TabPanel v-for="tab in tabs" :header="$t(tab.label)">
-            <form
-                v-if="tab.showIf !== false"
-                @submit.prevent="sendForm(tab.id)"
-                class="space-y-6"
+    <Card class="p-0">
+        <template #content>
+            <Message v-if="status" :severity="statusTheme || 'info'">
+                {{ $t(status) }}</Message
             >
-                <div :class="`grid sm:grid-cols-${tab.cols} sm:gap-2`">
-                    <div
-                        v-for="field in tab.fields"
-                        :class="`pt-6 ${
-                            field.span ? `sm:col-span-${field.span}` : ''
-                        }`"
-                    >
-                        <div class="flex justify-content-center">
-                            <FloatLabel class="w-full">
-                                <InputText
-                                    id="username"
-                                    v-model="value"
-                                    class="w-full"
-                                    v-tooltip="'Enter your username'"
-                                />
-                                <label for="username">{{ field.label }}</label>
-                            </FloatLabel>
-                        </div>
-                    </div>
-                </div>
 
-                <!-- <div
-                    v-if="props.routes[tab.id]"
-                    class="flex gap-4"
-                    :class="
-                        props.routes[tab.id].buttonClass || 'justify-start'
-                    "
-                ></div> -->
-            </form>
-        </TabPanel>
-    </TabView>
+            <TabView>
+                <TabPanel v-for="tab in tabs" :header="$t(tab.label)">
+                    <form
+                        v-if="tab.showIf !== false"
+                        @submit.prevent="sendForm(tab.id)"
+                        class="space-y-6"
+                    >
+                        <div :class="`grid sm:grid-cols-${tab.cols} sm:gap-2`">
+                            <div
+                                v-for="field in tab.fields"
+                                :class="`pt-6 ${
+                                    field.span
+                                        ? `sm:col-span-${field.span}`
+                                        : ''
+                                }`"
+                            >
+                                <div class="flex justify-content-center">
+                                    <FloatLabel
+                                        v-if="field.type === 'input'"
+                                        class="w-full"
+                                    >
+                                        <InputText
+                                            :id="field.id"
+                                            v-model="value"
+                                            class="w-full"
+                                            v-tooltip="'Enter your username'"
+                                        />
+                                        <label :for="field.id">
+                                            {{ $t(field.label || "") }}</label
+                                        >
+                                    </FloatLabel>
+                                    <FloatLabel
+                                        v-else-if="field.type === 'mask'"
+                                        class="w-full"
+                                    >
+                                        <InputMask
+                                            :id="field.name"
+                                            :mask="field.mask"
+                                            class="w-full"
+                                            v-tooltip="'Enter your username'"
+                                        />
+                                        <label :for="field.name">
+                                            {{ $t(field.label || "") }}</label
+                                        >
+                                    </FloatLabel>
+                                    <ToggleButton
+                                        v-else-if="field.type === 'toggle'"
+                                        v-model="checked"
+                                        class="w-full"
+                                        onIcon="pi pi-check"
+                                        offIcon="pi pi-times"
+                                        onLabel="On"
+                                        offLabel="Off"
+                                    />
+                                    <span v-else class="text-xs">
+                                        {{ field.name }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- <div
+                        v-if="props.routes[tab.id]"
+                        class="flex gap-4"
+                        :class="
+                            props.routes[tab.id].buttonClass || 'justify-start'
+                        "
+                    ></div> -->
+                    </form>
+                </TabPanel>
+            </TabView>
+        </template>
+    </Card>
 </template>

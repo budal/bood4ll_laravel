@@ -18,8 +18,6 @@ import { useToast } from "primevue/usetoast";
 import { DataTableRowReorderEvent } from "primevue/datatable";
 import { useDialog } from "primevue/usedialog";
 
-import NavBar from "@/Components/NavBar.vue";
-import TailwindIndicator from "@/Components/TailwindIndicator.vue";
 import { trans, transChoice } from "laravel-vue-i18n";
 import { MenuItem } from "primevue/menuitem";
 
@@ -399,204 +397,157 @@ const showProducts = () => {
 </script>
 
 <template>
-    <div class="card relative min-h-screen">
-        <nav
-            class="bg-zero-light dark:bg-zero-dark sm:sticky sm:top-0 z-[10] border-b"
-        >
-            <div
-                v-if="$page.props.auth.previousUser === true"
-                class="font-medium bg-danger-light dark:bg-danger-dark text-xs text-center text-danger-light dark:text-danger-dark"
-            >
-                {{
-                    $t(
-                        "You are managing information as a different account than you are logged in to. Be cautious.",
-                    )
-                }}
-                <Link
-                    :href="route('apps.users.return_to_my_user')"
-                    as="button"
-                    method="post"
-                    >[ {{ $t("Log out") }} ]
-                </Link>
-            </div>
-            <NavBar class="max-w-7xl mx-auto py-1 px-2 sm:px-6 lg:px-8" />
-        </nav>
-        <div class="max-w-7xl mx-auto pt-8 px-2 sm:px-6 lg:px-8 space-y-6">
-            <DeferredContent
-                @load="onDataLoad"
-                role="region"
-                aria-live="polite"
-                aria-label="Content loaded after page scrolled down"
-            >
-                <Card>
-                    <template #title>{{ $t(component.label || "") }}</template>
-                    <template #subtitle>{{
-                        $t(component.description || "")
-                    }}</template>
-                    <template #content>
-                        <DataTable
-                            ref="dt"
-                            :value="contentItems"
-                            dataKey="id"
-                            v-model:selection="selectedItems"
-                            v-model:expandedRows="expandedRows"
-                            stripedRows
-                            sortMode="multiple"
-                            removableSort
-                            scrollable
-                            :loading="loadingTable"
-                            :rowReorder="
-                                props.component.routes.reorderRoute?.showIf ===
-                                true
-                            "
-                            @rowReorder="onRowReorder"
+    <DeferredContent
+        @load="onDataLoad"
+        role="region"
+        aria-live="polite"
+        aria-label="Content loaded after page scrolled down"
+    >
+        <Card>
+            <template #title>{{ $t(component.label || "") }}</template>
+            <template #subtitle>{{ $t(component.description || "") }}</template>
+            <template #content>
+                <DataTable
+                    ref="dt"
+                    :value="contentItems"
+                    dataKey="id"
+                    v-model:selection="selectedItems"
+                    v-model:expandedRows="expandedRows"
+                    stripedRows
+                    sortMode="multiple"
+                    removableSort
+                    scrollable
+                    :loading="loadingTable"
+                    :rowReorder="
+                        props.component.routes.reorderRoute?.showIf === true
+                    "
+                    @rowReorder="onRowReorder"
+                >
+                    <template #header>
+                        <div
+                            class="flex flex-wrap items-center justify-content-end justify-between gap-2"
                         >
-                            <template #header>
-                                <div
-                                    class="flex flex-wrap items-center justify-content-end justify-between gap-2"
+                            <div>
+                                <Button
+                                    icon="pi pi-ellipsis-v"
+                                    rounded
+                                    raised
+                                    @click="tableMenuToggle"
+                                    aria-haspopup="true"
+                                    aria-controls="overlay_tmenu"
+                                />
+                                <TieredMenu
+                                    ref="tableMenu"
+                                    :model="tableMenuItems"
+                                    popup
                                 >
-                                    <div>
-                                        <Button
-                                            icon="pi pi-ellipsis-v"
-                                            rounded
-                                            raised
-                                            @click="tableMenuToggle"
-                                            aria-haspopup="true"
-                                            aria-controls="overlay_tmenu"
-                                        />
-                                        <TieredMenu
-                                            ref="tableMenu"
-                                            :model="tableMenuItems"
-                                            popup
+                                    <template #item="{ item, props }">
+                                        <a
+                                            class="flex align-items-center"
+                                            v-bind="props.action"
+                                            v-ripple
                                         >
-                                            <template #item="{ item, props }">
-                                                <a
-                                                    class="flex align-items-center"
-                                                    v-bind="props.action"
-                                                    v-ripple
-                                                >
-                                                    <span :class="item.icon" />
-                                                    <span class="ml-2">
-                                                        {{
-                                                            $t(
-                                                                item.label as string,
-                                                            )
-                                                        }}
-                                                    </span>
-                                                    <Badge
-                                                        v-if="item.badge"
-                                                        class="ml-auto"
-                                                        :value="item.badge"
-                                                    />
-                                                    <span
-                                                        v-if="item.shortcut"
-                                                        class="ml-auto border-1 surface-border border-round surface-100 text-xs p-1"
-                                                        >{{
-                                                            item.shortcut
-                                                        }}</span
-                                                    >
-                                                    <span
-                                                        v-if="item.items"
-                                                        class="pi pi-chevron-right ml-auto border-1 surface-border border-round surface-100 text-xs p-1"
-                                                    />
-                                                </a>
-                                            </template>
-                                        </TieredMenu>
-                                        <Dialog
-                                            v-model:visible="columnsView"
-                                            modal
-                                            :header="trans('Columns')"
-                                            :style="{ width: '25rem' }"
-                                        >
-                                            <MultiSelect
-                                                :modelValue="selectedColumns"
-                                                :options="component.titles"
-                                                optionLabel="header"
-                                                @update:modelValue="
-                                                    onToggleColumns
-                                                "
-                                                display="chip"
-                                                :placeholder="
-                                                    $t('Select columns')
-                                                "
+                                            <span :class="item.icon" />
+                                            <span class="ml-2">
+                                                {{ $t(item.label as string) }}
+                                            </span>
+                                            <Badge
+                                                v-if="item.badge"
+                                                class="ml-auto"
+                                                :value="item.badge"
                                             />
-                                        </Dialog>
-                                    </div>
-                                    <div class="flex gap-2">
-                                        <IconField iconPosition="left">
-                                            <InputIcon>
-                                                <i class="pi pi-search" />
-                                            </InputIcon>
-                                            <InputText
-                                                v-model="
-                                                    filters['global'].value
-                                                "
-                                                :placeholder="$t('Search...')"
-                                                class="pl-8"
+                                            <span
+                                                v-if="item.shortcut"
+                                                class="ml-auto border-1 surface-border border-round surface-100 text-xs p-1"
+                                                >{{ item.shortcut }}</span
+                                            >
+                                            <span
+                                                v-if="item.items"
+                                                class="pi pi-chevron-right ml-auto border-1 surface-border border-round surface-100 text-xs p-1"
                                             />
-                                        </IconField>
-                                    </div>
-                                </div>
-                            </template>
-                            <template #empty>
-                                {{ $t("No items to show.") }}
-                            </template>
-                            <Column
-                                v-if="
-                                    props.component.routes.reorderRoute
-                                        ?.showIf === true
-                                "
-                                rowReorder
-                                headerStyle="width: 3rem"
-                                class="border-b"
-                                :reorderableColumn="false"
-                            />
-                            <Column
-                                selectionMode="multiple"
-                                headerStyle="width: 3rem "
-                                class="border-b"
-                            />
-                            <Column
-                                v-for="(col, index) of selectedColumns"
-                                :field="col.field"
-                                :header="$t(col.header)"
-                                :key="col.field + '_' + index"
-                                sortable
-                                :showFilterMenu="true"
-                                class="border-b"
-                            >
-                                <template #body="slotProps">
-                                    {{ slotProps.data[col.field] }}
-                                </template>
-                            </Column>
-                            <Column
-                                expander
-                                frozen
-                                alignFrozen="right"
-                                style="width: 5rem"
-                                class="border-b"
-                            />
-                            <template #expansion="slotProps">
-                                <div class="p-3">
-                                    <h5>
-                                        Orders for
-                                        {{ slotProps.data.shortpath }}
-                                    </h5>
-                                </div>
-                            </template>
-                        </DataTable>
+                                        </a>
+                                    </template>
+                                </TieredMenu>
+                                <Dialog
+                                    v-model:visible="columnsView"
+                                    modal
+                                    :header="trans('Columns')"
+                                    :style="{ width: '25rem' }"
+                                >
+                                    <MultiSelect
+                                        :modelValue="selectedColumns"
+                                        :options="component.titles"
+                                        optionLabel="header"
+                                        @update:modelValue="onToggleColumns"
+                                        display="chip"
+                                        :placeholder="$t('Select columns')"
+                                    />
+                                </Dialog>
+                            </div>
+                            <div class="flex gap-2">
+                                <IconField iconPosition="left">
+                                    <InputIcon>
+                                        <i class="pi pi-search" />
+                                    </InputIcon>
+                                    <InputText
+                                        v-model="filters['global'].value"
+                                        :placeholder="$t('Search...')"
+                                        class="pl-8"
+                                    />
+                                </IconField>
+                            </div>
+                        </div>
                     </template>
-                    <template #footer>
-                        <div ref="lastIntersection" class="-translate-y-96" />
+                    <template #empty>
+                        {{ $t("No items to show.") }}
                     </template>
-                </Card>
-            </DeferredContent>
-        </div>
-    </div>
-    <Toast />
-    <DynamicDialog />
-    <ConfirmDialog group="dialog" :draggable="false" />
-    <ConfirmPopup group="popup" />
-    <ScrollTop />
-    <TailwindIndicator />
+                    <Column
+                        v-if="
+                            props.component.routes.reorderRoute?.showIf === true
+                        "
+                        rowReorder
+                        headerStyle="width: 3rem"
+                        class="border-b"
+                        :reorderableColumn="false"
+                    />
+                    <Column
+                        selectionMode="multiple"
+                        headerStyle="width: 3rem "
+                        class="border-b"
+                    />
+                    <Column
+                        v-for="(col, index) of selectedColumns"
+                        :field="col.field"
+                        :header="$t(col.header)"
+                        :key="col.field + '_' + index"
+                        sortable
+                        :showFilterMenu="true"
+                        class="border-b"
+                    >
+                        <template #body="slotProps">
+                            {{ slotProps.data[col.field] }}
+                        </template>
+                    </Column>
+                    <Column
+                        expander
+                        frozen
+                        alignFrozen="right"
+                        style="width: 5rem"
+                        class="border-b"
+                    />
+                    <template #expansion="slotProps">
+                        <div class="p-3">
+                            <h5>
+                                Orders for
+                                {{ slotProps.data.shortpath }}
+                            </h5>
+                        </div>
+                    </template>
+                </DataTable>
+            </template>
+            <template #footer>
+                <div ref="lastIntersection" class="-translate-y-96" />
+            </template>
+        </Card>
+    </DeferredContent>
 </template>

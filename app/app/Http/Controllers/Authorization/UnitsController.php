@@ -49,7 +49,7 @@ class UnitsController extends Controller
             return response()->json($units);
         }
 
-        return Inertia::render('Bood4llTable', [
+        return Inertia::render('Bood4ll', [
             'component' => [
                 'type' => 'table',
                 'id' => 'units',
@@ -242,15 +242,15 @@ class UnitsController extends Controller
                         'label' => 'Inactivated at',
                     ],
                     [
-                        'type' => 'input',
+                        'type' => 'mask',
                         'name' => 'cellphone',
-                        'mask' => '(##) #####-####',
+                        'mask' => '(99) 99999-9999',
                         'label' => 'Cell phone',
                     ],
                     [
-                        'type' => 'input',
+                        'type' => 'mask',
                         'name' => 'landline',
-                        'mask' => '(##) ####-####',
+                        'mask' => '(99) 9999-9999',
                         'label' => 'Land line',
                     ],
                     [
@@ -275,9 +275,9 @@ class UnitsController extends Controller
                         'label' => 'City',
                     ],
                     [
-                        'type' => 'input',
+                        'type' => 'mask',
                         'name' => 'postcode',
-                        'mask' => '#####-###',
+                        'mask' => '99999-999',
                         'label' => 'Post code',
                     ],
                     [
