@@ -55,7 +55,7 @@ class UnitsController extends Controller
                 'id' => 'units',
                 'label' => Route::current()->title,
                 'description' => Route::current()->description,
-                // 'exportCSV' => true,
+                'exportCSV' => true,
                 'routes' => [
                     'indexRoute' => [
                         'route' => 'apps.units.index',
@@ -125,6 +125,7 @@ class UnitsController extends Controller
                         ],
                     ],
                 ],
+                'forms' => $this->__form($request, Unit::where('id', 1)->first()),
             ],
             'data' => $units,
         ]);
@@ -196,209 +197,205 @@ class UnitsController extends Controller
         return [
             [
                 'id' => 'unit',
-                'title' => 'Main data',
+                'label' => 'Main data',
                 'subtitle' => 'Unit data management.',
                 'disabledIf' => $unit->id !== null && $request->user()->cannot('isOwner', $unit),
                 'cols' => 4,
                 'fields' => [
                     [
-                        [
-                            'type' => 'input',
-                            'name' => 'name',
-                            'title' => 'Name',
-                            'span' => 2,
-                            'required' => true,
-                        ],
-                        [
-                            'type' => 'select',
-                            'name' => 'parent_id',
-                            'title' => 'Belongs to',
-                            'span' => 2,
-                            'content' => $units,
-                            'required' => true,
-                        ],
-                        [
-                            'type' => 'input',
-                            'name' => 'nickname',
-                            'title' => 'Nickname',
-                            'required' => true,
-                        ],
-                        [
-                            'type' => 'date',
-                            'name' => 'founded',
-                            'title' => 'Founded',
-                            'required' => true,
-                        ],
-                        [
-                            'type' => 'toggle',
-                            'name' => 'active',
-                            'title' => 'Active',
-                            'colorOn' => 'success',
-                            'colorOff' => 'danger',
-                        ],
-                        [
-                            'type' => 'date',
-                            'name' => 'expires',
-                            'title' => 'Inactivated at',
-                        ],
-                        [
-                            'type' => 'input',
-                            'name' => 'cellphone',
-                            'mask' => '(##) #####-####',
-                            'title' => 'Cell phone',
-                        ],
-                        [
-                            'type' => 'input',
-                            'name' => 'landline',
-                            'mask' => '(##) ####-####',
-                            'title' => 'Land line',
-                        ],
-                        [
-                            'type' => 'email',
-                            'name' => 'email',
-                            'title' => 'Email',
-                            'span' => 2,
-                        ],
-                        [
-                            'type' => 'input',
-                            'name' => 'country',
-                            'title' => 'Country',
-                        ],
-                        [
-                            'type' => 'input',
-                            'name' => 'state',
-                            'title' => 'State',
-                        ],
-                        [
-                            'type' => 'input',
-                            'name' => 'city',
-                            'title' => 'City',
-                        ],
-                        [
-                            'type' => 'input',
-                            'name' => 'postcode',
-                            'mask' => '#####-###',
-                            'title' => 'Post code',
-                        ],
-                        [
-                            'type' => 'input',
-                            'name' => 'address',
-                            'title' => 'Address',
-                            'span' => 3,
-                        ],
-                        [
-                            'type' => 'input',
-                            'name' => 'complement',
-                            'title' => 'Complement',
-                        ],
-                        [
-                            'type' => 'input',
-                            'name' => 'geo',
-                            'title' => 'Geographic coordinates',
-                            'span' => 4,
-                        ],
+                        'type' => 'input',
+                        'name' => 'name',
+                        'label' => 'Name',
+                        'span' => 2,
+                        'required' => true,
+                    ],
+                    [
+                        'type' => 'select',
+                        'name' => 'parent_id',
+                        'label' => 'Belongs to',
+                        'span' => 2,
+                        'content' => $units,
+                        'required' => true,
+                    ],
+                    [
+                        'type' => 'input',
+                        'name' => 'nickname',
+                        'label' => 'Nickname',
+                        'required' => true,
+                    ],
+                    [
+                        'type' => 'date',
+                        'name' => 'founded',
+                        'label' => 'Founded',
+                        'required' => true,
+                    ],
+                    [
+                        'type' => 'toggle',
+                        'name' => 'active',
+                        'label' => 'Active',
+                        'colorOn' => 'success',
+                        'colorOff' => 'danger',
+                    ],
+                    [
+                        'type' => 'date',
+                        'name' => 'expires',
+                        'label' => 'Inactivated at',
+                    ],
+                    [
+                        'type' => 'input',
+                        'name' => 'cellphone',
+                        'mask' => '(##) #####-####',
+                        'label' => 'Cell phone',
+                    ],
+                    [
+                        'type' => 'input',
+                        'name' => 'landline',
+                        'mask' => '(##) ####-####',
+                        'label' => 'Land line',
+                    ],
+                    [
+                        'type' => 'email',
+                        'name' => 'email',
+                        'label' => 'Email',
+                        'span' => 2,
+                    ],
+                    [
+                        'type' => 'input',
+                        'name' => 'country',
+                        'label' => 'Country',
+                    ],
+                    [
+                        'type' => 'input',
+                        'name' => 'state',
+                        'label' => 'State',
+                    ],
+                    [
+                        'type' => 'input',
+                        'name' => 'city',
+                        'label' => 'City',
+                    ],
+                    [
+                        'type' => 'input',
+                        'name' => 'postcode',
+                        'mask' => '#####-###',
+                        'label' => 'Post code',
+                    ],
+                    [
+                        'type' => 'input',
+                        'name' => 'address',
+                        'label' => 'Address',
+                        'span' => 3,
+                    ],
+                    [
+                        'type' => 'input',
+                        'name' => 'complement',
+                        'label' => 'Complement',
+                    ],
+                    [
+                        'type' => 'input',
+                        'name' => 'geo',
+                        'label' => 'Geographic coordinates',
+                        'span' => 4,
                     ],
                 ],
             ],
             [
                 'id' => 'staff',
-                'title' => 'Staff',
+                'label' => 'Staff',
                 'subtitle' => 'Staff management of this unit.',
                 'showIf' => $unit->id != null,
                 'cols' => 2,
                 'fields' => [
                     [
-                        [
-                            'type' => 'table',
-                            'name' => 'users',
-                            'span' => 2,
-                            'content' => [
-                                'routes' => [
-                                    'editRoute' => [
-                                        'route' => 'apps.users.edit',
-                                        'showIf' => Gate::allows('apps.users.index')
+                        'type' => 'table',
+                        'name' => 'users',
+                        'span' => 2,
+                        'content' => [
+                            'routes' => [
+                                'editRoute' => [
+                                    'route' => 'apps.users.edit',
+                                    'showIf' => Gate::allows('apps.users.index')
+                                ],
+                            ],
+                            'menu' => [
+                                [
+                                    'icon' => 'mdi:account-multiple',
+                                    'label' => 'Local staff',
+                                    'route' => [
+                                        'route' => 'apps.units.edit',
+                                        'attributes' => [
+                                            $unit->id,
+                                        ]
+                                    ],
+                                    'showIf' => $request->user()->can('canManageNestedData', User::class),
+                                ],
+                                [
+                                    'icon' => 'mdi:account-group-outline',
+                                    'label' => 'Total staff',
+                                    'route' => [
+                                        'route' => 'apps.units.edit',
+                                        'attributes' => [
+                                            $unit->id,
+                                            'all'
+                                        ]
+                                    ],
+                                    'showIf' => $request->user()->can('canManageNestedData', User::class)
+                                ],
+                            ],
+                            'titles' => [
+                                [
+                                    'type' => 'avatar',
+                                    'label' => 'Avatar',
+                                    'field' => 'id',
+                                    'fallback' => 'name',
+                                    'disableSort' => true,
+                                ],
+                                [
+                                    'type' => 'composite',
+                                    'label' => 'User',
+                                    'field' => 'name',
+                                    'values' => [
+                                        [
+                                            'field' => 'name',
+                                        ],
+                                        [
+                                            'field' => 'email',
+                                            'class' => 'text-xs',
+                                        ],
                                     ],
                                 ],
-                                'menu' => [
-                                    [
-                                        'icon' => 'mdi:account-multiple',
-                                        'title' => 'Local staff',
-                                        'route' => [
-                                            'route' => 'apps.units.edit',
-                                            'attributes' => [
-                                                $unit->id,
-                                            ]
+                                [
+                                    'type' => 'composite',
+                                    'label' => 'Classified',
+                                    'class' => 'collapse',
+                                    'field' => 'units_classified',
+                                    'options' => [
+                                        [
+                                            'field' => 'name',
                                         ],
-                                        'showIf' => $request->user()->can('canManageNestedData', User::class),
-                                    ],
-                                    [
-                                        'icon' => 'mdi:account-group-outline',
-                                        'title' => 'Total staff',
-                                        'route' => [
-                                            'route' => 'apps.units.edit',
-                                            'attributes' => [
-                                                $unit->id,
-                                                'all'
-                                            ]
-                                        ],
-                                        'showIf' => $request->user()->can('canManageNestedData', User::class)
                                     ],
                                 ],
-                                'titles' => [
-                                    [
-                                        'type' => 'avatar',
-                                        'title' => 'Avatar',
-                                        'field' => 'id',
-                                        'fallback' => 'name',
-                                        'disableSort' => true,
-                                    ],
-                                    [
-                                        'type' => 'composite',
-                                        'title' => 'User',
-                                        'field' => 'name',
-                                        'values' => [
-                                            [
-                                                'field' => 'name',
-                                            ],
-                                            [
-                                                'field' => 'email',
-                                                'class' => 'text-xs',
-                                            ],
+                                [
+                                    'type' => 'composite',
+                                    'label' => 'Working',
+                                    'class' => 'collapse',
+                                    'field' => 'units_working',
+                                    'options' => [
+                                        [
+                                            'field' => 'name',
                                         ],
-                                    ],
-                                    [
-                                        'type' => 'composite',
-                                        'title' => 'Classified',
-                                        'class' => 'collapse',
-                                        'field' => 'units_classified',
-                                        'options' => [
-                                            [
-                                                'field' => 'name',
-                                            ],
-                                        ],
-                                    ],
-                                    [
-                                        'type' => 'composite',
-                                        'title' => 'Working',
-                                        'class' => 'collapse',
-                                        'field' => 'units_working',
-                                        'options' => [
-                                            [
-                                                'field' => 'name',
-                                            ],
-                                        ],
-                                    ],
-                                    [
-                                        'type' => 'text',
-                                        'title' => 'Roles',
-                                        'field' => 'roles_count',
                                     ],
                                 ],
-                                'items' => $staff,
+                                [
+                                    'type' => 'text',
+                                    'label' => 'Roles',
+                                    'field' => 'roles_count',
+                                ],
                             ],
                         ],
                     ],
                 ],
+                'data' => $staff,
             ],
         ];
     }

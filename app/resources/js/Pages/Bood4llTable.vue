@@ -27,22 +27,8 @@ const props = withDefaults(
     defineProps<{
         component?: any;
         data?: any;
-        items?: any;
-        isGuest?: boolean;
-        isModal?: boolean;
-        title?: string;
-        form?: any;
-        routes?: any;
-        tabs?: boolean;
-        status?: string;
-        statusTheme?: string | null;
     }>(),
-    {
-        isGuest: false,
-        isModal: false,
-        routes: [],
-        tabs: true,
-    },
+    {},
 );
 
 const dialog = useDialog();
@@ -365,17 +351,17 @@ const onRowReorder = (event: DataTableRowReorderEvent) => {
 
 //////////////////
 
-const ProductListDemo = defineAsyncComponent(
-    () => import("@/Components/_useless/ProductListDemo.vue"),
-);
+const Form = defineAsyncComponent(() => import("@/Components/Form.vue"));
+
 const FooterDemo = defineAsyncComponent(
     () => import("@/Components/_useless/FooterDemo.vue"),
 );
 
 const showProducts = () => {
-    const dialogRef = dialog.open(ProductListDemo, {
+    dialog.open(Form, {
+        data: props.component.forms,
         props: {
-            header: "Product List",
+            header: trans("Add"),
             style: {
                 width: "50vw",
             },
@@ -519,7 +505,7 @@ const showProducts = () => {
                                         <Dialog
                                             v-model:visible="columnsView"
                                             modal
-                                            header="Columns"
+                                            :header="trans('Columns')"
                                             :style="{ width: '25rem' }"
                                         >
                                             <MultiSelect

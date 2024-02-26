@@ -115,7 +115,7 @@ const closeModal = () => {
 const submitModal = () => {
     modalForm.submit(
         modalInfo.value.method,
-        isValidUrl(modalInfo.value.route),
+        isValidUrl(modalInfo.value.route) as string,
         {
             preserveScroll: true,
             preserveState: modalInfo.value.preserveState,
@@ -319,7 +319,7 @@ const submitModal = () => {
                                 <template v-for="link in field.values">
                                     <Link
                                         v-if="link.showIf !== false"
-                                        :href="isValidUrl(link.route)"
+                                        :href="isValidUrl(link.route) as string"
                                         :method="link.method || 'get'"
                                         class="focus:outline-none underline decoration-indigo-500/30 border-transparent hover:border-zero-dark dark:hover:border-zero-white focus:border-zero-dark dark:focus:border-zero-white transition ease-in-out duration-500"
                                         as="button"
