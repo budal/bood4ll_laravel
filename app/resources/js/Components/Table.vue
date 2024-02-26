@@ -20,6 +20,9 @@ import { useDialog } from "primevue/usedialog";
 
 import { trans, transChoice } from "laravel-vue-i18n";
 import { MenuItem } from "primevue/menuitem";
+import { provide } from "vue";
+
+import Form from "@/Components/Form.vue";
 
 const props = withDefaults(
     defineProps<{
@@ -28,6 +31,8 @@ const props = withDefaults(
     }>(),
     {},
 );
+
+provide("dialogRef", props.component.forms);
 
 const dialog = useDialog();
 const toast = useToast();
@@ -349,14 +354,18 @@ const onRowReorder = (event: DataTableRowReorderEvent) => {
 
 //////////////////
 
-const Form = defineAsyncComponent(() => import("@/Components/Form.vue"));
+const FormDialog = defineAsyncComponent(
+    () => import("@/Components/FormDialog.vue"),
+);
 
 const FooterDemo = defineAsyncComponent(
     () => import("@/Components/_useless/FooterDemo.vue"),
 );
 
+// console.log(props.component.forms);
+
 const showProducts = () => {
-    dialog.open(Form, {
+    dialog.open(FormDialog, {
         data: props.component.forms,
         props: {
             header: trans("Add"),
@@ -532,16 +541,15 @@ const showProducts = () => {
                         expander
                         frozen
                         alignFrozen="right"
-                        style="width: 5rem"
+                        style="width: 1rem"
                         class="border-b"
                     />
                     <template #expansion="slotProps">
-                        <div class="p-3">
-                            <h5>
-                                Orders for
-                                {{ slotProps.data.shortpath }}
-                            </h5>
-                        </div>
+                        <Chip
+                            :label="slotProps.data.shortpath"
+                            class="font-bold mb-2"
+                        />
+                        <Form :component="component.forms" />
                     </template>
                 </DataTable>
             </template>

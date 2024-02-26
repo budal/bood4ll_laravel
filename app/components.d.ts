@@ -12,6 +12,7 @@ declare module 'vue' {
     Breadcrumb: typeof import('primevue/breadcrumb')['default']
     Button: typeof import('primevue/button')['default']
     Card: typeof import('primevue/card')['default']
+    Chip: typeof import('primevue/chip')['default']
     Column: typeof import('primevue/column')['default']
     DataTable: typeof import('primevue/datatable')['default']
     DeferredContent: typeof import('primevue/deferredcontent')['default']

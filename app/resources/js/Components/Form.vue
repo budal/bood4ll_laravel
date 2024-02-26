@@ -1,17 +1,17 @@
 <script setup lang="ts">
 import { isValidUrl, toast } from "@/helpers";
-import { nextTick, ref } from "vue";
+import { Ref, nextTick, ref } from "vue";
 import { Link, useForm } from "@inertiajs/vue3";
 
 import { inject, onMounted } from "vue";
 
 import TabView from "primevue/tabview";
 import TabPanel from "primevue/tabpanel";
-
-const dialogRef = inject("dialogRef");
+import type { DynamicDialogInstance } from "primevue/dynamicdialogoptions";
 
 const props = withDefaults(
     defineProps<{
+        component?: any;
         create?: any;
         form?: any;
         routes?: any;
@@ -31,12 +31,12 @@ interface FormItems {
     [key: string]: string;
 }
 
-const tabs = ref(dialogRef.value.data);
+const tabs = ref(props.component);
 const fields = ref([]);
 
 let formItems: FormItems = {};
 
-tabs.value.forEach((form: any) => {
+props.component.forEach((form: any) => {
     form.fields.forEach((field: any) => {
         // console.log(field);
         // fields.forEach((field: any) => {
@@ -147,7 +147,7 @@ const checked = ref(false);
             >
 
             <TabView>
-                <TabPanel v-for="tab in tabs" :header="$t(tab.label)">
+                <TabPanel v-for="tab in component" :header="$t(tab.label)">
                     <form
                         v-if="tab.showIf !== false"
                         @submit.prevent="sendForm(tab.id)"
