@@ -140,7 +140,7 @@ const checked = ref(false);
 </script>
 
 <template>
-    <Card class="p-0">
+    <Card>
         <template #content>
             <Message v-if="status" :severity="statusTheme || 'info'">
                 {{ $t(status) }}</Message
