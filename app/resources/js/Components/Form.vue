@@ -137,87 +137,123 @@ const submitModal = () => {
 
 const value = ref(null);
 const checked = ref(false);
+
+async function getData(route: any) {
+    try {
+        const response = await fetch(isValidUrl(route) as string);
+        return await response.json();
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+const onDataLoad = () => {
+    console.log(1);
+
+    // getData(props.component.routes.indexRoute).then((content) => {
+    //     contentItems.value = content.data;
+    //     nextPageURL.value = content.next_page_url;
+    //     loadingTable.value = false;
+    // });
+};
 </script>
 
 <template>
     <Card>
         <template #content>
             <Message v-if="status" :severity="statusTheme || 'info'">
-                {{ $t(status) }}</Message
-            >
+                {{ $t(status) }}
+            </Message>
 
-            <TabView>
-                <TabPanel v-for="tab in component" :header="$t(tab.label)">
-                    <form
-                        v-if="tab.showIf !== false"
-                        @submit.prevent="sendForm(tab.id)"
-                        class="space-y-6"
-                    >
-                        <div :class="`grid sm:grid-cols-${tab.cols} sm:gap-2`">
+            <DeferredContent
+                @load="onDataLoad"
+                role="region"
+                aria-live="polite"
+                aria-label="Content loaded after page scrolled down"
+            >
+                <TabView>
+                    <TabPanel v-for="tab in component" :header="$t(tab.label)">
+                        <form
+                            v-if="tab.showIf !== false"
+                            @submit.prevent="sendForm(tab.id)"
+                            class="space-y-6"
+                        >
                             <div
-                                v-for="field in tab.fields"
-                                :class="`pt-6 ${
-                                    field.span
-                                        ? `sm:col-span-${field.span}`
-                                        : ''
-                                }`"
+                                :class="`grid sm:grid-cols-${tab.cols} sm:gap-2`"
                             >
-                                <div class="flex justify-content-center">
-                                    <FloatLabel
-                                        v-if="field.type === 'input'"
-                                        class="w-full"
-                                    >
-                                        <InputText
-                                            :id="field.name"
-                                            v-model="value"
+                                <div
+                                    v-for="field in tab.fields"
+                                    :class="`pt-6 ${
+                                        field.span
+                                            ? `sm:col-span-${field.span}`
+                                            : ''
+                                    }`"
+                                >
+                                    <div class="flex justify-content-center">
+                                        <FloatLabel
+                                            v-if="field.type === 'input'"
                                             class="w-full"
-                                            v-tooltip="'Enter your username'"
-                                        />
-                                        <label :for="field.name">
-                                            {{ $t(field.label || "") }}</label
                                         >
-                                    </FloatLabel>
-                                    <FloatLabel
-                                        v-else-if="field.type === 'mask'"
-                                        class="w-full"
-                                    >
-                                        <InputMask
-                                            :id="field.name"
-                                            :mask="field.mask"
+                                            <InputText
+                                                :id="field.name"
+                                                v-model="value"
+                                                class="w-full"
+                                                v-tooltip="
+                                                    'Enter your username'
+                                                "
+                                            />
+                                            <label :for="field.name">
+                                                {{
+                                                    $t(field.label || "")
+                                                }}</label
+                                            >
+                                        </FloatLabel>
+                                        <FloatLabel
+                                            v-else-if="field.type === 'mask'"
                                             class="w-full"
-                                            v-tooltip="'Enter your username'"
-                                        />
-                                        <label :for="field.name">
-                                            {{ $t(field.label || "") }}</label
                                         >
-                                    </FloatLabel>
-                                    <ToggleButton
-                                        v-else-if="field.type === 'toggle'"
-                                        :id="field.name"
-                                        v-model="checked"
-                                        class="w-full"
-                                        onIcon="pi pi-check"
-                                        offIcon="pi pi-times"
-                                        onLabel="On"
-                                        offLabel="Off"
-                                    />
-                                    <span v-else class="text-xs">
-                                        {{ field.name }}
-                                    </span>
+                                            <InputMask
+                                                :id="field.name"
+                                                :mask="field.mask"
+                                                class="w-full"
+                                                v-tooltip="
+                                                    'Enter your username'
+                                                "
+                                            />
+                                            <label :for="field.name">
+                                                {{
+                                                    $t(field.label || "")
+                                                }}</label
+                                            >
+                                        </FloatLabel>
+                                        <ToggleButton
+                                            v-else-if="field.type === 'toggle'"
+                                            :id="field.name"
+                                            v-model="checked"
+                                            class="w-full"
+                                            onIcon="pi pi-check"
+                                            offIcon="pi pi-times"
+                                            onLabel="On"
+                                            offLabel="Off"
+                                        />
+                                        <span v-else class="text-xs">
+                                            {{ field.name }}
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- <div
+                            <!-- <div
                         v-if="props.routes[tab.id]"
                         class="flex gap-4"
                         :class="
                             props.routes[tab.id].buttonClass || 'justify-start'
                         "
                     ></div> -->
-                    </form>
-                </TabPanel>
-            </TabView>
+                        </form>
+                    </TabPanel>
+                </TabView>
+            </DeferredContent>
         </template>
     </Card>
 </template>

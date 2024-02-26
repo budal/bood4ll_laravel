@@ -49,7 +49,7 @@ const props = withDefaults(
                 :data="data"
             />
             <Form
-                v-if="component.type === 'form'"
+                v-else-if="component.type === 'form'"
                 :component="component"
                 :data="data"
             />
