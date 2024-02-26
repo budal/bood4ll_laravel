@@ -149,11 +149,9 @@ let tabs = ref(dialogRef.value.data);
                 @submit.prevent="sendForm(tab.id)"
                 class="space-y-6"
             >
-                <div
-                    v-for="field in tab.fields"
-                    :class="`grid sm:grid-cols-${tab.cols} sm:gap-4`"
-                >
+                <div :class="`grid sm:grid-cols-${tab.cols} sm:gap-4`">
                     <div
+                        v-for="field in tab.fields"
                         :class="`${
                             field.span ? `sm:col-span-${field.span}` : ''
                         }`"
