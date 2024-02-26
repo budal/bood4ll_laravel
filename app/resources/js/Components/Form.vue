@@ -168,12 +168,12 @@ const checked = ref(false);
                                         class="w-full"
                                     >
                                         <InputText
-                                            :id="field.id"
+                                            :id="field.name"
                                             v-model="value"
                                             class="w-full"
                                             v-tooltip="'Enter your username'"
                                         />
-                                        <label :for="field.id">
+                                        <label :for="field.name">
                                             {{ $t(field.label || "") }}</label
                                         >
                                     </FloatLabel>
@@ -193,6 +193,7 @@ const checked = ref(false);
                                     </FloatLabel>
                                     <ToggleButton
                                         v-else-if="field.type === 'toggle'"
+                                        :id="field.name"
                                         v-model="checked"
                                         class="w-full"
                                         onIcon="pi pi-check"
