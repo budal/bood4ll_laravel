@@ -13,6 +13,7 @@ const props = withDefaults(
     defineProps<{
         component?: any;
         data?: any;
+        route?: any;
         create?: any;
         form?: any;
         routes?: any;
@@ -147,17 +148,19 @@ async function getData(route: any) {
     }
 }
 
-console.log(props.component, props.data);
+console.log(props.component, props.route);
 
 const onDataLoad = () => {
-    getData("http://localhost/apps/units/edit/" + props.data.id).then(
-        (content) => {
-            console.log(content);
-            //     contentItems.value = content.data;
-            //     nextPageURL.value = content.next_page_url;
-            //     loadingTable.value = false;
-        },
-    );
+    if (props.data?.id) {
+        getData("http://localhost/apps/units/edit/" + props.data?.id).then(
+            (content) => {
+                console.log(content);
+                //     contentItems.value = content.data;
+                //     nextPageURL.value = content.next_page_url;
+                //     loadingTable.value = false;
+            },
+        );
+    }
 };
 </script>
 
