@@ -544,8 +544,8 @@ const openDialog = () => {
                         <Form
                             :component="component.forms"
                             :data="slotProps.data"
+                            :formRoute="component.routes.editRoute"
                         />
-                        {{ console.log(component.forms) }}
                     </template>
                 </DataTable>
             </template>
