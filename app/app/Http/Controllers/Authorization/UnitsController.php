@@ -507,7 +507,7 @@ class UnitsController extends Controller
         ]);
     }
 
-    public function edit(Request $request, Unit $unit): Response
+    public function edit(Request $request, Unit $unit): JsonResponse
     {
         $this->authorize('access', User::class);
         $this->authorize('isActive', $unit);
@@ -515,16 +515,7 @@ class UnitsController extends Controller
 
         $unit['abilities_disabled'] = $unit->id;
 
-        return Inertia::render('Default', [
-            'form' => $this->__form($request, $unit),
-            'routes' => [
-                'unit' => [
-                    'route' => route('apps.units.update', $unit->id),
-                    'method' => 'patch',
-                ],
-            ],
-            'data' => $unit,
-        ]);
+        return response()->json($unit);
     }
 
     public function update(Unit $unit, Request $request): RedirectResponse

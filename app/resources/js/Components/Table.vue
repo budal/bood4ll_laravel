@@ -33,12 +33,11 @@ const props = withDefaults(
 );
 
 provide("dialogRef", props.component.forms);
+const contentItems = ref(props.data?.data ?? []);
 
 const dialog = useDialog();
 const toast = useToast();
 const confirm = useConfirm();
-
-const contentItems = ref(props.data?.data ?? []);
 
 const dt = ref();
 const lastIntersection = ref(null);
@@ -47,9 +46,9 @@ const loadingTable = ref(contentItems.value.length === 0);
 const selectedItems = ref([]);
 const expandedRows = ref([]);
 const tableMenu = ref();
-const columnsView = ref(false);
-const columns = ref(props.component.titles);
-const selectedColumns = ref(columns.value);
+const selectColumns = ref(false);
+const tableColumns = ref(props.component.titles);
+const selectedColumns = ref(tableColumns.value);
 
 const tableMenuToggle = (event: MouseEvent) => {
     tableMenu.value.toggle(event);
@@ -71,7 +70,7 @@ const _tableMenuItemsEdit: MenuItem[] = [
         visible: props.component.routes.createRoute?.showIf === true,
         icon: "pi pi-plus",
         command: () => {
-            showProducts();
+            openDialog();
 
             // console.log(props.component.routes.createRoute?.route)
             // router.visit(
@@ -174,7 +173,7 @@ const _tableMenuItemsShow: MenuItem[] = [
         label: "Columns",
         icon: "pi pi-list",
         command: () => {
-            columnsView.value = true;
+            selectColumns.value = true;
         },
     },
     {
@@ -225,7 +224,7 @@ const tableMenuItems = ref([
 ]);
 
 const onToggleColumns = (val: string | any[]) => {
-    selectedColumns.value = columns.value.filter((col: any) =>
+    selectedColumns.value = tableColumns.value.filter((col: any) =>
         val.includes(col),
     );
 };
@@ -352,8 +351,6 @@ const onRowReorder = (event: DataTableRowReorderEvent) => {
     });
 };
 
-//////////////////
-
 const FormDialog = defineAsyncComponent(
     () => import("@/Components/FormDialog.vue"),
 );
@@ -362,9 +359,7 @@ const FooterDemo = defineAsyncComponent(
     () => import("@/Components/_useless/FooterDemo.vue"),
 );
 
-// console.log(props.component.forms);
-
-const showProducts = () => {
+const openDialog = () => {
     dialog.open(FormDialog, {
         data: props.component.forms,
         props: {
@@ -475,7 +470,7 @@ const showProducts = () => {
                                     </template>
                                 </TieredMenu>
                                 <Dialog
-                                    v-model:visible="columnsView"
+                                    v-model:visible="selectColumns"
                                     modal
                                     :header="trans('Columns')"
                                     :style="{ width: '25rem' }"
@@ -546,7 +541,11 @@ const showProducts = () => {
                             :label="slotProps.data.shortpath"
                             class="font-bold mb-2"
                         />
-                        <Form :component="component.forms" />
+                        <Form
+                            :component="component.forms"
+                            :data="slotProps.data"
+                        />
+                        {{ console.log(component.forms) }}
                     </template>
                 </DataTable>
             </template>

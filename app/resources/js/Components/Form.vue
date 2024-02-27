@@ -12,10 +12,10 @@ import type { DynamicDialogInstance } from "primevue/dynamicdialogoptions";
 const props = withDefaults(
     defineProps<{
         component?: any;
+        data?: any;
         create?: any;
         form?: any;
         routes?: any;
-        data?: any;
         shortcutKey?: string;
         tabs?: boolean;
         status?: string | null;
@@ -147,14 +147,17 @@ async function getData(route: any) {
     }
 }
 
-const onDataLoad = () => {
-    console.log(1);
+console.log(props.component, props.data);
 
-    // getData(props.component.routes.indexRoute).then((content) => {
-    //     contentItems.value = content.data;
-    //     nextPageURL.value = content.next_page_url;
-    //     loadingTable.value = false;
-    // });
+const onDataLoad = () => {
+    getData("http://localhost/apps/units/edit/" + props.data.id).then(
+        (content) => {
+            console.log(content);
+            //     contentItems.value = content.data;
+            //     nextPageURL.value = content.next_page_url;
+            //     loadingTable.value = false;
+        },
+    );
 };
 </script>
 
