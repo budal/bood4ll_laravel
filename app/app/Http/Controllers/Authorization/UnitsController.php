@@ -114,21 +114,16 @@ class UnitsController extends Controller
                                         'showIf' => $request->user()->can('canManageNestedData', User::class),
                                     ],
                                     [
-                                        'type' => 'composite',
-                                        'header' => 'Staff',
-                                        'field' => 'users_all_count',
+                                        'type' => 'text',
+                                        'header' => 'Local staff',
+                                        'field' => 'users_count',
                                         'showIf' => $request->user()->can('hasFullAccess', User::class),
-                                        'values' => [
-                                            [
-                                                'field' => 'users_all_count',
-                                                'class' => 'text-xs',
-                                                'showIf' => $request->user()->can('canManageNestedData', User::class),
-                                            ],
-                                            [
-                                                'field' => 'users_count',
-                                                'class' => 'text-xs',
-                                            ],
-                                        ],
+                                    ],
+                                    [
+                                        'type' => 'text',
+                                        'header' => 'Total staff',
+                                        'field' => 'users_all_count',
+                                        'showIf' => $request->user()->can('canManageNestedData', User::class),
                                     ],
                                 ],
                                 'forms' => $this->__form($request, Unit::where('id', 1)->first()),

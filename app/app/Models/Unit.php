@@ -67,19 +67,12 @@ class Unit extends Base
         }
     }
 
-    protected function usersCount(): Attribute
-    {
-        return Attribute::make(
-            get: fn (string $value) => "Local: " . $value,
-        );
-    }
-
-    protected function usersAllCount(): Attribute
-    {
-        return Attribute::make(
-            get: fn (string $value) => "Total: " . $value,
-        );
-    }
+    // protected function usersCount(): Attribute
+    // {
+    //     return Attribute::make(
+    //         get: fn (string $value) => "Local: " . $value,
+    //     );
+    // }
 }
 
 // return $query->select('units.*')
