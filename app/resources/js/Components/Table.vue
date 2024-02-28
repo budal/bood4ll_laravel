@@ -23,6 +23,7 @@ import { MenuItem } from "primevue/menuitem";
 import { provide } from "vue";
 
 import Structure from "@/Components/Structure.vue";
+import { reactive } from "vue";
 
 const props = defineProps<{
     component?: any;
@@ -46,6 +47,7 @@ const tableMenu = ref();
 const selectColumns = ref(false);
 const tableColumns = ref(props.component.titles);
 const selectedColumns = ref(tableColumns.value);
+const formRef = reactive(new Set());
 
 const tableMenuToggle = (event: MouseEvent) => {
     tableMenu.value.toggle(event);
@@ -53,8 +55,8 @@ const tableMenuToggle = (event: MouseEvent) => {
 
 const selectedItemsTotal = computed(() => selectedItems.value);
 
-watch(selectedItemsTotal, () => {
-    // console.log(selectedItemsTotal.value.length < 1);
+watch(formRef, () => {
+    console.log(formRef);
 });
 
 const _tableMenuItemsEdit: MenuItem[] = [
@@ -318,12 +320,27 @@ async function getData(route: any) {
     }
 }
 
-const onDataLoad = () => {
+const onTableDataLoad = () => {
     getData(props.component.routes.indexRoute).then((content) => {
         contentItems.value = content.data;
         nextPageURL.value = content.next_page_url;
         loadingTable.value = false;
     });
+};
+
+const onFormDataLoad = (route: any, id: string) => {
+    if (Array.from(formRef).some((item) => item.id === id) === false) {
+        getData(isValidUrl({ route: route.route, attributes: [id] })).then(
+            (content) => {
+                formRef.add({ id: id, data: content });
+                // return content;
+            },
+        );
+        // } else {
+        //     return Array.from(formRef).find((item) => item.id === id);
+    }
+
+    console.log(Array.from(formRef).find((item) => item.id === id));
 };
 
 useIntersectionObserver(lastIntersection, ([{ isIntersecting }]) => {
@@ -396,7 +413,7 @@ const openDialog = () => {
 
 <template>
     <DeferredContent
-        @load="onDataLoad"
+        @load="onTableDataLoad"
         role="region"
         aria-live="polite"
         aria-label="Content loaded after page scrolled down"
@@ -526,14 +543,26 @@ const openDialog = () => {
                 class="border-b"
             />
             <template #expansion="slotProps">
-                <Chip
-                    :label="slotProps.data.shortpath"
-                    class="font-bold mb-2"
-                />
-                <Structure
-                    :component="component.forms.component"
-                    :tabs="component.forms.tabs"
-                />
+                <DeferredContent
+                    @load="
+                        onFormDataLoad(
+                            component.forms.routes.editRoute,
+                            slotProps.data.id,
+                        )
+                    "
+                    role="region"
+                    aria-live="polite"
+                    aria-label="Content loaded after page scrolled down"
+                >
+                    <Chip
+                        :label="slotProps.data.shortpath"
+                        class="font-bold mb-2"
+                    />
+                    <Structure
+                        :component="component.forms.component"
+                        :tabs="component.forms.tabs"
+                    />
+                </DeferredContent>
             </template>
         </DataTable>
         <div ref="lastIntersection" class="-translate-y-96" />

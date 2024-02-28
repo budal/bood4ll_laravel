@@ -13,7 +13,10 @@ import Table from "@/Components/Table.vue";
 
 const props = withDefaults(
     defineProps<{
-        component?: any;
+        component: any;
+        buildRoute?: string;
+
+        ///////
         data?: any;
         formRoute?: any;
         create?: any;
@@ -140,30 +143,6 @@ const submitModal = () => {
 
 const value = ref(null);
 const checked = ref(false);
-
-async function getData(route: any) {
-    try {
-        const response = await fetch(isValidUrl(route) as string);
-        return await response.json();
-    } catch (error) {
-        console.error(error);
-    }
-}
-
-// console.log(props.formRoute);
-
-const onDataLoad = () => {
-    if (props.data?.id) {
-        getData("http://localhost/apps/units/edit/" + props.data?.id).then(
-            (content) => {
-                // console.log(content);
-                //     contentItems.value = content.data;
-                //     nextPageURL.value = content.next_page_url;
-                //     loadingTable.value = false;
-            },
-        );
-    }
-};
 </script>
 
 <template>

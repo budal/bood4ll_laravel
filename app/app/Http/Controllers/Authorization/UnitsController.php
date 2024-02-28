@@ -207,6 +207,14 @@ class UnitsController extends Controller
         return [
 
             // 'tabs' => false,
+            'routes' => [
+                'createRoute' => [
+                    'route' => 'apps.units.create',
+                ],
+                'editRoute' => [
+                    'route' => 'apps.units.edit',
+                ],
+            ],
             'component' => [
                 [
                     'label' => 'Main data',

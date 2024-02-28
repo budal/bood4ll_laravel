@@ -3,8 +3,9 @@ import ChangeUser from "@/Components/ChangeUser.vue";
 import NavBar from "@/Components/NavBar.vue";
 import Structure from "@/Components/Structure.vue";
 import TailwindIndicator from "@/Components/TailwindIndicator.vue";
+import { provide } from "vue";
 
-withDefaults(
+const props = withDefaults(
     defineProps<{
         component: any;
         tabs?: boolean;
