@@ -516,13 +516,14 @@ const openDialog = () => {
                 </template>
             </Column>
             <Column
+                v-if="component.forms"
                 expander
                 frozen
                 alignFrozen="right"
                 style="width: 1rem"
                 class="border-b"
             />
-            <template #expansion="slotProps">
+            <template v-if="component.forms" #expansion="slotProps">
                 <Structure
                     :component="component.forms.component"
                     :tabs="component.forms.tabs"
