@@ -10,13 +10,5 @@ const data = ref(dialogRef?.value.data);
 </script>
 
 <template>
-    <Structure
-        :component="data.component"
-        :tabs="data.tabs"
-        :buildRoute="
-            isValidUrl({
-                route: data.routes.createRoute.route,
-            })
-        "
-    />
+    <Structure :component="data.component" :tabs="data.tabs" />
 </template>

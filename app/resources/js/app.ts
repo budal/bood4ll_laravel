@@ -10,21 +10,21 @@ import { i18nVue } from "laravel-vue-i18n";
 import PrimeVue from "primevue/config";
 import ConfirmationService from "primevue/confirmationservice";
 import DialogService from "primevue/dialogservice";
-import DynamicDialog from "primevue/dynamicdialog";
 import FocusTrap from "primevue/focustrap";
 import Ripple from "primevue/ripple";
 import StyleClass from "primevue/styleclass";
 import ToastService from "primevue/toastservice";
+import Tooltip from "primevue/tooltip";
 import "primevue/resources/themes/aura-light-blue/theme.css";
 // import "primevue/resources/themes/aura-dark-blue/theme.css";
 import "primeicons/primeicons.css";
+import DynamicDialog from "primevue/dynamicdialog";
 import ConfirmDialog from "primevue/confirmdialog";
 import ConfirmPopup from "primevue/confirmpopup";
 import FloatLabel from "primevue/floatlabel";
 import InputIcon from "primevue/inputicon";
 import IconField from "primevue/iconfield";
 import Toast from "primevue/toast";
-import Tooltip from "primevue/tooltip";
 
 import { Icon } from "@iconify/vue";
 
@@ -65,6 +65,9 @@ createInertiaApp({
                 },
             })
             .use(PrimeVue, { ripple: true })
+            .use(ConfirmationService)
+            .use(DialogService)
+            .use(ToastService)
             .directive("focustrap", FocusTrap)
             .directive("ripple", Ripple)
             .directive("styleclass", StyleClass)
@@ -77,9 +80,6 @@ createInertiaApp({
             .component("IconField", IconField)
             .component("Toast", Toast)
             .component("Icon", Icon)
-            .use(ConfirmationService)
-            .use(DialogService)
-            .use(ToastService)
             .use(Vue3Toasity, {
                 autoClose: 3000,
                 limit: 5,

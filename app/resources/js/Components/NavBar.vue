@@ -67,15 +67,6 @@ const menu = ref(false);
                 </template>
                 <template #end>
                     <div class="xs:-mr-2 flex items-center gap-2 sm:ml-6">
-                        <IconField iconPosition="left">
-                            <InputIcon>
-                                <i class="pi pi-search" />
-                            </InputIcon>
-                            <InputText
-                                :placeholder="$t('Search...')"
-                                class="pl-8"
-                            />
-                        </IconField>
                         <button @click="menu = true">
                             <Avatar
                                 :label="
