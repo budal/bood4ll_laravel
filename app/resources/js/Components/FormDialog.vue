@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { ref, Ref, inject } from "vue";
 import type { DynamicDialogInstance } from "primevue/dynamicdialogoptions";
-import Form from "@/Components/Form.vue";
+import Build from "@/Components/Build.vue";
 
 const dialogRef = inject<Ref<DynamicDialogInstance>>("dialogRef");
 
-const form = ref(dialogRef?.value.data);
+const data = ref(dialogRef?.value.data);
 </script>
 
 <template>
-    <Form :component="form" />
+    <Build :component="data" />
 </template>

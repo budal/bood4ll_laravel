@@ -2,16 +2,18 @@
 import { Link } from "@inertiajs/vue3";
 import NavBar from "@/Components/NavBar.vue";
 import TailwindIndicator from "@/Components/TailwindIndicator.vue";
-
-import Form from "@/Components/Form.vue";
-import Table from "@/Components/Table.vue";
+import Build from "@/Components/Build.vue";
+import Structure from "@/Components/Structure.vue";
+import { provide } from "vue";
 
 const props = withDefaults(
     defineProps<{
-        component?: any;
-        data?: any;
+        component: any;
+        tabs?: boolean;
     }>(),
-    {},
+    {
+        tabs: true,
+    },
 );
 </script>
 
@@ -43,16 +45,7 @@ const props = withDefaults(
             </Card>
         </nav>
         <div class="max-w-7xl mx-auto pt-8 px-2 sm:px-6 lg:px-8 space-y-6">
-            <Table
-                v-if="component.type === 'table'"
-                :component="component"
-                :data="data"
-            />
-            <Form
-                v-else-if="component.type === 'form'"
-                :component="component"
-                :data="data"
-            />
+            <Structure :component="component" :tabs="tabs" />
         </div>
     </div>
     <Toast />

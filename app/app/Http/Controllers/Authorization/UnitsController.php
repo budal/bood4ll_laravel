@@ -50,84 +50,111 @@ class UnitsController extends Controller
         }
 
         return Inertia::render('Bood4ll', [
+            // 'tabs' => false,
             'component' => [
-                'type' => 'table',
-                'id' => 'units',
-                'label' => Route::current()->title,
-                'description' => Route::current()->description,
-                'exportCSV' => true,
-                'routes' => [
-                    'indexRoute' => [
-                        'route' => 'apps.units.index',
-                        'attributes' => ['json'],
-                    ],
-                    'createRoute' => [
-                        'route' => 'apps.units.create',
-                        'showIf' => Gate::allows('apps.units.create') && $request->user()->can('isManager', User::class) && $request->user()->can('canManageNestedData', User::class),
-                    ],
-                    'editRoute' => [
-                        'route' => 'apps.units.edit',
-                        'showIf' => Gate::allows('apps.units.edit'),
-                    ],
-                    'destroyRoute' => [
-                        'route' => 'apps.units.destroy',
-                        'showIf' => Gate::allows('apps.units.destroy') && $request->user()->can('isManager', User::class),
-                    ],
-                    'forceDestroyRoute' => [
-                        'route' => 'apps.roles.forcedestroy',
-                        'showIf' => Gate::allows('apps.roles.forcedestroy') && $request->user()->can('isSuperAdmin', User::class),
-                    ],
-                    'restoreRoute' => [
-                        'route' => 'apps.units.restore',
-                        'showIf' => Gate::allows('apps.units.restore') && $request->user()->can('isManager', User::class),
-                    ],
-                    // 'reorderRoute' => [
-                    //     'route' => 'apps.units.reorder',
-                    //     'showIf' => Gate::allows('apps.units.reorder') && $request->user()->can('isManager', User::class),
-                    // ],
-                ],
-                'menu' => [
-                    [
-                        'icon' => 'pi pi-replay',
-                        'label' => 'Refresh units hierarchy',
-                        'route' => 'apps.units.hierarchy',
-                        'method' => 'post',
-                        'showIf' => $request->user()->can('isSuperAdmin', User::class),
+                [
+                    'label' => 'Main data1',
+                    'subtitle' => 'Unit data management.',
+                    'cols' => 4,
+                    'fields' => [
+                        [
+                            'type' => 'input',
+                            'name' => 'name',
+                            'label' => 'Name',
+                            'span' => 2,
+                            'required' => true,
+                        ],
                     ],
                 ],
-                'titles' => [
-                    [
-                        'type' => 'text',
-                        'header' => 'Name',
-                        'field' => 'shortpath',
-                    ],
-                    [
-                        'type' => 'text',
-                        'header' => 'Subunits',
-                        'field' => 'children_count',
-                        'showIf' => $request->user()->can('canManageNestedData', User::class),
-                    ],
-                    [
-                        'type' => 'composite',
-                        'header' => 'Staff',
-                        'field' => 'users_all_count',
-                        'showIf' => $request->user()->can('hasFullAccess', User::class),
-                        'values' => [
-                            [
-                                'field' => 'users_all_count',
-                                'class' => 'text-xs',
-                                'showIf' => $request->user()->can('canManageNestedData', User::class),
-                            ],
-                            [
-                                'field' => 'users_count',
-                                'class' => 'text-xs',
+                [
+                    'label' => 'Main data2',
+                    'subtitle' => 'Unit data management.',
+                    'fields' => [
+                        [
+                            'type' => 'table',
+                            'component' => [
+                                'type' => 'table',
+                                'id' => 'units',
+                                'label' => Route::current()->title,
+                                'description' => Route::current()->description,
+                                'exportCSV' => true,
+                                'routes' => [
+                                    'indexRoute' => [
+                                        'route' => 'apps.units.index',
+                                        'attributes' => ['json'],
+                                    ],
+                                    'createRoute' => [
+                                        'route' => 'apps.units.create',
+                                        'showIf' => Gate::allows('apps.units.create') && $request->user()->can('isManager', User::class) && $request->user()->can('canManageNestedData', User::class),
+                                    ],
+                                    'editRoute' => [
+                                        'route' => 'apps.units.edit',
+                                        'showIf' => Gate::allows('apps.units.edit'),
+                                    ],
+                                    'destroyRoute' => [
+                                        'route' => 'apps.units.destroy',
+                                        'showIf' => Gate::allows('apps.units.destroy') && $request->user()->can('isManager', User::class),
+                                    ],
+                                    'forceDestroyRoute' => [
+                                        'route' => 'apps.roles.forcedestroy',
+                                        'showIf' => Gate::allows('apps.roles.forcedestroy') && $request->user()->can('isSuperAdmin', User::class),
+                                    ],
+                                    'restoreRoute' => [
+                                        'route' => 'apps.units.restore',
+                                        'showIf' => Gate::allows('apps.units.restore') && $request->user()->can('isManager', User::class),
+                                    ],
+                                    // 'reorderRoute' => [
+                                    //     'route' => 'apps.units.reorder',
+                                    //     'showIf' => Gate::allows('apps.units.reorder') && $request->user()->can('isManager', User::class),
+                                    // ],
+                                ],
+                                'menu' => [
+                                    [
+                                        'icon' => 'pi pi-replay',
+                                        'label' => 'Refresh units hierarchy',
+                                        'route' => 'apps.units.hierarchy',
+                                        'method' => 'post',
+                                        'showIf' => $request->user()->can('isSuperAdmin', User::class),
+                                    ],
+                                ],
+                                'titles' => [
+                                    [
+                                        'type' => 'text',
+                                        'header' => 'Name',
+                                        'field' => 'shortpath',
+                                    ],
+                                    [
+                                        'type' => 'text',
+                                        'header' => 'Subunits',
+                                        'field' => 'children_count',
+                                        'showIf' => $request->user()->can('canManageNestedData', User::class),
+                                    ],
+                                    [
+                                        'type' => 'composite',
+                                        'header' => 'Staff',
+                                        'field' => 'users_all_count',
+                                        'showIf' => $request->user()->can('hasFullAccess', User::class),
+                                        'values' => [
+                                            [
+                                                'field' => 'users_all_count',
+                                                'class' => 'text-xs',
+                                                'showIf' => $request->user()->can('canManageNestedData', User::class),
+                                            ],
+                                            [
+                                                'field' => 'users_count',
+                                                'class' => 'text-xs',
+                                            ],
+                                        ],
+                                    ],
+                                ],
+                                'forms' => $this->__form($request, Unit::where('id', 1)->first()),
+                                'data' => $units,
                             ],
                         ],
                     ],
                 ],
-                'forms' => $this->__form($request, Unit::where('id', 1)->first()),
-            ],
-            'data' => $units,
+            ]
+
         ]);
     }
 

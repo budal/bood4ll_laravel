@@ -22,18 +22,14 @@ import { trans, transChoice } from "laravel-vue-i18n";
 import { MenuItem } from "primevue/menuitem";
 import { provide } from "vue";
 
-import Form from "@/Components/Form.vue";
+import Build from "@/Components/Build.vue";
 
-const props = withDefaults(
-    defineProps<{
-        component?: any;
-        data?: any;
-    }>(),
-    {},
-);
+const props = defineProps<{
+    component?: any;
+}>();
 
 provide("dialogRef", props.component.forms);
-const contentItems = ref(props.data?.data ?? []);
+const contentItems = ref(props.component.data?.data ?? []);
 
 const dialog = useDialog();
 const toast = useToast();
@@ -541,7 +537,7 @@ const openDialog = () => {
                             :label="slotProps.data.shortpath"
                             class="font-bold mb-2"
                         />
-                        <Form
+                        <Build
                             :component="component.forms"
                             :data="slotProps.data"
                             :formRoute="component.routes.editRoute"
