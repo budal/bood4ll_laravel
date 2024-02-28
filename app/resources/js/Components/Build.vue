@@ -84,6 +84,9 @@ const onFormDataLoad = () => {
                                 :id="field.name"
                                 v-model="formValue[field.name]"
                                 class="w-full"
+                                :autocomplete="
+                                    field.name === true ? field.name : 'off'
+                                "
                                 v-tooltip="''"
                             />
                             <label :for="field.name">
