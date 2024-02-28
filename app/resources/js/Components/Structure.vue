@@ -4,19 +4,20 @@ import Build from "@/Components/Build.vue";
 withDefaults(
     defineProps<{
         component?: any;
-        tabs: boolean;
-        status?: string;
-        statusTheme?: string;
+        tabs?: boolean;
     }>(),
     {
-        statusTheme: "info",
+        tabs: true,
     },
 );
 </script>
 
 <template>
-    <Message v-if="status" :severity="statusTheme">
-        {{ $t(status) }}
+    <Message
+        v-if="$page.props.status"
+        :severity="($page.props.statusTheme as string) || 'info'"
+    >
+        {{ $t($page.props.status as string) }}
     </Message>
 
     <Card v-if="component.length > 1 && tabs == true">

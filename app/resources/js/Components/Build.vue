@@ -150,7 +150,7 @@ async function getData(route: any) {
     }
 }
 
-console.log(props.formRoute);
+// console.log(props.formRoute);
 
 const onDataLoad = () => {
     if (props.data?.id) {

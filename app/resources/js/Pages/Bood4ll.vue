@@ -1,13 +1,10 @@
 <script setup lang="ts">
-import { Link } from "@inertiajs/vue3";
 import ChangeUser from "@/Components/ChangeUser.vue";
 import NavBar from "@/Components/NavBar.vue";
-import TailwindIndicator from "@/Components/TailwindIndicator.vue";
-import Build from "@/Components/Build.vue";
 import Structure from "@/Components/Structure.vue";
-import { provide } from "vue";
+import TailwindIndicator from "@/Components/TailwindIndicator.vue";
 
-const props = withDefaults(
+withDefaults(
     defineProps<{
         component: any;
         tabs?: boolean;
@@ -30,7 +27,7 @@ const props = withDefaults(
                 </template>
             </Card>
         </nav>
-        <div class="max-w-7xl mx-auto pt-8 px-2 sm:px-6 lg:px-8 space-y-6">
+        <div class="max-w-7xl mx-auto py-4 px-2 sm:px-6 lg:px-8 space-y-6">
             <Structure :component="component" :tabs="tabs" />
         </div>
     </div>

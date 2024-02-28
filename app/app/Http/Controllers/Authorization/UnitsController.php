@@ -243,208 +243,211 @@ class UnitsController extends Controller
             ->withQueryString();
 
         return [
-            [
-                'id' => 'unit',
-                'label' => 'Main data',
-                'subtitle' => 'Unit data management.',
-                'disabledIf' => $unit->id !== null && $request->user()->cannot('isOwner', $unit),
-                'cols' => 4,
-                'fields' => [
-                    [
-                        'type' => 'input',
-                        'name' => 'name',
-                        'label' => 'Name',
-                        'span' => 2,
-                        'required' => true,
-                    ],
-                    [
-                        'type' => 'select',
-                        'name' => 'parent_id',
-                        'label' => 'Belongs to',
-                        'span' => 2,
-                        'content' => $units,
-                        'required' => true,
-                    ],
-                    [
-                        'type' => 'input',
-                        'name' => 'nickname',
-                        'label' => 'Nickname',
-                        'required' => true,
-                    ],
-                    [
-                        'type' => 'date',
-                        'name' => 'founded',
-                        'label' => 'Founded',
-                        'required' => true,
-                    ],
-                    [
-                        'type' => 'toggle',
-                        'name' => 'active',
-                        'label' => 'Active',
-                        'colorOn' => 'success',
-                        'colorOff' => 'danger',
-                    ],
-                    [
-                        'type' => 'date',
-                        'name' => 'expires',
-                        'label' => 'Inactivated at',
-                    ],
-                    [
-                        'type' => 'mask',
-                        'name' => 'cellphone',
-                        'mask' => '(99) 99999-9999',
-                        'label' => 'Cell phone',
-                    ],
-                    [
-                        'type' => 'mask',
-                        'name' => 'landline',
-                        'mask' => '(99) 9999-9999',
-                        'label' => 'Land line',
-                    ],
-                    [
-                        'type' => 'email',
-                        'name' => 'email',
-                        'label' => 'Email',
-                        'span' => 2,
-                    ],
-                    [
-                        'type' => 'input',
-                        'name' => 'country',
-                        'label' => 'Country',
-                    ],
-                    [
-                        'type' => 'input',
-                        'name' => 'state',
-                        'label' => 'State',
-                    ],
-                    [
-                        'type' => 'input',
-                        'name' => 'city',
-                        'label' => 'City',
-                    ],
-                    [
-                        'type' => 'mask',
-                        'name' => 'postcode',
-                        'mask' => '99999-999',
-                        'label' => 'Post code',
-                    ],
-                    [
-                        'type' => 'input',
-                        'name' => 'address',
-                        'label' => 'Address',
-                        'span' => 3,
-                    ],
-                    [
-                        'type' => 'input',
-                        'name' => 'complement',
-                        'label' => 'Complement',
-                    ],
-                    [
-                        'type' => 'input',
-                        'name' => 'geo',
-                        'label' => 'Geographic coordinates',
-                        'span' => 4,
-                    ],
-                ],
-            ],
-            [
-                'id' => 'staff',
-                'label' => 'Staff',
-                'subtitle' => 'Staff management of this unit.',
-                'showIf' => $unit->id != null,
-                'cols' => 2,
-                'fields' => [
-                    [
-                        'type' => 'table',
-                        'name' => 'users',
-                        'span' => 2,
-                        'content' => [
-                            'routes' => [
-                                'editRoute' => [
-                                    'route' => 'apps.users.edit',
-                                    'showIf' => Gate::allows('apps.users.index')
-                                ],
-                            ],
-                            'menu' => [
-                                [
-                                    'icon' => 'mdi:account-multiple',
-                                    'label' => 'Local staff',
-                                    'route' => [
-                                        'route' => 'apps.units.edit',
-                                        'attributes' => [
-                                            $unit->id,
-                                        ]
-                                    ],
-                                    'showIf' => $request->user()->can('canManageNestedData', User::class),
-                                ],
-                                [
-                                    'icon' => 'mdi:account-group-outline',
-                                    'label' => 'Total staff',
-                                    'route' => [
-                                        'route' => 'apps.units.edit',
-                                        'attributes' => [
-                                            $unit->id,
-                                            'all'
-                                        ]
-                                    ],
-                                    'showIf' => $request->user()->can('canManageNestedData', User::class)
-                                ],
-                            ],
-                            'titles' => [
-                                [
-                                    'type' => 'avatar',
-                                    'label' => 'Avatar',
-                                    'field' => 'id',
-                                    'fallback' => 'name',
-                                    'disableSort' => true,
-                                ],
-                                [
-                                    'type' => 'composite',
-                                    'label' => 'User',
-                                    'field' => 'name',
-                                    'values' => [
-                                        [
-                                            'field' => 'name',
-                                        ],
-                                        [
-                                            'field' => 'email',
-                                            'class' => 'text-xs',
-                                        ],
-                                    ],
-                                ],
-                                [
-                                    'type' => 'composite',
-                                    'label' => 'Classified',
-                                    'class' => 'collapse',
-                                    'field' => 'units_classified',
-                                    'options' => [
-                                        [
-                                            'field' => 'name',
-                                        ],
-                                    ],
-                                ],
-                                [
-                                    'type' => 'composite',
-                                    'label' => 'Working',
-                                    'class' => 'collapse',
-                                    'field' => 'units_working',
-                                    'options' => [
-                                        [
-                                            'field' => 'name',
-                                        ],
-                                    ],
-                                ],
-                                [
-                                    'type' => 'text',
-                                    'label' => 'Roles',
-                                    'field' => 'roles_count',
-                                ],
-                            ],
+
+            // 'tabs' => false,
+            'component' => [
+                [
+                    'label' => 'Main data',
+                    'description' => 'Unit data management.',
+                    'disabledIf' => $unit->id !== null && $request->user()->cannot('isOwner', $unit),
+                    'cols' => 4,
+                    'fields' => [
+                        [
+                            'type' => 'input',
+                            'name' => 'name',
+                            'label' => 'Name',
+                            'span' => 2,
+                            'required' => true,
+                        ],
+                        [
+                            'type' => 'select',
+                            'name' => 'parent_id',
+                            'label' => 'Belongs to',
+                            'span' => 2,
+                            'content' => $units,
+                            'required' => true,
+                        ],
+                        [
+                            'type' => 'input',
+                            'name' => 'nickname',
+                            'label' => 'Nickname',
+                            'required' => true,
+                        ],
+                        [
+                            'type' => 'date',
+                            'name' => 'founded',
+                            'label' => 'Founded',
+                            'required' => true,
+                        ],
+                        [
+                            'type' => 'toggle',
+                            'name' => 'active',
+                            'label' => 'Active',
+                            'colorOn' => 'success',
+                            'colorOff' => 'danger',
+                        ],
+                        [
+                            'type' => 'date',
+                            'name' => 'expires',
+                            'label' => 'Inactivated at',
+                        ],
+                        [
+                            'type' => 'mask',
+                            'name' => 'cellphone',
+                            'mask' => '(99) 99999-9999',
+                            'label' => 'Cell phone',
+                        ],
+                        [
+                            'type' => 'mask',
+                            'name' => 'landline',
+                            'mask' => '(99) 9999-9999',
+                            'label' => 'Land line',
+                        ],
+                        [
+                            'type' => 'email',
+                            'name' => 'email',
+                            'label' => 'Email',
+                            'span' => 2,
+                        ],
+                        [
+                            'type' => 'input',
+                            'name' => 'country',
+                            'label' => 'Country',
+                        ],
+                        [
+                            'type' => 'input',
+                            'name' => 'state',
+                            'label' => 'State',
+                        ],
+                        [
+                            'type' => 'input',
+                            'name' => 'city',
+                            'label' => 'City',
+                        ],
+                        [
+                            'type' => 'mask',
+                            'name' => 'postcode',
+                            'mask' => '99999-999',
+                            'label' => 'Post code',
+                        ],
+                        [
+                            'type' => 'input',
+                            'name' => 'address',
+                            'label' => 'Address',
+                            'span' => 3,
+                        ],
+                        [
+                            'type' => 'input',
+                            'name' => 'complement',
+                            'label' => 'Complement',
+                        ],
+                        [
+                            'type' => 'input',
+                            'name' => 'geo',
+                            'label' => 'Geographic coordinates',
+                            'span' => 4,
                         ],
                     ],
                 ],
-                'data' => $staff,
-            ],
+                // [
+                //     'id' => 'staff',
+                //     'label' => 'Staff',
+                //     'subtitle' => 'Staff management of this unit.',
+                //     'showIf' => $unit->id != null,
+                //     'cols' => 2,
+                //     'fields' => [
+                //         [
+                //             'type' => 'table',
+                //             'name' => 'users',
+                //             'span' => 2,
+                //             'content' => [
+                //                 'routes' => [
+                //                     'editRoute' => [
+                //                         'route' => 'apps.users.edit',
+                //                         'showIf' => Gate::allows('apps.users.index')
+                //                     ],
+                //                 ],
+                //                 'menu' => [
+                //                     [
+                //                         'icon' => 'mdi:account-multiple',
+                //                         'label' => 'Local staff',
+                //                         'route' => [
+                //                             'route' => 'apps.units.edit',
+                //                             'attributes' => [
+                //                                 $unit->id,
+                //                             ]
+                //                         ],
+                //                         'showIf' => $request->user()->can('canManageNestedData', User::class),
+                //                     ],
+                //                     [
+                //                         'icon' => 'mdi:account-group-outline',
+                //                         'label' => 'Total staff',
+                //                         'route' => [
+                //                             'route' => 'apps.units.edit',
+                //                             'attributes' => [
+                //                                 $unit->id,
+                //                                 'all'
+                //                             ]
+                //                         ],
+                //                         'showIf' => $request->user()->can('canManageNestedData', User::class)
+                //                     ],
+                //                 ],
+                //                 'titles' => [
+                //                     [
+                //                         'type' => 'avatar',
+                //                         'label' => 'Avatar',
+                //                         'field' => 'id',
+                //                         'fallback' => 'name',
+                //                         'disableSort' => true,
+                //                     ],
+                //                     [
+                //                         'type' => 'composite',
+                //                         'label' => 'User',
+                //                         'field' => 'name',
+                //                         'values' => [
+                //                             [
+                //                                 'field' => 'name',
+                //                             ],
+                //                             [
+                //                                 'field' => 'email',
+                //                                 'class' => 'text-xs',
+                //                             ],
+                //                         ],
+                //                     ],
+                //                     [
+                //                         'type' => 'composite',
+                //                         'label' => 'Classified',
+                //                         'class' => 'collapse',
+                //                         'field' => 'units_classified',
+                //                         'options' => [
+                //                             [
+                //                                 'field' => 'name',
+                //                             ],
+                //                         ],
+                //                     ],
+                //                     [
+                //                         'type' => 'composite',
+                //                         'label' => 'Working',
+                //                         'class' => 'collapse',
+                //                         'field' => 'units_working',
+                //                         'options' => [
+                //                             [
+                //                                 'field' => 'name',
+                //                             ],
+                //                         ],
+                //                     ],
+                //                     [
+                //                         'type' => 'text',
+                //                         'label' => 'Roles',
+                //                         'field' => 'roles_count',
+                //                     ],
+                //                 ],
+                //             ],
+                //         ],
+                //     ],
+                //     'data' => $staff,
+                // ],
+            ]
         ];
     }
 

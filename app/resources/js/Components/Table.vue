@@ -22,13 +22,14 @@ import { trans, transChoice } from "laravel-vue-i18n";
 import { MenuItem } from "primevue/menuitem";
 import { provide } from "vue";
 
-import Build from "@/Components/Build.vue";
+import Structure from "@/Components/Structure.vue";
 
 const props = defineProps<{
     component?: any;
 }>();
 
 provide("dialogRef", props.component.forms);
+
 const contentItems = ref(props.component.data?.data ?? []);
 
 const dialog = useDialog();
@@ -529,10 +530,9 @@ const openDialog = () => {
                     :label="slotProps.data.shortpath"
                     class="font-bold mb-2"
                 />
-                <Build
-                    :component="component.forms"
-                    :data="slotProps.data"
-                    :formRoute="component.routes.editRoute"
+                <Structure
+                    :component="component.forms.component"
+                    :tabs="component.forms.tabs"
                 />
             </template>
         </DataTable>
