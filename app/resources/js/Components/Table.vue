@@ -47,17 +47,12 @@ const tableMenu = ref();
 const selectColumns = ref(false);
 const tableColumns = ref(props.component.titles);
 const selectedColumns = ref(tableColumns.value);
-const formRef = reactive(new Set());
 
 const tableMenuToggle = (event: MouseEvent) => {
     tableMenu.value.toggle(event);
 };
 
 const selectedItemsTotal = computed(() => selectedItems.value);
-
-watch(formRef, () => {
-    // console.log(formRef);
-});
 
 const _tableMenuItemsEdit: MenuItem[] = [
     {
@@ -328,20 +323,6 @@ const onTableDataLoad = () => {
     });
 };
 
-const onFormDataLoad = (route: any, id: string) => {
-    if (Array.from(formRef).some((item) => item.id === id) === false) {
-        getData(isValidUrl({ route: route.route, attributes: [id] })).then(
-            (content) => {
-                formRef.add({ id: id, data: content });
-                // return content;
-                // console.log(Array.from(formRef).find((item) => item.id === id));
-            },
-        );
-    } else {
-    }
-    //     return Array.from(formRef).find((item) => item.id === id);
-};
-
 useIntersectionObserver(lastIntersection, ([{ isIntersecting }]) => {
     if (isIntersecting && nextPageURL.value !== null) {
         loadingTable.value = true;
@@ -542,27 +523,21 @@ const openDialog = () => {
                 class="border-b"
             />
             <template #expansion="slotProps">
-                <DeferredContent
-                    @load="
-                        onFormDataLoad(
-                            component.forms.routes.editRoute,
-                            slotProps.data.id,
-                        )
+                <Chip
+                    :label="slotProps.data.shortpath"
+                    class="font-bold mb-2"
+                />
+
+                <Structure
+                    :component="component.forms.component"
+                    :tabs="component.forms.tabs"
+                    :buildRoute="
+                        isValidUrl({
+                            route: component.forms.routes.editRoute.route,
+                            attributes: [slotProps.data.id],
+                        })
                     "
-                    role="region"
-                    aria-live="polite"
-                    aria-label="Content loaded after page scrolled down"
-                >
-                    <Chip
-                        :label="slotProps.data.shortpath"
-                        class="font-bold mb-2"
-                    />
-                    <Structure
-                        :component="component.forms.component"
-                        :tabs="component.forms.tabs"
-                        :value="formRef"
-                    />
-                </DeferredContent>
+                />
             </template>
         </DataTable>
         <div ref="lastIntersection" class="-translate-y-96" />

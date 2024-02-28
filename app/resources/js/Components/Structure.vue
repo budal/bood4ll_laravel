@@ -5,7 +5,7 @@ withDefaults(
     defineProps<{
         component?: any;
         tabs?: boolean;
-        value?: any;
+        buildRoute?: any;
     }>(),
     {
         tabs: true,
@@ -25,7 +25,7 @@ withDefaults(
         <template #content>
             <TabView>
                 <TabPanel v-for="item in component" :header="$t(item.label)">
-                    <Build :component="item" :value="value">
+                    <Build :component="item" :buildRoute="buildRoute">
                         <template #description>
                             {{ $t(item.description) }}
                         </template>
@@ -44,7 +44,7 @@ withDefaults(
                 {{ $t(item.description) }}
             </template>
             <template #content>
-                <Build :component="item" :value="value" />
+                <Build :component="item" :buildRoute="buildRoute" />
             </template>
         </Card>
     </template>
