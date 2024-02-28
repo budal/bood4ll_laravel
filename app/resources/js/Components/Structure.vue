@@ -24,13 +24,15 @@ withDefaults(
     <Card v-if="component.length > 1 && tabs == true">
         <template #content>
             <TabView>
-                <TabPanel v-for="item in component" :header="$t(item.label)">
-                    <Build :component="item" :buildRoute="buildRoute">
-                        <template v-if="item.description" #description>
-                            {{ $t(item.description) }}
-                        </template>
-                    </Build>
-                </TabPanel>
+                <template v-for="item in component">
+                    <TabPanel :header="$t(item.label)">
+                        <Build :component="item" :buildRoute="buildRoute">
+                            <template v-if="item.description" #description>
+                                {{ $t(item.description) }}
+                            </template>
+                        </Build>
+                    </TabPanel>
+                </template>
             </TabView>
         </template>
     </Card>
