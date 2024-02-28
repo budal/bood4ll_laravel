@@ -244,8 +244,9 @@ class UnitsController extends Controller
                             'required' => true,
                         ],
                         [
-                            'type' => 'date',
+                            'type' => 'calendar',
                             'name' => 'founded',
+                            'dateFormat' => 'dd/mm/yy',
                             'label' => 'Founded',
                             'required' => true,
                         ],
@@ -257,8 +258,9 @@ class UnitsController extends Controller
                             'colorOff' => 'danger',
                         ],
                         [
-                            'type' => 'date',
+                            'type' => 'calendar',
                             'name' => 'expires',
+                            'dateFormat' => 'dd/mm/yy',
                             'label' => 'Inactivated at',
                         ],
                         [

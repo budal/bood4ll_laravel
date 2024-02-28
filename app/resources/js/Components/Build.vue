@@ -220,6 +220,17 @@ const onFormDataLoad = () => {
                             {{ $t(field.label as string) }}</label
                         >
                     </FloatLabel>
+                    <FloatLabel v-if="field.type === 'calendar'" class="w-full">
+                        <Calendar
+                            :id="field.name"
+                            :dateFormat="field.dateFormat"
+                            class="w-full"
+                            v-tooltip="'Enter your username'"
+                        />
+                        <label :for="field.name">
+                            {{ $t(field.label as string) }}</label
+                        >
+                    </FloatLabel>
                     <FloatLabel
                         v-else-if="field.type === 'mask'"
                         class="w-full"
@@ -248,9 +259,6 @@ const onFormDataLoad = () => {
                         v-else-if="field.type === 'table'"
                         :component="field.component"
                     />
-                    <span v-else class="text-xs">
-                        {{ field.name }}
-                    </span>
                 </div>
             </div>
 

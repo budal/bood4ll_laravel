@@ -2,6 +2,7 @@
 import { ref, Ref, inject } from "vue";
 import type { DynamicDialogInstance } from "primevue/dynamicdialogoptions";
 import Structure from "@/Components/Structure.vue";
+import { isValidUrl } from "@/helpers";
 
 const dialogRef = inject<Ref<DynamicDialogInstance>>("dialogRef");
 
@@ -9,5 +10,13 @@ const data = ref(dialogRef?.value.data);
 </script>
 
 <template>
-    <Structure :component="data.component" :tabs="data.tabs" />
+    <Structure
+        :component="data.component"
+        :tabs="data.tabs"
+        :buildRoute="
+            isValidUrl({
+                route: data.routes.createRoute.route,
+            })
+        "
+    />
 </template>
