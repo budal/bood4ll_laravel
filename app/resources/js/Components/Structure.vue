@@ -26,7 +26,7 @@ withDefaults(
             <TabView>
                 <TabPanel v-for="item in component" :header="$t(item.label)">
                     <Build :component="item" :buildRoute="buildRoute">
-                        <template #description>
+                        <template v-if="item.description" #description>
                             {{ $t(item.description) }}
                         </template>
                     </Build>

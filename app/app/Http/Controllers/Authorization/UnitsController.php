@@ -255,7 +255,7 @@ class UnitsController extends Controller
                         [
                             'type' => 'calendar',
                             'name' => 'expires',
-                            'dateFormat' => 'dd/mm/yy',
+                            // 'dateFormat' => 'dd/mm/yy',
                             'label' => 'Inactivated at',
                         ],
                         [
@@ -316,104 +316,111 @@ class UnitsController extends Controller
                         ],
                     ],
                 ],
-                // [
-                //     'id' => 'staff',
-                //     'label' => 'Staff',
-                //     'subtitle' => 'Staff management of this unit.',
-                //     'showIf' => $unit->id != null,
-                //     'cols' => 2,
-                //     'fields' => [
-                //         [
-                //             'type' => 'table',
-                //             'name' => 'users',
-                //             'span' => 2,
-                //             'content' => [
-                //                 'routes' => [
-                //                     'editRoute' => [
-                //                         'route' => 'apps.users.edit',
-                //                         'showIf' => Gate::allows('apps.users.index')
-                //                     ],
-                //                 ],
-                //                 'menu' => [
-                //                     [
-                //                         'icon' => 'mdi:account-multiple',
-                //                         'label' => 'Local staff',
-                //                         'route' => [
-                //                             'route' => 'apps.units.edit',
-                //                             'attributes' => [
-                //                                 $unit->id,
-                //                             ]
-                //                         ],
-                //                         'showIf' => $request->user()->can('canManageNestedData', User::class),
-                //                     ],
-                //                     [
-                //                         'icon' => 'mdi:account-group-outline',
-                //                         'label' => 'Total staff',
-                //                         'route' => [
-                //                             'route' => 'apps.units.edit',
-                //                             'attributes' => [
-                //                                 $unit->id,
-                //                                 'all'
-                //                             ]
-                //                         ],
-                //                         'showIf' => $request->user()->can('canManageNestedData', User::class)
-                //                     ],
-                //                 ],
-                //                 'titles' => [
-                //                     [
-                //                         'type' => 'avatar',
-                //                         'label' => 'Avatar',
-                //                         'field' => 'id',
-                //                         'fallback' => 'name',
-                //                         'disableSort' => true,
-                //                     ],
-                //                     [
-                //                         'type' => 'composite',
-                //                         'label' => 'User',
-                //                         'field' => 'name',
-                //                         'values' => [
-                //                             [
-                //                                 'field' => 'name',
-                //                             ],
-                //                             [
-                //                                 'field' => 'email',
-                //                                 'class' => 'text-xs',
-                //                             ],
-                //                         ],
-                //                     ],
-                //                     [
-                //                         'type' => 'composite',
-                //                         'label' => 'Classified',
-                //                         'class' => 'collapse',
-                //                         'field' => 'units_classified',
-                //                         'options' => [
-                //                             [
-                //                                 'field' => 'name',
-                //                             ],
-                //                         ],
-                //                     ],
-                //                     [
-                //                         'type' => 'composite',
-                //                         'label' => 'Working',
-                //                         'class' => 'collapse',
-                //                         'field' => 'units_working',
-                //                         'options' => [
-                //                             [
-                //                                 'field' => 'name',
-                //                             ],
-                //                         ],
-                //                     ],
-                //                     [
-                //                         'type' => 'text',
-                //                         'label' => 'Roles',
-                //                         'field' => 'roles_count',
-                //                     ],
-                //                 ],
-                //             ],
-                //         ],
-                //     ],
-                //     'data' => $staff,
-                // ],
+                [
+                    'label' => 'Staff',
+                    'description' => 'Staff management of this unit.',
+                    'showIf' => $unit->id != null,
+                    'cols' => 2,
+                    'fields' => [
+                        [
+                            'type' => 'input',
+                            'name' => 'name',
+                            'label' => 'Name',
+                            'span' => 2,
+                            'required' => true,
+                        ],
+
+                        // [
+                        //             'type' => 'table',
+                        //             'name' => 'users',
+                        //             'span' => 2,
+                        //             'content' => [
+                        //                 'routes' => [
+                        //                     'editRoute' => [
+                        //                         'route' => 'apps.users.edit',
+                        //                         'showIf' => Gate::allows('apps.users.index')
+                        //                     ],
+                        //                 ],
+                        //                 'menu' => [
+                        //                     [
+                        //                         'icon' => 'mdi:account-multiple',
+                        //                         'label' => 'Local staff',
+                        //                         'route' => [
+                        //                             'route' => 'apps.units.edit',
+                        //                             'attributes' => [
+                        //                                 $unit->id,
+                        //                             ]
+                        //                         ],
+                        //                         'showIf' => $request->user()->can('canManageNestedData', User::class),
+                        //                     ],
+                        //                     [
+                        //                         'icon' => 'mdi:account-group-outline',
+                        //                         'label' => 'Total staff',
+                        //                         'route' => [
+                        //                             'route' => 'apps.units.edit',
+                        //                             'attributes' => [
+                        //                                 $unit->id,
+                        //                                 'all'
+                        //                             ]
+                        //                         ],
+                        //                         'showIf' => $request->user()->can('canManageNestedData', User::class)
+                        //                     ],
+                        //                 ],
+                        //                 'titles' => [
+                        //                     [
+                        //                         'type' => 'avatar',
+                        //                         'label' => 'Avatar',
+                        //                         'field' => 'id',
+                        //                         'fallback' => 'name',
+                        //                         'disableSort' => true,
+                        //                     ],
+                        //                     [
+                        //                         'type' => 'composite',
+                        //                         'label' => 'User',
+                        //                         'field' => 'name',
+                        //                         'values' => [
+                        //                             [
+                        //                                 'field' => 'name',
+                        //                             ],
+                        //                             [
+                        //                                 'field' => 'email',
+                        //                                 'class' => 'text-xs',
+                        //                             ],
+                        //                         ],
+                        //                     ],
+                        //                     [
+                        //                         'type' => 'composite',
+                        //                         'label' => 'Classified',
+                        //                         'class' => 'collapse',
+                        //                         'field' => 'units_classified',
+                        //                         'options' => [
+                        //                             [
+                        //                                 'field' => 'name',
+                        //                             ],
+                        //                         ],
+                        //                     ],
+                        //                     [
+                        //                         'type' => 'composite',
+                        //                         'label' => 'Working',
+                        //                         'class' => 'collapse',
+                        //                         'field' => 'units_working',
+                        //                         'options' => [
+                        //                             [
+                        //                                 'field' => 'name',
+                        //                             ],
+                        //                         ],
+                        //                     ],
+                        //                     [
+                        //                         'type' => 'text',
+                        //                         'label' => 'Roles',
+                        //                         'field' => 'roles_count',
+                        //                     ],
+                        //                 ],
+                        //             ],
+                        // ],
+                    ],
+                    'data' => $staff,
+                ],
             ]
         ];
     }

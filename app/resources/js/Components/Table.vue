@@ -523,11 +523,6 @@ const openDialog = () => {
                 class="border-b"
             />
             <template #expansion="slotProps">
-                <Chip
-                    :label="slotProps.data.shortpath"
-                    class="font-bold mb-2"
-                />
-
                 <Structure
                     :component="component.forms.component"
                     :tabs="component.forms.tabs"
