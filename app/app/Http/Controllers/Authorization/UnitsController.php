@@ -58,8 +58,8 @@ class UnitsController extends Controller
                     'fields' => [
                         [
                             'type' => 'table',
+                            'name' => 'name',
                             'component' => [
-                                'type' => 'table',
                                 'id' => 'units',
                                 'exportCSV' => true,
                                 'routes' => [
