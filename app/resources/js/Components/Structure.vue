@@ -19,11 +19,19 @@ withDefaults(
         {{ $t(status) }}
     </Message>
 
-    <TabView v-if="component.length > 1 && tabs == true">
-        <TabPanel v-for="item in component" :header="$t(item.label)">
-            <Build :component="item" />
-        </TabPanel>
-    </TabView>
+    <Card v-if="component.length > 1 && tabs == true">
+        <template #content>
+            <TabView>
+                <TabPanel v-for="item in component" :header="$t(item.label)">
+                    <Build :component="item">
+                        <template #description>
+                            {{ $t(item.description) }}
+                        </template>
+                    </Build>
+                </TabPanel>
+            </TabView>
+        </template>
+    </Card>
 
     <template v-else>
         <Card v-for="item in component">

@@ -400,154 +400,142 @@ const openDialog = () => {
         aria-live="polite"
         aria-label="Content loaded after page scrolled down"
     >
-        <Card>
-            <template #title>{{ $t(component.label || "") }}</template>
-            <template #subtitle>{{ $t(component.description || "") }}</template>
-            <template #content>
-                <DataTable
-                    ref="dt"
-                    :value="contentItems"
-                    dataKey="id"
-                    v-model:selection="selectedItems"
-                    v-model:expandedRows="expandedRows"
-                    stripedRows
-                    sortMode="multiple"
-                    removableSort
-                    scrollable
-                    :loading="loadingTable"
-                    :rowReorder="
-                        props.component.routes.reorderRoute?.showIf === true
-                    "
-                    @rowReorder="onRowReorder"
+        <DataTable
+            ref="dt"
+            :value="contentItems"
+            dataKey="id"
+            v-model:selection="selectedItems"
+            v-model:expandedRows="expandedRows"
+            stripedRows
+            sortMode="multiple"
+            removableSort
+            scrollable
+            :loading="loadingTable"
+            :rowReorder="props.component.routes.reorderRoute?.showIf === true"
+            @rowReorder="onRowReorder"
+        >
+            <template #header>
+                <div
+                    class="flex flex-wrap items-center justify-content-end justify-between gap-2"
                 >
-                    <template #header>
-                        <div
-                            class="flex flex-wrap items-center justify-content-end justify-between gap-2"
+                    <div>
+                        <Button
+                            icon="pi pi-ellipsis-v"
+                            rounded
+                            raised
+                            @click="tableMenuToggle"
+                            aria-haspopup="true"
+                            aria-controls="overlay_tmenu"
+                        />
+                        <TieredMenu
+                            ref="tableMenu"
+                            :model="tableMenuItems"
+                            popup
                         >
-                            <div>
-                                <Button
-                                    icon="pi pi-ellipsis-v"
-                                    rounded
-                                    raised
-                                    @click="tableMenuToggle"
-                                    aria-haspopup="true"
-                                    aria-controls="overlay_tmenu"
-                                />
-                                <TieredMenu
-                                    ref="tableMenu"
-                                    :model="tableMenuItems"
-                                    popup
+                            <template #item="{ item, props }">
+                                <a
+                                    class="flex align-items-center"
+                                    v-bind="props.action"
+                                    v-ripple
                                 >
-                                    <template #item="{ item, props }">
-                                        <a
-                                            class="flex align-items-center"
-                                            v-bind="props.action"
-                                            v-ripple
-                                        >
-                                            <span :class="item.icon" />
-                                            <span class="ml-2">
-                                                {{ $t(item.label as string) }}
-                                            </span>
-                                            <Badge
-                                                v-if="item.badge"
-                                                class="ml-auto"
-                                                :value="item.badge"
-                                            />
-                                            <span
-                                                v-if="item.shortcut"
-                                                class="ml-auto border-1 surface-border border-round surface-100 text-xs p-1"
-                                                >{{ item.shortcut }}</span
-                                            >
-                                            <span
-                                                v-if="item.items"
-                                                class="pi pi-chevron-right ml-auto border-1 surface-border border-round surface-100 text-xs p-1"
-                                            />
-                                        </a>
-                                    </template>
-                                </TieredMenu>
-                                <Dialog
-                                    v-model:visible="selectColumns"
-                                    modal
-                                    :header="trans('Columns')"
-                                    :style="{ width: '25rem' }"
-                                >
-                                    <MultiSelect
-                                        :modelValue="selectedColumns"
-                                        :options="component.titles"
-                                        optionLabel="header"
-                                        @update:modelValue="onToggleColumns"
-                                        display="chip"
-                                        :placeholder="$t('Select columns')"
+                                    <span :class="item.icon" />
+                                    <span class="ml-2">
+                                        {{ $t(item.label as string) }}
+                                    </span>
+                                    <Badge
+                                        v-if="item.badge"
+                                        class="ml-auto"
+                                        :value="item.badge"
                                     />
-                                </Dialog>
-                            </div>
-                            <div class="flex gap-2">
-                                <IconField iconPosition="left">
-                                    <InputIcon>
-                                        <i class="pi pi-search" />
-                                    </InputIcon>
-                                    <InputText
-                                        v-model="filters['global'].value"
-                                        :placeholder="$t('Search...')"
-                                        class="pl-8"
+                                    <span
+                                        v-if="item.shortcut"
+                                        class="ml-auto border-1 surface-border border-round surface-100 text-xs p-1"
+                                        >{{ item.shortcut }}</span
+                                    >
+                                    <span
+                                        v-if="item.items"
+                                        class="pi pi-chevron-right ml-auto border-1 surface-border border-round surface-100 text-xs p-1"
                                     />
-                                </IconField>
-                            </div>
-                        </div>
-                    </template>
-                    <template #empty>
-                        {{ $t("No items to show.") }}
-                    </template>
-                    <Column
-                        v-if="
-                            props.component.routes.reorderRoute?.showIf === true
-                        "
-                        rowReorder
-                        headerStyle="width: 3rem"
-                        class="border-b"
-                        :reorderableColumn="false"
-                    />
-                    <Column
-                        selectionMode="multiple"
-                        headerStyle="width: 3rem "
-                        class="border-b"
-                    />
-                    <Column
-                        v-for="(col, index) of selectedColumns"
-                        :field="col.field"
-                        :header="$t(col.header)"
-                        :key="col.field + '_' + index"
-                        sortable
-                        :showFilterMenu="true"
-                        class="border-b"
-                    >
-                        <template #body="slotProps">
-                            {{ slotProps.data[col.field] }}
-                        </template>
-                    </Column>
-                    <Column
-                        expander
-                        frozen
-                        alignFrozen="right"
-                        style="width: 1rem"
-                        class="border-b"
-                    />
-                    <template #expansion="slotProps">
-                        <Chip
-                            :label="slotProps.data.shortpath"
-                            class="font-bold mb-2"
-                        />
-                        <Build
-                            :component="component.forms"
-                            :data="slotProps.data"
-                            :formRoute="component.routes.editRoute"
-                        />
-                    </template>
-                </DataTable>
+                                </a>
+                            </template>
+                        </TieredMenu>
+                        <Dialog
+                            v-model:visible="selectColumns"
+                            modal
+                            :header="trans('Columns')"
+                            :style="{ width: '25rem' }"
+                        >
+                            <MultiSelect
+                                :modelValue="selectedColumns"
+                                :options="component.titles"
+                                optionLabel="header"
+                                @update:modelValue="onToggleColumns"
+                                display="chip"
+                                :placeholder="$t('Select columns')"
+                            />
+                        </Dialog>
+                    </div>
+                    <div class="flex gap-2">
+                        <IconField iconPosition="left">
+                            <InputIcon>
+                                <i class="pi pi-search" />
+                            </InputIcon>
+                            <InputText
+                                v-model="filters['global'].value"
+                                :placeholder="$t('Search...')"
+                                class="pl-8"
+                            />
+                        </IconField>
+                    </div>
+                </div>
             </template>
-            <template #footer>
-                <div ref="lastIntersection" class="-translate-y-96" />
+            <template #empty>
+                {{ $t("No items to show.") }}
             </template>
-        </Card>
+            <Column
+                v-if="props.component.routes.reorderRoute?.showIf === true"
+                rowReorder
+                headerStyle="width: 3rem"
+                class="border-b"
+                :reorderableColumn="false"
+            />
+            <Column
+                selectionMode="multiple"
+                headerStyle="width: 3rem "
+                class="border-b"
+            />
+            <Column
+                v-for="(col, index) of selectedColumns"
+                :field="col.field"
+                :header="$t(col.header)"
+                :key="col.field + '_' + index"
+                sortable
+                :showFilterMenu="true"
+                class="border-b"
+            >
+                <template #body="slotProps">
+                    {{ slotProps.data[col.field] }}
+                </template>
+            </Column>
+            <Column
+                expander
+                frozen
+                alignFrozen="right"
+                style="width: 1rem"
+                class="border-b"
+            />
+            <template #expansion="slotProps">
+                <Chip
+                    :label="slotProps.data.shortpath"
+                    class="font-bold mb-2"
+                />
+                <Build
+                    :component="component.forms"
+                    :data="slotProps.data"
+                    :formRoute="component.routes.editRoute"
+                />
+            </template>
+        </DataTable>
+        <div ref="lastIntersection" class="-translate-y-96" />
     </DeferredContent>
 </template>

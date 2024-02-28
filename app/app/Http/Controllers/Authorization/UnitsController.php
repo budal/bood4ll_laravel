@@ -53,30 +53,14 @@ class UnitsController extends Controller
             // 'tabs' => false,
             'component' => [
                 [
-                    'label' => 'Main data1',
-                    'subtitle' => 'Unit data management.',
-                    'cols' => 4,
-                    'fields' => [
-                        [
-                            'type' => 'input',
-                            'name' => 'name',
-                            'label' => 'Name',
-                            'span' => 2,
-                            'required' => true,
-                        ],
-                    ],
-                ],
-                [
-                    'label' => 'Main data2',
-                    'subtitle' => 'Unit data management.',
+                    'label' => Route::current()->title,
+                    'description' => Route::current()->description,
                     'fields' => [
                         [
                             'type' => 'table',
                             'component' => [
                                 'type' => 'table',
                                 'id' => 'units',
-                                'label' => Route::current()->title,
-                                'description' => Route::current()->description,
                                 'exportCSV' => true,
                                 'routes' => [
                                     'indexRoute' => [
@@ -153,8 +137,45 @@ class UnitsController extends Controller
                         ],
                     ],
                 ],
+                [
+                    'label' => 'Main data1',
+                    'description' => 'Unit data management.',
+                    'cols' => 4,
+                    'fields' => [
+                        [
+                            'type' => 'input',
+                            'name' => 'name',
+                            'label' => 'Name',
+                            'required' => true,
+                        ],
+                        [
+                            'type' => 'input',
+                            'name' => 'name',
+                            'label' => 'Name',
+                            'required' => true,
+                        ],
+                        [
+                            'type' => 'input',
+                            'name' => 'name',
+                            'label' => 'Name',
+                            'required' => true,
+                        ],
+                        [
+                            'type' => 'input',
+                            'name' => 'name',
+                            'label' => 'Name',
+                            'required' => true,
+                        ],
+                        [
+                            'type' => 'input',
+                            'name' => 'name',
+                            'label' => 'Name',
+                            'span' => 2,
+                            'required' => true,
+                        ],
+                    ],
+                ],
             ]
-
         ]);
     }
 
