@@ -84,7 +84,7 @@ const onFormDataLoad = () => {
                                 :id="field.name"
                                 v-model="formValue[field.name]"
                                 class="w-full"
-                                v-tooltip="'Enter your username'"
+                                v-tooltip="''"
                             />
                             <label :for="field.name">
                                 {{ $t(field.label as string) }}</label
@@ -95,7 +95,7 @@ const onFormDataLoad = () => {
                             class="w-full"
                         >
                             <Calendar
-                                :id="field.name"
+                                :inputId="field.name"
                                 v-model="formValue[field.name]"
                                 :dateFormat="field.dateFormat"
                                 class="w-full"
@@ -123,6 +123,7 @@ const onFormDataLoad = () => {
                         <ToggleButton
                             v-else-if="field.type === 'toggle'"
                             :id="field.name"
+                            :inputId="field.name"
                             v-model="formValue[field.name]"
                             class="w-full"
                             onIcon="pi pi-check"

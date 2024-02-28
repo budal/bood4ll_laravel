@@ -401,11 +401,13 @@ const openDialog = () => {
         <DataTable
             ref="dt"
             :value="contentItems"
+            selectionMode="multiple"
             dataKey="id"
             v-model:selection="selectedItems"
             v-model:expandedRows="expandedRows"
             stripedRows
             sortMode="multiple"
+            rowHover
             removableSort
             scrollable
             :loading="loadingTable"
@@ -479,6 +481,7 @@ const openDialog = () => {
                                 <i class="pi pi-search" />
                             </InputIcon>
                             <InputText
+                                id="findTable"
                                 v-model="filters['global'].value"
                                 :placeholder="$t('Search...')"
                                 class="pl-8"
@@ -496,11 +499,6 @@ const openDialog = () => {
                 headerStyle="width: 3rem"
                 class="border-b"
                 :reorderableColumn="false"
-            />
-            <Column
-                selectionMode="multiple"
-                headerStyle="width: 3rem "
-                class="border-b"
             />
             <Column
                 v-for="(col, index) of selectedColumns"
