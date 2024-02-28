@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { isValidUrl, toast } from "@/helpers";
+import { isValidUrl, getData, toast } from "@/helpers";
 import { Ref, nextTick, ref } from "vue";
 import { Link, useForm } from "@inertiajs/vue3";
 
@@ -10,6 +10,7 @@ import TabPanel from "primevue/tabpanel";
 import type { DynamicDialogInstance } from "primevue/dynamicdialogoptions";
 
 import Table from "@/Components/Table.vue";
+import { watch } from "vue";
 
 const props = withDefaults(
     defineProps<{
@@ -37,8 +38,7 @@ interface FormItems {
     [key: string]: string;
 }
 
-const tabs = ref(props.component);
-const fields = ref([]);
+const formValue = ref([]);
 
 let formItems: FormItems = {};
 
@@ -141,22 +141,10 @@ const submitModal = () => {
     );
 };
 
-const value = ref(null);
-const checked = ref(false);
-
-async function getData(route: any) {
-    try {
-        const response = await fetch(isValidUrl(route) as string);
-        return await response.json();
-    } catch (error) {
-        console.error(error);
-    }
-}
-
 const onFormDataLoad = () => {
     if (props.buildRoute) {
         getData(props.buildRoute).then((content) => {
-            console.log(content);
+            formValue.value = content;
         });
         //     Array.from(formRef).find((item) => item.id === id);
         //     Array.from(formRef).some((item) => item.id === id) === false
@@ -212,7 +200,7 @@ const onFormDataLoad = () => {
                     <FloatLabel v-if="field.type === 'input'" class="w-full">
                         <InputText
                             :id="field.name"
-                            v-model="value"
+                            v-model="formValue[field.name]"
                             class="w-full"
                             v-tooltip="'Enter your username'"
                         />
@@ -223,6 +211,7 @@ const onFormDataLoad = () => {
                     <FloatLabel v-if="field.type === 'calendar'" class="w-full">
                         <Calendar
                             :id="field.name"
+                            v-model="formValue[field.name]"
                             :dateFormat="field.dateFormat"
                             class="w-full"
                             v-tooltip="'Enter your username'"
@@ -237,6 +226,7 @@ const onFormDataLoad = () => {
                     >
                         <InputMask
                             :id="field.name"
+                            v-model="formValue[field.name]"
                             :mask="field.mask"
                             class="w-full"
                             v-tooltip="'Enter your username'"
@@ -248,7 +238,7 @@ const onFormDataLoad = () => {
                     <ToggleButton
                         v-else-if="field.type === 'toggle'"
                         :id="field.name"
-                        v-model="checked"
+                        v-model="formValue[field.name]"
                         class="w-full"
                         onIcon="pi pi-check"
                         offIcon="pi pi-times"

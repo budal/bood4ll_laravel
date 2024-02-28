@@ -18,6 +18,15 @@ const isValidUrl = (url: string | { route: string; attributes: string[] }) => {
     }
 };
 
+async function getData(route: any) {
+    try {
+        const response = await fetch(isValidUrl(route) as string);
+        return await response.json();
+    } catch (error) {
+        console.error(error);
+    }
+}
+
 const formatRouteWithID = (url: any, id: any) =>
     isValidUrl(
         typeof url == "string"
@@ -44,4 +53,4 @@ const toast = () => {
     }
 };
 
-export { isValidUrl, formatRouteWithID, toast };
+export { isValidUrl, getData, formatRouteWithID, toast };
