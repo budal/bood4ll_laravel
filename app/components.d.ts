@@ -28,6 +28,7 @@ declare module 'vue' {
     Panel: (typeof import("primevue/panel"))["default"]
     ScrollTop: typeof import('primevue/scrolltop')['default']
     Sidebar: typeof import('primevue/sidebar')['default']
+    Skeleton: typeof import('primevue/skeleton')['default']
     SpeedDial: (typeof import("primevue/speeddial"))["default"]
     TabPanel: typeof import('primevue/tabpanel')['default']
     TabView: typeof import('primevue/tabview')['default']

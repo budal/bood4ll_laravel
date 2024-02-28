@@ -13,12 +13,15 @@ const props = withDefaults(
     {},
 );
 
+const loading = ref(false);
 const formValue = ref([]);
 
 const onFormDataLoad = () => {
     if (props.buildRoute) {
+        loading.value = true;
         getData(props.buildRoute).then((content) => {
             formValue.value = content;
+            loading.value = false;
         });
         //     Array.from(formRef).find((item) => item.id === id);
         //     Array.from(formRef).some((item) => item.id === id) === false
@@ -67,58 +70,71 @@ const onFormDataLoad = () => {
                         'sm:col-span-10': field.span == 10,
                     }"
                 >
-                    <FloatLabel v-if="field.type === 'input'" class="w-full">
-                        <InputText
-                            :id="field.name"
-                            v-model="formValue[field.name]"
-                            class="w-full"
-                            v-tooltip="'Enter your username'"
-                        />
-                        <label :for="field.name">
-                            {{ $t(field.label as string) }}</label
-                        >
-                    </FloatLabel>
-                    <FloatLabel v-if="field.type === 'calendar'" class="w-full">
-                        <Calendar
-                            :id="field.name"
-                            v-model="formValue[field.name]"
-                            :dateFormat="field.dateFormat"
-                            class="w-full"
-                            v-tooltip="'Enter your username'"
-                        />
-                        <label :for="field.name">
-                            {{ $t(field.label as string) }}</label
-                        >
-                    </FloatLabel>
-                    <FloatLabel
-                        v-else-if="field.type === 'mask'"
-                        class="w-full"
-                    >
-                        <InputMask
-                            :id="field.name"
-                            v-model="formValue[field.name]"
-                            :mask="field.mask"
-                            class="w-full"
-                            v-tooltip="'Enter your username'"
-                        />
-                        <label :for="field.name">
-                            {{ $t(field.label as string) }}
-                        </label>
-                    </FloatLabel>
-                    <ToggleButton
-                        v-else-if="field.type === 'toggle'"
-                        :id="field.name"
-                        v-model="formValue[field.name]"
-                        class="w-full"
-                        onIcon="pi pi-check"
-                        offIcon="pi pi-times"
-                        onLabel="On"
-                        offLabel="Off"
+                    <Skeleton
+                        v-if="loading == true"
+                        height="3rem"
+                        borderRadius="16px"
                     />
-                    <Table
-                        v-else-if="field.type === 'table'"
-                        :component="field.component"
-                    />
+                    <template v-else>
+                        <FloatLabel
+                            v-if="field.type === 'input'"
+                            class="w-full"
+                        >
+                            <InputText
+                                :id="field.name"
+                                v-model="formValue[field.name]"
+                                class="w-full"
+                                v-tooltip="'Enter your username'"
+                            />
+                            <label :for="field.name">
+                                {{ $t(field.label as string) }}</label
+                            >
+                        </FloatLabel>
+                        <FloatLabel
+                            v-if="field.type === 'calendar'"
+                            class="w-full"
+                        >
+                            <Calendar
+                                :id="field.name"
+                                v-model="formValue[field.name]"
+                                :dateFormat="field.dateFormat"
+                                class="w-full"
+                                v-tooltip="'Enter your username'"
+                            />
+                            <label :for="field.name">
+                                {{ $t(field.label as string) }}</label
+                            >
+                        </FloatLabel>
+                        <FloatLabel
+                            v-else-if="field.type === 'mask'"
+                            class="w-full"
+                        >
+                            <InputMask
+                                :id="field.name"
+                                v-model="formValue[field.name]"
+                                :mask="field.mask"
+                                class="w-full"
+                                v-tooltip="'Enter your username'"
+                            />
+                            <label :for="field.name">
+                                {{ $t(field.label as string) }}
+                            </label>
+                        </FloatLabel>
+                        <ToggleButton
+                            v-else-if="field.type === 'toggle'"
+                            :id="field.name"
+                            v-model="formValue[field.name]"
+                            class="w-full"
+                            onIcon="pi pi-check"
+                            offIcon="pi pi-times"
+                            onLabel="On"
+                            offLabel="Off"
+                        />
+                        <Table
+                            v-else-if="field.type === 'table'"
+                            :component="field.component"
+                        />
+                    </template>
                 </div>
             </div>
 
