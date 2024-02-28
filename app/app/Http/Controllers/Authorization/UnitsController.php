@@ -137,44 +137,6 @@ class UnitsController extends Controller
                         ],
                     ],
                 ],
-                [
-                    'label' => 'Main data1',
-                    'description' => 'Unit data management.',
-                    'cols' => 4,
-                    'fields' => [
-                        [
-                            'type' => 'input',
-                            'name' => 'name',
-                            'label' => 'Name',
-                            'required' => true,
-                        ],
-                        [
-                            'type' => 'input',
-                            'name' => 'name',
-                            'label' => 'Name',
-                            'required' => true,
-                        ],
-                        [
-                            'type' => 'input',
-                            'name' => 'name',
-                            'label' => 'Name',
-                            'required' => true,
-                        ],
-                        [
-                            'type' => 'input',
-                            'name' => 'name',
-                            'label' => 'Name',
-                            'required' => true,
-                        ],
-                        [
-                            'type' => 'input',
-                            'name' => 'name',
-                            'label' => 'Name',
-                            'span' => 2,
-                            'required' => true,
-                        ],
-                    ],
-                ],
             ]
         ]);
     }
