@@ -5,6 +5,7 @@ withDefaults(
     defineProps<{
         component?: any;
         tabs?: boolean;
+        value?: any;
     }>(),
     {
         tabs: true,
@@ -24,7 +25,7 @@ withDefaults(
         <template #content>
             <TabView>
                 <TabPanel v-for="item in component" :header="$t(item.label)">
-                    <Build :component="item">
+                    <Build :component="item" :value="value">
                         <template #description>
                             {{ $t(item.description) }}
                         </template>
@@ -43,7 +44,7 @@ withDefaults(
                 {{ $t(item.description) }}
             </template>
             <template #content>
-                <Build :component="item" />
+                <Build :component="item" :value="value" />
             </template>
         </Card>
     </template>

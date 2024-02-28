@@ -15,6 +15,7 @@ const props = withDefaults(
     defineProps<{
         component: any;
         buildRoute?: string;
+        value?: any;
 
         ///////
         data?: any;
@@ -32,6 +33,8 @@ const props = withDefaults(
         statusTheme: "info",
     },
 );
+
+console.log(props.value);
 
 interface FormItems {
     [key: string]: string;

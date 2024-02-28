@@ -56,7 +56,7 @@ const tableMenuToggle = (event: MouseEvent) => {
 const selectedItemsTotal = computed(() => selectedItems.value);
 
 watch(formRef, () => {
-    console.log(formRef);
+    // console.log(formRef);
 });
 
 const _tableMenuItemsEdit: MenuItem[] = [
@@ -334,13 +334,12 @@ const onFormDataLoad = (route: any, id: string) => {
             (content) => {
                 formRef.add({ id: id, data: content });
                 // return content;
+                // console.log(Array.from(formRef).find((item) => item.id === id));
             },
         );
-        // } else {
-        //     return Array.from(formRef).find((item) => item.id === id);
+    } else {
     }
-
-    console.log(Array.from(formRef).find((item) => item.id === id));
+    //     return Array.from(formRef).find((item) => item.id === id);
 };
 
 useIntersectionObserver(lastIntersection, ([{ isIntersecting }]) => {
@@ -561,6 +560,7 @@ const openDialog = () => {
                     <Structure
                         :component="component.forms.component"
                         :tabs="component.forms.tabs"
+                        :value="formRef"
                     />
                 </DeferredContent>
             </template>
