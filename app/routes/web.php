@@ -69,7 +69,7 @@ Route::middleware('auth')->group(function () {
     Route::prefix('apps')->name('apps.')->group(function () {
         Route::controller(RolesController::class)->group(function () {
             Route::name('roles.')->middleware('verified', 'password.confirm')->group(function () {
-                Route::get('/roles', 'index')->name('index')->breadcrumb('Roles')
+                Route::get('/roles/{cursor?}', 'index')->name('index')->breadcrumb('Roles')
                     ->defaults('title', 'Roles')
                     ->defaults('description', 'Define roles, grouping abilities to define specific access.')
                     ->defaults('icon', 'material-symbols-light:badge-outline');
@@ -92,7 +92,9 @@ Route::middleware('auth')->group(function () {
 
         Route::controller(UnitsController::class)->group(function () {
             Route::name('units.')->middleware('verified', 'password.confirm')->group(function () {
-                Route::get('/units/{out?}', 'index')->name('index')->breadcrumb('Units')
+                Route::get('/getUnits', 'getUnits')->name('getUnits');
+
+                Route::get('/units', 'index')->name('index')->breadcrumb('Units')
                     ->defaults('title', 'Units')
                     ->defaults('description', 'Manage units registered in the system, their subunits and users.')
                     ->defaults('icon', 'material-symbols-light:apartment-rounded');;

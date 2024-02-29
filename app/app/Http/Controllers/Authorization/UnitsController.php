@@ -18,7 +18,7 @@ use Inertia\Response;
 
 class UnitsController extends Controller
 {
-    public function index(Request $request, string $cursor): Response | JsonResponse
+    public function getUnits(Request $request): JsonResponse
     {
         $this->authorize('access', User::class);
 
@@ -45,9 +45,12 @@ class UnitsController extends Controller
             })
             ->cursorPaginate(30);
 
-        if ($cursor == 'json') {
-            return response()->json($units);
-        }
+        return response()->json($units);
+    }
+
+    public function index(Request $request, string $cursor): Response
+    {
+        $this->authorize('access', User::class);
 
         return Inertia::render('Bood4ll', [
             // 'tabs' => false,
@@ -62,35 +65,46 @@ class UnitsController extends Controller
                             'component' => [
                                 'id' => 'units',
                                 'exportCSV' => true,
-                                'routes' => [
-                                    'indexRoute' => [
-                                        'route' => 'apps.units.index',
-                                        'attributes' => ['json'],
+
+                                'actions' => [
+                                    'index' => [
+                                        'route' => 'apps.units.getUnits',
+                                        'visible' => true,
+                                        'disabled' => true,
+                                        'values' => [],
                                     ],
-                                    'createRoute' => [
-                                        'route' => 'apps.units.create',
-                                        'showIf' => Gate::allows('apps.units.create') && $request->user()->can('isManager', User::class) && $request->user()->can('canManageNestedData', User::class),
+                                    'create' => [
+                                        'callback' => 'apps.units.store',
+                                        'form' => $this->__form($request, Unit::where('id', 1)->first()),
+                                        'visible' => true,
+                                        'disabled' => false,
                                     ],
-                                    'editRoute' => [
+                                    'edit' => [
                                         'route' => 'apps.units.edit',
-                                        'showIf' => Gate::allows('apps.units.edit'),
+                                        'callback' => 'apps.units.update',
+                                        'form' => $this->__form($request, Unit::where('id', 1)->first()),
+                                        'visible' => true,
+                                        'disabled' => false,
                                     ],
-                                    'destroyRoute' => [
-                                        'route' => 'apps.units.destroy',
-                                        'showIf' => Gate::allows('apps.units.destroy') && $request->user()->can('isManager', User::class),
+                                    'destroy' => [
+                                        'callback' => 'apps.units.destroy',
+                                        'visible' => true,
+                                        'disabled' => false,
                                     ],
-                                    'forceDestroyRoute' => [
-                                        'route' => 'apps.roles.forcedestroy',
-                                        'showIf' => Gate::allows('apps.roles.forcedestroy') && $request->user()->can('isSuperAdmin', User::class),
+                                    'restore' => [
+                                        'callback' => 'apps.units.restore',
+                                        'visible' => true,
+                                        'disabled' => false,
                                     ],
-                                    'restoreRoute' => [
-                                        'route' => 'apps.units.restore',
-                                        'showIf' => Gate::allows('apps.units.restore') && $request->user()->can('isManager', User::class),
+                                    'forceDestroy' => [
+                                        'callback' => 'apps.units.forceDestroy',
+                                        'visible' => true,
+                                        'disabled' => false,
                                     ],
-                                    // 'reorderRoute' => [
-                                    //     'route' => 'apps.units.reorder',
-                                    //     'showIf' => Gate::allows('apps.units.reorder') && $request->user()->can('isManager', User::class),
-                                    // ],
+                                    // 'reorder' => [
+                                    //     'callback' => 'apps.units.reorder',
+                                    //     'visible' => true,
+                                    // ]
                                 ],
                                 'menu' => [
                                     [
@@ -127,7 +141,7 @@ class UnitsController extends Controller
                                     ],
                                 ],
                                 'forms' => $this->__form($request, Unit::where('id', 1)->first()),
-                                'data' => $units,
+                                // 'data' => $this->getUnits($request),
                             ],
                         ],
                     ],
@@ -200,16 +214,7 @@ class UnitsController extends Controller
             ->withQueryString();
 
         return [
-
             // 'tabs' => false,
-            'routes' => [
-                'createRoute' => [
-                    'route' => 'apps.units.create',
-                ],
-                'editRoute' => [
-                    'route' => 'apps.units.edit',
-                ],
-            ],
             'component' => [
                 [
                     'label' => 'Main data',

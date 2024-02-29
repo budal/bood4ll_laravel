@@ -8,10 +8,10 @@ import {
     defineAsyncComponent,
 } from "vue";
 import { Link, router } from "@inertiajs/vue3";
-import { useIntersectionObserver } from "@vueuse/core";
+import { isDefined, useIntersectionObserver } from "@vueuse/core";
 
 import { useConfirm } from "primevue/useconfirm";
-import { isValidUrl, formatRouteWithID } from "@/helpers";
+import { isValidUrl, getData, formatRouteWithID } from "@/helpers";
 
 import { FilterMatchMode } from "primevue/api";
 import { useToast } from "primevue/usetoast";
@@ -23,13 +23,10 @@ import { MenuItem } from "primevue/menuitem";
 import { provide } from "vue";
 
 import Structure from "@/Components/Structure.vue";
-import { reactive } from "vue";
 
 const props = defineProps<{
     component?: any;
 }>();
-
-provide("dialogRef", props.component.forms);
 
 const contentItems = ref(props.component.data?.data ?? []);
 
@@ -47,6 +44,7 @@ const tableMenu = ref();
 const selectColumns = ref(false);
 const tableColumns = ref(props.component.titles);
 const selectedColumns = ref(tableColumns.value);
+const structureData = ref([]);
 
 const tableMenuToggle = (event: MouseEvent) => {
     tableMenu.value.toggle(event);
@@ -57,18 +55,14 @@ const selectedItemsTotal = computed(() => selectedItems.value);
 const _tableMenuItemsEdit: MenuItem[] = [
     {
         label: "Add",
-        // url: isValidUrl(props.component.routes.createRoute?.route) as string,
-        disabled: isValidUrl(props.component.routes.createRoute?.route)
-            ? false
-            : true,
-        visible: props.component.routes.createRoute?.showIf === true,
+        visible: props.component.actions.create?.visible != false,
+        disabled: props.component.actions.create?.disabled == true,
         icon: "pi pi-plus",
         command: () => {
-            openDialog();
+            openDialog("Add", props.component.actions.create.form);
 
-            // console.log(props.component.routes.createRoute?.route)
             // router.visit(
-            //     isValidUrl(props.component.routes.createRoute?.route),
+            //     isValidUrl(props.component.actions.create?.callback),
             //     {
             //         preserveState: true,
             //         preserveScroll: true,
@@ -78,11 +72,10 @@ const _tableMenuItemsEdit: MenuItem[] = [
     },
     {
         label: "Remove",
-        url: isValidUrl(props.component.routes.destroyRoute?.route) as string,
-        disabled: isValidUrl(props.component.routes.createRoute?.route)
-            ? false
-            : true,
-        visible: props.component.routes.destroyRoute?.showIf === true,
+        visible:
+            props.component.actions.destroy?.visible != false &&
+            isDefined(props.component.actions.destroy?.callback),
+        disabled: props.component.actions.destroy?.disabled == true,
         icon: "pi pi-trash",
         command: () => {
             confirmDialog({
@@ -97,11 +90,10 @@ const _tableMenuItemsEdit: MenuItem[] = [
     },
     {
         label: "Restore",
-        url: isValidUrl(props.component.routes.restoreRoute?.route) as string,
-        disabled: isValidUrl(props.component.routes.createRoute?.route)
-            ? false
-            : true,
-        visible: props.component.routes.restoreRoute?.showIf === true,
+        visible:
+            props.component.actions.restore?.visible != false &&
+            isDefined(props.component.actions.restore?.callback),
+        disabled: props.component.actions.restore?.disabled == true,
         icon: "pi pi-replay",
         command: () => {
             confirmDialog({
@@ -116,13 +108,11 @@ const _tableMenuItemsEdit: MenuItem[] = [
     },
     {
         label: "Erase",
-        url: isValidUrl(
-            props.component.routes.forceDestroyRoute?.route,
-        ) as string,
-        disabled: isValidUrl(props.component.routes.createRoute?.route)
-            ? false
-            : true,
-        visible: props.component.routes.forceDestroyRoute?.showIf === true,
+        visible:
+            props.component.actions.forceDestroy?.visible != false &&
+            isDefined(props.component.actions.forceDestroy?.callback),
+        disabled: props.component.actions.forceDestroy?.disabled == true,
+
         icon: "pi pi-times",
         command: () => {
             confirmDialog({
@@ -138,10 +128,10 @@ const _tableMenuItemsEdit: MenuItem[] = [
     {
         separator: true,
         visible:
-            props.component.routes.createRoute?.showIf === true ||
-            props.component.routes.destroyRoute?.showIf === true ||
-            props.component.routes.restoreRoute?.showIf === true ||
-            props.component.routes.forceDestroyRoute?.showIf === true,
+            isDefined(props.component.actions.create?.callback) ||
+            isDefined(props.component.actions.destroy?.callback) ||
+            isDefined(props.component.actions.restore?.callback) ||
+            isDefined(props.component.actions.forceDestroy?.callback),
     },
 ];
 
@@ -306,20 +296,17 @@ const confirm2 = (event: any) => {
 
 ///////////////
 
-async function getData(route: any) {
-    try {
-        const response = await fetch(isValidUrl(route) as string);
-        return await response.json();
-    } catch (error) {
-        console.error(error);
-    }
-}
-
 const onTableDataLoad = () => {
-    getData(props.component.routes.indexRoute).then((content) => {
+    getData(props.component.actions.index.route).then((content) => {
         contentItems.value = content.data;
         nextPageURL.value = content.next_page_url;
         loadingTable.value = false;
+    });
+};
+
+const onStrutureDataLoad = () => {
+    getData(props.component.actions.index.route).then((content) => {
+        structureData.value = content.data;
     });
 };
 
@@ -353,11 +340,11 @@ const FooterDemo = defineAsyncComponent(
     () => import("@/Components/_useless/FooterDemo.vue"),
 );
 
-const openDialog = () => {
+const openDialog = (header: string, form: string[]) => {
     dialog.open(FormDialog, {
-        data: props.component.forms,
+        data: form,
         props: {
-            header: trans("Add"),
+            header: trans(header),
             breakpoints: {
                 "1080px": "75vw",
                 "640px": "90vw",
@@ -411,7 +398,10 @@ const openDialog = () => {
             removableSort
             scrollable
             :loading="loadingTable"
-            :rowReorder="props.component.routes.reorderRoute?.showIf === true"
+            :rowReorder="
+                component.actions.reorder?.visible != false &&
+                isDefined(component.actions.reorder?.callback)
+            "
             @rowReorder="onRowReorder"
         >
             <template #header>
@@ -494,7 +484,10 @@ const openDialog = () => {
                 {{ $t("No items to show.") }}
             </template>
             <Column
-                v-if="props.component.routes.reorderRoute?.showIf === true"
+                v-if="
+                    component.actions.reorder?.visible != false &&
+                    isDefined(component.actions.reorder?.callback)
+                "
                 rowReorder
                 headerStyle="width: 3rem"
                 class="border-b"
@@ -514,20 +507,20 @@ const openDialog = () => {
                 </template>
             </Column>
             <Column
-                v-if="component.forms"
+                v-if="component.actions.edit"
                 expander
                 frozen
                 alignFrozen="right"
                 style="width: 1rem"
                 class="border-b"
             />
-            <template v-if="component.forms" #expansion="slotProps">
+            <template v-if="component.actions.edit" #expansion="slotProps">
                 <Structure
-                    :component="component.forms.component"
-                    :tabs="component.forms.tabs"
+                    :component="component.actions.edit.form.component"
+                    :tabs="component.actions.edit.form.tabs"
                     :buildRoute="
                         isValidUrl({
-                            route: component.forms.routes.editRoute.route,
+                            route: component.actions.edit.route,
                             attributes: [slotProps.data.id],
                         })
                     "

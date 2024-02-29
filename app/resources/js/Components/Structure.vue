@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import Build from "@/Components/Build.vue";
+import { isValidUrl, getData } from "@/helpers";
 
 withDefaults(
     defineProps<{
