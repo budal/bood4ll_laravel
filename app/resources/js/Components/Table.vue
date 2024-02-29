@@ -297,11 +297,14 @@ const confirm2 = (event: any) => {
 ///////////////
 
 const onTableDataLoad = () => {
-    getData(props.component.actions.index.route).then((content) => {
-        contentItems.value = content.data;
-        nextPageURL.value = content.next_page_url;
-        loadingTable.value = false;
-    });
+    // if (!contentItems.value)
+    {
+        getData(props.component.actions.index.route).then((content) => {
+            contentItems.value = content.data;
+            nextPageURL.value = content.next_page_url;
+            loadingTable.value = false;
+        });
+    }
 };
 
 const onStrutureDataLoad = () => {
