@@ -331,10 +331,12 @@ class UnitsController extends Controller
                             'name' => 'users',
                             'component' => [
                                 'id' => 'units',
-                                'routes' => [
-                                    'indexRoute' => [
-                                        'route' => 'apps.units.index',
-                                        'attributes' => ['json'],
+                                'actions' => [
+                                    'index' => [
+                                        'route' => 'apps.units.getUnits',
+                                        'visible' => true,
+                                        'disabled' => true,
+                                        'values' => [],
                                     ],
                                 ],
                                 'menu' => [
