@@ -32,12 +32,7 @@ const onFormDataLoad = () => {
 <template>
     <slot name="description" />
 
-    <DeferredContent
-        @load="onFormDataLoad"
-        role="region"
-        aria-live="polite"
-        aria-label="Content loaded after page scrolled down"
-    >
+    <DeferredContent @load="onFormDataLoad" aria-live="polite">
         <form v-if="component.showIf !== false" class="space-y-6">
             <div
                 class="grid sm:gap-2"

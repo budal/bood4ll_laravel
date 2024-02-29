@@ -382,12 +382,7 @@ const openDialog = (header: string, form: string[]) => {
 </script>
 
 <template>
-    <DeferredContent
-        @load="onTableDataLoad"
-        role="region"
-        aria-live="polite"
-        aria-label="Content loaded after page scrolled down"
-    >
+    <DeferredContent @load="onTableDataLoad" aria-live="polite">
         <DataTable
             ref="dt"
             :value="contentItems"
