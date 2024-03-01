@@ -59,7 +59,10 @@ const _tableMenuItemsEdit: MenuItem[] = [
         disabled: props.component.actions.create?.disabled == true,
         icon: "pi pi-plus",
         command: () => {
-            openDialog("Add", props.component.actions.create.form);
+            openDialog({
+                header: "Add",
+                action: props.component.actions.create,
+            });
 
             // router.visit(
             //     isValidUrl(props.component.actions.create?.callback),
@@ -343,11 +346,18 @@ const FooterDemo = defineAsyncComponent(
     () => import("@/Components/_useless/FooterDemo.vue"),
 );
 
-const openDialog = (header: string, form: string[]) => {
+const openDialog = (options: {
+    header: string;
+    action?: any;
+    id?: number | string;
+}) => {
     dialog.open(FormDialog, {
-        data: form,
+        data: { action: options.action, id: options.id },
         props: {
-            header: trans(header),
+            header: trans(options.header),
+            style: {
+                width: "90vw",
+            },
             breakpoints: {
                 "1080px": "75vw",
                 "640px": "90vw",
@@ -386,7 +396,6 @@ const openDialog = (header: string, form: string[]) => {
         <DataTable
             ref="dt"
             :value="contentItems"
-            selectionMode="multiple"
             dataKey="id"
             v-model:selection="selectedItems"
             v-model:expandedRows="expandedRows"
@@ -481,6 +490,7 @@ const openDialog = (header: string, form: string[]) => {
             <template #empty>
                 {{ $t("No items to show.") }}
             </template>
+            <Column selectionMode="multiple" headerStyle="width: 1rem"></Column>
             <Column
                 v-if="
                     component.actions.reorder?.visible != false &&
@@ -504,15 +514,35 @@ const openDialog = (header: string, form: string[]) => {
                     {{ slotProps.data[col.field] }}
                 </template>
             </Column>
+            <Column style="width: 1rem" frozen alignFrozen="right">
+                <template #body="{ data }">
+                    <Button
+                        type="button"
+                        icon="pi pi-pencil"
+                        text
+                        size="small"
+                        @click="
+                            openDialog({
+                                header: `Edit :item`,
+                                action: props.component.actions.edit,
+                                id: data.id,
+                            })
+                        "
+                    />
+                </template>
+            </Column>
             <Column
-                v-if="component.actions.edit"
+                v-if="component.actions.edit.embbeded === true"
                 expander
                 frozen
                 alignFrozen="right"
                 style="width: 1rem"
                 class="border-b"
             />
-            <template v-if="component.actions.edit" #expansion="slotProps">
+            <template
+                v-if="component.actions.edit.embbeded === true"
+                #expansion="slotProps"
+            >
                 <Structure
                     :component="component.actions.edit.form.component"
                     :tabs="component.actions.edit.form.tabs"
