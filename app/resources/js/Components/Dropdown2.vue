@@ -7,6 +7,7 @@ import Table from "@/Components/Table.vue";
 
 const props = withDefaults(
     defineProps<{
+        id?: string;
         value?: any;
         component?: any;
         url?: string;
@@ -42,6 +43,7 @@ const value = ref(props.value);
 
 <template>
     <Dropdown
+        :id="id"
         v-model="value"
         :options="dropdownItems"
         :optionValue="optionValue"

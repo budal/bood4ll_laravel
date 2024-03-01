@@ -113,11 +113,15 @@ const onFormDataLoad = () => {
                             <Dropdown2
                                 v-else-if="field.type === 'dropdown'"
                                 :id="field.name"
+                                v-model="formValue[field.name]"
                                 url="getUnits"
                                 optionValue="id"
                                 optionLabel="shortpath"
                             />
-                            <label :for="field.name">
+                            <label
+                                v-if="field.type !== 'toggle'"
+                                :for="field.name"
+                            >
                                 {{ $t(field.label || "") }}</label
                             >
                         </FloatLabel>
