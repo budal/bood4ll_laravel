@@ -4,6 +4,7 @@ import { nextTick, ref } from "vue";
 import { Link, useForm } from "@inertiajs/vue3";
 
 import Table from "@/Components/Table.vue";
+import Dropdown2 from "./Dropdown2.vue";
 
 const props = withDefaults(
     defineProps<{
@@ -71,11 +72,9 @@ const onFormDataLoad = () => {
                         borderRadius="16px"
                     />
                     <template v-else>
-                        <FloatLabel
-                            v-if="field.type === 'input'"
-                            class="w-full"
-                        >
+                        <FloatLabel class="w-full">
                             <InputText
+                                v-if="field.type === 'input'"
                                 :id="field.name"
                                 v-model="formValue[field.name]"
                                 class="w-full"
@@ -84,53 +83,47 @@ const onFormDataLoad = () => {
                                 "
                                 v-tooltip="''"
                             />
-                            <label :for="field.name">
-                                {{ $t(field.label as string) }}</label
-                            >
-                        </FloatLabel>
-                        <FloatLabel
-                            v-if="field.type === 'calendar'"
-                            class="w-full"
-                        >
                             <Calendar
+                                v-if="field.type === 'calendar'"
                                 :inputId="field.name"
                                 v-model="formValue[field.name]"
                                 :dateFormat="field.dateFormat"
                                 class="w-full"
                                 v-tooltip="'Enter your username'"
                             />
-                            <label :for="field.name">
-                                {{ $t(field.label as string) }}</label
-                            >
-                        </FloatLabel>
-                        <FloatLabel
-                            v-else-if="field.type === 'mask'"
-                            class="w-full"
-                        >
                             <InputMask
+                                v-else-if="field.type === 'mask'"
                                 :id="field.name"
                                 v-model="formValue[field.name]"
                                 :mask="field.mask"
                                 class="w-full"
                                 v-tooltip="'Enter your username'"
                             />
+                            <ToggleButton
+                                v-else-if="field.type === 'toggle'"
+                                :id="field.name"
+                                :inputId="field.name"
+                                v-model="formValue[field.name]"
+                                class="w-full"
+                                onIcon="pi pi-check"
+                                offIcon="pi pi-times"
+                                onLabel="On"
+                                offLabel="Off"
+                            />
+                            <Dropdown2
+                                v-else-if="field.type === 'dropdown'"
+                                :id="field.name"
+                                url="getUnits"
+                                optionValue="id"
+                                optionLabel="shortpath"
+                            />
                             <label :for="field.name">
-                                {{ $t(field.label as string) }}
-                            </label>
+                                {{ $t(field.label || "") }}</label
+                            >
                         </FloatLabel>
-                        <ToggleButton
-                            v-else-if="field.type === 'toggle'"
-                            :id="field.name"
-                            :inputId="field.name"
-                            v-model="formValue[field.name]"
-                            class="w-full"
-                            onIcon="pi pi-check"
-                            offIcon="pi pi-times"
-                            onLabel="On"
-                            offLabel="Off"
-                        />
+
                         <Table
-                            v-else-if="field.type === 'table'"
+                            v-if="field.type === 'table'"
                             :component="field.component"
                         />
                     </template>

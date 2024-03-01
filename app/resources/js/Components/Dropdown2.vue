@@ -1,0 +1,58 @@
+<script setup lang="ts">
+import { isValidUrl, getData } from "@/helpers";
+import { nextTick, ref } from "vue";
+import { Link, useForm } from "@inertiajs/vue3";
+
+import Table from "@/Components/Table.vue";
+
+const props = withDefaults(
+    defineProps<{
+        value?: any;
+        component?: any;
+        url?: string;
+        optionValue?: string;
+        optionLabel?: string;
+        placeholder?: string;
+        itemSize?: number;
+    }>(),
+
+    {
+        optionValue: "id",
+        optionLabel: "name",
+        placeholder: "Select an item",
+        itemSize: 40,
+    },
+);
+
+const loading = ref(false);
+const dropdownItems = ref([]);
+
+if (props.url) {
+    loading.value = true;
+    getData(isValidUrl(props.url)).then((content) => {
+        dropdownItems.value = content;
+        loading.value = false;
+    });
+    //     Array.from(formRef).find((item) => item.id === id);
+    //     Array.from(formRef).some((item) => item.id === id) === false
+}
+
+const value = ref(props.value);
+</script>
+
+<template>
+    <Dropdown
+        v-model="value"
+        :options="dropdownItems"
+        :optionValue="optionValue"
+        :optionLabel="optionLabel"
+        :placeholder="$t(placeholder)"
+        :virtualScrollerOptions="{ itemSize: props.itemSize }"
+        showClear
+        checkmark
+        filter
+        :loading="loading"
+        :highlightOnSelect="true"
+        class="w-full"
+    />
+</template>

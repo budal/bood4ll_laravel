@@ -18,6 +18,7 @@ declare module 'vue' {
     DataTable: typeof import('primevue/datatable')['default']
     DeferredContent: typeof import('primevue/deferredcontent')['default']
     Dialog: typeof import('primevue/dialog')['default']
+    Dropdown: typeof import('primevue/dropdown')['default']
     InputMask: typeof import('primevue/inputmask')['default']
     InputText: typeof import('primevue/inputtext')['default']
     Listbox: (typeof import("primevue/listbox"))["default"]

@@ -21,7 +21,12 @@ const isValidUrl = (url: string | { route: string; attributes: string[] }) => {
 async function getData(route: any) {
     try {
         const response = await fetch(isValidUrl(route) as string);
-        return await response.json();
+
+        try {
+            return await response.json();
+        } catch (error) {
+            console.error(`Error on load '${route}'.`);
+        }
     } catch (error) {
         console.error(error);
     }

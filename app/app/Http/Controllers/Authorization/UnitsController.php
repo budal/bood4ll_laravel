@@ -9,6 +9,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Redirect;
@@ -230,7 +231,7 @@ class UnitsController extends Controller
                             'required' => true,
                         ],
                         [
-                            'type' => 'select',
+                            'type' => 'dropdown',
                             'name' => 'parent_id',
                             'label' => 'Belongs to',
                             'span' => 2,
