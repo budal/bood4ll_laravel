@@ -18,11 +18,12 @@ import { useToast } from "primevue/usetoast";
 import { DataTableRowReorderEvent } from "primevue/datatable";
 import { useDialog } from "primevue/usedialog";
 
-import { trans, transChoice } from "laravel-vue-i18n";
+import { trans, transChoice, wTrans } from "laravel-vue-i18n";
 import { MenuItem } from "primevue/menuitem";
 import { provide } from "vue";
 
 import Structure from "@/Components/Structure.vue";
+import { ReplacementsInterface } from "laravel-vue-i18n/interfaces/replacements";
 
 const props = defineProps<{
     component?: any;
@@ -60,7 +61,7 @@ const _tableMenuItemsEdit: MenuItem[] = [
         icon: "pi pi-plus",
         command: () => {
             openDialog({
-                header: "Add",
+                header: "Add unit",
                 action: props.component.actions.create,
             });
 
@@ -348,13 +349,17 @@ const FooterDemo = defineAsyncComponent(
 
 const openDialog = (options: {
     header: string;
+    headerReplacement?: ReplacementsInterface;
     action?: any;
     id?: number | string;
 }) => {
     dialog.open(FormDialog, {
         data: { action: options.action, id: options.id },
         props: {
-            header: trans(options.header),
+            header: wTrans(
+                options.header,
+                options.headerReplacement,
+            ) as unknown as string,
             style: {
                 width: "90vw",
             },
@@ -523,7 +528,8 @@ const openDialog = (options: {
                         size="small"
                         @click="
                             openDialog({
-                                header: `Edit :item`,
+                                header: `Edit ':unit'`,
+                                headerReplacement: { unit: data.shortpath },
                                 action: props.component.actions.edit,
                                 id: data.id,
                             })

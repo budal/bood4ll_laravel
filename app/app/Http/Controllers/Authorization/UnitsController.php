@@ -21,7 +21,7 @@ class UnitsController extends Controller
 {
     public function getUnits(Request $request): JsonResponse
     {
-        $this->authorize('access', User::class);
+        // $this->authorize('access', User::class);
 
         $units = Unit::filter($request, 'units', ['where' => ['shortpath'], 'order' => ['shortpath']])
             ->leftJoin('unit_user', 'unit_user.unit_id', '=', 'units.id')

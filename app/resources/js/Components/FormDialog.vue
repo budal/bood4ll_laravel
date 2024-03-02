@@ -14,8 +14,6 @@ const buildRoute = data.value.action.route
           attributes: [data.value.id],
       })
     : null;
-
-console.log(buildRoute);
 </script>
 
 <template>
