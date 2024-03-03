@@ -8,9 +8,9 @@ const dialogRef = inject<Ref<DynamicDialogInstance>>("dialogRef");
 
 const data = ref(dialogRef?.value.data);
 
-const buildRoute = data.value.action.route
+const buildRoute = data.value.action.source
     ? isValidUrl({
-          route: data.value.action.route,
+          route: data.value.action.source,
           attributes: [data.value.id],
       })
     : null;
@@ -18,7 +18,7 @@ const buildRoute = data.value.action.route
 
 <template>
     <Structure
-        :component="data.action.form.component"
+        :structure="data.action.form.component"
         :tabs="data.action.form.tabs"
         :buildRoute="buildRoute"
     />

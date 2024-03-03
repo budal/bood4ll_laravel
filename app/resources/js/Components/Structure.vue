@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import Build from "@/Components/Build.vue";
-import { isValidUrl, getData } from "@/helpers";
 
 withDefaults(
     defineProps<{
-        component?: any;
+        structure?: any;
         tabs?: boolean;
         buildRoute?: any;
     }>(),
@@ -22,10 +21,10 @@ withDefaults(
         {{ $t($page.props.status as string) }}
     </Message>
 
-    <Card v-if="component.length > 1 && tabs == true">
+    <Card v-if="structure.length > 1 && tabs == true">
         <template #content>
             <TabView>
-                <template v-for="item in component">
+                <template v-for="item in structure">
                     <TabPanel :header="$t(item.label)">
                         <Build :component="item" :buildRoute="buildRoute">
                             <template v-if="item.description" #description>
@@ -39,7 +38,7 @@ withDefaults(
     </Card>
 
     <template v-else>
-        <Card v-for="item in component">
+        <Card v-for="item in structure">
             <template v-if="item.label" #title>
                 {{ $t(item.label) }}
             </template>

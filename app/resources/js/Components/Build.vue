@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { isValidUrl, getData } from "@/helpers";
+import { getData } from "@/helpers";
 import { nextTick, ref } from "vue";
 import { Link, useForm } from "@inertiajs/vue3";
 

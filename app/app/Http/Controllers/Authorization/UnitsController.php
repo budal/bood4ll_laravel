@@ -126,7 +126,7 @@ class UnitsController extends Controller
 
         return Inertia::render('Bood4ll', [
             // 'tabs' => false,
-            'component' => [
+            'structure' => [
                 [
                     'label' => Route::current()->title,
                     'description' => Route::current()->description,
@@ -152,7 +152,7 @@ class UnitsController extends Controller
                                         'disabled' => false,
                                     ],
                                     'edit' => [
-                                        'route' => 'apps.units.edit',
+                                        'source' => 'apps.units.edit',
                                         'callback' => 'apps.units.update',
                                         'form' => $this->__form($request, Unit::where('id', 1)->first()),
                                         'visible' => true,

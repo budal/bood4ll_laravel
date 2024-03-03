@@ -7,7 +7,7 @@ import { provide } from "vue";
 
 const props = withDefaults(
     defineProps<{
-        component: any;
+        structure: any;
         tabs?: boolean;
     }>(),
     {
@@ -29,7 +29,7 @@ const props = withDefaults(
             </Card>
         </nav>
         <div class="max-w-7xl mx-auto py-4 px-2 sm:px-6 lg:px-8 space-y-6">
-            <Structure :component="component" :tabs="tabs" />
+            <Structure :structure="structure" :tabs="tabs" />
         </div>
     </div>
     <Toast />

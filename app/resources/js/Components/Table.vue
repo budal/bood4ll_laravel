@@ -340,7 +340,7 @@ const onRowReorder = (event: DataTableRowReorderEvent) => {
 };
 
 const FormDialog = defineAsyncComponent(
-    () => import("@/Components/FormDialog.vue"),
+    () => import("@/Components/Dialog.vue"),
 );
 
 const FooterDemo = defineAsyncComponent(
