@@ -130,14 +130,6 @@ const _tableMenuItemsEdit: MenuItem[] = [
             });
         },
     },
-    {
-        separator: true,
-        visible:
-            isDefined(props.component.actions.create?.callback) ||
-            isDefined(props.component.actions.destroy?.callback) ||
-            isDefined(props.component.actions.restore?.callback) ||
-            isDefined(props.component.actions.forceDestroy?.callback),
-    },
 ];
 
 const _tableMenuItemsShow: MenuItem[] = [
@@ -198,6 +190,11 @@ props.component.menu?.forEach(
             icon: item.icon,
         }),
 );
+
+_tableMenuItemsComplementar.unshift({
+    separator: true,
+    visible: props.component.menu.length > 0,
+});
 
 _tableMenuItemsComplementar.push({
     separator: true,
