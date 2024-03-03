@@ -11,6 +11,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::controller(UnitsController::class)->middleware('auth:sanctum')->group(function () {
     Route::get('/getUnits/{unit?}', 'getUnits')->name('getUnits');
     Route::get('/getUnitsIndex', 'getUnitsIndex')->name('getUnitsIndex');
-    Route::get('/getUnitStaff/{unit?}', 'getUnitStaff')->name('getUnitStaff');
     Route::get('/getUnitInfo/{unit?}', 'edit')->name('getUnitInfo');
+    Route::get('/getUnitStaff/{unit?}', 'getUnitStaff')->name('getUnitStaff');
 });

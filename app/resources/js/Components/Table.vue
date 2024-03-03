@@ -300,53 +300,6 @@ const confirm2 = (event: any) => {
 
 ///////////////
 
-const onTableDataLoad = () => {
-    // if (!contentItems.value)
-    {
-        getData(props.component.actions.index.route).then((content) => {
-            contentItems.value = content.data;
-            nextPageURL.value = content.next_page_url;
-            loadingTable.value = false;
-        });
-    }
-};
-
-const onStrutureDataLoad = () => {
-    getData(props.component.actions.index.route).then((content) => {
-        structureData.value = content.data;
-    });
-};
-
-useIntersectionObserver(lastIntersection, ([{ isIntersecting }]) => {
-    if (isIntersecting && nextPageURL.value !== null) {
-        loadingTable.value = true;
-
-        getData(nextPageURL.value).then((content) => {
-            nextPageURL.value = content.next_page_url;
-            contentItems.value = [...contentItems.value, ...content.data];
-            loadingTable.value = false;
-        });
-    }
-});
-
-const onRowReorder = (event: DataTableRowReorderEvent) => {
-    contentItems.value = event.value;
-    toast.add({
-        severity: "success",
-        summary: "Rows Reordered",
-        detail: "This is a success toast message",
-        life: 3000,
-    });
-};
-
-const FormDialog = defineAsyncComponent(
-    () => import("@/Components/Dialog.vue"),
-);
-
-const FooterDemo = defineAsyncComponent(
-    () => import("@/Components/_useless/FooterDemo.vue"),
-);
-
 const openDialog = (options: {
     header: string;
     headerReplacement?: ReplacementsInterface;
@@ -394,6 +347,53 @@ const openDialog = (options: {
         },
     });
 };
+
+const onTableDataLoad = () => {
+    // if (!contentItems.value)
+    {
+        getData(props.component.actions.index.route).then((content) => {
+            contentItems.value = content.data;
+            nextPageURL.value = content.next_page_url;
+            loadingTable.value = false;
+        });
+    }
+};
+
+const onStrutureDataLoad = () => {
+    getData(props.component.actions.index.route).then((content) => {
+        structureData.value = content.data;
+    });
+};
+
+useIntersectionObserver(lastIntersection, ([{ isIntersecting }]) => {
+    if (isIntersecting && nextPageURL.value !== null) {
+        loadingTable.value = true;
+
+        getData(nextPageURL.value).then((content) => {
+            nextPageURL.value = content.next_page_url;
+            contentItems.value = [...contentItems.value, ...content.data];
+            loadingTable.value = false;
+        });
+    }
+});
+
+const onRowReorder = (event: DataTableRowReorderEvent) => {
+    contentItems.value = event.value;
+    toast.add({
+        severity: "success",
+        summary: "Rows Reordered",
+        detail: "This is a success toast message",
+        life: 3000,
+    });
+};
+
+const FormDialog = defineAsyncComponent(
+    () => import("@/Components/Dialog.vue"),
+);
+
+const FooterDemo = defineAsyncComponent(
+    () => import("@/Components/_useless/FooterDemo.vue"),
+);
 </script>
 
 <template>
@@ -537,6 +537,7 @@ const openDialog = (options: {
                     />
                 </template>
             </Column>
+            <!-- 
             <Column
                 v-if="component.actions.edit.embbeded === true"
                 expander
@@ -560,6 +561,7 @@ const openDialog = (options: {
                     "
                 />
             </template>
+         -->
         </DataTable>
         <div ref="lastIntersection" class="-translate-y-96" />
     </DeferredContent>
