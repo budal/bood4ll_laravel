@@ -59,8 +59,7 @@ class UnitsController extends Controller
                     $query->where('unit_user.user_id', $request->user()->id);
                 }
             })
-            ->orderBy('units.parent_id')
-            ->orderBy('units.order')
+            ->orderBy('units.shortpath')
             ->get()
             ->map(function ($item) use ($unit) {
                 $item->disabled = $item->active === true && $item->id != $unit->id ? false : true;
@@ -73,7 +72,7 @@ class UnitsController extends Controller
 
             if ($parent === null) {
                 $units->prepend([
-                    'id' => null,
+                    'id' => 0,
                     'name' => '[ root ]',
                 ]);
             } else {
@@ -152,7 +151,7 @@ class UnitsController extends Controller
                                         'disabled' => false,
                                     ],
                                     'edit' => [
-                                        'source' => 'apps.units.edit',
+                                        'source' => 'getUnitInfo',
                                         'callback' => 'apps.units.update',
                                         'form' => $this->__form($request, Unit::where('id', 1)->first()),
                                         'visible' => true,
@@ -243,10 +242,11 @@ class UnitsController extends Controller
                             'type' => 'dropdown',
                             'name' => 'parent_id',
                             'label' => 'Belongs to',
-                            'source' => [
-                                'route' => 'getUnits',
-                                'attributes' => [$unit->id],
-                            ],
+                            'source' => 'getUnits',
+                            // 'source' => [
+                            //     'route' => 'getUnits',
+                            //     'attributes' => [$unit->id],
+                            // ],
                             'span' => 2,
                             'required' => true,
                         ],
@@ -592,9 +592,9 @@ class UnitsController extends Controller
 
     public function edit(Request $request, Unit $unit): JsonResponse
     {
-        $this->authorize('access', User::class);
-        $this->authorize('isActive', $unit);
-        $this->authorize('canEdit', $unit);
+        // $this->authorize('access', User::class);
+        // $this->authorize('isActive', $unit);
+        // $this->authorize('canEdit', $unit);
 
         $unit['abilities_disabled'] = $unit->id;
 

@@ -15,7 +15,7 @@ const props = withDefaults(
 );
 
 const loading = ref(false);
-const formValue = ref([]);
+const formValue = ref<Record<string, any>>({});
 
 const onFormDataLoad = () => {
     if (props.buildRoute) {
@@ -115,6 +115,7 @@ const onFormDataLoad = () => {
                                 :id="field.name"
                                 v-model="formValue[field.name]"
                                 :url="field.source"
+                                :urlAttributes="formValue.id"
                                 :optionValue="field.optionValue || 'id'"
                                 :optionLabel="field.optionLabel || 'name'"
                             />

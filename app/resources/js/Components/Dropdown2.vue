@@ -8,6 +8,7 @@ const props = withDefaults(
         value?: any;
         component?: any;
         url?: string | { route: string; attributes: string[] };
+        urlAttributes?: any;
         optionValue?: string;
         optionLabel?: string;
         placeholder?: string;
@@ -25,14 +26,21 @@ const props = withDefaults(
 const loading = ref(false);
 const dropdownItems = ref([]);
 
+const routeUrl = {
+    route: props.url,
+    attributes: props.urlAttributes,
+};
+
+if (typeof props.url === "object") {
+    routeUrl.attributes.push(props.urlAttributes);
+}
+
 if (props.url) {
     loading.value = true;
-    getData(isValidUrl(props.url)).then((content) => {
+    getData(isValidUrl(routeUrl as any)).then((content) => {
         dropdownItems.value = content;
         loading.value = false;
     });
-    //     Array.from(formRef).find((item) => item.id === id);
-    //     Array.from(formRef).some((item) => item.id === id) === false
 }
 
 const value = ref(props.value);

@@ -96,9 +96,7 @@ Route::middleware('auth')->group(function () {
                     ->defaults('title', 'Units')
                     ->defaults('description', 'Manage units registered in the system, their subunits and users.')
                     ->defaults('icon', 'material-symbols-light:apartment-rounded');;
-                Route::get('/units/create/{unit?}', 'create')->name('create')->breadcrumb('Unit creation', 'apps.units.index');
                 Route::post('/units/create', 'store')->name('store');
-                Route::get('/units/edit/{unit}/{show?}', 'edit')->name('edit')->breadcrumb('Unit edition', 'apps.units.index');
                 Route::patch('/units/edit/{unit}', 'update')->name('update');
                 Route::post('/units/hierarchy', 'hierarchy')->name('hierarchy');
                 Route::delete('/units/destroy', 'destroy')->name('destroy');
