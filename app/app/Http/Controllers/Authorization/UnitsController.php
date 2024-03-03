@@ -136,7 +136,6 @@ class UnitsController extends Controller
                             'component' => [
                                 'id' => 'units',
                                 'exportCSV' => true,
-
                                 'actions' => [
                                     'index' => [
                                         'route' => 'getUnitsIndex',
@@ -330,6 +329,7 @@ class UnitsController extends Controller
                         ],
                     ],
                 ],
+
                 [
                     'label' => 'Staff',
                     'description' => 'Staff management of this unit.',
@@ -342,135 +342,80 @@ class UnitsController extends Controller
                                 'id' => 'units',
                                 'actions' => [
                                     'index' => [
-                                        'route' => 'getUnitsIndex',
+                                        'route' => 'getUnits',
                                         'visible' => true,
                                         'disabled' => true,
                                         'values' => [],
                                     ],
                                 ],
-                                'menu' => [
-                                    [
-                                        'icon' => 'pi pi-replay',
-                                        'label' => 'Refresh units hierarchy',
-                                        'route' => 'apps.units.hierarchy',
-                                        'method' => 'post',
-                                        'showIf' => $request->user()->can('isSuperAdmin', User::class),
-                                    ],
-                                ],
+                                // 'menu' => [
+                                //     [
+                                //         'icon' => 'mdi:account-multiple',
+                                //         'label' => 'Local staff',
+                                //         'route' => [
+                                //             'route' => 'apps.units.edit',
+                                //             'attributes' => [
+                                //                 $unit->id,
+                                //             ]
+                                //         ],
+                                //         'showIf' => $request->user()->can('canManageNestedData', User::class),
+                                //     ],
+                                //     [
+                                //         'icon' => 'mdi:account-group-outline',
+                                //         'label' => 'Total staff',
+                                //         'route' => [
+                                //             'route' => 'apps.units.edit',
+                                //             'attributes' => [
+                                //                 $unit->id,
+                                //                 'all'
+                                //             ]
+                                //         ],
+                                //         'showIf' => $request->user()->can('canManageNestedData', User::class)
+                                //     ],
+                                // ],
                                 'titles' => [
                                     [
+                                        'type' => 'avatar',
+                                        'header' => 'Avatar',
+                                        'field' => 'id',
+                                        'fallback' => 'name',
+                                        'disableSort' => true,
+                                    ],
+                                    [
                                         'type' => 'text',
-                                        'header' => 'Name',
+                                        'header' => 'User',
                                         'field' => 'shortpath',
                                     ],
                                     [
-                                        'type' => 'text',
-                                        'header' => 'Subunits',
-                                        'field' => 'children_count',
-                                        'showIf' => $request->user()->can('canManageNestedData', User::class),
+                                        'type' => 'composite',
+                                        'header' => 'Classified',
+                                        'class' => 'collapse',
+                                        'field' => 'units_classified',
+                                        'options' => [
+                                            [
+                                                'field' => 'name',
+                                            ],
+                                        ],
+                                    ],
+                                    [
+                                        'type' => 'composite',
+                                        'header' => 'Working',
+                                        'class' => 'collapse',
+                                        'field' => 'units_working',
+                                        'options' => [
+                                            [
+                                                'field' => 'name',
+                                            ],
+                                        ],
                                     ],
                                     [
                                         'type' => 'text',
-                                        'header' => 'Local staff',
-                                        'field' => 'users_count',
-                                        'showIf' => $request->user()->can('hasFullAccess', User::class),
-                                    ],
-                                    [
-                                        'type' => 'text',
-                                        'header' => 'Total staff',
-                                        'field' => 'users_all_count',
-                                        'showIf' => $request->user()->can('canManageNestedData', User::class),
+                                        'header' => 'Roles',
+                                        'field' => 'roles_count',
                                     ],
                                 ],
                                 // 'data' => $units,
                             ],
-
-
-
-                            //             'span' => 2,
-                            //             'content' => [
-                            //                 'routes' => [
-                            //                     'editRoute' => [
-                            //                         'route' => 'apps.users.edit',
-                            //                         'showIf' => Gate::allows('apps.users.index')
-                            //                     ],
-                            //                 ],
-                            //                 'menu' => [
-                            //                     [
-                            //                         'icon' => 'mdi:account-multiple',
-                            //                         'label' => 'Local staff',
-                            //                         'route' => [
-                            //                             'route' => 'apps.units.edit',
-                            //                             'attributes' => [
-                            //                                 $unit->id,
-                            //                             ]
-                            //                         ],
-                            //                         'showIf' => $request->user()->can('canManageNestedData', User::class),
-                            //                     ],
-                            //                     [
-                            //                         'icon' => 'mdi:account-group-outline',
-                            //                         'label' => 'Total staff',
-                            //                         'route' => [
-                            //                             'route' => 'apps.units.edit',
-                            //                             'attributes' => [
-                            //                                 $unit->id,
-                            //                                 'all'
-                            //                             ]
-                            //                         ],
-                            //                         'showIf' => $request->user()->can('canManageNestedData', User::class)
-                            //                     ],
-                            //                 ],
-                            //                 'titles' => [
-                            //                     [
-                            //                         'type' => 'avatar',
-                            //                         'label' => 'Avatar',
-                            //                         'field' => 'id',
-                            //                         'fallback' => 'name',
-                            //                         'disableSort' => true,
-                            //                     ],
-                            //                     [
-                            //                         'type' => 'composite',
-                            //                         'label' => 'User',
-                            //                         'field' => 'name',
-                            //                         'values' => [
-                            //                             [
-                            //                                 'field' => 'name',
-                            //                             ],
-                            //                             [
-                            //                                 'field' => 'email',
-                            //                                 'class' => 'text-xs',
-                            //                             ],
-                            //                         ],
-                            //                     ],
-                            //                     [
-                            //                         'type' => 'composite',
-                            //                         'label' => 'Classified',
-                            //                         'class' => 'collapse',
-                            //                         'field' => 'units_classified',
-                            //                         'options' => [
-                            //                             [
-                            //                                 'field' => 'name',
-                            //                             ],
-                            //                         ],
-                            //                     ],
-                            //                     [
-                            //                         'type' => 'composite',
-                            //                         'label' => 'Working',
-                            //                         'class' => 'collapse',
-                            //                         'field' => 'units_working',
-                            //                         'options' => [
-                            //                             [
-                            //                                 'field' => 'name',
-                            //                             ],
-                            //                         ],
-                            //                     ],
-                            //                     [
-                            //                         'type' => 'text',
-                            //                         'label' => 'Roles',
-                            //                         'field' => 'roles_count',
-                            //                     ],
-                            //                 ],
-                            // ],
                         ],
                     ],
                 ],

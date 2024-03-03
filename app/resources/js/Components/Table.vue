@@ -180,7 +180,7 @@ const _tableMenuItemsShow: MenuItem[] = [
 
 let _tableMenuItemsComplementar: MenuItem[] = [];
 
-props.component.menu.forEach(
+props.component.menu?.forEach(
     (item: {
         label: string;
         route: string;
@@ -509,7 +509,7 @@ const FooterDemo = defineAsyncComponent(
             <Column
                 v-for="(col, index) of selectedColumns"
                 :field="col.field"
-                :header="$t(col.header)"
+                :header="$t(col.header || '')"
                 :key="col.field + '_' + index"
                 sortable
                 :showFilterMenu="true"
