@@ -348,31 +348,25 @@ class UnitsController extends Controller
                                         'values' => [],
                                     ],
                                 ],
-                                // 'menu' => [
-                                //     [
-                                //         'icon' => 'mdi:account-multiple',
-                                //         'label' => 'Local staff',
-                                //         'route' => [
-                                //             'route' => 'apps.units.edit',
-                                //             'attributes' => [
-                                //                 $unit->id,
-                                //             ]
-                                //         ],
-                                //         'showIf' => $request->user()->can('canManageNestedData', User::class),
-                                //     ],
-                                //     [
-                                //         'icon' => 'mdi:account-group-outline',
-                                //         'label' => 'Total staff',
-                                //         'route' => [
-                                //             'route' => 'apps.units.edit',
-                                //             'attributes' => [
-                                //                 $unit->id,
-                                //                 'all'
-                                //             ]
-                                //         ],
-                                //         'showIf' => $request->user()->can('canManageNestedData', User::class)
-                                //     ],
-                                // ],
+                                'menu' => [
+                                    [
+                                        'icon' => 'mdi:account-multiple',
+                                        'label' => 'Local staff',
+                                        'route' => 'getUnitStaff',
+                                        'showIf' => $request->user()->can('canManageNestedData', User::class),
+                                    ],
+                                    [
+                                        'icon' => 'mdi:account-group-outline',
+                                        'label' => 'Total staff',
+                                        'route' => [
+                                            'route' => 'getUnitStaff',
+                                            'attributes' => [
+                                                'all'
+                                            ]
+                                        ],
+                                        'showIf' => $request->user()->can('canManageNestedData', User::class)
+                                    ],
+                                ],
                                 'titles' => [
                                     [
                                         'type' => 'avatar',

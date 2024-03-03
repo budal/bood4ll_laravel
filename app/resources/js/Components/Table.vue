@@ -526,7 +526,44 @@ const FooterDemo = defineAsyncComponent(
                 class="border-b"
             >
                 <template #body="slotProps">
-                    {{ slotProps.data[col.field] }}
+                    <p v-if="col.type == 'text'">
+                        {{ slotProps.data[col.field] ?? "-" }}
+                    </p>
+
+                    <template
+                        v-if="col.type == 'composite' && col.showIf !== false"
+                    >
+                        <template
+                            v-if="col.values"
+                            v-for="subitem in col.values"
+                        >
+                            <p
+                                v-if="subitem.showIf !== false"
+                                class="truncate text-secondary-light dark:text-secondary-dark text-center"
+                                :class="subitem.class"
+                            >
+                                {{ $t(slotProps.data[subitem.field] ?? "-") }}
+                            </p>
+                        </template>
+                        <template
+                            v-if="slotProps.data[col.field]"
+                            v-for="subitem in slotProps.data[col.field]"
+                        >
+                            <template v-for="option in col.options">
+                                <p
+                                    class="truncate text-secondary-light dark:text-secondary-dark text-center"
+                                    :class="option.class"
+                                >
+                                    {{
+                                        subitem[option.field]
+                                            ? $t(subitem[option.field])
+                                            : "-"
+                                    }}
+                                </p>
+                            </template>
+                        </template>
+                        <p v-if="slotProps.data[col.field]?.length == 0">-</p>
+                    </template>
                 </template>
             </Column>
             <Column style="width: 1rem" frozen alignFrozen="right">
