@@ -130,6 +130,7 @@ const onFormDataLoad = () => {
                         <Table
                             v-if="field.type === 'table'"
                             :component="field.component"
+                            :urlAttributes="formValue.id"
                         />
                     </template>
                 </div>

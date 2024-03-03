@@ -342,7 +342,7 @@ class UnitsController extends Controller
                                 'id' => 'units',
                                 'actions' => [
                                     'index' => [
-                                        'route' => 'getUnits',
+                                        'route' => 'getUnitStaff',
                                         'visible' => true,
                                         'disabled' => true,
                                         'values' => [],
@@ -384,7 +384,7 @@ class UnitsController extends Controller
                                     [
                                         'type' => 'text',
                                         'header' => 'User',
-                                        'field' => 'shortpath',
+                                        'field' => 'name',
                                     ],
                                     [
                                         'type' => 'composite',

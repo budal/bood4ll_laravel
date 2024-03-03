@@ -27,6 +27,7 @@ import { ReplacementsInterface } from "laravel-vue-i18n/interfaces/replacements"
 
 const props = defineProps<{
     component?: any;
+    urlAttributes?: any;
 }>();
 
 const contentItems = ref(props.component.data?.data ?? []);
@@ -348,10 +349,19 @@ const openDialog = (options: {
     });
 };
 
+const routeUrl = {
+    route: props.component.actions.index.route,
+    attributes: props.urlAttributes,
+};
+
+if (typeof props.component.actions.index.route === "object") {
+    routeUrl.attributes.push(props.urlAttributes);
+}
+
 const onTableDataLoad = () => {
     // if (!contentItems.value)
     {
-        getData(props.component.actions.index.route).then((content) => {
+        getData(routeUrl).then((content) => {
             contentItems.value = content.data;
             nextPageURL.value = content.next_page_url;
             loadingTable.value = false;
