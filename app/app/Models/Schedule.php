@@ -2,13 +2,11 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Schedule extends Base
 {
-    use HasFactory;
     use SoftDeletes;
 
     protected $fillable = [
@@ -20,11 +18,6 @@ class Schedule extends Base
         'starts_at',
         'ends_at',
     ];
-
-    public function calendars(): BelongsToMany
-    {
-        return $this->belongsToMany(Calendar::class);
-    }
 
     public function users(): BelongsToMany
     {

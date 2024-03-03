@@ -138,6 +138,8 @@ class AuthenticatedSessionController extends Controller
     {
         $request->authenticate();
 
+        $request->user()->createToken('token', $request->user()->getAllAbilities->whereNotNull('ability')->pluck('ability')->toArray());
+
         $request->session()->regenerate();
 
         return redirect()->intended(RouteServiceProvider::HOME);
@@ -188,6 +190,8 @@ class AuthenticatedSessionController extends Controller
             event(new Registered($user));
 
             Auth::login($user);
+
+            $user->createToken('token', $user->getAllAbilities->whereNotNull('ability')->pluck('ability')->toArray());
 
             return redirect('/dashboard');
         }

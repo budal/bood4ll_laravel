@@ -19,10 +19,8 @@ use Inertia\Response;
 
 class UnitsController extends Controller
 {
-    public function getUnits(Request $request): JsonResponse
+    public function getUnitsIndex(Request $request): JsonResponse
     {
-        // $this->authorize('access', User::class);
-
         $units = Unit::filter($request, 'units', ['where' => ['shortpath'], 'order' => ['shortpath']])
             ->leftJoin('unit_user', 'unit_user.unit_id', '=', 'units.id')
             ->select('units.id', 'units.shortpath', 'units.deleted_at')
@@ -49,7 +47,80 @@ class UnitsController extends Controller
         return response()->json($units);
     }
 
-    public function index(Request $request, string $cursor): Response
+    public function getUnits(Request $request, Unit $unit): JsonResponse
+    {
+        $units = Unit::leftJoin('unit_user', 'unit_user.unit_id', '=', 'units.id')
+            ->select('units.id', 'units.parent_id', 'units.shortpath as name', 'units.active')
+            ->groupBy('units.id', 'units.parent_id', 'name', 'units.active')
+            ->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
+                $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
+
+                if ($request->user()->cannot('hasFullAccess', User::class)) {
+                    $query->where('unit_user.user_id', $request->user()->id);
+                }
+            })
+            ->orderBy('units.parent_id')
+            ->orderBy('units.order')
+            ->get()
+            ->map(function ($item) use ($unit) {
+                $item->disabled = $item->active === true && $item->id != $unit->id ? false : true;
+
+                return $item;
+            });
+
+        if ($units->pluck('id')->contains($unit->parent_id) === false && $unit->id != null) {
+            $parent = Unit::where('id', $unit->parent_id)->first();
+
+            if ($parent === null) {
+                $units->prepend([
+                    'id' => null,
+                    'name' => '[ root ]',
+                ]);
+            } else {
+                $units->prepend([
+                    'id' => $parent->id,
+                    'name' => $parent->getParentsNames(),
+                ]);
+            }
+        }
+
+        return response()->json($units);
+    }
+
+    public function getUnitStaff(Request $request, Unit $unit): JsonResponse
+    {
+        $staff = User::filter($request, 'staff')
+            ->leftJoin('unit_user', 'unit_user.user_id', '=', 'users.id')
+            ->select('users.id', 'users.name', 'users.email')
+            ->groupBy('users.id', 'users.name', 'users.email')
+            ->when(
+                $request->show == 'all',
+                function ($query) use ($unit) {
+                    $query->whereIn('unit_user.unit_id', json_decode($unit['children_id']));
+                },
+                function ($query) use ($unit) {
+                    $query->where('unit_user.unit_id', $unit->id);
+                }
+            )
+            ->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
+                if ($request->user()->cannot('hasFullAccess', User::class)) {
+                    $query->where('unit_user.user_id', $request->user()->id);
+                }
+
+                $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
+            })
+            ->with('unitsClassified', 'unitsWorking')
+            ->withCount('roles')
+            ->cursorPaginate(30);
+            // ->paginate($perPage = 20, $columns = ['*'], $pageName = 'staff')
+            // ->onEachSide(2)
+            // ->withQueryString()
+        ;
+
+        return response()->json($staff);
+    }
+
+    public function index(Request $request): Response
     {
         $this->authorize('access', User::class);
 
@@ -69,7 +140,7 @@ class UnitsController extends Controller
 
                                 'actions' => [
                                     'index' => [
-                                        'route' => 'apps.units.getUnits',
+                                        'route' => 'getUnitsIndex',
                                         'visible' => true,
                                         'disabled' => true,
                                         'values' => [],
@@ -141,7 +212,6 @@ class UnitsController extends Controller
                                         'showIf' => $request->user()->can('canManageNestedData', User::class),
                                     ],
                                 ],
-                                'forms' => $this->__form($request, Unit::where('id', 1)->first()),
                                 // 'data' => $this->getUnits($request),
                             ],
                         ],
@@ -153,67 +223,6 @@ class UnitsController extends Controller
 
     public function __form(Request $request, Unit $unit): array
     {
-        $units = Unit::leftJoin('unit_user', 'unit_user.unit_id', '=', 'units.id')
-            ->select('units.id', 'units.parent_id', 'units.shortpath AS name', 'units.active')
-            ->groupBy('units.id', 'units.parent_id', 'name', 'units.active')
-            ->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
-                $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
-
-                if ($request->user()->cannot('hasFullAccess', User::class)) {
-                    $query->where('unit_user.user_id', $request->user()->id);
-                }
-            })
-            ->orderBy('units.parent_id')
-            ->orderBy('units.order')
-            ->get()
-            ->map(function ($item) use ($unit) {
-                $item->disabled = $item->active === true && $item->id != $unit->id ? false : true;
-
-                return $item;
-            });
-
-        if ($units->pluck('id')->contains($unit->parent_id) === false && $unit->id != null) {
-            $parent = Unit::where('id', $unit->parent_id)->first();
-
-            if ($parent === null) {
-                $units->prepend([
-                    'id' => null,
-                    'name' => '[ root ]',
-                ]);
-            } else {
-                $units->prepend([
-                    'id' => $parent->id,
-                    'name' => $parent->getParentsNames(),
-                ]);
-            }
-        }
-
-        $staff = User::filter($request, 'staff')
-            ->leftJoin('unit_user', 'unit_user.user_id', '=', 'users.id')
-            ->select('users.id', 'users.name', 'users.email')
-            ->groupBy('users.id', 'users.name', 'users.email')
-            ->when(
-                $request->show == 'all',
-                function ($query) use ($unit) {
-                    $query->whereIn('unit_user.unit_id', json_decode($unit['children_id']));
-                },
-                function ($query) use ($unit) {
-                    $query->where('unit_user.unit_id', $unit->id);
-                }
-            )
-            ->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
-                if ($request->user()->cannot('hasFullAccess', User::class)) {
-                    $query->where('unit_user.user_id', $request->user()->id);
-                }
-
-                $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
-            })
-            ->with('unitsClassified', 'unitsWorking')
-            ->withCount('roles')
-            ->paginate($perPage = 20, $columns = ['*'], $pageName = 'staff')
-            ->onEachSide(2)
-            ->withQueryString();
-
         return [
             // 'tabs' => false,
             'component' => [
@@ -234,8 +243,11 @@ class UnitsController extends Controller
                             'type' => 'dropdown',
                             'name' => 'parent_id',
                             'label' => 'Belongs to',
+                            'source' => [
+                                'route' => 'getUnits',
+                                'attributes' => [$unit->id],
+                            ],
                             'span' => 2,
-                            'content' => $units,
                             'required' => true,
                         ],
                         [

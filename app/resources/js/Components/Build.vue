@@ -114,9 +114,9 @@ const onFormDataLoad = () => {
                                 v-else-if="field.type === 'dropdown'"
                                 :id="field.name"
                                 v-model="formValue[field.name]"
-                                url="getUnits"
-                                optionValue="id"
-                                optionLabel="shortpath"
+                                :url="field.source"
+                                :optionValue="field.optionValue || 'id'"
+                                :optionLabel="field.optionLabel || 'name'"
                             />
                             <label
                                 v-if="field.type !== 'toggle'"

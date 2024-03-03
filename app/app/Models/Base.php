@@ -2,11 +2,16 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Laravel\Sanctum\HasApiTokens;
 
 class Base extends Model
 {
+    use HasFactory;
+    use HasApiTokens;
+
     public function scopeFilter($query, Request $request, string $prefix = null, array $options = []): void
     {
         $filters = collect($request->query)->toArray();

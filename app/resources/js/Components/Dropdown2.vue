@@ -1,16 +1,13 @@
 <script setup lang="ts">
 import { isValidUrl, getData } from "@/helpers";
-import { nextTick, ref } from "vue";
-import { Link, useForm } from "@inertiajs/vue3";
-
-import Table from "@/Components/Table.vue";
+import { ref } from "vue";
 
 const props = withDefaults(
     defineProps<{
         id?: string;
         value?: any;
         component?: any;
-        url?: string;
+        url?: string | { route: string; attributes: string[] };
         optionValue?: string;
         optionLabel?: string;
         placeholder?: string;
