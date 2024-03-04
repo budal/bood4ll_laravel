@@ -52,9 +52,16 @@ const tableMenuToggle = (event: MouseEvent) => {
     tableMenu.value.toggle(event);
 };
 
-const selectedItemsTotal = computed(() => selectedItems.value);
+let selectedItemsTotal = computed(() => selectedItems.value);
 
 const _tableMenuItemsEdit: MenuItem[] = [
+    {
+        label: "Refresh",
+        icon: "pi pi-refresh",
+        command: () => {
+            onTableDataLoad();
+        },
+    },
     {
         label: "Add",
         visible:
@@ -334,6 +341,7 @@ const openDialog = (options: {
         },
         onClose: (options: any) => {
             const data = options.data;
+
             if (data) {
                 const buttonType = data.buttonType;
                 const summary_and_detail = buttonType
@@ -538,7 +546,6 @@ const FooterDemo = defineAsyncComponent(
                         >
                             <p
                                 v-if="subitem.showIf !== false"
-                                class="truncate text-secondary-light dark:text-secondary-dark text-center"
                                 :class="subitem.class"
                             >
                                 {{ $t(slotProps.data[subitem.field] ?? "-") }}
@@ -549,10 +556,7 @@ const FooterDemo = defineAsyncComponent(
                             v-for="subitem in slotProps.data[col.field]"
                         >
                             <template v-for="option in col.options">
-                                <p
-                                    class="truncate text-secondary-light dark:text-secondary-dark text-center"
-                                    :class="option.class"
-                                >
+                                <p :class="option.class">
                                     {{
                                         subitem[option.field]
                                             ? $t(subitem[option.field])

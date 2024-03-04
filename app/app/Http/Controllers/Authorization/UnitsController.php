@@ -177,7 +177,7 @@ class UnitsController extends Controller
                                 ],
                                 'menu' => [
                                     [
-                                        'icon' => 'pi pi-replay',
+                                        'icon' => 'pi pi-refresh',
                                         'label' => 'Refresh units hierarchy',
                                         'source' => 'apps.units.hierarchy',
                                         'method' => 'post',
