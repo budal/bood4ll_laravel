@@ -331,7 +331,6 @@ class UnitsController extends Controller
                         ],
                     ],
                 ],
-
                 [
                     'label' => 'Staff',
                     'description' => 'Staff management of this unit.',

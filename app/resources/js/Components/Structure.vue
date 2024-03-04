@@ -38,7 +38,7 @@ withDefaults(
     </Card>
 
     <template v-else>
-        <Card v-for="item in structure">
+        <Card v-for="item in structure" class="mb-5">
             <template v-if="item.label" #title>
                 {{ $t(item.label) }}
             </template>

@@ -57,7 +57,9 @@ const selectedItemsTotal = computed(() => selectedItems.value);
 const _tableMenuItemsEdit: MenuItem[] = [
     {
         label: "Add",
-        visible: props.component.actions.create?.visible != false,
+        visible:
+            props.component.actions.create?.visible != false &&
+            isDefined(props.component.actions.destroy?.callback),
         disabled: props.component.actions.create?.disabled == true,
         icon: "pi pi-plus",
         command: () => {
