@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { mkAttr, getData } from "@/helpers";
+import { mkAttr, getData, mkRoute } from "@/helpers";
 import { nextTick, ref } from "vue";
 import { Link, useForm } from "@inertiajs/vue3";
 
@@ -21,23 +21,7 @@ const onFormDataLoad = () => {
     if (props.component.source) {
         loading.value = true;
 
-        const mkAttributes = mkAttr(
-            props.component.sourceAttributes,
-            ref({ id: props.id }).value,
-        );
-
-        let attributes = Object.assign(
-            {},
-            props.component.source.attributes,
-            mkAttributes,
-        );
-
-        const route =
-            typeof props.component.source === "object"
-                ? props.component.source.route
-                : props.component.source;
-
-        getData({ route: route, attributes: attributes }).then((content) => {
+        getData(mkRoute(props.component, props.id)).then((content) => {
             formValue.value = content;
             loading.value = false;
         });
@@ -147,6 +131,7 @@ const onFormDataLoad = () => {
                         <Table
                             v-if="field.type === 'table'"
                             :component="field.component"
+                            :id="id"
                             :formValue="formValue"
                         />
                     </template>

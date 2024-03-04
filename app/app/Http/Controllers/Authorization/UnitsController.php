@@ -138,7 +138,7 @@ class UnitsController extends Controller
                                 'exportCSV' => true,
                                 'actions' => [
                                     'index' => [
-                                        'route' => 'getUnitsIndex',
+                                        'source' => 'getUnitsIndex',
                                         'visible' => true,
                                         'disabled' => true,
                                         'values' => [],
@@ -150,7 +150,6 @@ class UnitsController extends Controller
                                         'disabled' => false,
                                     ],
                                     'edit' => [
-                                        'source' => 'getUnitInfo',
                                         'callback' => 'apps.units.update',
                                         'form' => $this->__form($request, Unit::where('id', 1)->first()),
                                         'visible' => true,
@@ -345,8 +344,8 @@ class UnitsController extends Controller
                                 'id' => 'units',
                                 'actions' => [
                                     'index' => [
-                                        'route' => 'getUnitStaff',
-                                        'routeAttributes' => ['unit' => 'id'],
+                                        'source' => 'getUnitStaff',
+                                        'sourceAttributes' => ['unit' => 'id'],
                                         'visible' => true,
                                         'disabled' => true,
                                         'values' => [],
@@ -356,19 +355,18 @@ class UnitsController extends Controller
                                     [
                                         'icon' => 'mdi:account-multiple',
                                         'label' => 'Local staff',
-                                        'route' => 'getUnitStaff',
-                                        'routeAttributes' => ['unit' => 'id'],
+                                        'source' => 'getUnitStaff',
+                                        'sourceAttributes' => ['unit' => 'id'],
                                         'showIf' => $request->user()->can('canManageNestedData', User::class),
                                     ],
                                     [
                                         'icon' => 'mdi:account-group-outline',
                                         'label' => 'Total staff',
-                                        'route' => [
+                                        'source' => [
                                             'route' => 'getUnitStaff',
-                                            'attributes' => [
-                                                'all' => 'all'
-                                            ]
+                                            'attributes' => ['all' => 'all']
                                         ],
+                                        'sourceAttributes' => ['unit' => 'id'],
                                         'showIf' => $request->user()->can('canManageNestedData', User::class)
                                     ],
                                 ],

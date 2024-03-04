@@ -11,7 +11,7 @@ import { Link, router } from "@inertiajs/vue3";
 import { isDefined, useIntersectionObserver } from "@vueuse/core";
 
 import { useConfirm } from "primevue/useconfirm";
-import { isValidUrl, mkAttr, getData } from "@/helpers";
+import { isValidUrl, mkAttr, getData, mkRoute } from "@/helpers";
 
 import { FilterMatchMode } from "primevue/api";
 import { useToast } from "primevue/usetoast";
@@ -26,6 +26,7 @@ import { ReplacementsInterface } from "laravel-vue-i18n/interfaces/replacements"
 
 const props = defineProps<{
     component?: any;
+    id?: string | number;
     formValue?: any;
 }>();
 
@@ -188,9 +189,11 @@ props.component.menu?.forEach(
             visible: item.showIf === true,
             icon: item.icon,
             command: () => {
+                routeUrlRef.value = mkRoute(item, props.id);
+
                 let routeUrl = {
                     route: item.route,
-                    attributes: [{ unit: props.urlAttributes }],
+                    attributes: [{ unit: props.id }],
                 };
 
                 if (typeof item.route === "object") {
@@ -361,15 +364,7 @@ const openDialog = (options: {
     });
 };
 
-let routeUrl = {
-    route: props.component.actions.index.route,
-    attributes: mkAttr(
-        props.component.actions.index.routeAttributes,
-        props.formValue,
-    ),
-};
-
-const routeUrlRef = ref(routeUrl);
+const routeUrlRef = ref(mkRoute(props.component.actions.index, props.id));
 
 const onTableDataLoad = () => {
     loadingTable.value = true;

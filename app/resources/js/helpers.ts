@@ -1,6 +1,7 @@
 import { usePage } from "@inertiajs/vue3";
 import { transChoice } from "laravel-vue-i18n";
 import { ReplacementsInterface } from "laravel-vue-i18n/interfaces/replacements";
+import { ref } from "vue";
 import { ToastType, toast as toasty } from "vue3-toastify";
 
 const isValidUrl = (url: string | { route: string; attributes: string[] }) => {
@@ -29,6 +30,26 @@ function mkAttr(sourceAttributes: any, formValue: any) {
         }
     }
     return result;
+}
+
+function mkRoute(component: any, id: any) {
+    const mkAttributes = mkAttr(
+        component.sourceAttributes,
+        ref({ id: id }).value,
+    );
+
+    const attributes = Object.assign(
+        {},
+        component.source.attributes,
+        mkAttributes,
+    );
+
+    const route =
+        typeof component.source === "object"
+            ? component.source.route
+            : component.source;
+
+    return { route: route, attributes: attributes };
 }
 
 async function getData(route: any) {
@@ -71,4 +92,4 @@ const toast = () => {
     }
 };
 
-export { isValidUrl, mkAttr, getData, formatRouteWithID, toast };
+export { isValidUrl, mkAttr, mkRoute, getData, formatRouteWithID, toast };
