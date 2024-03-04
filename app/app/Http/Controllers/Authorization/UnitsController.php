@@ -179,7 +179,7 @@ class UnitsController extends Controller
                                     [
                                         'icon' => 'pi pi-replay',
                                         'label' => 'Refresh units hierarchy',
-                                        'route' => 'apps.units.hierarchy',
+                                        'source' => 'apps.units.hierarchy',
                                         'method' => 'post',
                                         'showIf' => $request->user()->can('isSuperAdmin', User::class),
                                     ],

@@ -12,5 +12,5 @@ Route::controller(UnitsController::class)->middleware('auth:sanctum')->group(fun
     Route::get('/getUnits/{unit?}', 'getUnits')->name('getUnits');
     Route::get('/getUnitsIndex', 'getUnitsIndex')->name('getUnitsIndex');
     Route::get('/getUnitInfo/{unit}', 'edit')->name('getUnitInfo');
-    Route::get('/getUnitStaff/{unit?}', 'getUnitStaff')->name('getUnitStaff');
+    Route::get('/getUnitStaff/{unit?}/{show?}', 'getUnitStaff')->name('getUnitStaff');
 });
