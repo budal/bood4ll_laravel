@@ -18,6 +18,19 @@ const isValidUrl = (url: string | { route: string; attributes: string[] }) => {
     }
 };
 
+function mkAttr(sourceAttributes: any, formValue: any) {
+    const result: any = {};
+    for (const key in sourceAttributes) {
+        if (
+            Object.prototype.hasOwnProperty.call(sourceAttributes, key) &&
+            formValue.hasOwnProperty(sourceAttributes[key])
+        ) {
+            result[key] = formValue[sourceAttributes[key]];
+        }
+    }
+    return result;
+}
+
 async function getData(route: any) {
     try {
         const response = await fetch(isValidUrl(route) as string);
@@ -58,4 +71,4 @@ const toast = () => {
     }
 };
 
-export { isValidUrl, getData, formatRouteWithID, toast };
+export { isValidUrl, mkAttr, getData, formatRouteWithID, toast };

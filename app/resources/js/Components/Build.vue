@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { getData } from "@/helpers";
+import { mkAttr, getData } from "@/helpers";
 import { nextTick, ref } from "vue";
 import { Link, useForm } from "@inertiajs/vue3";
 
@@ -9,7 +9,7 @@ import Dropdown2 from "./Dropdown2.vue";
 const props = withDefaults(
     defineProps<{
         component: any;
-        buildRoute?: string;
+        id?: string | number;
     }>(),
     {},
 );
@@ -18,14 +18,29 @@ const loading = ref(false);
 const formValue = ref<Record<string, any>>({});
 
 const onFormDataLoad = () => {
-    if (props.buildRoute) {
+    if (props.component.source) {
         loading.value = true;
-        getData(props.buildRoute).then((content) => {
+
+        const mkAttributes = mkAttr(
+            props.component.sourceAttributes,
+            ref({ id: props.id }).value,
+        );
+
+        let attributes = Object.assign(
+            {},
+            props.component.source.attributes,
+            mkAttributes,
+        );
+
+        const route =
+            typeof props.component.source === "object"
+                ? props.component.source.route
+                : props.component.source;
+
+        getData({ route: route, attributes: attributes }).then((content) => {
             formValue.value = content;
             loading.value = false;
         });
-        //     Array.from(formRef).find((item) => item.id === id);
-        //     Array.from(formRef).some((item) => item.id === id) === false
     }
 };
 </script>
@@ -115,7 +130,9 @@ const onFormDataLoad = () => {
                                 :id="field.name"
                                 v-model="formValue[field.name]"
                                 :url="field.source"
-                                :urlAttributes="formValue.id"
+                                :urlAttributes="
+                                    mkAttr(field.sourceAttributes, formValue)
+                                "
                                 :optionValue="field.optionValue || 'id'"
                                 :optionLabel="field.optionLabel || 'name'"
                             />
@@ -130,7 +147,7 @@ const onFormDataLoad = () => {
                         <Table
                             v-if="field.type === 'table'"
                             :component="field.component"
-                            :urlAttributes="formValue.id"
+                            :formValue="formValue"
                         />
                     </template>
                 </div>

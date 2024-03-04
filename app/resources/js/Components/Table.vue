@@ -11,7 +11,7 @@ import { Link, router } from "@inertiajs/vue3";
 import { isDefined, useIntersectionObserver } from "@vueuse/core";
 
 import { useConfirm } from "primevue/useconfirm";
-import { isValidUrl, getData, formatRouteWithID } from "@/helpers";
+import { isValidUrl, mkAttr, getData } from "@/helpers";
 
 import { FilterMatchMode } from "primevue/api";
 import { useToast } from "primevue/usetoast";
@@ -20,14 +20,13 @@ import { useDialog } from "primevue/usedialog";
 
 import { trans, transChoice, wTrans } from "laravel-vue-i18n";
 import { MenuItem } from "primevue/menuitem";
-import { provide } from "vue";
 
 import Structure from "@/Components/Structure.vue";
 import { ReplacementsInterface } from "laravel-vue-i18n/interfaces/replacements";
 
 const props = defineProps<{
     component?: any;
-    urlAttributes?: any;
+    formValue?: any;
 }>();
 
 const contentItems = ref(props.component.data?.data ?? []);
@@ -188,6 +187,22 @@ props.component.menu?.forEach(
             disabled: isValidUrl(item.route) ? false : true,
             visible: item.showIf === true,
             icon: item.icon,
+            command: () => {
+                let routeUrl = {
+                    route: item.route,
+                    attributes: [{ unit: props.urlAttributes }],
+                };
+
+                if (typeof item.route === "object") {
+                    routeUrl.attributes.push(item.route.attributes);
+                }
+
+                console.log(routeUrl);
+
+                routeUrlRef.value = routeUrl;
+
+                onTableDataLoad();
+            },
         }),
 );
 
@@ -346,19 +361,22 @@ const openDialog = (options: {
     });
 };
 
-const routeUrl = {
+let routeUrl = {
     route: props.component.actions.index.route,
-    attributes: props.urlAttributes,
+    attributes: mkAttr(
+        props.component.actions.index.routeAttributes,
+        props.formValue,
+    ),
 };
 
-if (typeof props.component.actions.index.route === "object") {
-    routeUrl.attributes.push(props.urlAttributes);
-}
+const routeUrlRef = ref(routeUrl);
 
 const onTableDataLoad = () => {
+    loadingTable.value = true;
+
     // if (!contentItems.value)
     {
-        getData(routeUrl).then((content) => {
+        getData(routeUrlRef.value).then((content) => {
             contentItems.value = content.data;
             nextPageURL.value = content.next_page_url;
             loadingTable.value = false;

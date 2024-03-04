@@ -7,19 +7,12 @@ import { isValidUrl } from "@/helpers";
 const dialogRef = inject<Ref<DynamicDialogInstance>>("dialogRef");
 
 const data = ref(dialogRef?.value.data);
-
-const buildRoute = data.value.action.source
-    ? isValidUrl({
-          route: data.value.action.source,
-          attributes: [data.value.id],
-      })
-    : null;
 </script>
 
 <template>
     <Structure
         :structure="data.action.form.component"
         :tabs="data.action.form.tabs"
-        :buildRoute="buildRoute"
+        :id="data.id"
     />
 </template>

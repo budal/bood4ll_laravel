@@ -227,6 +227,8 @@ class UnitsController extends Controller
                 [
                     'label' => 'Main data',
                     'description' => 'Unit data management.',
+                    'source' => 'getUnitInfo',
+                    'sourceAttributes' => ['unit' => 'id'],
                     'disabledIf' => $unit->id !== null && $request->user()->cannot('isOwner', $unit),
                     'cols' => 4,
                     'fields' => [
@@ -242,6 +244,7 @@ class UnitsController extends Controller
                             'name' => 'parent_id',
                             'label' => 'Belongs to',
                             'source' => 'getUnits',
+                            'sourceAttributes' => ['unit' => 'id'],
                             'span' => 2,
                             'required' => true,
                         ],
@@ -343,6 +346,7 @@ class UnitsController extends Controller
                                 'actions' => [
                                     'index' => [
                                         'route' => 'getUnitStaff',
+                                        'routeAttributes' => ['unit' => 'id'],
                                         'visible' => true,
                                         'disabled' => true,
                                         'values' => [],
@@ -353,6 +357,7 @@ class UnitsController extends Controller
                                         'icon' => 'mdi:account-multiple',
                                         'label' => 'Local staff',
                                         'route' => 'getUnitStaff',
+                                        'routeAttributes' => ['unit' => 'id'],
                                         'showIf' => $request->user()->can('canManageNestedData', User::class),
                                     ],
                                     [
@@ -361,7 +366,7 @@ class UnitsController extends Controller
                                         'route' => [
                                             'route' => 'getUnitStaff',
                                             'attributes' => [
-                                                'all'
+                                                'all' => 'all'
                                             ]
                                         ],
                                         'showIf' => $request->user()->can('canManageNestedData', User::class)
