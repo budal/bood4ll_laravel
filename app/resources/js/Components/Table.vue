@@ -176,33 +176,20 @@ let _tableMenuItemsComplementar: MenuItem[] = [];
 props.component.menu?.forEach(
     (item: {
         label: string;
-        route: string;
+        source: string;
         method: string;
         showIf: boolean;
         icon: string;
     }) =>
         _tableMenuItemsComplementar.push({
             label: item.label,
-            url: isValidUrl(item.route) as string,
+            url: isValidUrl(item.source) as string,
             method: item.method,
-            disabled: isValidUrl(item.route) ? false : true,
+            disabled: isValidUrl(item.source) ? false : true,
             visible: item.showIf === true,
             icon: item.icon,
             command: () => {
                 routeUrlRef.value = mkRoute(item, props.id);
-
-                let routeUrl = {
-                    route: item.route,
-                    attributes: [{ unit: props.id }],
-                };
-
-                if (typeof item.route === "object") {
-                    routeUrl.attributes.push(item.route.attributes);
-                }
-
-                console.log(routeUrl);
-
-                routeUrlRef.value = routeUrl;
 
                 onTableDataLoad();
             },

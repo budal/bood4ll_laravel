@@ -364,7 +364,7 @@ class UnitsController extends Controller
                                         'label' => 'Total staff',
                                         'source' => [
                                             'route' => 'getUnitStaff',
-                                            'attributes' => ['all' => 'all']
+                                            'attributes' => ['show' => 'all']
                                         ],
                                         'sourceAttributes' => ['unit' => 'id'],
                                         'showIf' => $request->user()->can('canManageNestedData', User::class)
