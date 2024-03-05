@@ -6,6 +6,7 @@ import {
     watch,
     markRaw,
     defineAsyncComponent,
+    onBeforeUnmount,
 } from "vue";
 import { Link, router } from "@inertiajs/vue3";
 import { isDefined, useIntersectionObserver } from "@vueuse/core";
@@ -23,6 +24,7 @@ import { MenuItem } from "primevue/menuitem";
 
 import Structure from "@/Components/Structure.vue";
 import { ReplacementsInterface } from "laravel-vue-i18n/interfaces/replacements";
+import debounce from "lodash.debounce";
 
 const props = defineProps<{
     component?: any;
@@ -411,6 +413,26 @@ const FormDialog = defineAsyncComponent(
 const FooterDemo = defineAsyncComponent(
     () => import("@/Components/_useless/FooterDemo.vue"),
 );
+
+const search = ref(null);
+
+const debouncedWatch = debounce(() => {
+    // console.log(search.value);
+    // searchRoute.searchParams.set(searchFieldName, search.value);
+    // router.visit(searchRoute, {
+    //     method: "get",
+    //     preserveState: true,
+    //     preserveScroll: true,
+    // });
+}, 500);
+
+watch(search, () => {
+    // console.log(search.value);
+});
+
+onBeforeUnmount(() => {
+    debouncedWatch.cancel();
+});
 </script>
 
 <template>
@@ -419,6 +441,7 @@ const FooterDemo = defineAsyncComponent(
             ref="dt"
             :value="contentItems"
             dataKey="id"
+            selectionMode="multiple"
             v-model:selection="selectedItems"
             v-model:expandedRows="expandedRows"
             stripedRows
@@ -432,6 +455,7 @@ const FooterDemo = defineAsyncComponent(
                 isDefined(component.actions.reorder?.callback)
             "
             @rowReorder="onRowReorder"
+            class="w-full"
         >
             <template #header>
                 <div
@@ -457,7 +481,7 @@ const FooterDemo = defineAsyncComponent(
                                     v-bind="props.action"
                                     v-ripple
                                 >
-                                    <span :class="item.icon" />
+                                    <span class="w-4" :class="item.icon" />
                                     <span class="ml-2">
                                         {{ $t(item.label as string) }}
                                     </span>
@@ -501,7 +525,7 @@ const FooterDemo = defineAsyncComponent(
                             </InputIcon>
                             <InputText
                                 id="findTable"
-                                v-model="filters['global'].value"
+                                ref="search"
                                 :placeholder="$t('Search...')"
                                 class="pl-8"
                             />
@@ -512,7 +536,7 @@ const FooterDemo = defineAsyncComponent(
             <template #empty>
                 {{ $t("No items to show.") }}
             </template>
-            <Column selectionMode="multiple" headerStyle="width: 1rem"></Column>
+            <Column headerStyle="width: 1rem"></Column>
             <Column
                 v-if="
                     component.actions.reorder?.visible != false &&
@@ -567,6 +591,17 @@ const FooterDemo = defineAsyncComponent(
                         </template>
                         <p v-if="slotProps.data[col.field]?.length == 0">-</p>
                     </template>
+                    <p v-if="col.type == 'active'">
+                        <i
+                            class="pi"
+                            :class="{
+                                'pi-check-circle text-green-500':
+                                    slotProps.data[col.field],
+                                'pi-times-circle text-red-400':
+                                    !slotProps.data[col.field],
+                            }"
+                        ></i>
+                    </p>
                 </template>
             </Column>
             <Column style="width: 1rem" frozen alignFrozen="right">

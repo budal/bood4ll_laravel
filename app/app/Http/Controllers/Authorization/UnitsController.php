@@ -23,8 +23,8 @@ class UnitsController extends Controller
     {
         $units = Unit::filter($request, 'units', ['where' => ['shortpath'], 'order' => ['shortpath']])
             ->leftJoin('unit_user', 'unit_user.unit_id', '=', 'units.id')
-            ->select('units.id', 'units.shortpath', 'units.deleted_at')
-            ->groupBy('units.id', 'units.shortpath', 'units.deleted_at')
+            ->select('units.id', 'units.shortpath', 'units.active', 'units.deleted_at')
+            ->groupBy('units.id', 'units.shortpath', 'units.active', 'units.deleted_at')
             ->withCount([
                 'children', 'users',
                 'users as users_all_count' => function ($query) {
@@ -189,6 +189,11 @@ class UnitsController extends Controller
                                         'type' => 'text',
                                         'header' => 'Name',
                                         'field' => 'shortpath',
+                                    ],
+                                    [
+                                        'type' => 'active',
+                                        'header' => 'Active',
+                                        'field' => 'active',
                                     ],
                                     [
                                         'type' => 'text',
