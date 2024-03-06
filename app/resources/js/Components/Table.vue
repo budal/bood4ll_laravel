@@ -543,7 +543,20 @@ onBeforeUnmount(() => {
             <template #empty>
                 {{ $t("No items to show.") }}
             </template>
-            <Column headerStyle="width: 1rem"></Column>
+            <Column
+                v-bind="
+                    (props.component.actions.destroy?.visible != false &&
+                        isDefined(props.component.actions.destroy?.callback)) ||
+                    (props.component.actions.restore?.visible != false &&
+                        isDefined(props.component.actions.restore?.callback)) ||
+                    (props.component.actions.forceDestroy?.visible != false &&
+                        isDefined(
+                            props.component.actions.forceDestroy?.callback,
+                        ))
+                        ? { selectionMode: 'multiple' }
+                        : null
+                "
+            />
             <Column
                 v-if="
                     component.actions.reorder?.visible != false &&
@@ -637,31 +650,6 @@ onBeforeUnmount(() => {
                     />
                 </template>
             </Column>
-            <!-- 
-            <Column
-                v-if="component.actions.edit.embbeded === true"
-                expander
-                frozen
-                alignFrozen="right"
-                style="width: 1rem"
-                class="border-b"
-            />
-            <template
-                v-if="component.actions.edit.embbeded === true"
-                #expansion="slotProps"
-            >
-                <Structure
-                    :component="component.actions.edit.form.component"
-                    :tabs="component.actions.edit.form.tabs"
-                    :buildRoute="
-                        isValidUrl({
-                            route: component.actions.edit.route,
-                            attributes: [slotProps.data.id],
-                        })
-                    "
-                />
-            </template>
-         -->
         </DataTable>
         <div ref="lastIntersection" class="-translate-y-96" />
     </DeferredContent>
