@@ -102,7 +102,6 @@ Route::middleware('auth')->group(function () {
                 Route::delete('/units/destroy', 'destroy')->name('destroy');
                 Route::post('/units/restore', 'restore')->name('restore');
                 Route::post('/units/reorder', 'restore')->name('reorder');
-                Route::get('/getUnitStaff/{unit?}/{show?}', 'getUnitStaff')->name('getUnitStaff');
             });
         });
 

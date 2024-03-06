@@ -30,11 +30,11 @@ const props = withDefaults(
         <div class="max-w-7xl mx-auto py-4 px-2 sm:px-6 lg:px-8 space-y-6">
             <Structure :structure="structure" :tabs="tabs" />
         </div>
+        <Toast />
+        <DynamicDialog />
+        <ConfirmDialog group="dialog" :draggable="false" />
+        <ConfirmPopup group="popup" />
+        <ScrollTop />
+        <TailwindIndicator />
     </div>
-    <Toast />
-    <DynamicDialog />
-    <ConfirmDialog group="dialog" :draggable="false" />
-    <ConfirmPopup group="popup" />
-    <ScrollTop />
-    <TailwindIndicator />
 </template>

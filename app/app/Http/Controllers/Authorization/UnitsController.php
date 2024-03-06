@@ -19,36 +19,6 @@ use Inertia\Response;
 
 class UnitsController extends Controller
 {
-    public function getUnitsIndex(Request $request): JsonResponse
-    {
-        $units = Unit::where('shortpath', 'ilike', "%$request->search%")
-            ->orderBy('shortpath')
-            ->leftJoin('unit_user', 'unit_user.unit_id', '=', 'units.id')
-            ->select('units.id', 'units.shortpath', 'units.active', 'units.deleted_at')
-            ->groupBy('units.id', 'units.shortpath', 'units.active', 'units.deleted_at')
-            ->withCount([
-                'children', 'users',
-                'users as users_all_count' => function ($query) {
-                    $query->orWhere(function ($query) {
-                        $query->whereRaw('unit_id IN (
-                            SELECT (json_array_elements(u.children_id::json)::text)::bigint FROM units u WHERE u.id = units.id
-                        )');
-                    });
-                },
-            ])
-            ->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
-                if ($request->user()->cannot('hasFullAccess', User::class)) {
-                    $query->where('unit_user.user_id', $request->user()->id);
-                }
-
-                $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
-            })
-            ->cursorPaginate(30)
-            ->withQueryString();
-
-        return response()->json($units);
-    }
-
     public function getUnits(Request $request, Unit $unit): JsonResponse
     {
         $units = Unit::leftJoin('unit_user', 'unit_user.unit_id', '=', 'units.id')
@@ -88,15 +58,61 @@ class UnitsController extends Controller
         return response()->json($units);
     }
 
+    public function getUnitsIndex(Request $request): JsonResponse
+    {
+        $units = Unit::leftJoin('unit_user', 'unit_user.unit_id', '=', 'units.id')
+            ->select('units.id', 'units.shortpath', 'units.active', 'units.deleted_at')
+            ->groupBy('units.id', 'units.shortpath', 'units.active', 'units.deleted_at')
+            ->withCount([
+                'children', 'users',
+                'users as users_all_count' => function ($query) {
+                    $query->orWhere(function ($query) {
+                        $query->whereRaw('unit_id IN (
+                            SELECT (json_array_elements(u.children_id::json)::text)::bigint FROM units u WHERE u.id = units.id
+                            )');
+                    });
+                },
+            ])
+            ->orderBy('shortpath')
+            ->when($request->showItems ?? null, function ($query, $showItems) {
+                if ($showItems == 'both') {
+                    $query->withTrashed();
+                } elseif ($showItems == 'trashed') {
+                    $query->onlyTrashed();
+                }
+            })
+            ->where('shortpath', 'ilike', "%$request->search%")
+            ->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
+                if ($request->user()->cannot('hasFullAccess', User::class)) {
+                    $query->where('unit_user.user_id', $request->user()->id);
+                }
+
+                $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
+            })
+            ->cursorPaginate(30)
+            ->withQueryString();
+
+        return response()->json($units);
+    }
+
     public function getUnitStaff(Request $request, Unit $unit): JsonResponse
     {
-        $staff = User::where("name", 'ilike', '%' . $request->search . '%')
-            ->orderBy('name')
-            ->leftJoin('unit_user', 'unit_user.user_id', '=', 'users.id')
+        $staff = User::leftJoin('unit_user', 'unit_user.user_id', '=', 'users.id')
             ->select('users.id', 'users.name', 'users.email')
             ->groupBy('users.id', 'users.name', 'users.email')
+            ->with('unitsClassified', 'unitsWorking')
+            ->withCount('roles')
+            ->orderBy('name')
+            ->where("name", 'ilike', '%' . $request->search . '%')
+            ->when($request->showItems ?? null, function ($query, $showItems) {
+                if ($showItems == 'both') {
+                    $query->withTrashed();
+                } elseif ($showItems == 'trashed') {
+                    $query->onlyTrashed();
+                }
+            })
             ->when(
-                $request->show == 'all',
+                $request->show === 'all',
                 function ($query) use ($unit) {
                     $query->whereIn('unit_user.unit_id', json_decode($unit['children_id']));
                 },
@@ -111,11 +127,7 @@ class UnitsController extends Controller
 
                 $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
             })
-            ->with('unitsClassified', 'unitsWorking')
-            ->withCount('roles')
             ->cursorPaginate(30)
-            // ->paginate($perPage = 20, $columns = ['*'], $pageName = 'staff')
-            // ->onEachSide(2)
             ->withQueryString();
 
         return response()->json($staff);

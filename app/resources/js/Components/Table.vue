@@ -8,7 +8,7 @@ import {
     defineAsyncComponent,
     onBeforeUnmount,
 } from "vue";
-import { Link, router } from "@inertiajs/vue3";
+import { Link } from "@inertiajs/vue3";
 import { isDefined, useIntersectionObserver } from "@vueuse/core";
 
 import { useConfirm } from "primevue/useconfirm";
@@ -49,6 +49,9 @@ const selectColumns = ref(false);
 const tableColumns = ref(props.component.titles);
 const selectedColumns = ref(tableColumns.value);
 const structureData = ref([]);
+const search = ref(null);
+const showItems = ref();
+const routeUrlRef = ref(mkRoute(props.component.actions.index, props.id));
 
 const tableMenuToggle = (event: MouseEvent) => {
     tableMenu.value.toggle(event);
@@ -56,7 +59,7 @@ const tableMenuToggle = (event: MouseEvent) => {
 
 let selectedItemsTotal = computed(() => selectedItems.value);
 
-const _tableMenuItemsEdit: MenuItem[] = [
+let _tableMenuItemsEdit: MenuItem[] = [
     {
         label: "Refresh",
         icon: "pi pi-refresh",
@@ -76,14 +79,6 @@ const _tableMenuItemsEdit: MenuItem[] = [
                 header: "Add unit",
                 action: props.component.actions.create,
             });
-
-            // router.visit(
-            //     isValidUrl(props.component.actions.create?.callback),
-            //     {
-            //         preserveState: true,
-            //         preserveScroll: true,
-            //     },
-            // );
         },
     },
     {
@@ -143,21 +138,41 @@ const _tableMenuItemsEdit: MenuItem[] = [
     },
 ];
 
-const _tableMenuItemsShow: MenuItem[] = [
+const showAll = ref("pi pi-check text-xs");
+const showTrashed = ref("pi pi-check text-xs");
+const showBoth = ref("pi pi-check text-xs");
+
+let _tableMenuItemsShow: MenuItem[] = [
     {
-        label: "Filters",
-        icon: "pi pi-filter",
+        label: "List",
+        icon: "pi pi-eye",
         items: [
             {
-                label: "Active only",
-                icon: "pi pi-check text-xs",
+                label: "Active",
+                icon: showAll.value,
+                command: () => {
+                    showItems.value = null;
+
+                    onTableDataLoad();
+                },
             },
             {
-                label: "Trashed only",
+                label: "Trashed",
+                icon: showTrashed.value,
+                command: () => {
+                    showItems.value = "trashed";
+
+                    onTableDataLoad();
+                },
             },
             {
-                label: "All records",
-                icon: "",
+                label: "All",
+                icon: showBoth.value,
+                command: () => {
+                    showItems.value = "both";
+
+                    onTableDataLoad();
+                },
             },
         ],
     },
@@ -219,7 +234,7 @@ _tableMenuItemsComplementar.push({
             .length > 0,
 });
 
-const tableMenuItems = ref([
+let tableMenuItems = ref([
     ..._tableMenuItemsEdit,
     ..._tableMenuItemsComplementar,
     ..._tableMenuItemsShow,
@@ -262,26 +277,19 @@ const confirmDialog = (options: {
         acceptLabel: trans(options.acceptLabel || "Confirm"),
         defaultFocus: "reject",
         accept: () => {
-            toast.add({
-                severity: "info",
-                summary: "Confirmed",
-                detail: "You have accepted",
-                life: 3000,
-            });
+            onTableDataLoad();
+
+            // toast.add({
+            //     severity: "info",
+            //     summary: "Confirmed",
+            //     detail: "You have accepted",
+            //     life: 3000,
+            // });
         },
     });
 };
 
 ///////////////
-
-const filters = ref({
-    global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-    name: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
-    "country.name": { value: null, matchMode: FilterMatchMode.STARTS_WITH },
-    representative: { value: null, matchMode: FilterMatchMode.IN },
-    status: { value: null, matchMode: FilterMatchMode.EQUALS },
-    verified: { value: null, matchMode: FilterMatchMode.EQUALS },
-});
 
 const confirm2 = (event: any) => {
     confirm.require({
@@ -298,14 +306,6 @@ const confirm2 = (event: any) => {
                 severity: "info",
                 summary: "Confirmed",
                 detail: "Record deleted",
-                life: 3000,
-            });
-        },
-        reject: () => {
-            toast.add({
-                severity: "error",
-                summary: "Rejected",
-                detail: "You have rejected",
                 life: 3000,
             });
         },
@@ -363,9 +363,9 @@ const openDialog = (options: {
     });
 };
 
-const routeUrlRef = ref(mkRoute(props.component.actions.index, props.id));
-
 const onTableDataLoad = () => {
+    showBoth.value = "";
+
     loadingTable.value = true;
 
     routeUrlRef.value = {
@@ -373,6 +373,7 @@ const onTableDataLoad = () => {
         attributes: {
             ...routeUrlRef.value.attributes,
             ...{ search: search.value },
+            ...{ showItems: showItems.value },
         },
     };
 
@@ -419,8 +420,6 @@ const FooterDemo = defineAsyncComponent(
     () => import("@/Components/_useless/FooterDemo.vue"),
 );
 
-const search = ref(null);
-
 const debouncedWatch = debounce(() => {
     onTableDataLoad();
 }, 500);
@@ -438,7 +437,16 @@ onBeforeUnmount(() => {
             ref="dt"
             :value="contentItems"
             dataKey="id"
-            selectionMode="multiple"
+            v-bind="
+                (props.component.actions.destroy?.visible != false &&
+                    isDefined(props.component.actions.destroy?.callback)) ||
+                (props.component.actions.restore?.visible != false &&
+                    isDefined(props.component.actions.restore?.callback)) ||
+                (props.component.actions.forceDestroy?.visible != false &&
+                    isDefined(props.component.actions.forceDestroy?.callback))
+                    ? { selectionMode: 'multiple' }
+                    : null
+            "
             v-model:selection="selectedItems"
             v-model:expandedRows="expandedRows"
             stripedRows
@@ -459,61 +467,63 @@ onBeforeUnmount(() => {
                     class="flex flex-wrap items-center justify-content-end justify-between gap-2"
                 >
                     <div>
-                        <Button
-                            icon="pi pi-ellipsis-v"
-                            rounded
-                            raised
-                            @click="tableMenuToggle"
-                            aria-haspopup="true"
-                            aria-controls="overlay_tmenu"
-                        />
-                        <TieredMenu
-                            ref="tableMenu"
-                            :model="tableMenuItems"
-                            popup
-                        >
-                            <template #item="{ item, props }">
-                                <a
-                                    class="flex align-items-center"
-                                    v-bind="props.action"
-                                    v-ripple
-                                >
-                                    <span class="w-4" :class="item.icon" />
-                                    <span class="ml-2">
-                                        {{ $t(item.label as string) }}
-                                    </span>
-                                    <Badge
-                                        v-if="item.badge"
-                                        class="ml-auto"
-                                        :value="item.badge"
-                                    />
-                                    <span
-                                        v-if="item.shortcut"
-                                        class="ml-auto border-1 surface-border border-round surface-100 text-xs p-1"
-                                        >{{ item.shortcut }}</span
-                                    >
-                                    <span
-                                        v-if="item.items"
-                                        class="pi pi-chevron-right ml-auto border-1 surface-border border-round surface-100 text-xs p-1"
-                                    />
-                                </a>
-                            </template>
-                        </TieredMenu>
-                        <Dialog
-                            v-model:visible="selectColumns"
-                            modal
-                            :header="trans('Columns')"
-                            :style="{ width: '25rem' }"
-                        >
-                            <MultiSelect
-                                :modelValue="selectedColumns"
-                                :options="component.titles"
-                                optionLabel="header"
-                                @update:modelValue="onToggleColumns"
-                                display="chip"
-                                :placeholder="$t('Select columns')"
+                        <div class="sticky top-200">
+                            <Button
+                                icon="pi pi-ellipsis-v"
+                                rounded
+                                raised
+                                @click="tableMenuToggle"
+                                aria-haspopup="true"
+                                aria-controls="overlay_tmenu"
                             />
-                        </Dialog>
+                            <TieredMenu
+                                ref="tableMenu"
+                                :model="tableMenuItems"
+                                popup
+                            >
+                                <template #item="{ item, props }">
+                                    <a
+                                        class="flex align-items-center"
+                                        v-bind="props.action"
+                                        v-ripple
+                                    >
+                                        <span class="w-4" :class="item.icon" />
+                                        <span class="ml-2">
+                                            {{ $t(item.label as string) }}
+                                        </span>
+                                        <Badge
+                                            v-if="item.badge"
+                                            class="ml-auto"
+                                            :value="item.badge"
+                                        />
+                                        <span
+                                            v-if="item.shortcut"
+                                            class="ml-auto border-1 surface-border border-round surface-100 text-xs p-1"
+                                            >{{ item.shortcut }}</span
+                                        >
+                                        <span
+                                            v-if="item.items"
+                                            class="pi pi-chevron-right ml-auto border-1 surface-border border-round surface-100 text-xs p-1"
+                                        />
+                                    </a>
+                                </template>
+                            </TieredMenu>
+                            <Dialog
+                                v-model:visible="selectColumns"
+                                modal
+                                :header="trans('Columns')"
+                                :style="{ width: '25rem' }"
+                            >
+                                <MultiSelect
+                                    :modelValue="selectedColumns"
+                                    :options="component.titles"
+                                    optionLabel="header"
+                                    @update:modelValue="onToggleColumns"
+                                    display="chip"
+                                    :placeholder="$t('Select columns')"
+                                />
+                            </Dialog>
+                        </div>
                     </div>
                     <div class="flex gap-2">
                         <IconField iconPosition="left">
@@ -601,7 +611,15 @@ onBeforeUnmount(() => {
                     </p>
                 </template>
             </Column>
-            <Column style="width: 1rem" frozen alignFrozen="right">
+            <Column
+                v-if="
+                    props.component.actions.edit?.visible != false &&
+                    isDefined(props.component.actions.edit?.callback)
+                "
+                style="width: 1rem"
+                frozen
+                alignFrozen="right"
+            >
                 <template #body="{ data }">
                     <Button
                         type="button"
