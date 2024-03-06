@@ -52,7 +52,7 @@ function mkRoute(component: any, id: any) {
     return { route: route, attributes: attributes };
 }
 
-async function getData(route: any) {
+async function fetchData(route: any) {
     try {
         const response = await fetch(isValidUrl(route) as string);
         try {
@@ -91,4 +91,4 @@ const toast = () => {
     }
 };
 
-export { isValidUrl, mkAttr, mkRoute, getData, formatRouteWithID, toast };
+export { isValidUrl, mkAttr, mkRoute, fetchData, formatRouteWithID, toast };

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { mkAttr, getData, mkRoute } from "@/helpers";
+import { mkAttr, fetchData, mkRoute } from "@/helpers";
 import { nextTick, ref } from "vue";
 import { Link, useForm } from "@inertiajs/vue3";
 
@@ -21,7 +21,7 @@ const onFormDataLoad = () => {
     if (props.component.source) {
         loading.value = true;
 
-        getData(mkRoute(props.component, props.id)).then((content) => {
+        fetchData(mkRoute(props.component, props.id)).then((content) => {
             formValue.value = content;
             loading.value = false;
         });

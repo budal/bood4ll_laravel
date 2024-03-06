@@ -12,7 +12,7 @@ import { Link } from "@inertiajs/vue3";
 import { isDefined, useIntersectionObserver } from "@vueuse/core";
 
 import { useConfirm } from "primevue/useconfirm";
-import { isValidUrl, getData, mkRoute } from "@/helpers";
+import { isValidUrl, fetchData, mkRoute } from "@/helpers";
 
 import { useToast } from "primevue/usetoast";
 import { DataTableRowReorderEvent } from "primevue/datatable";
@@ -390,7 +390,7 @@ const onTableDataLoad = () => {
         },
     };
 
-    getData(routeUrlRef.value).then((content) => {
+    fetchData(routeUrlRef.value).then((content) => {
         contentItems.value = content.data;
         nextPageURL.value = content.next_page_url;
         loadingTable.value = false;
@@ -401,7 +401,7 @@ useIntersectionObserver(lastIntersection, ([{ isIntersecting }]) => {
     if (isIntersecting && nextPageURL.value !== null) {
         loadingTable.value = true;
 
-        getData(nextPageURL.value).then((content) => {
+        fetchData(nextPageURL.value).then((content) => {
             nextPageURL.value = content.next_page_url;
             contentItems.value = [...contentItems.value, ...content.data];
             loadingTable.value = false;

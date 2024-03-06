@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { isValidUrl, getData } from "@/helpers";
+import { isValidUrl, fetchData } from "@/helpers";
 import { ref } from "vue";
 
 const props = withDefaults(
@@ -37,7 +37,7 @@ if (typeof props.url === "object") {
 
 if (props.url) {
     loading.value = true;
-    getData(isValidUrl(routeUrl as any)).then((content) => {
+    fetchData(isValidUrl(routeUrl as any)).then((content) => {
         dropdownItems.value = content;
         loading.value = false;
     });
