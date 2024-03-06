@@ -368,14 +368,11 @@ const routeUrlRef = ref(mkRoute(props.component.actions.index, props.id));
 const onTableDataLoad = () => {
     loadingTable.value = true;
 
-    // if (!contentItems.value)
-    {
-        getData(routeUrlRef.value).then((content) => {
-            contentItems.value = content.data;
-            nextPageURL.value = content.next_page_url;
-            loadingTable.value = false;
-        });
-    }
+    getData(routeUrlRef.value).then((content) => {
+        contentItems.value = content.data;
+        nextPageURL.value = content.next_page_url;
+        loadingTable.value = false;
+    });
 };
 
 const onStrutureDataLoad = () => {
@@ -417,18 +414,18 @@ const FooterDemo = defineAsyncComponent(
 const search = ref(null);
 
 const debouncedWatch = debounce(() => {
-    // console.log(search.value);
-    // searchRoute.searchParams.set(searchFieldName, search.value);
-    // router.visit(searchRoute, {
-    //     method: "get",
-    //     preserveState: true,
-    //     preserveScroll: true,
-    // });
+    routeUrlRef.value = {
+        route: routeUrlRef.value.route,
+        attributes: {
+            ...routeUrlRef.value.attributes,
+            ...{ search: search.value },
+        },
+    };
+
+    onTableDataLoad();
 }, 500);
 
-watch(search, () => {
-    // console.log(search.value);
-});
+watch(search, debouncedWatch);
 
 onBeforeUnmount(() => {
     debouncedWatch.cancel();
@@ -525,7 +522,7 @@ onBeforeUnmount(() => {
                             </InputIcon>
                             <InputText
                                 id="findTable"
-                                ref="search"
+                                v-model="search"
                                 :placeholder="$t('Search...')"
                                 class="pl-8"
                             />

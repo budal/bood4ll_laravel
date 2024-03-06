@@ -21,7 +21,8 @@ class UnitsController extends Controller
 {
     public function getUnitsIndex(Request $request): JsonResponse
     {
-        $units = Unit::filter($request, 'units', ['where' => ['shortpath'], 'order' => ['shortpath']])
+        $units = Unit::where('shortpath', 'ilike', "%$request->search%")
+            ->orderBy('shortpath')
             ->leftJoin('unit_user', 'unit_user.unit_id', '=', 'units.id')
             ->select('units.id', 'units.shortpath', 'units.active', 'units.deleted_at')
             ->groupBy('units.id', 'units.shortpath', 'units.active', 'units.deleted_at')
@@ -42,7 +43,8 @@ class UnitsController extends Controller
 
                 $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
             })
-            ->cursorPaginate(30);
+            ->cursorPaginate(30)
+            ->withQueryString();
 
         return response()->json($units);
     }
@@ -88,7 +90,8 @@ class UnitsController extends Controller
 
     public function getUnitStaff(Request $request, Unit $unit): JsonResponse
     {
-        $staff = User::filter($request, 'staff')
+        $staff = User::where("name", 'ilike', '%' . $request->search . '%')
+            ->orderBy('name')
             ->leftJoin('unit_user', 'unit_user.user_id', '=', 'users.id')
             ->select('users.id', 'users.name', 'users.email')
             ->groupBy('users.id', 'users.name', 'users.email')
@@ -110,11 +113,10 @@ class UnitsController extends Controller
             })
             ->with('unitsClassified', 'unitsWorking')
             ->withCount('roles')
-            ->cursorPaginate(30);
+            ->cursorPaginate(30)
             // ->paginate($perPage = 20, $columns = ['*'], $pageName = 'staff')
             // ->onEachSide(2)
-            // ->withQueryString()
-        ;
+            ->withQueryString();
 
         return response()->json($staff);
     }

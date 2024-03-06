@@ -55,7 +55,6 @@ function mkRoute(component: any, id: any) {
 async function getData(route: any) {
     try {
         const response = await fetch(isValidUrl(route) as string);
-
         try {
             return await response.json();
         } catch (error) {
