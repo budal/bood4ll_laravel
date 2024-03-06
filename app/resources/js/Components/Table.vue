@@ -307,7 +307,7 @@ const confirmDialog = (options: {
     confirm.require({
         group: "dialog",
         message:
-            transChoice(options.message, 1) ||
+            transChoice(options.message, options.items.length) ||
             trans("Are you sure you want to proceed?"),
         header: trans(options.header || "Confirmation"),
         icon: options.icon || "pi pi-exclamation-triangle",
