@@ -88,13 +88,25 @@ const tableMenuToggle = (event: MouseEvent) => {
                 props.component.actions.destroy?.visible != false &&
                 isDefined(props.component.actions.destroy?.callback) &&
                 showItems.value !== "trashed",
-            disabled: selectedItemsTotal.value.length < 1 ? true : false,
+            disabled:
+                selectedItemsTotal.value.filter(
+                    (item: { deleted_at: string }) => item.deleted_at === null,
+                ).length < 1
+                    ? true
+                    : false,
             icon: "pi pi-trash",
-            badge: selectedItemsTotal.value.length,
+            badge: selectedItemsTotal.value.filter(
+                (item: { deleted_at: string }) => item.deleted_at === null,
+            ).length,
             badgeClass: "warning",
             command: () => {
                 confirmDialog({
                     header: "Remove",
+                    callback: props.component.actions.destroy?.callback,
+                    items: selectedItemsTotal.value.filter(
+                        (item: { deleted_at: string }) =>
+                            item.deleted_at === null,
+                    ),
                     message:
                         "Are you sure you want to remove the selected item?|Are you sure you want to remove the selected items?",
                     icon: "pi pi-trash",
@@ -109,13 +121,25 @@ const tableMenuToggle = (event: MouseEvent) => {
                 props.component.actions.restore?.visible != false &&
                 isDefined(props.component.actions.restore?.callback) &&
                 (showItems.value === "trashed" || showItems.value === "both"),
-            disabled: selectedItemsTotal.value.length < 1 ? true : false,
+            disabled:
+                selectedItemsTotal.value.filter(
+                    (item: { deleted_at: string }) => item.deleted_at !== null,
+                ).length < 1
+                    ? true
+                    : false,
             icon: "pi pi-replay",
-            badge: selectedItemsTotal.value.length,
+            badge: selectedItemsTotal.value.filter(
+                (item: { deleted_at: string }) => item.deleted_at !== null,
+            ).length,
             badgeClass: "info",
             command: () => {
                 confirmDialog({
                     header: "Restore",
+                    callback: props.component.actions.restore?.callback,
+                    items: selectedItemsTotal.value.filter(
+                        (item: { deleted_at: string }) =>
+                            item.deleted_at !== null,
+                    ),
                     message:
                         "Are you sure you want to restore the selected item?|Are you sure you want to restore the selected items?",
                     icon: "pi pi-replay",
@@ -137,6 +161,11 @@ const tableMenuToggle = (event: MouseEvent) => {
             command: () => {
                 confirmDialog({
                     header: "Erase",
+                    callback: props.component.actions.forceDestroy?.callback,
+                    items: selectedItemsTotal.value.filter(
+                        (item: { deleted_at: string }) =>
+                            item.deleted_at === null,
+                    ),
                     message:
                         "Are you sure you want to erase the selected item?|Are you sure you want to erase the selected items?",
                     icon: "pi pi-times",
@@ -265,6 +294,8 @@ const onToggleColumns = (val: string | any[]) => {
 const confirmDialog = (options: {
     message: string;
     header?: string;
+    callback?: any;
+    items?: any;
     icon?: string;
     rejectIcon?: string;
     rejectClass?: string;
@@ -289,6 +320,8 @@ const confirmDialog = (options: {
         acceptLabel: trans(options.acceptLabel || "Confirm"),
         defaultFocus: "reject",
         accept: () => {
+            console.log(options.callback, options.items);
+
             onTableDataLoad();
 
             // toast.add({
@@ -345,6 +378,7 @@ const openDialog = (options: {
 };
 
 const onTableDataLoad = () => {
+    selectedItems.value = [];
     loadingTable.value = true;
 
     routeUrlRef.value = {
