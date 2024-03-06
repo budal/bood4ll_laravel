@@ -159,31 +159,36 @@ class UnitsController extends Controller
                                     ],
                                     'create' => [
                                         'callback' => 'apps.units.store',
+                                        'method' => 'post',
                                         'form' => $this->__form($request, Unit::where('id', 1)->first()),
                                         'visible' => true,
                                         'disabled' => false,
                                     ],
                                     'edit' => [
                                         'callback' => 'apps.units.update',
+                                        'method' => 'patch',
                                         'form' => $this->__form($request, Unit::where('id', 1)->first()),
                                         'visible' => true,
                                         'disabled' => false,
                                     ],
                                     'destroy' => [
                                         'callback' => 'apps.units.destroy',
+                                        'method' => 'delete',
                                         'visible' => true,
                                         'disabled' => false,
                                     ],
                                     'restore' => [
                                         'callback' => 'apps.units.restore',
+                                        'method' => 'post',
                                         'visible' => true,
                                         'disabled' => false,
                                     ],
-                                    'forceDestroy' => [
-                                        'callback' => 'apps.units.forceDestroy',
-                                        'visible' => true,
-                                        'disabled' => false,
-                                    ],
+                                    // 'forceDestroy' => [
+                                    //     'callback' => 'apps.units.forceDestroy',
+                                    //     'method' => 'delete',
+                                    //     'visible' => true,
+                                    //     'disabled' => false,
+                                    // ],
                                     // 'reorder' => [
                                     //     'callback' => 'apps.units.reorder',
                                     //     'visible' => true,

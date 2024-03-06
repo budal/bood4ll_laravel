@@ -1,13 +1,23 @@
 <script setup lang="ts">
-import { inject } from "vue";
+import { Ref, inject } from "vue";
 import { useConfirm } from "primevue/useconfirm";
 import { useToast } from "primevue/usetoast";
 
+interface DialogRef {
+    close: (event?: any) => void;
+}
+
 const confirm = useConfirm();
 const toast = useToast();
-const dialogRef = inject("dialogRef");
+const dialogRef = inject<Ref<DialogRef>>("dialogRef");
 
-const confirm2 = (event: any) => {
+const close = (event: any) => {
+    if (dialogRef && dialogRef.value) {
+        dialogRef.value.close(event);
+    }
+};
+
+const confirmDialog = (event: any) => {
     confirm.require({
         group: "popup",
         target: event.currentTarget,
@@ -24,18 +34,28 @@ const confirm2 = (event: any) => {
                 detail: "Record deleted",
                 life: 3000,
             });
-            dialogRef.value.close(event);
+
+            close(event);
         },
     });
 };
 </script>
 
 <template>
-    <Button
-        type="button"
-        label="Cancel"
-        icon="pi pi-times"
-        @click="confirm2($event)"
-        autofocus
-    ></Button>
+    <div class="flex justify-content-end gap-2">
+        <Button
+            type="button"
+            :label="$t('Cancel')"
+            severity="secondary"
+            icon="pi pi-times"
+            @click="close($event)"
+            autofocus
+        />
+        <Button
+            type="button"
+            :label="$t('Confirm')"
+            icon="pi pi-check"
+            @click="confirmDialog($event)"
+        />
+    </div>
 </template>
