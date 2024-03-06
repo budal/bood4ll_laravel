@@ -90,6 +90,8 @@ const tableMenuToggle = (event: MouseEvent) => {
                 showItems.value !== "trashed",
             disabled: selectedItemsTotal.value.length < 1 ? true : false,
             icon: "pi pi-trash",
+            badge: selectedItemsTotal.value.length,
+            badgeClass: "warning",
             command: () => {
                 confirmDialog({
                     header: "Remove",
@@ -109,6 +111,8 @@ const tableMenuToggle = (event: MouseEvent) => {
                 (showItems.value === "trashed" || showItems.value === "both"),
             disabled: selectedItemsTotal.value.length < 1 ? true : false,
             icon: "pi pi-replay",
+            badge: selectedItemsTotal.value.length,
+            badgeClass: "info",
             command: () => {
                 confirmDialog({
                     header: "Restore",
@@ -127,8 +131,9 @@ const tableMenuToggle = (event: MouseEvent) => {
                 isDefined(props.component.actions.forceDestroy?.callback) &&
                 showItems.value === "trashed",
             disabled: selectedItemsTotal.value.length < 1 ? true : false,
-
             icon: "pi pi-times",
+            badge: selectedItemsTotal.value.length,
+            badgeClass: "danger",
             command: () => {
                 confirmDialog({
                     header: "Erase",
@@ -454,6 +459,9 @@ onBeforeUnmount(() => {
                                         <Badge
                                             v-if="item.badge"
                                             class="ml-auto"
+                                            :severity="
+                                                item.badgeClass || 'info'
+                                            "
                                             :value="item.badge"
                                         />
                                         <span
