@@ -289,31 +289,6 @@ const confirmDialog = (options: {
     });
 };
 
-///////////////
-
-const confirm2 = (event: any) => {
-    confirm.require({
-        group: "popup",
-        target: event.currentTarget,
-        message: "Do you want to delete this record?",
-        icon: "pi pi-info-circle",
-        rejectClass: "p-button-secondary p-button-outlined p-button-sm",
-        acceptClass: "p-button-danger p-button-sm",
-        rejectLabel: "Cancel",
-        acceptLabel: "Delete",
-        accept: () => {
-            toast.add({
-                severity: "info",
-                summary: "Confirmed",
-                detail: "Record deleted",
-                life: 3000,
-            });
-        },
-    });
-};
-
-///////////////
-
 const openDialog = (options: {
     header: string;
     headerReplacement?: ReplacementsInterface;
