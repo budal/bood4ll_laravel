@@ -7,10 +7,6 @@ const confirm = useConfirm();
 const toast = useToast();
 const dialogRef = inject("dialogRef");
 
-const closeDialog = (e) => {
-    dialogRef.value.close(e);
-};
-
 const confirm2 = (event: any) => {
     confirm.require({
         group: "popup",
@@ -28,6 +24,7 @@ const confirm2 = (event: any) => {
                 detail: "Record deleted",
                 life: 3000,
             });
+            dialogRef.value.close(event);
         },
     });
 };

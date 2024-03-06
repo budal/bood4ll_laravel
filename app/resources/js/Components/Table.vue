@@ -12,9 +12,8 @@ import { Link } from "@inertiajs/vue3";
 import { isDefined, useIntersectionObserver } from "@vueuse/core";
 
 import { useConfirm } from "primevue/useconfirm";
-import { isValidUrl, mkAttr, getData, mkRoute } from "@/helpers";
+import { isValidUrl, getData, mkRoute } from "@/helpers";
 
-import { FilterMatchMode } from "primevue/api";
 import { useToast } from "primevue/usetoast";
 import { DataTableRowReorderEvent } from "primevue/datatable";
 import { useDialog } from "primevue/usedialog";
@@ -22,7 +21,6 @@ import { useDialog } from "primevue/usedialog";
 import { trans, transChoice, wTrans } from "laravel-vue-i18n";
 import { MenuItem } from "primevue/menuitem";
 
-import Structure from "@/Components/Structure.vue";
 import { ReplacementsInterface } from "laravel-vue-i18n/interfaces/replacements";
 import debounce from "lodash.debounce";
 
@@ -31,6 +29,14 @@ const props = defineProps<{
     id?: string | number;
     formValue?: any;
 }>();
+
+const DialogBody = defineAsyncComponent(
+    () => import("@/Components/DialogBody.vue"),
+);
+
+const DialogFooter = defineAsyncComponent(
+    () => import("@/Components/DialogFooter.vue"),
+);
 
 const contentItems = ref(props.component.data?.data ?? []);
 
@@ -45,209 +51,210 @@ const loadingTable = ref(contentItems.value.length === 0);
 const selectedItems = ref([]);
 const expandedRows = ref([]);
 const tableMenu = ref();
+const tableMenuItems = ref<MenuItem[]>([]);
 const selectColumns = ref(false);
 const tableColumns = ref(props.component.titles);
 const selectedColumns = ref(tableColumns.value);
-const structureData = ref([]);
 const search = ref(null);
 const showItems = ref();
 const routeUrlRef = ref(mkRoute(props.component.actions.index, props.id));
 
 const tableMenuToggle = (event: MouseEvent) => {
+    const _tableMenuItemsEdit: MenuItem[] = [
+        {
+            label: "Refresh",
+            icon: "pi pi-refresh",
+            command: () => {
+                onTableDataLoad();
+            },
+        },
+        {
+            label: "Add",
+            visible:
+                props.component.actions.create?.visible != false &&
+                isDefined(props.component.actions.destroy?.callback),
+            disabled: props.component.actions.create?.disabled == true,
+            icon: "pi pi-plus",
+            command: () => {
+                openDialog({
+                    header: "Add unit",
+                    action: props.component.actions.create,
+                });
+            },
+        },
+        {
+            label: "Remove",
+            visible:
+                props.component.actions.destroy?.visible != false &&
+                isDefined(props.component.actions.destroy?.callback) &&
+                showItems.value !== "trashed",
+            disabled: selectedItemsTotal.value.length < 1 ? true : false,
+            icon: "pi pi-trash",
+            command: () => {
+                confirmDialog({
+                    header: "Remove",
+                    message:
+                        "Are you sure you want to remove the selected item?|Are you sure you want to remove the selected items?",
+                    icon: "pi pi-trash",
+                    acceptClass: "p-button-warning",
+                    acceptLabel: "Remove",
+                });
+            },
+        },
+        {
+            label: "Restore",
+            visible:
+                props.component.actions.restore?.visible != false &&
+                isDefined(props.component.actions.restore?.callback) &&
+                (showItems.value === "trashed" || showItems.value === "both"),
+            disabled: selectedItemsTotal.value.length < 1 ? true : false,
+            icon: "pi pi-replay",
+            command: () => {
+                confirmDialog({
+                    header: "Restore",
+                    message:
+                        "Are you sure you want to restore the selected item?|Are you sure you want to restore the selected items?",
+                    icon: "pi pi-replay",
+                    acceptClass: "p-button-info",
+                    acceptLabel: "Restore",
+                });
+            },
+        },
+        {
+            label: "Erase",
+            visible:
+                props.component.actions.forceDestroy?.visible != false &&
+                isDefined(props.component.actions.forceDestroy?.callback) &&
+                showItems.value === "trashed",
+            disabled: selectedItemsTotal.value.length < 1 ? true : false,
+
+            icon: "pi pi-times",
+            command: () => {
+                confirmDialog({
+                    header: "Erase",
+                    message:
+                        "Are you sure you want to erase the selected item?|Are you sure you want to erase the selected items?",
+                    icon: "pi pi-times",
+                    acceptClass: "p-button-danger",
+                    acceptLabel: "Erase",
+                });
+            },
+        },
+    ];
+
+    const _tableMenuItemsShow: MenuItem[] = [
+        {
+            label: "List",
+            icon: "pi pi-eye",
+            items: [
+                {
+                    label: "Active",
+                    icon: (showItems.value == null
+                        ? "pi pi-check text-xs"
+                        : null) as string,
+                    command: () => {
+                        showItems.value = null;
+
+                        onTableDataLoad();
+                    },
+                },
+                {
+                    label: "Trashed",
+                    icon: (showItems.value == "trashed"
+                        ? "pi pi-check text-xs"
+                        : null) as string,
+                    command: () => {
+                        showItems.value = "trashed";
+
+                        onTableDataLoad();
+                    },
+                },
+                {
+                    label: "Both",
+                    icon: (showItems.value == "both"
+                        ? "pi pi-check text-xs"
+                        : null) as string,
+                    command: () => {
+                        showItems.value = "both";
+
+                        onTableDataLoad();
+                    },
+                },
+            ],
+        },
+        {
+            label: "Columns",
+            icon: "pi pi-list",
+            command: () => {
+                selectColumns.value = true;
+            },
+        },
+        {
+            separator: true,
+            visible: props.component.exportCSV === true,
+        },
+        {
+            label: "Export CSV",
+            icon: "pi pi-file-export",
+            visible: props.component.exportCSV === true,
+            command: () => {
+                dt.value.exportCSV();
+            },
+        },
+    ];
+
+    const _tableMenuItemsComplementar: MenuItem[] = [];
+
+    props.component.menu?.forEach(
+        (item: {
+            label: string;
+            source: string;
+            method: string;
+            showIf: boolean;
+            icon: string;
+        }) =>
+            _tableMenuItemsComplementar.push({
+                label: item.label,
+                url: isValidUrl(item.source) as string,
+                method: item.method,
+                disabled: isValidUrl(item.source) ? false : true,
+                visible: item.showIf === true,
+                icon: item.icon,
+                command: () => {
+                    routeUrlRef.value = mkRoute(item, props.id);
+
+                    onTableDataLoad();
+                },
+            }),
+    );
+
+    _tableMenuItemsComplementar.unshift({
+        separator: true,
+        visible: props.component.menu.length > 0,
+    });
+
+    _tableMenuItemsComplementar.push({
+        separator: true,
+        visible:
+            _tableMenuItemsComplementar.filter((item) => item.visible === true)
+                .length > 0,
+    });
+
+    tableMenuItems.value = [
+        ..._tableMenuItemsEdit,
+        ..._tableMenuItemsComplementar,
+        ..._tableMenuItemsShow,
+    ];
+
     tableMenu.value.toggle(event);
 };
 
-let selectedItemsTotal = computed(() => selectedItems.value);
-
-let _tableMenuItemsEdit: MenuItem[] = [
-    {
-        label: "Refresh",
-        icon: "pi pi-refresh",
-        command: () => {
-            onTableDataLoad();
-        },
-    },
-    {
-        label: "Add",
-        visible:
-            props.component.actions.create?.visible != false &&
-            isDefined(props.component.actions.destroy?.callback),
-        disabled: props.component.actions.create?.disabled == true,
-        icon: "pi pi-plus",
-        command: () => {
-            openDialog({
-                header: "Add unit",
-                action: props.component.actions.create,
-            });
-        },
-    },
-    {
-        label: "Remove",
-        visible:
-            props.component.actions.destroy?.visible != false &&
-            isDefined(props.component.actions.destroy?.callback),
-        disabled: props.component.actions.destroy?.disabled == true,
-        icon: "pi pi-trash",
-        command: () => {
-            confirmDialog({
-                header: "Remove",
-                message:
-                    "Are you sure you want to remove the selected item?|Are you sure you want to remove the selected items?",
-                icon: "pi pi-trash",
-                acceptClass: "p-button-warning",
-                acceptLabel: "Remove",
-            });
-        },
-    },
-    {
-        label: "Restore",
-        visible:
-            props.component.actions.restore?.visible != false &&
-            isDefined(props.component.actions.restore?.callback),
-        disabled: props.component.actions.restore?.disabled == true,
-        icon: "pi pi-replay",
-        command: () => {
-            confirmDialog({
-                header: "Restore",
-                message:
-                    "Are you sure you want to restore the selected item?|Are you sure you want to restore the selected items?",
-                icon: "pi pi-replay",
-                acceptClass: "p-button-info",
-                acceptLabel: "Restore",
-            });
-        },
-    },
-    {
-        label: "Erase",
-        visible:
-            props.component.actions.forceDestroy?.visible != false &&
-            isDefined(props.component.actions.forceDestroy?.callback),
-        disabled: props.component.actions.forceDestroy?.disabled == true,
-
-        icon: "pi pi-times",
-        command: () => {
-            confirmDialog({
-                header: "Erase",
-                message:
-                    "Are you sure you want to erase the selected item?|Are you sure you want to erase the selected items?",
-                icon: "pi pi-times",
-                acceptClass: "p-button-danger",
-                acceptLabel: "Erase",
-            });
-        },
-    },
-];
-
-const showAll = ref("pi pi-check text-xs");
-const showTrashed = ref("pi pi-check text-xs");
-const showBoth = ref("pi pi-check text-xs");
-
-let _tableMenuItemsShow: MenuItem[] = [
-    {
-        label: "List",
-        icon: "pi pi-eye",
-        items: [
-            {
-                label: "Active",
-                icon: showAll.value,
-                command: () => {
-                    showItems.value = null;
-
-                    onTableDataLoad();
-                },
-            },
-            {
-                label: "Trashed",
-                icon: showTrashed.value,
-                command: () => {
-                    showItems.value = "trashed";
-
-                    onTableDataLoad();
-                },
-            },
-            {
-                label: "All",
-                icon: showBoth.value,
-                command: () => {
-                    showItems.value = "both";
-
-                    onTableDataLoad();
-                },
-            },
-        ],
-    },
-    {
-        label: "Columns",
-        icon: "pi pi-list",
-        command: () => {
-            selectColumns.value = true;
-        },
-    },
-    {
-        separator: true,
-        visible: props.component.exportCSV === true,
-    },
-    {
-        label: "Export CSV",
-        icon: "pi pi-file-export",
-        visible: props.component.exportCSV === true,
-        command: () => {
-            exportCSV();
-        },
-    },
-];
-
-let _tableMenuItemsComplementar: MenuItem[] = [];
-
-props.component.menu?.forEach(
-    (item: {
-        label: string;
-        source: string;
-        method: string;
-        showIf: boolean;
-        icon: string;
-    }) =>
-        _tableMenuItemsComplementar.push({
-            label: item.label,
-            url: isValidUrl(item.source) as string,
-            method: item.method,
-            disabled: isValidUrl(item.source) ? false : true,
-            visible: item.showIf === true,
-            icon: item.icon,
-            command: () => {
-                routeUrlRef.value = mkRoute(item, props.id);
-
-                onTableDataLoad();
-            },
-        }),
-);
-
-_tableMenuItemsComplementar.unshift({
-    separator: true,
-    visible: props.component.menu.length > 0,
-});
-
-_tableMenuItemsComplementar.push({
-    separator: true,
-    visible:
-        _tableMenuItemsComplementar.filter((item) => item.visible === true)
-            .length > 0,
-});
-
-let tableMenuItems = ref([
-    ..._tableMenuItemsEdit,
-    ..._tableMenuItemsComplementar,
-    ..._tableMenuItemsShow,
-]);
+const selectedItemsTotal = computed(() => selectedItems.value);
 
 const onToggleColumns = (val: string | any[]) => {
     selectedColumns.value = tableColumns.value.filter((col: any) =>
         val.includes(col),
     );
-};
-
-const exportCSV = () => {
-    dt.value.exportCSV();
 };
 
 const confirmDialog = (options: {
@@ -295,7 +302,7 @@ const openDialog = (options: {
     action?: any;
     id?: number | string;
 }) => {
-    dialog.open(FormDialog, {
+    dialog.open(DialogBody, {
         data: { action: options.action, id: options.id },
         props: {
             header: wTrans(
@@ -314,7 +321,7 @@ const openDialog = (options: {
             draggable: false,
         },
         templates: {
-            footer: markRaw(FooterDemo),
+            footer: markRaw(DialogFooter),
         },
         onClose: (options: any) => {
             const data = options.data;
@@ -327,20 +334,12 @@ const openDialog = (options: {
                           detail: `Pressed '${buttonType}' button`,
                       }
                     : { summary: "Product Selected", detail: data.name };
-
-                toast.add({
-                    severity: "info",
-                    ...summary_and_detail,
-                    life: 3000,
-                });
             }
         },
     });
 };
 
 const onTableDataLoad = () => {
-    showBoth.value = "";
-
     loadingTable.value = true;
 
     routeUrlRef.value = {
@@ -356,12 +355,6 @@ const onTableDataLoad = () => {
         contentItems.value = content.data;
         nextPageURL.value = content.next_page_url;
         loadingTable.value = false;
-    });
-};
-
-const onStrutureDataLoad = () => {
-    getData(props.component.actions.index.route).then((content) => {
-        structureData.value = content.data;
     });
 };
 
@@ -386,14 +379,6 @@ const onRowReorder = (event: DataTableRowReorderEvent) => {
         life: 3000,
     });
 };
-
-const FormDialog = defineAsyncComponent(
-    () => import("@/Components/Dialog.vue"),
-);
-
-const FooterDemo = defineAsyncComponent(
-    () => import("@/Components/_useless/FooterDemo.vue"),
-);
 
 const debouncedWatch = debounce(() => {
     onTableDataLoad();
