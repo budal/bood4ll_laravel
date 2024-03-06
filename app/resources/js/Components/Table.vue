@@ -368,6 +368,14 @@ const routeUrlRef = ref(mkRoute(props.component.actions.index, props.id));
 const onTableDataLoad = () => {
     loadingTable.value = true;
 
+    routeUrlRef.value = {
+        route: routeUrlRef.value.route,
+        attributes: {
+            ...routeUrlRef.value.attributes,
+            ...{ search: search.value },
+        },
+    };
+
     getData(routeUrlRef.value).then((content) => {
         contentItems.value = content.data;
         nextPageURL.value = content.next_page_url;
@@ -414,14 +422,6 @@ const FooterDemo = defineAsyncComponent(
 const search = ref(null);
 
 const debouncedWatch = debounce(() => {
-    routeUrlRef.value = {
-        route: routeUrlRef.value.route,
-        attributes: {
-            ...routeUrlRef.value.attributes,
-            ...{ search: search.value },
-        },
-    };
-
     onTableDataLoad();
 }, 500);
 
