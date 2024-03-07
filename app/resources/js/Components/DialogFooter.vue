@@ -3,6 +3,7 @@ import { Ref, inject, ref } from "vue";
 import { useConfirm } from "primevue/useconfirm";
 import { useToast } from "primevue/usetoast";
 import { trans } from "laravel-vue-i18n";
+import { fetchData } from "@/helpers";
 
 const confirm = useConfirm();
 const toast = useToast();
@@ -17,6 +18,8 @@ const close = (event: Event) => {
 };
 
 const send = (event: Event) => {
+    // fetchData()
+
     console.log(1);
     if (data.value) {
         toast.add({
