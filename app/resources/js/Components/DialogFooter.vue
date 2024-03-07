@@ -72,7 +72,7 @@ const dialogConfirmIcon = data.value?.dialogConfirmIcon || "pi pi-check";
 </script>
 
 <template>
-    <div class="flex justify-content-end gap-2">
+    <div class="pt-2 flex justify-content-end gap-2">
         <Button
             type="button"
             :label="dialogCancelLabel"

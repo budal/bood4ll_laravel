@@ -19,14 +19,14 @@ const isValidUrl = (url: string | { route: string; attributes: string[] }) => {
     }
 };
 
-function mkAttr(sourceAttributes: any, formValue: any) {
+function mkAttr(attributes: any, formValue: any) {
     const result: any = {};
-    for (const key in sourceAttributes) {
+    for (const key in attributes) {
         if (
-            Object.prototype.hasOwnProperty.call(sourceAttributes, key) &&
-            formValue.hasOwnProperty(sourceAttributes[key])
+            Object.prototype.hasOwnProperty.call(attributes, key) &&
+            formValue.hasOwnProperty(attributes[key])
         ) {
-            result[key] = formValue[sourceAttributes[key]];
+            result[key] = formValue[attributes[key]];
         }
     }
     return result;

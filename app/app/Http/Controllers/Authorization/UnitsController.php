@@ -277,12 +277,16 @@ class UnitsController extends Controller
     {
         return [
             // 'tabs' => false,
+            'routes' => [
+                'create' => []
+            ],
             'component' => [
                 [
                     'label' => 'Main data',
                     'description' => 'Unit data management.',
                     'source' => 'getUnitInfo',
                     'sourceAttributes' => ['unit' => 'id'],
+                    'callback' => 'getUnitInfo',
                     'disabledIf' => $unit->id !== null && $request->user()->cannot('isOwner', $unit),
                     'cols' => 4,
                     'fields' => [

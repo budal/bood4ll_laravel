@@ -348,10 +348,10 @@ const openDialog = (options: {
                 options.headerReplacement,
             ) as unknown as string,
             style: {
-                width: "90vw",
+                width: "50vw",
             },
             breakpoints: {
-                "1080px": "75vw",
+                "960px": "75vw",
                 "640px": "90vw",
             },
             modal: true,
