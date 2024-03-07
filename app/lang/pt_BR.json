@@ -37,6 +37,10 @@
   "Email verified at": "E-mail verificado em",
   "unverified": "não verificado",
   "Reset password":  "Resetar senha",
+  "Yes": "Sim",
+  "No": "Não",
+  "Confirmed": "Confirmado",
+  "Do you want confirm this action?": "Você quer confirmar esta ação?",
   
   "Current Password": "Senha atual",
   "New Password": "Nova Senha",
