@@ -158,6 +158,7 @@ class UnitsController extends Controller
                                         'values' => [],
                                     ],
                                     'create' => [
+                                        'confirm' => true,
                                         'dialog' => 'Do you want to insert a new unit?',
                                         'toast' => 'Unit inserted.',
                                         'callback' => 'apps.units.store',
