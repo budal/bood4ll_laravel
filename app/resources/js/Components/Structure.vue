@@ -40,7 +40,6 @@ withDefaults(
                             {{ $t(item.description) }}
                         </template>
                         <template #content>
-                            {{ item.visible }}
                             <Build :component="item" :id="id" />
                         </template>
                     </Card>

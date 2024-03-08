@@ -163,7 +163,7 @@ class UnitsController extends Controller
                                         'callback' => 'apps.units.store',
                                         'method' => 'post',
                                         'visible' => (
-                                            Gate::authorize('apps.units.store')
+                                            Gate::allows('apps.units.store')
                                             && $request->user()->can('isManager', User::class)
                                         ),
                                         'component' => [
@@ -173,7 +173,7 @@ class UnitsController extends Controller
                                                 'cols' => 4,
                                                 'fields' => $this->__fields(),
                                                 'visible' => (
-                                                    Gate::authorize('apps.units.store')
+                                                    Gate::allows('apps.units.store')
                                                     && $request->user()->can('isManager', User::class)
                                                 )
                                             ],

@@ -181,7 +181,6 @@ const tableMenuToggle = (event: MouseEvent) => {
                         : null) as string,
                     command: () => {
                         showItems.value = null;
-
                         onTableDataLoad();
                     },
                 },
@@ -192,7 +191,6 @@ const tableMenuToggle = (event: MouseEvent) => {
                         : null) as string,
                     command: () => {
                         showItems.value = "trashed";
-
                         onTableDataLoad();
                     },
                 },
@@ -203,7 +201,6 @@ const tableMenuToggle = (event: MouseEvent) => {
                         : null) as string,
                     command: () => {
                         showItems.value = "both";
-
                         onTableDataLoad();
                     },
                 },
@@ -237,7 +234,7 @@ const tableMenuToggle = (event: MouseEvent) => {
             label: string;
             source: string;
             method: string;
-            showIf: boolean;
+            visible: boolean;
             icon: string;
         }) =>
             _tableMenuItemsComplementar.push({
@@ -245,27 +242,14 @@ const tableMenuToggle = (event: MouseEvent) => {
                 url: isValidUrl(item.source) as string,
                 method: item.method,
                 disabled: isValidUrl(item.source) ? false : true,
-                visible: item.showIf === true,
+                visible: item.visible === true,
                 icon: item.icon,
                 command: () => {
                     routeUrlRef.value = mkRoute(item, props.id);
-
                     onTableDataLoad();
                 },
             }),
     );
-
-    // _tableMenuItemsComplementar.unshift({
-    //     separator: true,
-    //     visible: props.component.menu.length > 0,
-    // });
-
-    // _tableMenuItemsComplementar.push({
-    //     separator: true,
-    //     visible:
-    //         _tableMenuItemsComplementar.filter((item) => item.visible === true)
-    //             .length > 0,
-    // });
 
     tableMenuItems.value = [
         {
@@ -278,16 +262,13 @@ const tableMenuToggle = (event: MouseEvent) => {
         {
             separator: true,
         },
-
         ..._tableMenuItemsEdit,
-
         {
             separator: true,
             visible:
                 _tableMenuItemsEdit.filter((item: any) => item.visible == true)
                     .length > 0,
         },
-
         ..._tableMenuItemsComplementar,
         {
             separator: true,
@@ -340,7 +321,6 @@ const confirmDialog = (options: {
         defaultFocus: "reject",
         accept: () => {
             console.log(options.callback, options.items);
-
             onTableDataLoad();
 
             // toast.add({
@@ -368,6 +348,7 @@ const openDialog = (options: {
             ) as unknown as string,
             style: {
                 width: "50vw",
+                // height: "50vw",
             },
             breakpoints: {
                 "960px": "75vw",
@@ -376,25 +357,12 @@ const openDialog = (options: {
             modal: true,
             maximizable: true,
             draggable: false,
+            onCancel: (e) => {
+                console.log(e); // {user: 'primetime'}
+            },
         },
         templates: {
             footer: markRaw(DialogFooter),
-        },
-        onClose: (options: any) => {
-            const data = options.data;
-
-            if (data) {
-                const buttonType = data.buttonType;
-                const summary_and_detail = buttonType
-                    ? {
-                          summary: "No Product Selected",
-                          detail: `Pressed '${buttonType}' button`,
-                      }
-                    : {
-                          summary: "Product Selected",
-                          detail: data.name,
-                      };
-            }
         },
     });
 };

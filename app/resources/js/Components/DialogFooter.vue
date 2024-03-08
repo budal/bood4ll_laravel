@@ -22,7 +22,9 @@ const close = (event: Event) => {
 const send = (event: Event) => {
     // fetchData()
 
-    console.log(1);
+    console.log(data.value);
+
+    console.log(dialogRef);
     if (data.value) {
         toast.add({
             severity: data.value.toastClass || "info",
