@@ -11,8 +11,8 @@ const data = ref(dialogRef?.value.data);
 
 <template>
     <Structure
-        :structure="data.action.form.component"
-        :tabs="data.action.form.tabs"
+        :structure="data.action.component"
+        :tabs="data.action.tabs"
         :id="data.id"
     />
 </template>

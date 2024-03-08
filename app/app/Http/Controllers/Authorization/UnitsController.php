@@ -148,7 +148,6 @@ class UnitsController extends Controller
                             'type' => 'table',
                             'name' => 'name',
                             'component' => [
-                                'id' => 'units',
                                 'exportCSV' => true,
                                 'actions' => [
                                     'index' => [
@@ -159,13 +158,18 @@ class UnitsController extends Controller
                                     ],
                                     'create' => [
                                         'confirm' => true,
-                                        'dialog' => 'Do you want to insert a new unit?',
+                                        'popup' => 'Do you want to insert a new unit?',
                                         'toast' => 'Unit inserted.',
                                         'callback' => 'apps.units.store',
                                         'method' => 'post',
-                                        'form' => $this->__form($request, Unit::where('id', 1)->first()),
-                                        'visible' => true,
-                                        'disabled' => false,
+                                        'component' => [
+                                            [
+                                                'label' => 'Main data',
+                                                'description' => 'Unit data management.',
+                                                'cols' => 4,
+                                                'fields' => $this->__fields(),
+                                            ],
+                                        ],
                                     ],
                                     'edit' => [
                                         'confirm' => true,
@@ -185,7 +189,98 @@ class UnitsController extends Controller
                                         'toastClass' => 'warning',
                                         'callback' => 'apps.units.update',
                                         'method' => 'patch',
-                                        'form' => $this->__form($request, Unit::where('id', 1)->first()),
+                                        'component' => [
+                                            [
+                                                'label' => 'Main data',
+                                                'description' => 'Unit data management.',
+                                                'source' => 'getUnitInfo',
+                                                'sourceAttributes' => ['unit' => 'id'],
+                                                'cols' => 4,
+                                                'fields' => $this->__fields(),
+                                            ],
+                                            [
+                                                'label' => 'Staff',
+                                                'description' => 'Staff management of this unit.',
+                                                'fields' => [
+                                                    [
+                                                        'type' => 'table',
+                                                        'name' => 'users',
+                                                        'component' => [
+                                                            'actions' => [
+                                                                'index' => [
+                                                                    'source' => 'getUnitStaff',
+                                                                    'sourceAttributes' => ['unit' => 'id'],
+                                                                    'visible' => true,
+                                                                    'disabled' => true,
+                                                                    'values' => [],
+                                                                ],
+                                                            ],
+                                                            'menu' => [
+                                                                [
+                                                                    'icon' => 'mdi:account-multiple',
+                                                                    'label' => 'Local staff',
+                                                                    'source' => 'getUnitStaff',
+                                                                    'sourceAttributes' => ['unit' => 'id'],
+                                                                    'showIf' => $request->user()->can('canManageNestedData', User::class),
+                                                                ],
+                                                                [
+                                                                    'icon' => 'mdi:account-group-outline',
+                                                                    'label' => 'Total staff',
+                                                                    'source' => [
+                                                                        'route' => 'getUnitStaff',
+                                                                        'attributes' => ['show' => 'all']
+                                                                    ],
+                                                                    'sourceAttributes' => ['unit' => 'id'],
+                                                                    'showIf' => $request->user()->can('canManageNestedData', User::class)
+                                                                ],
+                                                            ],
+                                                            'titles' => [
+                                                                [
+                                                                    'type' => 'avatar',
+                                                                    'header' => 'Avatar',
+                                                                    'field' => 'id',
+                                                                    'fallback' => 'name',
+                                                                    'disableSort' => true,
+                                                                ],
+                                                                [
+                                                                    'type' => 'text',
+                                                                    'header' => 'User',
+                                                                    'field' => 'name',
+                                                                ],
+                                                                [
+                                                                    'type' => 'composite',
+                                                                    'header' => 'Classified',
+                                                                    'class' => 'collapse',
+                                                                    'field' => 'units_classified',
+                                                                    'options' => [
+                                                                        [
+                                                                            'field' => 'name',
+                                                                        ],
+                                                                    ],
+                                                                ],
+                                                                [
+                                                                    'type' => 'composite',
+                                                                    'header' => 'Working',
+                                                                    'class' => 'collapse',
+                                                                    'field' => 'units_working',
+                                                                    'options' => [
+                                                                        [
+                                                                            'field' => 'name',
+                                                                        ],
+                                                                    ],
+                                                                ],
+                                                                [
+                                                                    'type' => 'text',
+                                                                    'header' => 'Roles',
+                                                                    'field' => 'roles_count',
+                                                                ],
+                                                            ],
+                                                            // 'data' => $units,
+                                                        ],
+                                                    ],
+                                                ],
+                                            ],
+                                        ],
                                         'visible' => true,
                                         'disabled' => false,
                                     ],
@@ -276,10 +371,6 @@ class UnitsController extends Controller
     public function __form(Request $request, Unit $unit): array
     {
         return [
-            // 'tabs' => false,
-            'routes' => [
-                'create' => []
-            ],
             'component' => [
                 [
                     'label' => 'Main data',
@@ -475,6 +566,110 @@ class UnitsController extends Controller
                     ],
                 ],
             ]
+        ];
+    }
+
+    public function __fields(): array
+    {
+        return [
+            [
+                'type' => 'input',
+                'name' => 'name',
+                'label' => 'Name',
+                'span' => 2,
+                'required' => true,
+            ],
+            [
+                'type' => 'dropdown',
+                'name' => 'parent_id',
+                'label' => 'Belongs to',
+                'source' => 'getUnits',
+                'sourceAttributes' => ['unit' => 'id'],
+                'span' => 2,
+                'required' => true,
+            ],
+            [
+                'type' => 'input',
+                'name' => 'nickname',
+                'label' => 'Nickname',
+                'required' => true,
+            ],
+            [
+                'type' => 'calendar',
+                'name' => 'founded',
+                'dateFormat' => 'dd/mm/yy',
+                'label' => 'Founded',
+                'required' => true,
+            ],
+            [
+                'type' => 'toggle',
+                'name' => 'active',
+                'label' => 'Active',
+                'colorOn' => 'success',
+                'colorOff' => 'danger',
+            ],
+            [
+                'type' => 'calendar',
+                'name' => 'expires',
+                // 'dateFormat' => 'dd/mm/yy',
+                'label' => 'Inactivated at',
+            ],
+            [
+                'type' => 'mask',
+                'name' => 'cellphone',
+                'mask' => '(99) 99999-9999',
+                'label' => 'Cell phone',
+            ],
+            [
+                'type' => 'mask',
+                'name' => 'landline',
+                'mask' => '(99) 9999-9999',
+                'label' => 'Land line',
+            ],
+            [
+                'type' => 'email',
+                'name' => 'email',
+                'label' => 'Email',
+                'span' => 2,
+            ],
+            [
+                'type' => 'input',
+                'name' => 'country',
+                'label' => 'Country',
+            ],
+            [
+                'type' => 'input',
+                'name' => 'state',
+                'label' => 'State',
+            ],
+            [
+                'type' => 'input',
+                'name' => 'city',
+                'label' => 'City',
+            ],
+            [
+                'type' => 'mask',
+                'name' => 'postcode',
+                'mask' => '99999-999',
+                'label' => 'Post code',
+            ],
+            [
+                'type' => 'input',
+                'name' => 'address',
+                'label' => 'Address',
+                'span' => 3,
+            ],
+            [
+                'type' => 'input',
+                'name' => 'complement',
+                'label' => 'Complement',
+            ],
+            [
+                'type' => 'input',
+                'name' => 'geo',
+                'label' => 'Geographic coordinates',
+                'span' => 4,
+            ],
         ];
     }
 
