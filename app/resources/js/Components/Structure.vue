@@ -44,16 +44,18 @@ withDefaults(
         </TabView>
     </template>
     <template v-else>
-        <Card v-for="item in structure" class="mb-5">
-            <template v-if="item.label" #title>
-                {{ $t(item.label) }}
-            </template>
-            <template v-if="item.description" #subtitle>
-                {{ $t(item.description) }}
-            </template>
-            <template #content>
-                <Build :component="item" :id="id" />
-            </template>
-        </Card>
+        <div class="grid gap-4 grid-cols-1">
+            <Card v-for="item in structure">
+                <template v-if="item.label" #title>
+                    {{ $t(item.label) }}
+                </template>
+                <template v-if="item.description" #subtitle>
+                    {{ $t(item.description) }}
+                </template>
+                <template #content>
+                    <Build :component="item" :id="id" />
+                </template>
+            </Card>
+        </div>
     </template>
 </template>
