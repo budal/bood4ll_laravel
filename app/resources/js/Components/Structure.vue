@@ -21,22 +21,25 @@ withDefaults(
         {{ $t($page.props.status as string) }}
     </Message>
 
-    <Card v-if="structure.length > 1 && tabs == true">
-        <template #content>
-            <TabView>
-                <template v-for="item in structure">
-                    <TabPanel :header="$t(item.label)">
-                        <Build :component="item" :id="id">
-                            <template v-if="item.description" #description>
-                                {{ $t(item.description) }}
-                            </template>
-                        </Build>
-                    </TabPanel>
-                </template>
-            </TabView>
-        </template>
-    </Card>
-
+    <template v-if="structure.length > 1 && tabs == true">
+        <TabView>
+            <template v-for="item in structure">
+                <TabPanel :header="$t(item.label)">
+                    <Card>
+                        <template v-if="item.label" #title>
+                            {{ $t(item.label) }}
+                        </template>
+                        <template v-if="item.description" #subtitle>
+                            {{ $t(item.description) }}
+                        </template>
+                        <template #content>
+                            <Build :component="item" :id="id" />
+                        </template>
+                    </Card>
+                </TabPanel>
+            </template>
+        </TabView>
+    </template>
     <template v-else>
         <Card v-for="item in structure" class="mb-5">
             <template v-if="item.label" #title>

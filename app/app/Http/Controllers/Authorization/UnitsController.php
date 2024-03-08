@@ -154,41 +154,44 @@ class UnitsController extends Controller
                                         'source' => 'getUnitsIndex',
                                         'visible' => true,
                                         'disabled' => true,
-                                        'values' => [],
                                     ],
                                     'create' => [
                                         'confirm' => true,
                                         'popup' => 'Do you want to insert a new unit?',
+                                        'toastTitle' => 'Added',
                                         'toast' => 'Unit inserted.',
                                         'callback' => 'apps.units.store',
                                         'method' => 'post',
+                                        // 'visible' => (
+                                        //     $request->user()->can('access', User::class)
+                                        //     && $request->user()->can('isManager', User::class)
+                                        //     && $request->user()->can('canManageNestedData', User::class)
+                                        // ),
                                         'component' => [
                                             [
                                                 'label' => 'Main data',
                                                 'description' => 'Unit data management.',
                                                 'cols' => 4,
                                                 'fields' => $this->__fields(),
+                                                'visible' => true,
+                                                // 'visible' => (
+                                                //     $request->user()->can('access', User::class)
+                                                //     && $request->user()->can('isManager', User::class)
+                                                //     && $request->user()->can('canManageNestedData', User::class)
+                                                // )
                                             ],
                                         ],
                                     ],
                                     'edit' => [
                                         'confirm' => true,
-                                        // 'dialogCancel' => 'Cancell1',
-                                        // 'dialogCancelIcon' => 'pi pi-eye',
-                                        // 'dialogConfirm' => 'Okk1',
-                                        // 'dialogConfirmClass' => 'warning',
-                                        // 'dialogConfirmIcon' => 'pi pi-eye',
-                                        // 'popup' => 'Do you want to edit this unit?',
-                                        // 'popupIcon' => 'pi pi-eye',
-                                        // 'popupCancel' => 'Cancell2',
-                                        // 'popupCancelClass' => 'p-button-warning p-button-outlined p-button-sm',
-                                        // 'popupConfirm' => 'Okk2',
-                                        // 'popupConfirmClass' => 'p-button-success p-button-sm',
-                                        // 'toastTitle' => 'Confirmedd',
+                                        'popup' => 'Do you want to edit this unit?',
+                                        'toastTitle' => 'Edited',
                                         'toast' => 'Unit edited.',
-                                        'toastClass' => 'warning',
                                         'callback' => 'apps.units.update',
                                         'method' => 'patch',
+                                        'visible' => true,
+                                        'disabled' => false,
+                                        // 'tabs' => false,
                                         'component' => [
                                             [
                                                 'label' => 'Main data',
@@ -212,7 +215,6 @@ class UnitsController extends Controller
                                                                     'sourceAttributes' => ['unit' => 'id'],
                                                                     'visible' => true,
                                                                     'disabled' => true,
-                                                                    'values' => [],
                                                                 ],
                                                             ],
                                                             'menu' => [
@@ -240,7 +242,6 @@ class UnitsController extends Controller
                                                                     'header' => 'Avatar',
                                                                     'field' => 'id',
                                                                     'fallback' => 'name',
-                                                                    'disableSort' => true,
                                                                 ],
                                                                 [
                                                                     'type' => 'text',
@@ -275,14 +276,11 @@ class UnitsController extends Controller
                                                                     'field' => 'roles_count',
                                                                 ],
                                                             ],
-                                                            // 'data' => $units,
                                                         ],
                                                     ],
                                                 ],
                                             ],
                                         ],
-                                        'visible' => true,
-                                        'disabled' => false,
                                     ],
                                     'destroy' => [
                                         'dialog' => 'Do you want to destroy this unit?|Do you want to destroy this units?',

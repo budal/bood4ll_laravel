@@ -1,18 +1,14 @@
 <script setup lang="ts">
 import { mkAttr, fetchData, mkRoute } from "@/helpers";
-import { nextTick, ref } from "vue";
-import { Link, useForm } from "@inertiajs/vue3";
+import { ref } from "vue";
 
 import Table from "@/Components/Table.vue";
 import Dropdown2 from "./Dropdown2.vue";
 
-const props = withDefaults(
-    defineProps<{
-        component: any;
-        id?: string | number;
-    }>(),
-    {},
-);
+const props = defineProps<{
+    component: any;
+    id?: string | number;
+}>();
 
 const loading = ref(false);
 const formValue = ref<Record<string, any>>({});
@@ -30,8 +26,6 @@ const onFormDataLoad = () => {
 </script>
 
 <template>
-    <slot name="description" />
-
     <DeferredContent @load="onFormDataLoad" aria-live="polite">
         <form v-if="component.showIf !== false" class="space-y-6">
             <div
