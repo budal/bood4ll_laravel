@@ -162,23 +162,20 @@ class UnitsController extends Controller
                                         'toast' => 'Unit inserted.',
                                         'callback' => 'apps.units.store',
                                         'method' => 'post',
-                                        // 'visible' => (
-                                        //     $request->user()->can('access', User::class)
-                                        //     && $request->user()->can('isManager', User::class)
-                                        //     && $request->user()->can('canManageNestedData', User::class)
-                                        // ),
+                                        'visibled' => (
+                                            Gate::authorize('apps.units.store')
+                                            && $request->user()->can('isManager', User::class)
+                                        ),
                                         'component' => [
                                             [
                                                 'label' => 'Main data',
                                                 'description' => 'Unit data management.',
                                                 'cols' => 4,
                                                 'fields' => $this->__fields(),
-                                                'visible' => true,
-                                                // 'visible' => (
-                                                //     $request->user()->can('access', User::class)
-                                                //     && $request->user()->can('isManager', User::class)
-                                                //     && $request->user()->can('canManageNestedData', User::class)
-                                                // )
+                                                'visible' => (
+                                                    Gate::authorize('apps.units.store')
+                                                    && $request->user()->can('isManager', User::class)
+                                                )
                                             ],
                                         ],
                                     ],
@@ -189,9 +186,11 @@ class UnitsController extends Controller
                                         'toast' => 'Unit edited.',
                                         'callback' => 'apps.units.update',
                                         'method' => 'patch',
-                                        'visible' => true,
-                                        'disabled' => false,
-                                        // 'tabs' => false,
+                                        'visibled' => (
+                                            Gate::authorize('apps.units.update')
+                                            && $request->user()->can('isManager', User::class)
+                                            && $request->user()->can('canManageNestedData', User::class)
+                                        ),
                                         'component' => [
                                             [
                                                 'label' => 'Main data',
@@ -200,6 +199,11 @@ class UnitsController extends Controller
                                                 'sourceAttributes' => ['unit' => 'id'],
                                                 'cols' => 4,
                                                 'fields' => $this->__fields(),
+                                                'visibled' => (
+                                                    Gate::authorize('apps.units.update')
+                                                    && $request->user()->can('isManager', User::class)
+                                                    && $request->user()->can('canManageNestedData', User::class)
+                                                ),
                                             ],
                                             [
                                                 'label' => 'Staff',
@@ -366,207 +370,6 @@ class UnitsController extends Controller
         ]);
     }
 
-    public function __form(Request $request, Unit $unit): array
-    {
-        return [
-            'component' => [
-                [
-                    'label' => 'Main data',
-                    'description' => 'Unit data management.',
-                    'source' => 'getUnitInfo',
-                    'sourceAttributes' => ['unit' => 'id'],
-                    'callback' => 'getUnitInfo',
-                    'disabledIf' => $unit->id !== null && $request->user()->cannot('isOwner', $unit),
-                    'cols' => 4,
-                    'fields' => [
-                        [
-                            'type' => 'input',
-                            'name' => 'name',
-                            'label' => 'Name',
-                            'span' => 2,
-                            'required' => true,
-                        ],
-                        [
-                            'type' => 'dropdown',
-                            'name' => 'parent_id',
-                            'label' => 'Belongs to',
-                            'source' => 'getUnits',
-                            'sourceAttributes' => ['unit' => 'id'],
-                            'span' => 2,
-                            'required' => true,
-                        ],
-                        [
-                            'type' => 'input',
-                            'name' => 'nickname',
-                            'label' => 'Nickname',
-                            'required' => true,
-                        ],
-                        [
-                            'type' => 'calendar',
-                            'name' => 'founded',
-                            'dateFormat' => 'dd/mm/yy',
-                            'label' => 'Founded',
-                            'required' => true,
-                        ],
-                        [
-                            'type' => 'toggle',
-                            'name' => 'active',
-                            'label' => 'Active',
-                            'colorOn' => 'success',
-                            'colorOff' => 'danger',
-                        ],
-                        [
-                            'type' => 'calendar',
-                            'name' => 'expires',
-                            // 'dateFormat' => 'dd/mm/yy',
-                            'label' => 'Inactivated at',
-                        ],
-                        [
-                            'type' => 'mask',
-                            'name' => 'cellphone',
-                            'mask' => '(99) 99999-9999',
-                            'label' => 'Cell phone',
-                        ],
-                        [
-                            'type' => 'mask',
-                            'name' => 'landline',
-                            'mask' => '(99) 9999-9999',
-                            'label' => 'Land line',
-                        ],
-                        [
-                            'type' => 'email',
-                            'name' => 'email',
-                            'label' => 'Email',
-                            'span' => 2,
-                        ],
-                        [
-                            'type' => 'input',
-                            'name' => 'country',
-                            'label' => 'Country',
-                        ],
-                        [
-                            'type' => 'input',
-                            'name' => 'state',
-                            'label' => 'State',
-                        ],
-                        [
-                            'type' => 'input',
-                            'name' => 'city',
-                            'label' => 'City',
-                        ],
-                        [
-                            'type' => 'mask',
-                            'name' => 'postcode',
-                            'mask' => '99999-999',
-                            'label' => 'Post code',
-                        ],
-                        [
-                            'type' => 'input',
-                            'name' => 'address',
-                            'label' => 'Address',
-                            'span' => 3,
-                        ],
-                        [
-                            'type' => 'input',
-                            'name' => 'complement',
-                            'label' => 'Complement',
-                        ],
-                        [
-                            'type' => 'input',
-                            'name' => 'geo',
-                            'label' => 'Geographic coordinates',
-                            'span' => 4,
-                        ],
-                    ],
-                ],
-                [
-                    'label' => 'Staff',
-                    'description' => 'Staff management of this unit.',
-                    'showIf' => $unit->id != null,
-                    'fields' => [
-                        [
-                            'type' => 'table',
-                            'name' => 'users',
-                            'component' => [
-                                'id' => 'units',
-                                'actions' => [
-                                    'index' => [
-                                        'source' => 'getUnitStaff',
-                                        'sourceAttributes' => ['unit' => 'id'],
-                                        'visible' => true,
-                                        'disabled' => true,
-                                        'values' => [],
-                                    ],
-                                ],
-                                'menu' => [
-                                    [
-                                        'icon' => 'mdi:account-multiple',
-                                        'label' => 'Local staff',
-                                        'source' => 'getUnitStaff',
-                                        'sourceAttributes' => ['unit' => 'id'],
-                                        'showIf' => $request->user()->can('canManageNestedData', User::class),
-                                    ],
-                                    [
-                                        'icon' => 'mdi:account-group-outline',
-                                        'label' => 'Total staff',
-                                        'source' => [
-                                            'route' => 'getUnitStaff',
-                                            'attributes' => ['show' => 'all']
-                                        ],
-                                        'sourceAttributes' => ['unit' => 'id'],
-                                        'showIf' => $request->user()->can('canManageNestedData', User::class)
-                                    ],
-                                ],
-                                'titles' => [
-                                    [
-                                        'type' => 'avatar',
-                                        'header' => 'Avatar',
-                                        'field' => 'id',
-                                        'fallback' => 'name',
-                                        'disableSort' => true,
-                                    ],
-                                    [
-                                        'type' => 'text',
-                                        'header' => 'User',
-                                        'field' => 'name',
-                                    ],
-                                    [
-                                        'type' => 'composite',
-                                        'header' => 'Classified',
-                                        'class' => 'collapse',
-                                        'field' => 'units_classified',
-                                        'options' => [
-                                            [
-                                                'field' => 'name',
-                                            ],
-                                        ],
-                                    ],
-                                    [
-                                        'type' => 'composite',
-                                        'header' => 'Working',
-                                        'class' => 'collapse',
-                                        'field' => 'units_working',
-                                        'options' => [
-                                            [
-                                                'field' => 'name',
-                                            ],
-                                        ],
-                                    ],
-                                    [
-                                        'type' => 'text',
-                                        'header' => 'Roles',
-                                        'field' => 'roles_count',
-                                    ],
-                                ],
-                                // 'data' => $units,
-                            ],
-                        ],
-                    ],
-                ],
-            ]
-        ];
-    }
-
     public function __fields(): array
     {
         return [
@@ -692,27 +495,6 @@ class UnitsController extends Controller
             'toast_type' => 'success',
             'toast_message' => '{0} Nothing to refresh.|[1] Item refreshed successfully.|[2,*] :total items successfully refreshed.',
             'toast_count' => 1,
-        ]);
-    }
-
-    public function create(Request $request, Unit $unit): Response
-    {
-        $this->authorize('access', User::class);
-        $this->authorize('isManager', User::class);
-        $this->authorize('canManageNestedData', User::class);
-
-        $data['parent_id'] = $request->unit->id ?? '';
-        $data['active'] = true;
-
-        return Inertia::render('Default', [
-            'form' => $this->__form($request, $unit),
-            'routes' => [
-                'unit' => [
-                    'route' => route('apps.units.store'),
-                    'method' => 'post',
-                ],
-            ],
-            'data' => $data,
         ]);
     }
 

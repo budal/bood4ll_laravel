@@ -17,6 +17,8 @@ const close = (event: Event) => {
     }
 };
 
+// "info" | "secondary" | "success" | "contrast" | "warn" | "error" | "undefined"
+
 const send = (event: Event) => {
     // fetchData()
 
@@ -33,10 +35,20 @@ const send = (event: Event) => {
 };
 
 const handleConfirm = (event: Event) => {
-    if (data.value?.confirm === true) {
-        confirmDialog(event);
+    if (data.value?.visibled != false) {
+        if (data.value?.confirm === true) {
+            confirmDialog(event);
+        } else {
+            send(event);
+        }
     } else {
-        send(event);
+        toast.add({
+            severity: "warn",
+            summary: trans("Error"),
+            detail: trans("You cant do this action."),
+            life: 3000,
+        });
+        close(event);
     }
 };
 
@@ -72,7 +84,10 @@ const dialogConfirmIcon = data.value?.dialogConfirmIcon || "pi pi-check";
 </script>
 
 <template>
-    <div class="pt-2 flex justify-content-end gap-2">
+    <div
+        v-if="data.visibled != false"
+        class="pt-2 flex justify-content-end gap-2"
+    >
         <Button
             type="button"
             :label="dialogCancelLabel"

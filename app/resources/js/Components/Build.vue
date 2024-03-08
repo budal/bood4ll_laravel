@@ -27,7 +27,7 @@ const onFormDataLoad = () => {
 
 <template>
     <DeferredContent @load="onFormDataLoad" aria-live="polite">
-        <form v-if="component.showIf !== false">
+        <form v-if="component.showIf !== false" class="space-y-6">
             <div
                 class="grid sm:gap-2"
                 :class="{
