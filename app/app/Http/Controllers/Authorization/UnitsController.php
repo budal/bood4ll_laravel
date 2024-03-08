@@ -162,7 +162,7 @@ class UnitsController extends Controller
                                         'toast' => 'Unit inserted.',
                                         'callback' => 'apps.units.store',
                                         'method' => 'post',
-                                        'visibled' => (
+                                        'visible' => (
                                             Gate::authorize('apps.units.store')
                                             && $request->user()->can('isManager', User::class)
                                         ),
@@ -186,7 +186,7 @@ class UnitsController extends Controller
                                         'toast' => 'Unit edited.',
                                         'callback' => 'apps.units.update',
                                         'method' => 'patch',
-                                        'visibled' => (
+                                        'visible' => (
                                             Gate::authorize('apps.units.update')
                                             && $request->user()->can('isManager', User::class)
                                             && $request->user()->can('canManageNestedData', User::class)
@@ -199,7 +199,7 @@ class UnitsController extends Controller
                                                 'sourceAttributes' => ['unit' => 'id'],
                                                 'cols' => 4,
                                                 'fields' => $this->__fields(),
-                                                'visibled' => (
+                                                'visible' => (
                                                     Gate::authorize('apps.units.update')
                                                     && $request->user()->can('isManager', User::class)
                                                     && $request->user()->can('canManageNestedData', User::class)

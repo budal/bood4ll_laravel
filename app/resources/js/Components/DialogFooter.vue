@@ -35,7 +35,7 @@ const send = (event: Event) => {
 };
 
 const handleConfirm = (event: Event) => {
-    if (data.value?.visibled != false) {
+    if (data.value?.visible != false) {
         if (data.value?.confirm === true) {
             confirmDialog(event);
         } else {
@@ -85,7 +85,7 @@ const dialogConfirmIcon = data.value?.dialogConfirmIcon || "pi pi-check";
 
 <template>
     <div
-        v-if="data.visibled != false"
+        v-if="data.visible != false"
         class="pt-2 flex justify-content-end gap-2"
     >
         <Button
