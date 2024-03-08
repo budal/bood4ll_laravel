@@ -187,7 +187,7 @@ class UnitsController extends Controller
                                         'callback' => 'apps.units.update',
                                         'method' => 'patch',
                                         'visible' => (
-                                            Gate::authorize('apps.units.update')
+                                            Gate::allows('apps.units.update')
                                             && $request->user()->can('isManager', User::class)
                                             && $request->user()->can('canManageNestedData', User::class)
                                         ),
@@ -198,16 +198,21 @@ class UnitsController extends Controller
                                                 'source' => 'getUnitInfo',
                                                 'sourceAttributes' => ['unit' => 'id'],
                                                 'cols' => 4,
-                                                'fields' => $this->__fields(),
                                                 'visible' => (
-                                                    Gate::authorize('apps.units.update')
+                                                    Gate::allows('apps.units.update')
                                                     && $request->user()->can('isManager', User::class)
                                                     && $request->user()->can('canManageNestedData', User::class)
                                                 ),
+                                                'fields' => $this->__fields(),
                                             ],
                                             [
                                                 'label' => 'Staff',
                                                 'description' => 'Staff management of this unit.',
+                                                'visible' => (
+                                                    Gate::allows('apps.units.update')
+                                                    && $request->user()->can('isManager', User::class)
+                                                    && $request->user()->can('canManageNestedData', User::class)
+                                                ),
                                                 'fields' => [
                                                     [
                                                         'type' => 'table',
@@ -227,7 +232,7 @@ class UnitsController extends Controller
                                                                     'label' => 'Local staff',
                                                                     'source' => 'getUnitStaff',
                                                                     'sourceAttributes' => ['unit' => 'id'],
-                                                                    'showIf' => $request->user()->can('canManageNestedData', User::class),
+                                                                    'visible' => $request->user()->can('canManageNestedData', User::class),
                                                                 ],
                                                                 [
                                                                     'icon' => 'mdi:account-group-outline',
@@ -237,7 +242,7 @@ class UnitsController extends Controller
                                                                         'attributes' => ['show' => 'all']
                                                                     ],
                                                                     'sourceAttributes' => ['unit' => 'id'],
-                                                                    'showIf' => $request->user()->can('canManageNestedData', User::class)
+                                                                    'visible' => $request->user()->can('canManageNestedData', User::class)
                                                                 ],
                                                             ],
                                                             'titles' => [
@@ -293,8 +298,11 @@ class UnitsController extends Controller
                                         'toastClass' => 'warning',
                                         'callback' => 'apps.units.destroy',
                                         'method' => 'delete',
-                                        'visible' => true,
-                                        'disabled' => false,
+                                        'visible' => (
+                                            Gate::allows('apps.units.destroy')
+                                            && $request->user()->can('isManager', User::class)
+                                            && $request->user()->can('canManageNestedData', User::class)
+                                        ),
                                     ],
                                     'restore' => [
                                         'dialog' => 'Do you want to restore this unit?|Do you want to restore this units?',
@@ -302,24 +310,34 @@ class UnitsController extends Controller
                                         'toastClass' => 'warning',
                                         'callback' => 'apps.units.restore',
                                         'method' => 'post',
-                                        'visible' => true,
-                                        'disabled' => false,
+                                        'visible' => (
+                                            Gate::allows('apps.units.restore')
+                                            && $request->user()->can('isManager', User::class)
+                                            && $request->user()->can('canManageNestedData', User::class)
+                                        ),
                                     ],
                                     // 'forceDestroy' => [
                                     //     'dialog' => 'Do you want to erase this unit?|Do you want to erase this units?',
                                     //     'dialogClass' => 'danger',
                                     //     'toast' => 'Unit erased.',
-                                    // 'toastClass' => 'warning',
+                                    //     'toastClass' => 'warning',
                                     //     'callback' => 'apps.units.forceDestroy',
                                     //     'method' => 'delete',
-                                    //     'visible' => true,
-                                    //     'disabled' => false,
+                                    //     'visible' => (
+                                    //         Gate::allows('apps.units.forceDestroy')
+                                    //         && $request->user()->can('isManager', User::class)
+                                    //         && $request->user()->can('canManageNestedData', User::class)
+                                    //     ),
                                     // ],
                                     // 'reorder' => [
                                     //     'toast' => 'Unit reordered.',
-                                    // 'toastClass' => 'warning',
+                                    //     'toastClass' => 'warning',
                                     //     'callback' => 'apps.units.reorder',
-                                    //     'visible' => true,
+                                    //     'visible' => (
+                                    //         Gate::allows('apps.units.reorder')
+                                    //         && $request->user()->can('isManager', User::class)
+                                    //         && $request->user()->can('canManageNestedData', User::class)
+                                    //     ),
                                     // ]
                                 ],
                                 'menu' => [

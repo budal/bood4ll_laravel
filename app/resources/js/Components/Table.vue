@@ -62,13 +62,6 @@ const routeUrlRef = ref(mkRoute(props.component.actions.index, props.id));
 const tableMenuToggle = (event: MouseEvent) => {
     const _tableMenuItemsEdit: MenuItem[] = [
         {
-            label: "Refresh",
-            icon: "pi pi-refresh",
-            command: () => {
-                onTableDataLoad();
-            },
-        },
-        {
             label: "Add",
             visible:
                 props.component.actions.create?.visible != false &&
@@ -262,21 +255,47 @@ const tableMenuToggle = (event: MouseEvent) => {
             }),
     );
 
-    _tableMenuItemsComplementar.unshift({
-        separator: true,
-        visible: props.component.menu.length > 0,
-    });
+    // _tableMenuItemsComplementar.unshift({
+    //     separator: true,
+    //     visible: props.component.menu.length > 0,
+    // });
 
-    _tableMenuItemsComplementar.push({
-        separator: true,
-        visible:
-            _tableMenuItemsComplementar.filter((item) => item.visible === true)
-                .length > 0,
-    });
+    // _tableMenuItemsComplementar.push({
+    //     separator: true,
+    //     visible:
+    //         _tableMenuItemsComplementar.filter((item) => item.visible === true)
+    //             .length > 0,
+    // });
 
     tableMenuItems.value = [
+        {
+            label: "Refresh",
+            icon: "pi pi-refresh",
+            command: () => {
+                onTableDataLoad();
+            },
+        },
+        {
+            separator: true,
+        },
+
         ..._tableMenuItemsEdit,
+
+        {
+            separator: true,
+            visible:
+                _tableMenuItemsEdit.filter((item: any) => item.visible == true)
+                    .length > 0,
+        },
+
         ..._tableMenuItemsComplementar,
+        {
+            separator: true,
+            visible:
+                _tableMenuItemsComplementar.filter(
+                    (item: any) => item.visible == true,
+                ).length > 0,
+        },
         ..._tableMenuItemsShow,
     ];
 
@@ -371,7 +390,10 @@ const openDialog = (options: {
                           summary: "No Product Selected",
                           detail: `Pressed '${buttonType}' button`,
                       }
-                    : { summary: "Product Selected", detail: data.name };
+                    : {
+                          summary: "Product Selected",
+                          detail: data.name,
+                      };
             }
         },
     });

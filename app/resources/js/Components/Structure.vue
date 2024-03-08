@@ -23,9 +23,12 @@ withDefaults(
 
     <template v-if="structure.length > 1 && tabs == true">
         <TabView>
-            <template v-for="item in structure">
+            <template
+                v-for="item in structure.filter(
+                    (item: any) => item.visible != false,
+                )"
+            >
                 <TabPanel
-                    v-if="item.visible != false"
                     :header="$t(item.label)"
                     :pt="{ content: { class: '-mx-4' } }"
                 >
@@ -47,8 +50,12 @@ withDefaults(
     </template>
     <template v-else>
         <div class="grid gap-4 grid-cols-1">
-            <template v-for="item in structure">
-                <Card v-if="item.visible != false">
+            <template
+                v-for="item in structure.filter(
+                    (item: any) => item.visible != false,
+                )"
+            >
+                <Card>
                     <template v-if="item.label" #title>
                         {{ $t(item.label) }}
                     </template>

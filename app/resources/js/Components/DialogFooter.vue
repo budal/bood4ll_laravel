@@ -43,7 +43,7 @@ const handleConfirm = (event: Event) => {
         }
     } else {
         toast.add({
-            severity: "warn",
+            severity: "error",
             summary: trans("Error"),
             detail: trans("You cant do this action."),
             life: 3000,
