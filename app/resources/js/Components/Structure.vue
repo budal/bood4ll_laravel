@@ -24,7 +24,10 @@ withDefaults(
     <template v-if="structure.length > 1 && tabs == true">
         <TabView>
             <template v-for="item in structure">
-                <TabPanel :header="$t(item.label)">
+                <TabPanel
+                    :header="$t(item.label)"
+                    :pt="{ content: { class: '-mx-4' } }"
+                >
                     <Card>
                         <template v-if="item.label" #title>
                             {{ $t(item.label) }}
