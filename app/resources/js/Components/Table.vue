@@ -58,6 +58,7 @@ const selectedColumns = ref(tableColumns.value);
 const search = ref(null);
 const showItems = ref();
 const routeUrlRef = ref(mkRoute(props.component.actions.index, props.id));
+const routeUrlOptionsRef = ref({});
 
 const tableMenuToggle = (event: MouseEvent) => {
     const _tableMenuItemsEdit: MenuItem[] = [
@@ -234,6 +235,7 @@ const tableMenuToggle = (event: MouseEvent) => {
             label: string;
             source: string;
             method: string;
+            data: any;
             visible: boolean;
             icon: string;
         }) =>
@@ -246,6 +248,10 @@ const tableMenuToggle = (event: MouseEvent) => {
                 icon: item.icon,
                 command: () => {
                     routeUrlRef.value = mkRoute(item, props.id);
+                    routeUrlOptionsRef.value = {
+                        method: item.method,
+                        data: item.data,
+                    };
                     onTableDataLoad();
                 },
             }),
@@ -357,9 +363,9 @@ const openDialog = (options: {
             modal: true,
             maximizable: true,
             draggable: false,
-            onCancel: (e) => {
-                console.log(e); // {user: 'primetime'}
-            },
+            // onCancel: (e) => {
+            //     console.log(e); // {user: 'primetime'}
+            // },
         },
         templates: {
             footer: markRaw(DialogFooter),
@@ -380,7 +386,7 @@ const onTableDataLoad = () => {
         },
     };
 
-    fetchData(routeUrlRef.value).then((content) => {
+    fetchData(routeUrlRef.value, routeUrlOptionsRef.value).then((content) => {
         contentItems.value = content.data;
         nextPageURL.value = content.next_page_url;
         loadingTable.value = false;

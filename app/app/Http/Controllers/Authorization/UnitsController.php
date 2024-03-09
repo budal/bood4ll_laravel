@@ -346,7 +346,7 @@ class UnitsController extends Controller
                                         'label' => 'Refresh units hierarchy',
                                         'source' => 'apps.units.hierarchy',
                                         'method' => 'post',
-                                        'showIf' => $request->user()->can('isSuperAdmin', User::class),
+                                        'visible' => $request->user()->can('isSuperAdmin', User::class),
                                     ],
                                 ],
                                 'titles' => [

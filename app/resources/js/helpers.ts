@@ -53,19 +53,21 @@ function mkRoute(component: any, id: any) {
 }
 
 async function fetchData(
-    route?: any,
+    route: any,
     options?: {
         method?: "get" | "post" | "put" | "patch" | "delete";
         data?: BodyInit | null | undefined;
     },
 ) {
-    route = route || "";
     options = options || { method: "get", data: null };
 
     try {
         const response = await fetch(isValidUrl(route) as string, {
-            method: options.method || "get",
-            body: options.data || null,
+            method: options.method,
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: options.data,
         });
         try {
             return await response.json();
