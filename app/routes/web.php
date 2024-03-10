@@ -7,7 +7,7 @@ use App\Http\Controllers\Authorization\UsersController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HolidaysController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\SchedulesController;
+use App\Http\ontrollers\SchedulesController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -20,6 +20,10 @@ Route::get('/', function () {
         'phpVersion' => PHP_VERSION,
     ]);
 })->name('home')->breadcrumb('Home');
+
+Route::get('/token', function () {
+    return csrf_token();
+});
 
 Route::middleware('auth')->group(function () {
     Route::name('dashboard.')->group(function () {

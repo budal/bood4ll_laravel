@@ -58,6 +58,7 @@ class HandleInertiaRequests extends Middleware
                 'previousUser' => $request->session()->has('previousUser') ? true : false,
             ],
             'breadcrumbs' => $request->route()->breadcrumbs()->jsonSerialize(),
+            'csrf' => csrf_token(),
             'status' => session('status'),
             'toast_type' => session('toast_type'),
             'toast_title' => session('toast_title'),
