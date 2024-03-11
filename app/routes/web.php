@@ -102,7 +102,7 @@ Route::middleware('auth')->group(function () {
                     ->defaults('icon', 'material-symbols-light:apartment-rounded');;
                 Route::post('/units/create', 'store')->name('store');
                 Route::patch('/units/edit/{unit}', 'update')->name('update');
-                Route::post('/units/hierarchy', 'hierarchy')->name('hierarchy');
+                Route::post('/units/hierarchy', 'postRefreshUnitsHierarchy')->name('hierarchy');
                 Route::delete('/units/destroy', 'destroy')->name('destroy');
                 Route::post('/units/restore', 'restore')->name('restore');
                 Route::post('/units/reorder', 'restore')->name('reorder');

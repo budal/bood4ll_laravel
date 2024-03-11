@@ -374,12 +374,13 @@ const openDialog = (options: {
             modal: true,
             maximizable: true,
             draggable: false,
-            // onCancel: (e) => {
-            //     console.log(e); // {user: 'primetime'}
-            // },
         },
         templates: {
             footer: markRaw(DialogFooter),
+        },
+
+        onCancel: (e) => {
+            console.log(123); // {user: 'primetime'}
         },
     });
 };

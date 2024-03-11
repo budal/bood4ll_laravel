@@ -3,13 +3,18 @@ import { Ref, inject, ref } from "vue";
 import { useConfirm } from "primevue/useconfirm";
 import { useToast } from "primevue/usetoast";
 import { trans } from "laravel-vue-i18n";
-import { fetchData } from "@/helpers";
 
 const confirm = useConfirm();
 const toast = useToast();
 const dialogRef: Ref<any> | undefined = inject("dialogRef");
 
 const data = ref(dialogRef?.value.data.action);
+
+const emit = defineEmits(["onCancel", "onSave"]);
+
+function onCancel() {
+    emit("onCancel", { user: "primetime" });
+}
 
 const close = (event: Event) => {
     if (dialogRef?.value) {
@@ -95,7 +100,7 @@ const dialogConfirmIcon = data.value?.dialogConfirmIcon || "pi pi-check";
             :label="dialogCancelLabel"
             severity="secondary"
             :icon="dialogCancelIcon"
-            @click="close"
+            @click="onCancel"
             autofocus
         />
         <Button

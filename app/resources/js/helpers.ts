@@ -70,7 +70,7 @@ async function fetchData(
             },
             body: options.data,
         });
-        console.log(response);
+        // console.log(response);
 
         try {
             return await response.json();

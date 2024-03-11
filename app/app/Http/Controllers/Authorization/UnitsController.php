@@ -135,6 +135,35 @@ class UnitsController extends Controller
         return response()->json($staff);
     }
 
+    public function postRefreshUnitsHierarchy(): JsonResponse
+    {
+        // $this->authorize('access', User::class);
+        // $this->authorize('isSuperAdmin', User::class);
+
+        $this->length = 0;
+
+        Unit::orderBy('id')->chunk(100, function (Collection $units) {
+            foreach ($units as $unit) {
+                $unit = Unit::where('id', $unit->id)->first();
+
+                $unit->fullpath = $unit->getParentsNames();
+                $unit->shortpath = $unit->getParentsNicknames();
+                $unit->children_id = collect($unit->getDescendants())->toJson();
+
+                $unit->save();
+
+                $this->length++;
+            }
+        });
+
+        return response()->json([
+            'type' => 'success',
+            'title' => 'Refresh',
+            'message' => '{0} Nothing to refresh.|[1] Item refreshed successfully.|[2,*] :total items successfully refreshed.',
+            'length' => $this->length,
+        ]);
+    }
+
     public function index(Request $request): Response
     {
         $this->authorize('access', User::class);
@@ -159,9 +188,10 @@ class UnitsController extends Controller
                                     ],
                                     'create' => [
                                         'confirm' => true,
-                                        'popup' => 'Do you want to insert a new unit?',
+                                        'popup' => 'Do you want to add a new unit?',
                                         'toastTitle' => 'Added',
-                                        'toast' => 'Unit inserted.',
+                                        'toast' => '{0} Nothing to add.|[1] Item added successfully.|[2,*] :total items successfully added.',
+                                        'length' => 1,
                                         'callback' => 'apps.units.store',
                                         'method' => 'post',
                                         'visible' => (
@@ -492,35 +522,6 @@ class UnitsController extends Controller
                 'span' => 4,
             ],
         ];
-    }
-
-    public function hierarchy(): JsonResponse
-    {
-        $this->authorize('access', User::class);
-        $this->authorize('isSuperAdmin', User::class);
-
-        $this->length = 0;
-
-        Unit::orderBy('id')->chunk(100, function (Collection $units) {
-            foreach ($units as $unit) {
-                $unit = Unit::where('id', $unit->id)->first();
-
-                $unit->fullpath = $unit->getParentsNames();
-                $unit->shortpath = $unit->getParentsNicknames();
-                $unit->children_id = collect($unit->getDescendants())->toJson();
-
-                $unit->save();
-
-                $this->length++;
-            }
-        });
-
-        return response()->json([
-            'type' => 'success',
-            'title' => 'Refresh',
-            'message' => '{0} Nothing to refresh.|[1] Item refreshed successfully.|[2,*] :total items successfully refreshed.',
-            'length' => $this->length,
-        ]);
     }
 
     public function store(Request $request, Unit $unit): RedirectResponse
