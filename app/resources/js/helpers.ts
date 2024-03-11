@@ -66,7 +66,7 @@ async function fetchData(
             method: options.method,
             headers: {
                 "Content-Type": "application/json",
-                "X-CSRF-TOKEN": usePage().props.csrf,
+                "X-CSRF-TOKEN": usePage().props.csrf as string,
             },
             body: options.data,
         });
