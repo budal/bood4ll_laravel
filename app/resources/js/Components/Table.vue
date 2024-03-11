@@ -260,7 +260,7 @@ const tableMenuToggle = (event: MouseEvent) => {
                     }).then((content) => {
                         toast.add({
                             severity: content.type,
-                            summary: content.title,
+                            summary: trans(content.title),
                             detail: transChoice(
                                 content.message,
                                 content.length,
