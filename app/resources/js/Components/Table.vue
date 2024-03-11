@@ -234,7 +234,7 @@ const tableMenuToggle = (event: MouseEvent) => {
         (item: {
             label: string;
             source: string;
-            method: string;
+            method: "get" | "post" | "put" | "patch" | "delete";
             data: any;
             visible: boolean;
             icon: string;
@@ -247,12 +247,30 @@ const tableMenuToggle = (event: MouseEvent) => {
                 visible: item.visible === true,
                 icon: item.icon,
                 command: () => {
-                    routeUrlRef.value = mkRoute(item, props.id);
-                    routeUrlOptionsRef.value = {
+                    toast.add({
+                        severity: "info",
+                        summary: trans("Loading"),
+                        detail: trans("Please wait..."),
+                        life: 3000,
+                    });
+
+                    fetchData(mkRoute(item, props.id), {
                         method: item.method,
                         data: item.data,
-                    };
-                    onTableDataLoad();
+                    }).then((content) => {
+                        toast.add({
+                            severity: content.type,
+                            summary: content.title,
+                            detail: transChoice(
+                                content.message,
+                                content.length,
+                                { total: content.length },
+                            ),
+                            life: 3000,
+                        });
+
+                        onTableDataLoad();
+                    });
                 },
             }),
     );
@@ -328,13 +346,6 @@ const confirmDialog = (options: {
         accept: () => {
             console.log(options.callback, options.items);
             onTableDataLoad();
-
-            // toast.add({
-            //     severity: "info",
-            //     summary: "Confirmed",
-            //     detail: "You have accepted",
-            //     life: 3000,
-            // });
         },
     });
 };

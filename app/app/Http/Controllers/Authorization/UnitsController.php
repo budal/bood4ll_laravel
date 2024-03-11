@@ -19,6 +19,8 @@ use Inertia\Response;
 
 class UnitsController extends Controller
 {
+    private $length = 0;
+
     public function getUnits(Request $request, Unit $unit): JsonResponse
     {
         $units = Unit::leftJoin('unit_user', 'unit_user.unit_id', '=', 'units.id')
@@ -492,10 +494,12 @@ class UnitsController extends Controller
         ];
     }
 
-    public function hierarchy(): RedirectResponse
+    public function hierarchy(): JsonResponse
     {
         $this->authorize('access', User::class);
         $this->authorize('isSuperAdmin', User::class);
+
+        $this->length = 0;
 
         Unit::orderBy('id')->chunk(100, function (Collection $units) {
             foreach ($units as $unit) {
@@ -506,13 +510,16 @@ class UnitsController extends Controller
                 $unit->children_id = collect($unit->getDescendants())->toJson();
 
                 $unit->save();
+
+                $this->length++;
             }
         });
 
-        return Redirect::back()->with([
-            'toast_type' => 'success',
-            'toast_message' => '{0} Nothing to refresh.|[1] Item refreshed successfully.|[2,*] :total items successfully refreshed.',
-            'toast_count' => 1,
+        return response()->json([
+            'type' => 'success',
+            'title' => 'Refresh',
+            'message' => '{0} Nothing to refresh.|[1] Item refreshed successfully.|[2,*] :total items successfully refreshed.',
+            'length' => $this->length,
         ]);
     }
 

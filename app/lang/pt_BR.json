@@ -41,7 +41,9 @@
   "No": "Não",
   "Confirmed": "Confirmado",
   "Do you want confirm this action?": "Você quer confirmar esta ação?",
-  
+  "Loading": "Carregando",
+  "Please wait...": "Por favor aguarde...",
+
   "Current Password": "Senha atual",
   "New Password": "Nova Senha",
   "Update Password": "Atualizar senha",
@@ -53,7 +55,7 @@
   "Already registered?": "Já registrado?",
   "Forgot your password?": "Esqueceu sua senha?",
   "Confirm your password": "Confirme sua senha",
-  
+
   "Trashed": "Removido",
   "Both": "Ambos",
 
@@ -89,7 +91,7 @@
   "Working": "Trabalhando em",
   "Concluded": "Concluído",
   "Authority": "Autoridade",
-  
+
   "Add": "Adicionar",
   "Are you sure you want to add the selected item?|Are you sure you want to add the selected items?": "Você tem certeza que deseja adicionar o item selecionado?|Você tem certeza que deseja adicionar os itens selecionados?",
   "Informed item will be added. Do you want to continue?|Informed items will be added. Do you want to continue?": "O item informado será salvo. Você deseja continuar?|Os itens informados serão salvos. Você deseja continuar?",
@@ -164,7 +166,7 @@
 
   "Manage which filters to apply to the list": "Gerencie quais filtros aplicar para a lista",
   "Selected filters refine searches according to your choices": "Os filtros selecionados refinam as pesquisas conforme suas escolhas",
-  
+
   "Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.": "Esqueceu sua senha? Sem problemas. Informe seu endereço de e-mail e lhe enviaremos um link de redefinição para cadastrar uma nova senha.",
   "Email Password Reset Link": "Email com link de redefinição de senha",
   "We have emailed your password reset link.": "Enviamos por email o link para redefinição de senha",
@@ -185,7 +187,7 @@
   "Are you sure you want to delete your account?": "Tem certeza de que deseja excluir sua conta?",
   "Once your account is deleted, all of its resources and data will be deleted. Please enter your password to confirm you would like to delete your account.": "Depois que sua conta for excluída, todos os seus recursos e dados serão excluídos. Por favor, digite sua senha para confirmar que deseja excluir sua conta.",
   "You are managing information as a different account than you are logged in to. Be cautious.": "Você está gerenciando informações com uma conta diferente da qual logou. Tenha cautela.",
-  
+
   "Dashboard": "Painel",
   "Apps": "Aplicativos",
   "Reports": "Relatórios",
@@ -198,7 +200,7 @@
   "Notifications": "Notificações",
   "System": "Sistema",
   "Settings": "Configurações",
-  
+
   "Abilities": "Abilitações",
   "Ability": "Abilitação",
   "Define which abilities will be showed in the roles management.": "Defina quais abilitações serão exibidas no gerenciamento de funções.",
@@ -208,7 +210,7 @@
   "Deactivate abilities": "Desativar abilitações",
   "The ability ':ability' was activated.": "A abilitação ':ability' foi ativada.",
   "The ability ':ability' was deactivated.": "A abilitação ':ability' foi desativada.",
-  
+
   "Roles": "Funções",
   "Role": "Função",
   "Define roles, grouping abilities to define specific access.": "Defina funções, agrupando abilitações para definir acessos específicos.",
@@ -261,7 +263,7 @@
   "User roles management.": "Gerenciamento de funções do usuário.",
   "The user ':user' was attached in the ':unit'.": "O usuário ':user' foi vinculado à ':unit'.",
   "The user ':user' was detached in the ':unit'.": "O usuário ':user' foi desvinculado de ':unit'.",
- 
+
   "Holidays": "Feriados",
   "Holiday creation": "Criação de feriado",
   "Holiday edition": "Edição de feriado",

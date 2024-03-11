@@ -70,6 +70,8 @@ async function fetchData(
             },
             body: options.data,
         });
+        console.log(response);
+
         try {
             return await response.json();
         } catch (error) {
