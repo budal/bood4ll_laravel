@@ -12,8 +12,10 @@ const data = ref(dialogRef?.value.data.action);
 
 const emit = defineEmits(["onCancel", "onSave"]);
 
-function onCancel() {
-    emit("onCancel", { user: "primetime" });
+function onCancel(event: Event) {
+    console.log(event);
+
+    emit("onCancel", event);
 }
 
 const close = (event: Event) => {

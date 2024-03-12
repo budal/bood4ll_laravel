@@ -158,7 +158,7 @@ class UnitsController extends Controller
 
         return response()->json([
             'type' => 'success',
-            'title' => 'Refresh',
+            'title' => 'Refresh units hierarchy',
             'message' => '{0} Nothing to refresh.|[1] Item refreshed successfully.|[2,*] :total items successfully refreshed.',
             'length' => $this->length,
         ]);

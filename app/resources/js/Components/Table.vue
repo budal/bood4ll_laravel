@@ -248,7 +248,7 @@ const tableMenuToggle = (event: MouseEvent) => {
                 icon: item.icon,
                 command: () => {
                     toast.add({
-                        severity: "info",
+                        severity: "contrast",
                         summary: trans("Loading"),
                         detail: trans("Please wait..."),
                         life: 3000,
@@ -259,7 +259,7 @@ const tableMenuToggle = (event: MouseEvent) => {
                         data: item.data,
                     }).then((content) => {
                         toast.add({
-                            severity: content.type,
+                            severity: content.type || "secondary",
                             summary: trans(content.title),
                             detail: transChoice(
                                 content.message,
@@ -355,7 +355,7 @@ const openDialog = (options: {
     headerReplacement?: ReplacementsInterface;
     action?: any;
     id?: number | string;
-}) => {
+}) =>
     dialog.open(DialogBody, {
         data: { action: options.action, id: options.id },
         props: {
@@ -378,12 +378,10 @@ const openDialog = (options: {
         templates: {
             footer: markRaw(DialogFooter),
         },
-
-        onCancel: (e) => {
-            console.log(123); // {user: 'primetime'}
+        onCancel: (event: Event) => {
+            console.log(event); // {user: 'primetime'}
         },
     });
-};
 
 const onTableDataLoad = () => {
     selectedItems.value = [];
