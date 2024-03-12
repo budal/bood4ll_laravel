@@ -249,7 +249,6 @@ const tableMenuToggle = (event: MouseEvent) => {
                 icon: item.icon,
                 command: () => {
                     if (item.reload === true) {
-                        showItems.value = "both";
                         routeUrlRef.value = mkRoute(item, props.id);
 
                         onTableDataLoad();
@@ -372,7 +371,8 @@ const openDialog = (options: {
                 options.headerReplacement,
             ) as unknown as string,
             style: {
-                width: "50vw",
+                width: "70vw",
+                height: "90vw",
             },
             breakpoints: {
                 "960px": "75vw",
