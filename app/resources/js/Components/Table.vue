@@ -249,16 +249,8 @@ const tableMenuToggle = (event: MouseEvent) => {
                 icon: item.icon,
                 command: () => {
                     if (item.reload === true) {
-                        console.log(isValidUrl(item.source));
-
-                        routeUrlRef.value = {
-                            route: item.source,
-                            attributes: {
-                                ...routeUrlRef.value.attributes,
-                            },
-                        };
-
-                        // fetchData(routeUrlRef.value, routeUrlOptionsRef.value).then((content) => {
+                        showItems.value = "both";
+                        routeUrlRef.value = mkRoute(item, props.id);
 
                         onTableDataLoad();
                     } else {
