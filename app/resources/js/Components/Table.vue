@@ -237,6 +237,7 @@ const tableMenuToggle = (event: MouseEvent) => {
             method: "get" | "post" | "put" | "patch" | "delete";
             data: any;
             visible: boolean;
+            reload: boolean;
             icon: string;
         }) =>
             _tableMenuItemsComplementar.push({
@@ -247,30 +248,45 @@ const tableMenuToggle = (event: MouseEvent) => {
                 visible: item.visible === true,
                 icon: item.icon,
                 command: () => {
-                    toast.add({
-                        severity: "contrast",
-                        summary: trans("Loading"),
-                        detail: trans("Please wait..."),
-                        life: 3000,
-                    });
+                    if (item.reload === true) {
+                        console.log(isValidUrl(item.source));
 
-                    fetchData(mkRoute(item, props.id), {
-                        method: item.method,
-                        data: item.data,
-                    }).then((content) => {
+                        routeUrlRef.value = {
+                            route: item.source,
+                            attributes: {
+                                ...routeUrlRef.value.attributes,
+                            },
+                        };
+
+                        // fetchData(routeUrlRef.value, routeUrlOptionsRef.value).then((content) => {
+
+                        onTableDataLoad();
+                    } else {
                         toast.add({
-                            severity: content.type || "secondary",
-                            summary: trans(content.title),
-                            detail: transChoice(
-                                content.message,
-                                content.length,
-                                { total: content.length },
-                            ),
+                            severity: "contrast",
+                            summary: trans("Loading"),
+                            detail: trans("Please wait..."),
                             life: 3000,
                         });
 
-                        onTableDataLoad();
-                    });
+                        fetchData(mkRoute(item, props.id), {
+                            method: item.method,
+                            data: item.data,
+                        }).then((content) => {
+                            toast.add({
+                                severity: content.type || "secondary",
+                                summary: trans(content.title),
+                                detail: transChoice(
+                                    content.message,
+                                    content.length,
+                                    { total: content.length },
+                                ),
+                                life: 3000,
+                            });
+
+                            onTableDataLoad();
+                        });
+                    }
                 },
             }),
     );
@@ -365,7 +381,6 @@ const openDialog = (options: {
             ) as unknown as string,
             style: {
                 width: "50vw",
-                // height: "50vw",
             },
             breakpoints: {
                 "960px": "75vw",
@@ -378,8 +393,8 @@ const openDialog = (options: {
         templates: {
             footer: markRaw(DialogFooter),
         },
-        onCancel: (event: Event) => {
-            console.log(event); // {user: 'primetime'}
+        onConfirm: () => {
+            console.log(1234);
         },
     });
 

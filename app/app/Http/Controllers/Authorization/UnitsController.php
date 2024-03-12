@@ -264,6 +264,7 @@ class UnitsController extends Controller
                                                                     'label' => 'Local staff',
                                                                     'source' => 'getUnitStaff',
                                                                     'sourceAttributes' => ['unit' => 'id'],
+                                                                    'reload' => true,
                                                                     'visible' => $request->user()->can('canManageNestedData', User::class),
                                                                 ],
                                                                 [
@@ -274,6 +275,7 @@ class UnitsController extends Controller
                                                                         'attributes' => ['show' => 'all']
                                                                     ],
                                                                     'sourceAttributes' => ['unit' => 'id'],
+                                                                    'reload' => true,
                                                                     'visible' => $request->user()->can('canManageNestedData', User::class)
                                                                 ],
                                                             ],

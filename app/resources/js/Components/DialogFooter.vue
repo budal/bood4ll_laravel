@@ -10,28 +10,15 @@ const dialogRef: Ref<any> | undefined = inject("dialogRef");
 
 const data = ref(dialogRef?.value.data.action);
 
-const emit = defineEmits(["onCancel", "onSave"]);
-
-function onCancel(event: Event) {
-    console.log(event);
-
-    emit("onCancel", event);
-}
-
 const close = (event: Event) => {
     if (dialogRef?.value) {
         dialogRef.value.close(event);
     }
 };
 
-// "info" | "secondary" | "success" | "contrast" | "warn" | "error" | "undefined"
-
 const send = (event: Event) => {
-    // fetchData()
+    dialogRef?.value.options.onConfirm();
 
-    console.log(data.value);
-
-    console.log(dialogRef);
     if (data.value) {
         toast.add({
             severity: data.value.toastClass || "info",
@@ -102,7 +89,7 @@ const dialogConfirmIcon = data.value?.dialogConfirmIcon || "pi pi-check";
             :label="dialogCancelLabel"
             severity="secondary"
             :icon="dialogCancelIcon"
-            @click="onCancel"
+            @click="close"
             autofocus
         />
         <Button
