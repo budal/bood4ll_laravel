@@ -1,4 +1,5 @@
 import { usePage } from "@inertiajs/vue3";
+import axios, { AxiosHeaderValue } from "axios";
 import { transChoice } from "laravel-vue-i18n";
 import { ReplacementsInterface } from "laravel-vue-i18n/interfaces/replacements";
 import { ref } from "vue";
@@ -92,6 +93,69 @@ async function fetchData(
     }
 }
 
+async function fetchData2(
+    route: any,
+    options?: {
+        method?: "get" | "post" | "put" | "patch" | "delete";
+        data?: BodyInit | null | undefined;
+        onBefore?: Function;
+        onProgress?: Function;
+        onCancel?: Function;
+        onSuccess?: Function;
+        onError?: Function;
+        onFinish?: Function;
+    },
+) {
+    options = options || { method: "get", data: null };
+
+    try {
+        setTimeout(() => (options?.onBefore ? options.onBefore() : null));
+
+        const instance = axios;
+
+        // instance.defaults.headers.common["X-CSRF-TOKEN"] = usePage().props
+        //     .csrf as AxiosHeaderValue;
+
+        await instance({
+            url: isValidUrl(route),
+            method: options?.method,
+            // headers: {
+            //     Accept: "application/json",
+            //     "Content-Type": "application/json;charset=UTF-8",
+            //     "X-CSRF-TOKEN": usePage().props.csrf as string,
+            // },
+            timeout: 10000,
+            // onUploadProgress: function (progressEvent) {
+            //     var percentCompleted = Math.round(
+            //         (progressEvent.loaded * 100) / progressEvent.total,
+            //     );
+            //     console.log(progressEvent);
+            // },
+            // onDownloadProgress: function (progressEvent) {
+            //     var percentCompleted = Math.round(
+            //         (progressEvent.loaded * 100) / progressEvent.total,
+            //     );
+            //     console.log(progressEvent);
+            // },
+        })
+            .then((response) => {
+                if (options?.onSuccess) options.onSuccess(response.data);
+            })
+            .catch((error) => {
+                if (error.code === "ECONNABORTED") {
+                    setTimeout(() =>
+                        options?.onCancel ? options.onCancel() : null,
+                    );
+                }
+                if (options?.onError) options.onError(error);
+            });
+
+        setTimeout(() => (options?.onFinish ? options.onFinish() : null));
+    } catch (error) {
+        console.error(error);
+    }
+}
+
 const formatRouteWithID = (url: any, id: any) =>
     isValidUrl(
         typeof url == "string"
@@ -118,4 +182,12 @@ const toast = () => {
     }
 };
 
-export { isValidUrl, mkAttr, mkRoute, fetchData, formatRouteWithID, toast };
+export {
+    isValidUrl,
+    mkAttr,
+    mkRoute,
+    fetchData,
+    fetchData2,
+    formatRouteWithID,
+    toast,
+};

@@ -12,7 +12,7 @@ import { Link } from "@inertiajs/vue3";
 import { isDefined, useIntersectionObserver } from "@vueuse/core";
 
 import { useConfirm } from "primevue/useconfirm";
-import { isValidUrl, fetchData, mkRoute } from "@/helpers";
+import { isValidUrl, fetchData, mkRoute, fetchData2 } from "@/helpers";
 
 import { useToast } from "primevue/usetoast";
 import { DataTableRowReorderEvent } from "primevue/datatable";
@@ -253,29 +253,34 @@ const tableMenuToggle = (event: MouseEvent) => {
 
                         onTableDataLoad();
                     } else {
-                        toast.add({
-                            severity: "contrast",
-                            summary: trans("Loading"),
-                            detail: trans("Please wait..."),
-                            life: 3000,
-                        });
-
-                        fetchData(mkRoute(item, props.id), {
+                        fetchData2(mkRoute(item, props.id), {
                             method: item.method,
                             data: item.data,
-                        }).then((content) => {
-                            toast.add({
-                                severity: content.type || "secondary",
-                                summary: trans(content.title),
-                                detail: transChoice(
-                                    content.message,
-                                    content.length,
-                                    { total: content.length },
-                                ),
-                                life: 3000,
-                            });
+                            onBefore: () => {
+                                toast.add({
+                                    severity: "contrast",
+                                    summary: trans("Loading"),
+                                    detail: trans("Please wait..."),
+                                    life: 3000,
+                                });
+                            },
+                            onError: (error) => {
+                                console.log(error.message);
+                            },
+                            onSuccess: (content: any) => {
+                                toast.add({
+                                    severity: content.type || "secondary",
+                                    summary: trans(content.title),
+                                    detail: transChoice(
+                                        content.message,
+                                        content.length,
+                                        { total: content.length },
+                                    ),
+                                    life: 3000,
+                                });
 
-                            onTableDataLoad();
+                                onTableDataLoad();
+                            },
                         });
                     }
                 },
@@ -398,10 +403,26 @@ const onTableDataLoad = () => {
         },
     };
 
-    fetchData(routeUrlRef.value).then((content) => {
-        contentItems.value = content.data;
-        nextPageURL.value = content.next_page_url;
-        loadingTable.value = false;
+    // fetchData(routeUrlRef.value).then((content) => {
+    //     contentItems.value = content.data;
+    //     nextPageURL.value = content.next_page_url;
+    //     loadingTable.value = false;
+    // });
+    fetchData2(routeUrlRef.value, {
+        onBefore: () => {
+            selectedItems.value = [];
+            loadingTable.value = true;
+        },
+        onSuccess: (content: { data: any; next_page_url: any }) => {
+            contentItems.value = content.data;
+            nextPageURL.value = content.next_page_url;
+        },
+        onFinish: () => {
+            loadingTable.value = false;
+        },
+        onError: (error) => {
+            console.log(error.message);
+        },
     });
 };
 
