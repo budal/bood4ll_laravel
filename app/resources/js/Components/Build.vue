@@ -21,24 +21,31 @@ const loading = ref(false);
 const formValue = ref<Record<string, any>>({});
 
 const send = () => {
-    loading.value = true;
-
-    onFormDataLoad();
+    fetchData(mkRoute(props.component, props.id), {
+        method: props.component.method,
+        data: props.component.data,
+        onBefore: () => {
+            loading.value = true;
+        },
+        onError: (error: { message: string }) => {
+            console.log(error.message);
+        },
+        onSuccess: (content: any) => {
+            toast.add({
+                severity: content.toastClass || "info",
+                summary: trans(content.toastTitle || "Confirmed"),
+                detail: transChoice(content.toast, 0, {}),
+                life: 3000,
+            });
+        },
+        onFinish: () => onFormDataLoad(),
+    });
 
     console.log(
         props.component,
         // formValue.value,
         mkRoute(props.component, props.id),
     );
-
-    if (props.component) {
-        toast.add({
-            severity: props.component.toastClass || "info",
-            summary: trans(props.component.toastTitle || "Confirmed"),
-            detail: transChoice(props.component.toast, 0, {}),
-            life: 3000,
-        });
-    }
 };
 
 const handleConfirm = (event: Event) => {
@@ -185,7 +192,10 @@ const onFormDataLoad = () => {
                                 v-else-if="field.type === 'dropdown'"
                                 :id="field.name"
                                 v-model="formValue[field.name]"
-                                :url="field.source"
+                                :url="{
+                                    route: field.source,
+                                    formId: formValue[field.name],
+                                }"
                                 :urlAttributes="
                                     mkAttr(field.sourceAttributes, formValue)
                                 "

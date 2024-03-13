@@ -7,7 +7,14 @@ const props = withDefaults(
         id?: string;
         value?: any;
         component?: any;
-        url?: string | { route: string; attributes: string[] };
+        url?:
+            | string
+            | {
+                  route: string;
+                  attributes?: string[];
+                  replace?: string[];
+                  formId?: string | number | undefined;
+              };
         urlAttributes?: any;
         optionValue?: string;
         optionLabel?: string;
@@ -26,17 +33,9 @@ const props = withDefaults(
 const loading = ref(false);
 const dropdownItems = ref([]);
 
-const routeUrl = {
-    route: props.url,
-    attributes: props.urlAttributes,
-};
-
-if (typeof props.url === "object") {
-    routeUrl.attributes.push(props.urlAttributes);
-}
-
-if (props.url) {
-    fetchData(isValidUrl(routeUrl as any), {
+if (props.url?.formId !== undefined) {
+    console.log(props.url);
+    fetchData(props.url.route, {
         onBefore: () => {
             loading.value = true;
         },

@@ -413,7 +413,6 @@ class UnitsController extends Controller
                                         'showIf' => $request->user()->can('canManageNestedData', User::class),
                                     ],
                                 ],
-                                // 'data' => $this->getUnits($request),
                             ],
                         ],
                     ],
@@ -436,7 +435,10 @@ class UnitsController extends Controller
                 'type' => 'dropdown',
                 'name' => 'parent_id',
                 'label' => 'Belongs to',
-                'source' => 'getUnits',
+                'source' => [
+                    'route' => 'getUnits',
+                    'replace' => ['unit' => 'id']
+                ],
                 'sourceAttributes' => ['unit' => 'id'],
                 'span' => 2,
                 'required' => true,

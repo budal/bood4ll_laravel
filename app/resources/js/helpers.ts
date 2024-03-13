@@ -73,9 +73,6 @@ async function fetchData(
 
         const instance = axios;
 
-        // instance.defaults.headers.common["X-CSRF-TOKEN"] = usePage().props
-        //     .csrf as AxiosHeaderValue;
-
         await instance({
             url: isValidUrl(route) as string,
             method: options?.method,
