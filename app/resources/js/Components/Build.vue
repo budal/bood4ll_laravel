@@ -23,11 +23,6 @@ const formValue = ref<Record<string, any>>({});
 const send = () => {
     loading.value = true;
 
-    fetchData(mkRoute(props.component, props.id)).then((content) => {
-        //     formValue.value = content;
-        //     loading.value = false;
-    });
-
     onFormDataLoad();
 
     console.log(
@@ -90,11 +85,19 @@ const confirmDialog = (event: Event) => {
 
 const onFormDataLoad = () => {
     if (props.component.source) {
-        loading.value = true;
-
-        fetchData(mkRoute(props.component, props.id)).then((content) => {
-            formValue.value = content;
-            loading.value = false;
+        fetchData(mkRoute(props.component, props.id), {
+            onBefore: () => {
+                loading.value = true;
+            },
+            onSuccess: (content: never[]) => {
+                formValue.value = content;
+            },
+            onFinish: () => {
+                loading.value = false;
+            },
+            onError: (error: { message: string }) => {
+                console.log(error.message);
+            },
         });
     }
 };

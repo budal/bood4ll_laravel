@@ -12,7 +12,7 @@ import { Link } from "@inertiajs/vue3";
 import { isDefined, useIntersectionObserver } from "@vueuse/core";
 
 import { useConfirm } from "primevue/useconfirm";
-import { isValidUrl, fetchData, mkRoute, fetchData2 } from "@/helpers";
+import { isValidUrl, fetchData, mkRoute } from "@/helpers";
 
 import { useToast } from "primevue/usetoast";
 import { DataTableRowReorderEvent } from "primevue/datatable";
@@ -253,7 +253,7 @@ const tableMenuToggle = (event: MouseEvent) => {
 
                         onTableDataLoad();
                     } else {
-                        fetchData2(mkRoute(item, props.id), {
+                        fetchData(mkRoute(item, props.id), {
                             method: item.method,
                             data: item.data,
                             onBefore: () => {
@@ -264,7 +264,7 @@ const tableMenuToggle = (event: MouseEvent) => {
                                     life: 3000,
                                 });
                             },
-                            onError: (error) => {
+                            onError: (error: { message: string }) => {
                                 console.log(error.message);
                             },
                             onSuccess: (content: any) => {
@@ -403,12 +403,7 @@ const onTableDataLoad = () => {
         },
     };
 
-    // fetchData(routeUrlRef.value).then((content) => {
-    //     contentItems.value = content.data;
-    //     nextPageURL.value = content.next_page_url;
-    //     loadingTable.value = false;
-    // });
-    fetchData2(routeUrlRef.value, {
+    fetchData(routeUrlRef.value, {
         onBefore: () => {
             selectedItems.value = [];
             loadingTable.value = true;
@@ -420,7 +415,7 @@ const onTableDataLoad = () => {
         onFinish: () => {
             loadingTable.value = false;
         },
-        onError: (error) => {
+        onError: (error: { message: string }) => {
             console.log(error.message);
         },
     });
@@ -430,10 +425,20 @@ useIntersectionObserver(lastIntersection, ([{ isIntersecting }]) => {
     if (isIntersecting && nextPageURL.value !== null) {
         loadingTable.value = true;
 
-        fetchData(nextPageURL.value).then((content) => {
-            nextPageURL.value = content.next_page_url;
-            contentItems.value = [...contentItems.value, ...content.data];
-            loadingTable.value = false;
+        fetchData(nextPageURL.value, {
+            onBefore: () => {
+                loadingTable.value = true;
+            },
+            onSuccess: (content: { data: any; next_page_url: any }) => {
+                nextPageURL.value = content.next_page_url;
+                contentItems.value = [...contentItems.value, ...content.data];
+            },
+            onFinish: () => {
+                loadingTable.value = false;
+            },
+            onError: (error: { message: string }) => {
+                console.log(error.message);
+            },
         });
     }
 });

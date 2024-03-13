@@ -58,46 +58,6 @@ async function fetchData(
     options?: {
         method?: "get" | "post" | "put" | "patch" | "delete";
         data?: BodyInit | null | undefined;
-        onCancel?: Function;
-        onBefore?: Function;
-        onProgress?: Function;
-        onSuccess?: Function;
-        onError?: Function;
-        onFinish?: Function;
-    },
-) {
-    options = options || { method: "get", data: null };
-
-    try {
-        const response = await fetch(isValidUrl(route) as string, {
-            method: options.method,
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRF-TOKEN": usePage().props.csrf as string,
-            },
-            body: options.data,
-        });
-
-        console.log(response);
-
-        if (response) {
-        }
-
-        try {
-            return await response.json();
-        } catch (error) {
-            console.error(`Error on load '${route}'.`);
-        }
-    } catch (error) {
-        console.error(error);
-    }
-}
-
-async function fetchData2(
-    route: any,
-    options?: {
-        method?: "get" | "post" | "put" | "patch" | "delete";
-        data?: BodyInit | null | undefined;
         onBefore?: Function;
         onProgress?: Function;
         onCancel?: Function;
@@ -117,7 +77,7 @@ async function fetchData2(
         //     .csrf as AxiosHeaderValue;
 
         await instance({
-            url: isValidUrl(route),
+            url: isValidUrl(route) as string,
             method: options?.method,
             // headers: {
             //     Accept: "application/json",
@@ -182,12 +142,4 @@ const toast = () => {
     }
 };
 
-export {
-    isValidUrl,
-    mkAttr,
-    mkRoute,
-    fetchData,
-    fetchData2,
-    formatRouteWithID,
-    toast,
-};
+export { isValidUrl, mkAttr, mkRoute, fetchData, formatRouteWithID, toast };

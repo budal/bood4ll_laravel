@@ -36,10 +36,19 @@ if (typeof props.url === "object") {
 }
 
 if (props.url) {
-    loading.value = true;
-    fetchData(isValidUrl(routeUrl as any)).then((content) => {
-        dropdownItems.value = content;
-        loading.value = false;
+    fetchData(isValidUrl(routeUrl as any), {
+        onBefore: () => {
+            loading.value = true;
+        },
+        onSuccess: (content: never[]) => {
+            dropdownItems.value = content;
+        },
+        onFinish: () => {
+            loading.value = false;
+        },
+        onError: (error: { message: string }) => {
+            console.log(error.message);
+        },
     });
 }
 
