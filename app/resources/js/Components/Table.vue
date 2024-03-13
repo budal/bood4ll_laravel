@@ -362,7 +362,7 @@ const openDialog = (options: {
     headerReplacement?: ReplacementsInterface;
     action?: any;
     id?: number | string;
-}) =>
+}) => {
     dialog.open(DialogBody, {
         data: { action: options.action, id: options.id },
         props: {
@@ -382,13 +382,8 @@ const openDialog = (options: {
             maximizable: true,
             draggable: false,
         },
-        templates: {
-            footer: markRaw(DialogFooter),
-        },
-        onConfirm: () => {
-            console.log(1234);
-        },
     });
+};
 
 const onTableDataLoad = () => {
     selectedItems.value = [];
@@ -403,7 +398,7 @@ const onTableDataLoad = () => {
         },
     };
 
-    fetchData(routeUrlRef.value, routeUrlOptionsRef.value).then((content) => {
+    fetchData(routeUrlRef.value).then((content) => {
         contentItems.value = content.data;
         nextPageURL.value = content.next_page_url;
         loadingTable.value = false;
@@ -640,10 +635,7 @@ onBeforeUnmount(() => {
                 </template>
             </Column>
             <Column
-                v-if="
-                    props.component.actions.edit?.visible != false &&
-                    isDefined(props.component.actions.edit?.callback)
-                "
+                v-if="props.component.actions.edit?.visible != false"
                 style="width: 1rem"
                 frozen
                 alignFrozen="right"

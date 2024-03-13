@@ -183,21 +183,15 @@ class UnitsController extends Controller
                                 'actions' => [
                                     'index' => [
                                         'source' => 'getUnitsIndex',
-                                        'visible' => true,
-                                        'disabled' => true,
+                                        'visible' => Gate::allows('apps.units.index'),
+                                        'disabled' => $request->user()->cannot('isManager', User::class),
                                     ],
                                     'create' => [
-                                        'confirm' => true,
-                                        'popup' => 'Do you want to add a new unit?',
-                                        'toastTitle' => 'Added',
-                                        'toast' => '{0} Nothing to add.|[1] Item added successfully.|[2,*] :total items successfully added.',
-                                        'length' => 1,
-                                        'callback' => 'apps.units.store',
-                                        'method' => 'post',
                                         'visible' => (
                                             Gate::allows('apps.units.store')
                                             && $request->user()->can('isManager', User::class)
                                         ),
+                                        'disabled' => $request->user()->cannot('isManager', User::class),
                                         'component' => [
                                             [
                                                 'label' => 'Main data',
@@ -207,22 +201,20 @@ class UnitsController extends Controller
                                                 'visible' => (
                                                     Gate::allows('apps.units.store')
                                                     && $request->user()->can('isManager', User::class)
-                                                )
+                                                ),
+                                                'callback' => 'apps.units.create',
+                                                'method' => 'post',
                                             ],
                                         ],
                                     ],
                                     'edit' => [
-                                        'confirm' => true,
-                                        'popup' => 'Do you want to edit this unit?',
-                                        'toastTitle' => 'Edited',
-                                        'toast' => 'Unit edited.',
-                                        'callback' => 'apps.units.update',
-                                        'method' => 'patch',
                                         'visible' => (
                                             Gate::allows('apps.units.update')
                                             && $request->user()->can('isManager', User::class)
                                             && $request->user()->can('canManageNestedData', User::class)
                                         ),
+                                        'disabled' => $request->user()->cannot('isManager', User::class),
+                                        // 'tabs' => false,
                                         'component' => [
                                             [
                                                 'label' => 'Main data',
@@ -235,7 +227,15 @@ class UnitsController extends Controller
                                                     && $request->user()->can('isManager', User::class)
                                                     && $request->user()->can('canManageNestedData', User::class)
                                                 ),
+                                                'disabled' => $request->user()->cannot('isManager', User::class),
                                                 'fields' => $this->__fields(),
+                                                'confirm' => true,
+                                                'popup' => 'Do you want to edit unit?',
+                                                'toastTitle' => 'Edit',
+                                                'toast' => '{0} Nothing to edit.|[1] Item edited successfully.|[2,*] :total items successfully edited.',
+                                                'toastClass' => 'success',
+                                                'callback' => 'apps.units.update',
+                                                'method' => 'patch',
                                             ],
                                             [
                                                 'label' => 'Staff',

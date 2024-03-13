@@ -57,6 +57,12 @@ async function fetchData(
     options?: {
         method?: "get" | "post" | "put" | "patch" | "delete";
         data?: BodyInit | null | undefined;
+        onCancel?: Function;
+        onBefore?: Function;
+        onProgress?: Function;
+        onSuccess?: Function;
+        onError?: Function;
+        onFinish?: Function;
     },
 ) {
     options = options || { method: "get", data: null };
@@ -70,7 +76,11 @@ async function fetchData(
             },
             body: options.data,
         });
-        // console.log(response);
+
+        console.log(response);
+
+        if (response) {
+        }
 
         try {
             return await response.json();
