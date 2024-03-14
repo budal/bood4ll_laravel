@@ -21,6 +21,8 @@ const loading = ref(false);
 const formValue = ref<Record<string, any>>({});
 
 const send = () => {
+    console.log(props.component);
+
     fetchData(props.component.callback, {
         complement: {
             id: props.id,
@@ -251,14 +253,6 @@ const onFormDataLoad = () => {
                     />
                 </div>
             </div>
-
-            <!-- <div
-                        v-if="props.routes[component.id]"
-                        class="flex gap-4"
-                        :class="
-                            props.routes[component.id].buttonClass || 'justify-start'
-                        "
-                    ></div> -->
         </form>
     </DeferredContent>
 </template>

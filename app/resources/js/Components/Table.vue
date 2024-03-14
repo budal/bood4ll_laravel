@@ -233,6 +233,7 @@ const tableMenuToggle = (event: MouseEvent) => {
         (item: {
             label: string;
             source: string;
+            callback: string;
             method: "get" | "post" | "put" | "patch" | "delete";
             data: any;
             disabled: boolean;
@@ -252,7 +253,7 @@ const tableMenuToggle = (event: MouseEvent) => {
 
                         onTableDataLoad();
                     } else {
-                        fetchData(item.source, {
+                        fetchData(item.callback, {
                             complement: {
                                 id: props.id,
                             },
