@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { fetchData, mkAttr, mkRoute } from "@/helpers";
+import { fetchData } from "@/helpers";
 
 import { useConfirm } from "primevue/useconfirm";
 import { useToast } from "primevue/usetoast";
@@ -21,8 +21,10 @@ const loading = ref(false);
 const formValue = ref<Record<string, any>>({});
 
 const send = () => {
-    fetchData(mkRoute(props.component, props.id), {
-        id: props.id,
+    fetchData(props.component.source, {
+        complement: {
+            id: props.id,
+        },
         method: props.component.method,
         data: props.component.data,
         onBefore: () => {
@@ -50,7 +52,6 @@ const send = () => {
     console.log(
         props.component,
         // formValue.value,
-        mkRoute(props.component, props.id),
     );
 };
 
@@ -98,8 +99,10 @@ const confirmDialog = (event: Event) => {
 
 const onFormDataLoad = () => {
     if (props.component.source) {
-        fetchData(mkRoute(props.component, props.id), {
-            id: props.id,
+        fetchData(props.component.source, {
+            complement: {
+                id: props.id,
+            },
             onBefore: () => {
                 loading.value = true;
             },

@@ -21,39 +21,6 @@ const isValidUrl = (url: string | { route: string; attributes?: string[] }) => {
     }
 };
 
-function mkAttr(attributes: any, formValue: any) {
-    const result: any = {};
-    for (const key in attributes) {
-        if (
-            Object.prototype.hasOwnProperty.call(attributes, key) &&
-            formValue.hasOwnProperty(attributes[key])
-        ) {
-            result[key] = formValue[attributes[key]];
-        }
-    }
-    return result;
-}
-
-function mkRoute(component: any, id: any) {
-    const mkAttributes = mkAttr(
-        component.sourceAttributes,
-        ref({ id: id }).value,
-    );
-
-    const attributes = Object.assign(
-        {},
-        component.source.attributes,
-        mkAttributes,
-    );
-
-    const route =
-        typeof component.source === "object"
-            ? component.source.route
-            : component.source;
-
-    return { route: route, attributes: attributes };
-}
-
 async function fetchData(
     route: any,
     options?: {
@@ -183,4 +150,4 @@ const toast = () => {
     }
 };
 
-export { isValidUrl, mkAttr, mkRoute, fetchData, formatRouteWithID, toast };
+export { isValidUrl, fetchData, formatRouteWithID, toast };
