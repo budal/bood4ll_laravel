@@ -12,7 +12,7 @@ import { Link } from "@inertiajs/vue3";
 import { isDefined, useIntersectionObserver } from "@vueuse/core";
 
 import { useConfirm } from "primevue/useconfirm";
-import { fetchData, mkRoute } from "@/helpers";
+import { fetchData } from "@/helpers";
 
 import { useToast } from "primevue/usetoast";
 import { DataTableRowReorderEvent } from "primevue/datatable";
@@ -56,8 +56,8 @@ const selectColumns = ref(false);
 const tableColumns = ref(props.component.titles);
 const selectedColumns = ref(tableColumns.value);
 const search = ref(null);
-const showItems = ref();
-const routeUrlRef = ref(mkRoute(props.component.actions.index, props.id));
+const listItems = ref();
+const indexUrlRef = ref(props.component.actions.index.source);
 const routeUrlOptionsRef = ref({});
 
 const tableMenuToggle = (event: MouseEvent) => {
@@ -81,7 +81,7 @@ const tableMenuToggle = (event: MouseEvent) => {
             visible:
                 props.component.actions.destroy?.visible != false &&
                 isDefined(props.component.actions.destroy?.callback) &&
-                showItems.value !== "trashed",
+                listItems.value !== "trashed",
             disabled:
                 selectedItemsTotal.value.filter(
                     (item: { deleted_at: string }) => item.deleted_at === null,
@@ -114,7 +114,7 @@ const tableMenuToggle = (event: MouseEvent) => {
             visible:
                 props.component.actions.restore?.visible != false &&
                 isDefined(props.component.actions.restore?.callback) &&
-                (showItems.value === "trashed" || showItems.value === "both"),
+                (listItems.value === "trashed" || listItems.value === "both"),
             disabled:
                 selectedItemsTotal.value.filter(
                     (item: { deleted_at: string }) => item.deleted_at !== null,
@@ -147,7 +147,7 @@ const tableMenuToggle = (event: MouseEvent) => {
             visible:
                 props.component.actions.forceDestroy?.visible != false &&
                 isDefined(props.component.actions.forceDestroy?.callback) &&
-                showItems.value === "trashed",
+                listItems.value === "trashed",
             disabled: selectedItemsTotal.value.length < 1 ? true : false,
             icon: "pi pi-times",
             badge: selectedItemsTotal.value.length,
@@ -177,31 +177,31 @@ const tableMenuToggle = (event: MouseEvent) => {
             items: [
                 {
                     label: "Active",
-                    icon: (showItems.value == null
+                    icon: (listItems.value == null
                         ? "pi pi-check text-xs"
                         : null) as string,
                     command: () => {
-                        showItems.value = null;
+                        listItems.value = null;
                         onTableDataLoad();
                     },
                 },
                 {
                     label: "Trashed",
-                    icon: (showItems.value == "trashed"
+                    icon: (listItems.value == "trashed"
                         ? "pi pi-check text-xs"
                         : null) as string,
                     command: () => {
-                        showItems.value = "trashed";
+                        listItems.value = "trashed";
                         onTableDataLoad();
                     },
                 },
                 {
                     label: "Both",
-                    icon: (showItems.value == "both"
+                    icon: (listItems.value == "both"
                         ? "pi pi-check text-xs"
                         : null) as string,
                     command: () => {
-                        showItems.value = "both";
+                        listItems.value = "both";
                         onTableDataLoad();
                     },
                 },
@@ -236,6 +236,7 @@ const tableMenuToggle = (event: MouseEvent) => {
             source: string;
             method: "get" | "post" | "put" | "patch" | "delete";
             data: any;
+            disabled: boolean;
             visible: boolean;
             reload: boolean;
             icon: string;
@@ -244,16 +245,18 @@ const tableMenuToggle = (event: MouseEvent) => {
                 label: item.label,
                 method: item.method,
                 disabled: item.disabled,
-                visible: item.visible === true,
+                visible: item.visible,
                 icon: item.icon,
                 command: () => {
-                    if (item.reload === true) {
-                        routeUrlRef.value = mkRoute(item, props.id);
+                    if (item.source) {
+                        indexUrlRef.value = item.source;
 
                         onTableDataLoad();
                     } else {
-                        fetchData(mkRoute(item, props.id), {
-                            id: props.id,
+                        fetchData(item.source, {
+                            complement: {
+                                id: props.id,
+                            },
                             method: item.method,
                             data: item.data,
                             onBefore: () => {
@@ -265,7 +268,12 @@ const tableMenuToggle = (event: MouseEvent) => {
                                 });
                             },
                             onError: (error: { message: string }) => {
-                                console.log(error.message);
+                                toast.add({
+                                    severity: "error",
+                                    summary: trans("Error"),
+                                    detail: trans(error.message),
+                                    life: 3000,
+                                });
                             },
                             onSuccess: (content: any) => {
                                 toast.add({
@@ -394,17 +402,12 @@ const onTableDataLoad = () => {
     selectedItems.value = [];
     loadingTable.value = true;
 
-    routeUrlRef.value = {
-        route: routeUrlRef.value.route,
-        attributes: {
-            ...routeUrlRef.value.attributes,
-            ...{ search: search.value },
-            ...{ showItems: showItems.value },
+    fetchData(indexUrlRef.value, {
+        complement: {
+            id: props.id,
+            search: search.value,
+            listItems: listItems.value,
         },
-    };
-
-    fetchData(routeUrlRef.value, {
-        id: props.id,
         onBefore: () => {
             selectedItems.value = [];
             loadingTable.value = true;
@@ -417,7 +420,12 @@ const onTableDataLoad = () => {
             loadingTable.value = false;
         },
         onError: (error: { message: string }) => {
-            console.log(error.message);
+            toast.add({
+                severity: "error",
+                summary: trans("Error"),
+                detail: trans(error.message),
+                life: 3000,
+            });
         },
     });
 };
@@ -439,7 +447,12 @@ useIntersectionObserver(lastIntersection, ([{ isIntersecting }]) => {
                 loadingTable.value = false;
             },
             onError: (error: { message: string }) => {
-                console.log(error.message);
+                toast.add({
+                    severity: "error",
+                    summary: trans("Error"),
+                    detail: trans(error.message),
+                    life: 3000,
+                });
             },
         });
     }
@@ -601,8 +614,6 @@ onBeforeUnmount(() => {
                     isDefined(component.actions.reorder?.callback)
                 "
                 rowReorder
-                headerStyle="width: 3rem"
-                class="border-b"
                 :reorderableColumn="false"
             />
             <Column
@@ -612,7 +623,6 @@ onBeforeUnmount(() => {
                 :key="col.field + '_' + index"
                 sortable
                 :showFilterMenu="true"
-                class="border-b"
             >
                 <template #body="slotProps">
                     <p v-if="col.type == 'text'">
@@ -664,7 +674,6 @@ onBeforeUnmount(() => {
             </Column>
             <Column
                 v-if="props.component.actions.edit?.visible != false"
-                style="width: 1rem"
                 frozen
                 alignFrozen="right"
             >

@@ -1,25 +1,17 @@
+import { ref } from "vue";
+import axios from "axios";
 import { usePage } from "@inertiajs/vue3";
-import axios, { AxiosHeaderValue } from "axios";
 import { transChoice } from "laravel-vue-i18n";
 import { ReplacementsInterface } from "laravel-vue-i18n/interfaces/replacements";
-import { ref } from "vue";
 import { ToastType, toast as toasty } from "vue3-toastify";
 
-const isValidUrl = (
-    url:
-        | string
-        | { route: string; attributes?: string[]; transmute?: string[] },
-) => {
+const isValidUrl = (url: string | { route: string; attributes?: string[] }) => {
     if (url) {
         try {
             if (Boolean(new URL(url as string | URL))) return url;
         } catch (e) {
             const link =
-                typeof url === "string"
-                    ? { route: url, attributes: [], transmute: [] }
-                    : url;
-
-            if (link.route == "getUnitInfo") console.log(url);
+                typeof url === "string" ? { route: url, attributes: [] } : url;
 
             const attributes = link.attributes;
 
@@ -66,6 +58,7 @@ async function fetchData(
     route: any,
     options?: {
         id?: string | number | undefined;
+        complement?: any;
         method?: "get" | "post" | "put" | "patch" | "delete";
         data?: BodyInit | null | undefined;
         onBefore?: Function;
@@ -76,7 +69,48 @@ async function fetchData(
         onFinish?: Function;
     },
 ) {
+    let routeUrl = route;
+
     options = options || { method: "get", data: null };
+
+    if (options.complement) {
+        routeUrl =
+            typeof route === "string"
+                ? { route: route, attributes: options.complement }
+                : {
+                      route: route.route,
+                      attributes: Object.assign(
+                          {},
+                          route.attributes,
+                          options.complement,
+                      ),
+                  };
+
+        if (route.transmute) {
+            const transmuteAttributes: any = {};
+            for (const key in route.transmute) {
+                if (
+                    Object.prototype.hasOwnProperty.call(
+                        route.transmute,
+                        key,
+                    ) &&
+                    options.complement.hasOwnProperty(route.transmute[key])
+                ) {
+                    transmuteAttributes[key] =
+                        options.complement[route.transmute[key]];
+                }
+            }
+
+            routeUrl = {
+                route: routeUrl.route,
+                attributes: Object.assign(
+                    {},
+                    routeUrl.attributes,
+                    transmuteAttributes,
+                ),
+            };
+        }
+    }
 
     try {
         setTimeout(() => (options?.onBefore ? options.onBefore() : null));
@@ -84,7 +118,7 @@ async function fetchData(
         const instance = axios;
 
         await instance({
-            url: isValidUrl(route) as string,
+            url: isValidUrl(routeUrl) as string,
             method: options?.method,
             // headers: {
             //     Accept: "application/json",

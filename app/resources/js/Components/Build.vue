@@ -29,7 +29,12 @@ const send = () => {
             loading.value = true;
         },
         onError: (error: { message: string }) => {
-            console.log(error.message);
+            toast.add({
+                severity: "error",
+                summary: trans("Error"),
+                detail: trans(error.message),
+                life: 3000,
+            });
         },
         onSuccess: (content: any) => {
             toast.add({
@@ -105,7 +110,12 @@ const onFormDataLoad = () => {
                 loading.value = false;
             },
             onError: (error: { message: string }) => {
-                console.log(error.message);
+                toast.add({
+                    severity: "error",
+                    summary: trans("Error"),
+                    detail: trans(error.message),
+                    life: 3000,
+                });
             },
         });
     }
@@ -196,11 +206,8 @@ const onFormDataLoad = () => {
                                 v-model="formValue[field.name]"
                                 :url="{
                                     route: field.source,
-                                    formId: formValue[field.name],
+                                    id: props.id,
                                 }"
-                                :urlAttributes="
-                                    mkAttr(field.sourceAttributes, formValue)
-                                "
                                 :optionValue="field.optionValue || 'id'"
                                 :optionLabel="field.optionLabel || 'name'"
                             />

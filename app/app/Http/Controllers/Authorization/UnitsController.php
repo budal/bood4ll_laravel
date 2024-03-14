@@ -44,12 +44,7 @@ class UnitsController extends Controller
         if ($units->pluck('id')->contains($unit->parent_id) === false && $unit->id != null) {
             $parent = Unit::where('id', $unit->parent_id)->first();
 
-            if ($parent === null) {
-                $units->prepend([
-                    'id' => 0,
-                    'name' => '[ root ]',
-                ]);
-            } else {
+            if ($parent !== null) {
                 $units->prepend([
                     'id' => $parent->id,
                     'name' => $parent->getParentsNames(),
@@ -70,16 +65,16 @@ class UnitsController extends Controller
                 'users as users_all_count' => function ($query) {
                     $query->orWhere(function ($query) {
                         $query->whereRaw('unit_id IN (
-                            SELECT (json_array_elements(u.children_id::json)::text)::bigint FROM units u WHERE u.id = units.id
+                                SELECT (json_array_elements(u.children_id::json)::text)::bigint FROM units u WHERE u.id = units.id
                             )');
                     });
                 },
             ])
             ->orderBy('shortpath')
-            ->when($request->showItems ?? null, function ($query, $showItems) {
-                if ($showItems == 'both') {
+            ->when($request->listItems ?? null, function ($query, $listItems) {
+                if ($listItems == 'both') {
                     $query->withTrashed();
-                } elseif ($showItems == 'trashed') {
+                } elseif ($listItems == 'trashed') {
                     $query->onlyTrashed();
                 }
             })
@@ -106,10 +101,10 @@ class UnitsController extends Controller
             ->withCount('roles')
             ->orderBy('name')
             ->where("name", 'ilike', '%' . $request->search . '%')
-            ->when($request->showItems ?? null, function ($query, $showItems) {
-                if ($showItems == 'both') {
+            ->when($request->listItems ?? null, function ($query, $listItems) {
+                if ($listItems == 'both') {
                     $query->withTrashed();
-                } elseif ($showItems == 'trashed') {
+                } elseif ($listItems == 'trashed') {
                     $query->onlyTrashed();
                 }
             })
@@ -255,7 +250,10 @@ class UnitsController extends Controller
                                                         'component' => [
                                                             'actions' => [
                                                                 'index' => [
-                                                                    'source' => 'getUnitStaff',
+                                                                    'source' => [
+                                                                        'route' => 'getUnitStaff',
+                                                                        'transmute' => ['unit' => 'id'],
+                                                                    ],
                                                                     'sourceAttributes' => ['unit' => 'id'],
                                                                     'visible' => true,
                                                                     'disabled' => true,
@@ -265,8 +263,10 @@ class UnitsController extends Controller
                                                                 [
                                                                     'icon' => 'mdi:account-multiple',
                                                                     'label' => 'Local staff',
-                                                                    'source' => 'getUnitStaff',
-                                                                    'sourceAttributes' => ['unit' => 'id'],
+                                                                    'source' => [
+                                                                        'route' => 'getUnitStaff',
+                                                                        'transmute' => ['unit' => 'id'],
+                                                                    ],
                                                                     'reload' => true,
                                                                     'visible' => $request->user()->can('canManageNestedData', User::class),
                                                                 ],
@@ -275,9 +275,9 @@ class UnitsController extends Controller
                                                                     'label' => 'Total staff',
                                                                     'source' => [
                                                                         'route' => 'getUnitStaff',
-                                                                        'attributes' => ['show' => 'all']
+                                                                        'attributes' => ['show' => 'all'],
+                                                                        'transmute' => ['unit' => 'id'],
                                                                     ],
-                                                                    'sourceAttributes' => ['unit' => 'id'],
                                                                     'reload' => true,
                                                                     'visible' => $request->user()->can('canManageNestedData', User::class)
                                                                 ],
@@ -381,7 +381,7 @@ class UnitsController extends Controller
                                     [
                                         'icon' => 'pi pi-refresh',
                                         'label' => 'Refresh units hierarchy',
-                                        'source' => 'apps.units.hierarchy',
+                                        'callback' => 'apps.units.hierarchy',
                                         'method' => 'post',
                                         'visible' => $request->user()->can('isSuperAdmin', User::class),
                                     ],

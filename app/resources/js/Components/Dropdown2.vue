@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { fetchData } from "@/helpers";
+import { trans } from "laravel-vue-i18n";
 import { ref } from "vue";
 
 const props = withDefaults(
@@ -11,9 +12,7 @@ const props = withDefaults(
             | string
             | {
                   route: string;
-                  attributes?: string[];
-                  replace?: string[];
-                  formId?: string | number | undefined;
+                  id?: string | number | undefined;
               };
         urlAttributes?: any;
         optionValue?: string;
@@ -25,7 +24,7 @@ const props = withDefaults(
     {
         optionValue: "id",
         optionLabel: "name",
-        placeholder: "Select an item",
+        placeholder: trans("Select an item"),
         itemSize: 40,
     },
 );
@@ -33,10 +32,13 @@ const props = withDefaults(
 const loading = ref(false);
 const dropdownItems = ref([]);
 
-if (props.url?.formId !== undefined) {
+if (props.url?.id !== undefined) {
     // console.log(props.url);
 
     fetchData(props.url.route, {
+        complement: {
+            id: props.url.id,
+        },
         onBefore: () => {
             loading.value = true;
         },
