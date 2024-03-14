@@ -58,7 +58,6 @@ const selectedColumns = ref(tableColumns.value);
 const search = ref(null);
 const listItems = ref();
 const indexUrlRef = ref(props.component.actions.index.source);
-const routeUrlOptionsRef = ref({});
 
 const tableMenuToggle = (event: MouseEvent) => {
     const _tableMenuItemsEdit: MenuItem[] = [

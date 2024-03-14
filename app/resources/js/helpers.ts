@@ -1,4 +1,3 @@
-import { ref } from "vue";
 import axios from "axios";
 import { usePage } from "@inertiajs/vue3";
 import { transChoice } from "laravel-vue-i18n";

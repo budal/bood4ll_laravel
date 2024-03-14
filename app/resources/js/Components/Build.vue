@@ -21,7 +21,7 @@ const loading = ref(false);
 const formValue = ref<Record<string, any>>({});
 
 const send = () => {
-    fetchData(props.component.source, {
+    fetchData(props.component.callback, {
         complement: {
             id: props.id,
         },
@@ -48,11 +48,6 @@ const send = () => {
         },
         onFinish: () => onFormDataLoad(),
     });
-
-    console.log(
-        props.component,
-        // formValue.value,
-    );
 };
 
 const handleConfirm = (event: Event) => {
