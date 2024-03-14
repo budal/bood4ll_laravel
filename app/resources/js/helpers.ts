@@ -5,16 +5,25 @@ import { ReplacementsInterface } from "laravel-vue-i18n/interfaces/replacements"
 import { ref } from "vue";
 import { ToastType, toast as toasty } from "vue3-toastify";
 
-const isValidUrl = (url: string | { route: string; attributes: string[] }) => {
+const isValidUrl = (
+    url:
+        | string
+        | { route: string; attributes?: string[]; transmute?: string[] },
+) => {
     if (url) {
         try {
             if (Boolean(new URL(url as string | URL))) return url;
         } catch (e) {
             const link =
-                typeof url === "string" ? { route: url, attributes: [] } : url;
+                typeof url === "string"
+                    ? { route: url, attributes: [], transmute: [] }
+                    : url;
 
-            if (route().has(link.route))
-                return route(link.route, link.attributes);
+            if (link.route == "getUnitInfo") console.log(url);
+
+            const attributes = link.attributes;
+
+            if (route().has(link.route)) return route(link.route, attributes);
             else console.log(`Error: route '${link.route}' doesn't exist.`);
         }
     }
@@ -56,6 +65,7 @@ function mkRoute(component: any, id: any) {
 async function fetchData(
     route: any,
     options?: {
+        id?: string | number | undefined;
         method?: "get" | "post" | "put" | "patch" | "delete";
         data?: BodyInit | null | undefined;
         onBefore?: Function;

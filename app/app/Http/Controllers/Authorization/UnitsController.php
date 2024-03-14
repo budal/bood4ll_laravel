@@ -219,7 +219,10 @@ class UnitsController extends Controller
                                             [
                                                 'label' => 'Main data',
                                                 'description' => 'Unit data management.',
-                                                'source' => 'getUnitInfo',
+                                                'source' => [
+                                                    'route' => 'getUnitInfo',
+                                                    'transmute' => ['unit' => 'id'],
+                                                ],
                                                 'sourceAttributes' => ['unit' => 'id'],
                                                 'cols' => 4,
                                                 'visible' => (

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { isValidUrl, fetchData } from "@/helpers";
+import { fetchData } from "@/helpers";
 import { ref } from "vue";
 
 const props = withDefaults(
@@ -34,7 +34,8 @@ const loading = ref(false);
 const dropdownItems = ref([]);
 
 if (props.url?.formId !== undefined) {
-    console.log(props.url);
+    // console.log(props.url);
+
     fetchData(props.url.route, {
         onBefore: () => {
             loading.value = true;

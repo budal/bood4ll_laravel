@@ -12,7 +12,7 @@ import { Link } from "@inertiajs/vue3";
 import { isDefined, useIntersectionObserver } from "@vueuse/core";
 
 import { useConfirm } from "primevue/useconfirm";
-import { isValidUrl, fetchData, mkRoute } from "@/helpers";
+import { fetchData, mkRoute } from "@/helpers";
 
 import { useToast } from "primevue/usetoast";
 import { DataTableRowReorderEvent } from "primevue/datatable";
@@ -242,9 +242,8 @@ const tableMenuToggle = (event: MouseEvent) => {
         }) =>
             _tableMenuItemsComplementar.push({
                 label: item.label,
-                url: isValidUrl(item.source) as string,
                 method: item.method,
-                disabled: isValidUrl(item.source) ? false : true,
+                disabled: item.disabled,
                 visible: item.visible === true,
                 icon: item.icon,
                 command: () => {
@@ -254,6 +253,7 @@ const tableMenuToggle = (event: MouseEvent) => {
                         onTableDataLoad();
                     } else {
                         fetchData(mkRoute(item, props.id), {
+                            id: props.id,
                             method: item.method,
                             data: item.data,
                             onBefore: () => {
@@ -404,6 +404,7 @@ const onTableDataLoad = () => {
     };
 
     fetchData(routeUrlRef.value, {
+        id: props.id,
         onBefore: () => {
             selectedItems.value = [];
             loadingTable.value = true;
@@ -426,6 +427,7 @@ useIntersectionObserver(lastIntersection, ([{ isIntersecting }]) => {
         loadingTable.value = true;
 
         fetchData(nextPageURL.value, {
+            id: props.id,
             onBefore: () => {
                 loadingTable.value = true;
             },
