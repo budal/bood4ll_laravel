@@ -39,10 +39,11 @@ const menu = ref(false);
                         v-bind="props.action"
                         v-ripple
                     >
-                        <Icon :icon="item.icon || ''" class="h-6 w-6 mr-1" />
-                        <span class="ml-2">
-                            {{ $t(item.label as string) }}
-                        </span>
+                        <span
+                            class="material-symbols-sharp"
+                            v-html="item.icon"
+                        />
+                        <span class="ml-2" v-html="$t(item.label as string)" />
                         <Badge
                             v-if="item.badge"
                             :class="{ 'ml-auto': !root, 'ml-2': root }"
@@ -51,17 +52,17 @@ const menu = ref(false);
                         <span
                             v-if="item.shortcut"
                             class="ml-auto border-1 surface-border border-round surface-100 text-xs p-1"
-                            >{{ item.shortcut }}</span
-                        >
-                        <Icon
-                            v-if="hasSubmenu && root"
-                            icon="material-symbols-light:expand-more-rounded"
-                            class="h-5 w-5"
+                            v-html="item.shortcut"
                         />
-                        <Icon
+                        <span
+                            v-if="hasSubmenu && root"
+                            class="material-symbols-sharp"
+                            v-html="'expand_more'"
+                        />
+                        <span
                             v-if="hasSubmenu && !root"
-                            icon="material-symbols-light:chevron-right"
-                            class="h-5 w-5"
+                            class="material-symbols-sharp"
+                            v-html="'chevron_right'"
                         />
                     </component>
                 </template>
@@ -127,7 +128,10 @@ const menu = ref(false);
                                         v-bind="props.action"
                                         v-ripple
                                     >
-                                        <span :class="item.icon" />
+                                        <span
+                                            class="material-symbols-sharp"
+                                            v-html="item.icon"
+                                        />
                                         <span class="ml-2">
                                             {{ $t(item.label as string) }}
                                         </span>
@@ -139,9 +143,8 @@ const menu = ref(false);
                                         <span
                                             v-if="item.shortcut"
                                             class="ml-auto border-1 surface-border border-round surface-100 text-xs p-1"
-                                        >
-                                            {{ item.shortcut }}
-                                        </span>
+                                            v-html="item.shortcut"
+                                        />
                                     </component>
                                 </template>
                             </Menu>

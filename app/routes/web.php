@@ -31,7 +31,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/dashboard', 'index')->name('index')->breadcrumb('Dashboard')
                 ->defaults('title', 'Dashboard')
                 ->defaults('description', 'See all your data in one place.')
-                ->defaults('icon', 'material-symbols-light:space-dashboard-outline');
+                ->defaults('icon', 'dashboard');
         });
     });
 
@@ -40,7 +40,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/profile', 'edit')->name('edit')->breadcrumb('Profile')
                 ->defaults('title', 'Profile')
                 ->defaults('description', 'Manage your personal data.')
-                ->defaults('icon', 'material-symbols-light:account-circle');
+                ->defaults('icon', 'account_circle');
             Route::patch('/profile', 'update')->name('update');
             Route::delete('/profile', 'destroy')->name('destroy');
         });
@@ -50,24 +50,24 @@ Route::middleware('auth')->group(function () {
         Route::get('/messages', [SchedulesController::class, 'show'])->name('messages.index')->breadcrumb('Messages')
             ->defaults('title', 'Messages')
             ->defaults('description', 'See all chats between you and other users.')
-            ->defaults('icon', 'material-symbols-light:chat-outline');
+            ->defaults('icon', 'chat');
 
         Route::get('/schedule', [SchedulesController::class, 'show'])->name('schedule.index')->breadcrumb('Schedule')
             ->defaults('title', 'Schedule')
             ->defaults('description', 'Manage all your appointments.')
-            ->defaults('icon', 'material-symbols-light:calendar-month-outline');
+            ->defaults('icon', 'calendar_month');
 
         Route::get('/notifications', [SchedulesController::class, 'show'])->name('notifications.index')->breadcrumb('Notifications')
             ->defaults('title', 'Notifications')
             ->defaults('description', 'Manage all your appointments.')
-            ->defaults('icon', 'material-symbols-light:calendar-month-outline');
+            ->defaults('icon', 'calendar_month');
     });
 
     Route::name('system.')->group(function () {
         Route::get('/settings', [SchedulesController::class, 'show'])->name('settings.index')->breadcrumb('Settings')
             ->defaults('title', 'Settings')
             ->defaults('description', 'Manage all your appointments.')
-            ->defaults('icon', 'material-symbols-light:calendar-month-outline');
+            ->defaults('icon', 'settings');
     });
 
     Route::prefix('apps')->name('apps.')->group(function () {
@@ -76,7 +76,7 @@ Route::middleware('auth')->group(function () {
                 Route::get('/roles/{cursor?}', 'index')->name('index')->breadcrumb('Roles')
                     ->defaults('title', 'Roles')
                     ->defaults('description', 'Define roles, grouping abilities to define specific access.')
-                    ->defaults('icon', 'material-symbols-light:badge-outline');
+                    ->defaults('icon', 'badge');
                 Route::get('/roles/create', 'create')->name('create')->breadcrumb('Role creation', 'apps.roles.index');
                 Route::post('/roles/create', 'store')->name('store');
                 Route::get('/roles/edit/{role}/{show?}', 'edit')->name('edit')->breadcrumb('Role edition', 'apps.roles.index');
@@ -89,7 +89,7 @@ Route::middleware('auth')->group(function () {
                 Route::get('/roles/abilities', 'abilitiesIndex')->name('abilities_index')->breadcrumb('Abilities', 'apps.roles.index')
                     ->defaults('title', 'Abilities')
                     ->defaults('description', 'Define which abilities will be showed in the roles management.')
-                    ->defaults('icon', 'material-symbols-light:ballot-outline');
+                    ->defaults('icon', 'ballot');
                 Route::post('/roles/abilities/update/{mode?}', 'abilitiesUpdate')->name('abilities_update')->whereIn('mode', ['toggle', 'on', 'off']);
             });
         });
@@ -99,7 +99,7 @@ Route::middleware('auth')->group(function () {
                 Route::get('/units', 'index')->name('index')->breadcrumb('Units')
                     ->defaults('title', 'Units')
                     ->defaults('description', 'Manage units registered in the system, their subunits and users.')
-                    ->defaults('icon', 'material-symbols-light:apartment-rounded');;
+                    ->defaults('icon', 'apartment');;
                 Route::post('/units/create', 'store')->name('store');
                 Route::patch('/units/edit/{unit}', 'update')->name('update');
                 Route::post('/units/hierarchy', 'postRefreshUnitsHierarchy')->name('hierarchy');
@@ -114,7 +114,7 @@ Route::middleware('auth')->group(function () {
                 Route::get('/users', 'index')->name('index')->breadcrumb('Users')
                     ->defaults('title', 'Users')
                     ->defaults('description', 'Manage users informations and authorizations.')
-                    ->defaults('icon', 'material-symbols-light:group-outline-rounded');
+                    ->defaults('icon', 'group');
                 Route::post('/users/changeuser/{user}', 'changeUser')->name('change_user');
                 Route::post('/users/returnToMyUser', 'returnToMyUser')->name('return_to_my_user');
                 Route::post('/users/activate/{user}/{mode?}', 'activate')->name('activate');
@@ -135,7 +135,7 @@ Route::middleware('auth')->group(function () {
                 Route::get('/holidays', 'index')->name('index')->breadcrumb('Holidays')
                     ->defaults('title', 'Holidays')
                     ->defaults('description', "Define which dates will be holidays and optional points.")
-                    ->defaults('icon', 'material-symbols-light:beach-access-outline');
+                    ->defaults('icon', 'beach_access');
 
                 Route::get('/holidays/create', 'create')->name('create')->breadcrumb('Holiday creation', 'apps.holidays.index');
                 Route::post('/holidays/create', 'store')->name('store');
@@ -152,7 +152,7 @@ Route::middleware('auth')->group(function () {
                 Route::get('/absences', 'index')->name('index')->breadcrumb('Absences')
                     ->defaults('title', 'Absences')
                     ->defaults('description', "Manage your staff's absences, vacations, layoffs and medical certificates.")
-                    ->defaults('icon', 'material-symbols-light:account-circle-off-outline');
+                    ->defaults('icon', 'account_circle_off');
                 Route::get('/absences/create', 'create')->name('create')->breadcrumb('Absence creation', 'apps.absences.index');
                 Route::post('/absences/create', 'store')->name('store');
                 Route::get('/absences/edit/{role}/{show?}', 'edit')->name('edit')->breadcrumb('Absence edition', 'apps.absences.index');
@@ -165,7 +165,7 @@ Route::middleware('auth')->group(function () {
                 Route::get('/absences/types', 'typesIndex')->name('types_index')->breadcrumb('Absences types', 'apps.absences.index')
                     ->defaults('title', 'Absences types')
                     ->defaults('description', "Manage absences types.")
-                    ->defaults('icon', 'material-symbols-light:type-specimen-outline');
+                    ->defaults('icon', 'type_specimen');
                 Route::get('/absences/types/create', 'typeCreate')->name('type_create')->breadcrumb('Absence type creation', 'apps.absences.types_index');
                 Route::post('/absences/types/create', 'typeStore')->name('type_store');
                 Route::get('/absences/types/edit/{absence_type}', 'typeEdit')->name('type_edit')->breadcrumb('Absence type edition', 'apps.absences.types_index');
@@ -197,7 +197,7 @@ Route::middleware('auth')->group(function () {
                 Route::get('/schedules', 'index')->name('index')->breadcrumb('Schedules')
                     ->defaults('title', 'Schedules')
                     ->defaults('description', "Manage your team's commitments, schedules and events.")
-                    ->defaults('icon', 'material-symbols-light:calendar-month-outline');
+                    ->defaults('icon', 'calendar_month');
                 Route::get('/schedules/create', 'create')->name('create')->breadcrumb('Schedule creation', 'apps.schedules.index');
                 Route::post('/schedules/create', 'store')->name('store');
                 Route::get('/schedules/edit/{role}/{show?}', 'edit')->name('edit')->breadcrumb('Schedule edition', 'apps.schedules.index');
@@ -213,7 +213,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/help', [ProfileController::class, 'edit'])->name('help.index')->breadcrumb('Help')
         ->defaults('title', 'Help')
         ->defaults('description', 'System manual.')
-        ->defaults('icon', 'material-symbols-light:help-outline-rounded');
+        ->defaults('icon', 'help');
 });
 
 require __DIR__ . '/auth.php';

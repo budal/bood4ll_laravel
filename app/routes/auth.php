@@ -61,5 +61,6 @@ Route::middleware('auth')->group(function () {
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
         ->name('logout')
         ->defaults('title', 'Log out')
-        ->defaults('method', 'post');
+        ->defaults('method', 'post')
+        ->defaults('icon', 'mode_off_on');
 });

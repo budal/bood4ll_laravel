@@ -15,9 +15,11 @@ import Ripple from "primevue/ripple";
 import StyleClass from "primevue/styleclass";
 import ToastService from "primevue/toastservice";
 import Tooltip from "primevue/tooltip";
+import "material-symbols";
 import "primevue/resources/themes/aura-light-blue/theme.css";
 // import "primevue/resources/themes/aura-dark-blue/theme.css";
 import "primeicons/primeicons.css";
+import BadgeDirective from "primevue/badgedirective";
 import DynamicDialog from "primevue/dynamicdialog";
 import ConfirmDialog from "primevue/confirmdialog";
 import ConfirmPopup from "primevue/confirmpopup";
@@ -70,6 +72,7 @@ createInertiaApp({
             .use(ConfirmationService)
             .use(DialogService)
             .use(ToastService)
+            .directive("badge", BadgeDirective)
             .directive("focustrap", FocusTrap)
             .directive("ripple", Ripple)
             .directive("styleclass", StyleClass)

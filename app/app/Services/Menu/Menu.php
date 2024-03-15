@@ -87,8 +87,6 @@ class Menu
                 );
         });
 
-        dd($tree);
-
         return $tree;
     }
 

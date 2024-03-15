@@ -39,12 +39,12 @@ class HandleInertiaRequests extends Middleware
                 [
                     'route' => 'apps',
                     'title' => 'Apps',
-                    'icon' => 'material-symbols-light:apps',
+                    'icon' => 'apps',
                 ],
                 [
                     'route' => 'analytics',
                     'title' => 'Analytics',
-                    'icon' => 'material-symbols-light:analytics-outline',
+                    'icon' => 'analytics',
                 ],
                 'help.index'
             ]),
