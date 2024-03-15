@@ -87,6 +87,7 @@ async function fetchData(
         await instance({
             url: isValidUrl(routeUrl) as string,
             method: options?.method,
+            data: options?.data,
             // headers: {
             //     Accept: "application/json",
             //     "Content-Type": "application/json;charset=UTF-8",

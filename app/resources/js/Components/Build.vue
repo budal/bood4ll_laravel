@@ -22,7 +22,7 @@ const formValue = ref<Record<string, any>>({});
 
 const send = () => {
     // console.log(props.component, formValue);
-    console.log(formValue.value);
+    // console.log(formValue.value);
 
     fetchData(props.component.callback, {
         complement: {
