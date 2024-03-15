@@ -395,6 +395,9 @@ const openDialog = (options: {
             maximizable: true,
             draggable: false,
         },
+        onClose: () => {
+            onTableDataLoad();
+        },
     });
 };
 
@@ -486,12 +489,12 @@ onBeforeUnmount(() => {
             :value="contentItems"
             dataKey="id"
             v-bind="
-                (props.component.actions.destroy?.visible != false &&
-                    isDefined(props.component.actions.destroy?.callback)) ||
-                (props.component.actions.restore?.visible != false &&
-                    isDefined(props.component.actions.restore?.callback)) ||
-                (props.component.actions.forceDestroy?.visible != false &&
-                    isDefined(props.component.actions.forceDestroy?.callback))
+                (component.actions.destroy?.visible != false &&
+                    isDefined(component.actions.destroy?.callback)) ||
+                (component.actions.restore?.visible != false &&
+                    isDefined(component.actions.restore?.callback)) ||
+                (component.actions.forceDestroy?.visible != false &&
+                    isDefined(component.actions.forceDestroy?.callback))
                     ? { selectionMode: 'multiple' }
                     : null
             "
@@ -577,17 +580,16 @@ onBeforeUnmount(() => {
                         </div>
                     </div>
                     <div class="flex gap-2">
-                        <IconField iconPosition="left">
-                            <InputIcon>
-                                <i class="pi pi-search" />
-                            </InputIcon>
+                        <InputGroup>
+                            <InputGroupAddon>
+                                <i class="pi pi-search"></i>
+                            </InputGroupAddon>
                             <InputText
                                 id="findTable"
                                 v-model="search"
                                 :placeholder="$t('Search...')"
-                                class="pl-8"
                             />
-                        </IconField>
+                        </InputGroup>
                     </div>
                 </div>
             </template>
@@ -596,14 +598,12 @@ onBeforeUnmount(() => {
             </template>
             <Column
                 v-bind="
-                    (props.component.actions.destroy?.visible != false &&
-                        isDefined(props.component.actions.destroy?.callback)) ||
-                    (props.component.actions.restore?.visible != false &&
-                        isDefined(props.component.actions.restore?.callback)) ||
-                    (props.component.actions.forceDestroy?.visible != false &&
-                        isDefined(
-                            props.component.actions.forceDestroy?.callback,
-                        ))
+                    (component.actions.destroy?.visible != false &&
+                        isDefined(component.actions.destroy?.callback)) ||
+                    (component.actions.restore?.visible != false &&
+                        isDefined(component.actions.restore?.callback)) ||
+                    (component.actions.forceDestroy?.visible != false &&
+                        isDefined(component.actions.forceDestroy?.callback))
                         ? { selectionMode: 'multiple' }
                         : null
                 "
@@ -673,7 +673,10 @@ onBeforeUnmount(() => {
                 </template>
             </Column>
             <Column
-                v-if="props.component.actions.edit?.visible != false"
+                v-if="
+                    component.actions.edit?.visible != false &&
+                    isDefined(component.actions.edit)
+                "
                 frozen
                 alignFrozen="right"
             >
@@ -687,7 +690,7 @@ onBeforeUnmount(() => {
                             openDialog({
                                 header: `Edit ':unit'`,
                                 headerReplacement: { unit: data.shortpath },
-                                action: props.component.actions.edit,
+                                action: component.actions.edit,
                                 id: data.id,
                             })
                         "

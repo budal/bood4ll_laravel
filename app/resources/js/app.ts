@@ -24,6 +24,8 @@ import ConfirmPopup from "primevue/confirmpopup";
 import FloatLabel from "primevue/floatlabel";
 import InputIcon from "primevue/inputicon";
 import IconField from "primevue/iconfield";
+import InputGroup from "primevue/inputgroup";
+import InputGroupAddon from "primevue/inputgroupaddon";
 import Toast from "primevue/toast";
 
 import { Icon } from "@iconify/vue";
@@ -78,6 +80,8 @@ createInertiaApp({
             .component("FloatLabel", FloatLabel)
             .component("InputIcon", InputIcon)
             .component("IconField", IconField)
+            .component("InputGroup", InputGroup)
+            .component("InputGroupAddon", InputGroupAddon)
             .component("Toast", Toast)
             .component("Icon", Icon)
             .use(Vue3Toasity, {

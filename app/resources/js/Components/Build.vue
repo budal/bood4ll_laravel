@@ -30,9 +30,7 @@ const send = () => {
         },
         method: props.component.method,
         data: formValue.value,
-        onBefore: () => {
-            loading.value = true;
-        },
+        onBefore: () => (loading.value = true),
         onError: (error: { message: string }) => {
             toast.add({
                 severity: "error",
@@ -49,7 +47,7 @@ const send = () => {
                 life: 3000,
             });
         },
-        onFinish: () => onFormDataLoad(),
+        onFinish: () => (loading.value = false),
     });
 };
 

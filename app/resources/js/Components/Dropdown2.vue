@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { fetchData } from "@/helpers";
 import { trans } from "laravel-vue-i18n";
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 
 const props = withDefaults(
     defineProps<{
@@ -32,27 +32,29 @@ const props = withDefaults(
 const loading = ref(false);
 const dropdownItems = ref([]);
 
-if (props.url?.id !== undefined) {
-    // console.log(props.url);
+onMounted(() => {
+    if (props.url?.id !== undefined) {
+        // console.log(props.url);
 
-    fetchData(props.url.route, {
-        complement: {
-            id: props.url.id,
-        },
-        onBefore: () => {
-            loading.value = true;
-        },
-        onSuccess: (content: never[]) => {
-            dropdownItems.value = content;
-        },
-        onFinish: () => {
-            loading.value = false;
-        },
-        onError: (error: { message: string }) => {
-            console.log(error.message);
-        },
-    });
-}
+        fetchData(props.url.route, {
+            complement: {
+                id: props.url.id,
+            },
+            onBefore: () => {
+                loading.value = true;
+            },
+            onSuccess: (content: never[]) => {
+                dropdownItems.value = content;
+            },
+            onFinish: () => {
+                loading.value = false;
+            },
+            onError: (error: { message: string }) => {
+                console.log(error.message);
+            },
+        });
+    }
+});
 
 const value = ref(props.value);
 </script>

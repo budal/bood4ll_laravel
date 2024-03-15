@@ -7,7 +7,7 @@ use App\Http\Controllers\Authorization\UsersController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HolidaysController;
 use App\Http\Controllers\ProfileController;
-use App\Http\ontrollers\SchedulesController;
+use App\Http\Controllers\SchedulesController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
