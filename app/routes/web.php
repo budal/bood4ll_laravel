@@ -30,7 +30,7 @@ Route::middleware('auth')->group(function () {
         Route::controller(DashboardController::class)->group(function () {
             Route::get('/dashboard', 'index')->name('index')->breadcrumb('Dashboard')
                 ->defaults('title', 'Dashboard')
-                ->defaults('description', 'See all your related data in one place.')
+                ->defaults('description', 'See all your data in one place.')
                 ->defaults('icon', 'material-symbols-light:space-dashboard-outline');
         });
     });

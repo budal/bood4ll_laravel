@@ -11,46 +11,34 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Inertia\Response;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Gate;
 
 class DashboardController extends Controller
 {
-    public function __form(Request $request): array
+    public function __fields(): array
     {
         return [
             [
-                'id' => 'profile',
-                'title' => 'Main data',
-                'subtitle' => 'User account profile information.',
-                'cols' => 2,
-                'fields' => []
+                'type' => 'input',
+                'name' => 'geo',
+                'label' => 'Geographic coordinates',
+                'span' => 4,
             ],
         ];
     }
 
     public function index(Request $request): Response
     {
-        $user = $request->user();
-        $user['mustVerifyEmail'] = $request->user() instanceof MustVerifyEmail;
-
-        // return Inertia::render('Profile/Edit', [
-        //     'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
-        //     'status' => session('status'),
-        // ]);
-
-        return Inertia::render('Default', [
-            'form' => $this->__form($request),
-            'tabs' => false,
-            'routes' => [
-                'profile' => [
-                    'route' => route('profile.update'),
-                    'method' => 'patch',
+        return Inertia::render('Bood4ll', [
+            // 'tabs' => false,
+            'structure' => [
+                [
+                    'label' => Route::current()->title,
+                    'description' => Route::current()->description,
+                    'fields' => $this->__fields(),
                 ],
-                'resetPassword' => [
-                    'route' => route('password.update'),
-                    'method' => 'put',
-                ],
-            ],
-            'data' => $user,
+            ]
         ]);
     }
 }
