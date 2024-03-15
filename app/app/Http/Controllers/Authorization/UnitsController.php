@@ -98,7 +98,6 @@ class UnitsController extends Controller
             ->select('users.id', 'users.name', 'users.email')
             ->groupBy('users.id', 'users.name', 'users.email')
             ->with('unitsClassified', 'unitsWorking')
-            ->withCount('roles')
             ->orderBy('name')
             ->where("name", 'ilike', '%' . $request->search . '%')
             ->when($request->listItems ?? null, function ($query, $listItems) {
@@ -315,11 +314,6 @@ class UnitsController extends Controller
                                                                             'field' => 'name',
                                                                         ],
                                                                     ],
-                                                                ],
-                                                                [
-                                                                    'type' => 'text',
-                                                                    'header' => 'Roles',
-                                                                    'field' => 'roles_count',
                                                                 ],
                                                             ],
                                                         ],
@@ -606,11 +600,18 @@ class UnitsController extends Controller
 
     public function update(Unit $unit, Request $request): RedirectResponse
     {
-        $this->authorize('access', User::class);
-        $this->authorize('isActive', $unit);
-        $this->authorize('isManager', User::class);
-        $this->authorize('canEdit', $unit);
-        $this->authorize('isOwner', $unit);
+        // $this->authorize('access', User::class);
+        // $this->authorize('isActive', $unit);
+        // $this->authorize('isManager', User::class);
+        // $this->authorize('canEdit', $unit);
+        // $this->authorize('isOwner', $unit);
+
+        return response()->json([
+            'type' => 'success',
+            'title' => 'Refresh units hierarchy',
+            'message' => '{0} Nothing to refresh.|[1] Item refreshed successfully.|[2,*] :total items successfully refreshed.',
+            'length' => 1,
+        ]);
 
         if (
             $request->user()->cannot('isSuperAdmin', User::class)

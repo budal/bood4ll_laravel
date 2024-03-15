@@ -37,9 +37,9 @@ async function fetchData(
 ) {
     let routeUrl = route;
 
-    options = options || { method: "get", data: null };
+    console.log(route, options?.method);
 
-    if (options.complement) {
+    if (options?.complement) {
         routeUrl =
             typeof route === "string"
                 ? { route: route, attributes: options.complement }

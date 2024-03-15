@@ -673,7 +673,10 @@ onBeforeUnmount(() => {
                 </template>
             </Column>
             <Column
-                v-if="props.component.actions.edit?.visible != false"
+                v-if="
+                    props.component.actions.edit?.visible != false &&
+                    isDefined(props.component.actions.destroy?.callback)
+                "
                 frozen
                 alignFrozen="right"
             >
