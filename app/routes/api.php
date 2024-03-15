@@ -1,11 +1,16 @@
 <?php
 
+use App\Http\Controllers\Authorization\RolesController;
 use App\Http\Controllers\Authorization\UnitsController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
+});
+
+Route::controller(RolesController::class)->middleware('auth:sanctum')->group(function () {
+    Route::get('/getRolesIndex', 'getRolesIndex')->name('getRolesIndex');
 });
 
 Route::controller(UnitsController::class)->middleware('auth:sanctum')->group(function () {

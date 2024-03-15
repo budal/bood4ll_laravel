@@ -196,8 +196,8 @@ const onFormDataLoad = () => {
                                 class="w-full"
                                 onIcon="pi pi-check"
                                 offIcon="pi pi-times"
-                                onLabel="On"
-                                offLabel="Off"
+                                :onLabel="$t(field.label)"
+                                :offLabel="$t(field.label)"
                             />
                             <Dropdown2
                                 v-else-if="field.type === 'dropdown'"

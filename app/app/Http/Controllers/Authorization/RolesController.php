@@ -8,6 +8,7 @@ use App\Models\Ability;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Database\Query\JoinClause;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -20,12 +21,9 @@ use Inertia\Response;
 
 class RolesController extends Controller
 {
-    public function index(Request $request): Response
+    public function getRolesIndex(Request $request): JsonResponse
     {
-        $this->authorize('access', User::class);
-
-        $roles = Role::filter($request, 'roles')
-            ->leftjoin('role_user', 'role_user.role_id', '=', 'roles.id')
+        $roles = Role::leftjoin('role_user', 'role_user.role_id', '=', 'roles.id')
             ->select('roles.id', 'roles.name', 'roles.description', 'roles.deleted_at')
             ->groupBy('roles.id', 'roles.name', 'roles.description', 'roles.deleted_at')
             ->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
@@ -41,6 +39,15 @@ class RolesController extends Controller
                 });
                 $query->where('role_user.user_id', $request->user()->id);
             })
+            ->orderBy('name')
+            ->when($request->listItems ?? null, function ($query, $listItems) {
+                if ($listItems == 'both') {
+                    $query->withTrashed();
+                } elseif ($listItems == 'trashed') {
+                    $query->onlyTrashed();
+                }
+            })
+            ->where('name', 'ilike', "%$request->search%")
             ->withCount([
                 'abilities',
                 'users' => function ($query) use ($request) {
@@ -58,9 +65,343 @@ class RolesController extends Controller
                     });
                 }
             ])
-            ->paginate(20)
-            ->onEachSide(2)
-            ->appends(collect($request->query)->toArray());
+            ->cursorPaginate(30)
+            ->withQueryString();
+
+        return response()->json($roles);
+    }
+
+    public function index(Request $request): Response
+    {
+        $this->authorize('access', User::class);
+
+        return Inertia::render('Bood4ll', [
+            'structure' => [
+                [
+                    'label' => Route::current()->title,
+                    'description' => Route::current()->description,
+                    'fields' => [
+                        [
+                            'type' => 'table',
+                            'name' => 'name',
+                            'component' => [
+                                'actions' => [
+                                    'index' => [
+                                        'source' => 'getRolesIndex',
+                                        'visible' => Gate::allows('apps.roles.index'),
+                                        'disabled' => $request->user()->cannot('isManager', User::class),
+                                    ],
+                                    'create' => [
+                                        'visible' => (
+                                            Gate::allows('apps.roles.store')
+                                            && $request->user()->can('isManager', User::class)
+                                        ),
+                                        'disabled' => $request->user()->cannot('isManager', User::class),
+                                        'component' => [
+                                            [
+                                                'label' => 'Main data',
+                                                'description' => 'Unit data management.',
+                                                'cols' => 3,
+                                                'fields' => $this->__fields($request),
+                                                'visible' => (
+                                                    Gate::allows('apps.roles.store')
+                                                    && $request->user()->can('isManager', User::class)
+                                                ),
+                                                'callback' => 'apps.roles.create',
+                                                'method' => 'post',
+                                            ],
+                                        ],
+                                    ],
+                                    'edit' => [
+                                        'visible' => (
+                                            Gate::allows('apps.roles.update')
+                                            && $request->user()->can('isManager', User::class)
+                                            && $request->user()->can('canManageNestedData', User::class)
+                                        ),
+                                        'disabled' => $request->user()->cannot('isManager', User::class),
+                                        // 'tabs' => false,
+                                        'component' => [
+                                            [
+                                                'label' => 'Main data',
+                                                'description' => 'Unit data management.',
+                                                'source' => [
+                                                    'route' => 'getUnitInfo',
+                                                    'transmute' => ['unit' => 'id'],
+                                                ],
+                                                'sourceAttributes' => ['unit' => 'id'],
+                                                'cols' => 3,
+                                                'visible' => (
+                                                    Gate::allows('apps.roles.update')
+                                                    && $request->user()->can('isManager', User::class)
+                                                    && $request->user()->can('canManageNestedData', User::class)
+                                                ),
+                                                'disabled' => $request->user()->cannot('isManager', User::class),
+                                                'fields' => $this->__fields($request),
+                                                'confirm' => true,
+                                                'popup' => 'Do you want to edit unit?',
+                                                'toastTitle' => 'Edit',
+                                                'toast' => '{0} Nothing to edit.|[1] Item edited successfully.|[2,*] :total items successfully edited.',
+                                                'toastClass' => 'success',
+                                                'callback' => 'apps.roles.update',
+                                                'method' => 'patch',
+                                            ],
+                                            [
+                                                'label' => 'Staff',
+                                                'description' => 'Staff management of this unit.',
+                                                'visible' => (
+                                                    Gate::allows('apps.roles.update')
+                                                    && $request->user()->can('isManager', User::class)
+                                                    && $request->user()->can('canManageNestedData', User::class)
+                                                ),
+                                                'fields' => [
+                                                    [
+                                                        'type' => 'table',
+                                                        'name' => 'users',
+                                                        'component' => [
+                                                            'actions' => [
+                                                                'index' => [
+                                                                    'source' => [
+                                                                        'route' => 'getUnitStaff',
+                                                                        'transmute' => ['unit' => 'id'],
+                                                                    ],
+                                                                    'sourceAttributes' => ['unit' => 'id'],
+                                                                    'visible' => true,
+                                                                    'disabled' => true,
+                                                                ],
+                                                            ],
+                                                            'menu' => [
+                                                                [
+                                                                    'icon' => 'mdi:account-multiple',
+                                                                    'label' => 'Local staff',
+                                                                    'source' => [
+                                                                        'route' => 'getUnitStaff',
+                                                                        'transmute' => ['unit' => 'id'],
+                                                                    ],
+                                                                    'reload' => true,
+                                                                    'visible' => $request->user()->can('canManageNestedData', User::class),
+                                                                ],
+                                                                [
+                                                                    'icon' => 'mdi:account-group-outline',
+                                                                    'label' => 'Total staff',
+                                                                    'source' => [
+                                                                        'route' => 'getUnitStaff',
+                                                                        'attributes' => ['show' => 'all'],
+                                                                        'transmute' => ['unit' => 'id'],
+                                                                    ],
+                                                                    'reload' => true,
+                                                                    'visible' => $request->user()->can('canManageNestedData', User::class)
+                                                                ],
+                                                            ],
+                                                            'titles' => [
+                                                                [
+                                                                    'type' => 'avatar',
+                                                                    'header' => 'Avatar',
+                                                                    'field' => 'id',
+                                                                    'fallback' => 'name',
+                                                                ],
+                                                                [
+                                                                    'type' => 'text',
+                                                                    'header' => 'User',
+                                                                    'field' => 'name',
+                                                                ],
+                                                                [
+                                                                    'type' => 'composite',
+                                                                    'header' => 'Classified',
+                                                                    'class' => 'collapse',
+                                                                    'field' => 'units_classified',
+                                                                    'options' => [
+                                                                        [
+                                                                            'field' => 'name',
+                                                                        ],
+                                                                    ],
+                                                                ],
+                                                                [
+                                                                    'type' => 'composite',
+                                                                    'header' => 'Working',
+                                                                    'class' => 'collapse',
+                                                                    'field' => 'units_working',
+                                                                    'options' => [
+                                                                        [
+                                                                            'field' => 'name',
+                                                                        ],
+                                                                    ],
+                                                                ],
+                                                            ],
+                                                        ],
+                                                    ],
+                                                ],
+                                            ],
+                                        ],
+                                    ],
+                                    'destroy' => [
+                                        'dialog' => 'Do you want to destroy this unit?|Do you want to destroy this units?',
+                                        'dialogClass' => 'warning',
+                                        'toast' => 'Unit destroyed|Units destroyed.',
+                                        'toastClass' => 'warning',
+                                        'callback' => 'apps.roles.destroy',
+                                        'method' => 'delete',
+                                        'visible' => (
+                                            Gate::allows('apps.roles.destroy')
+                                            && $request->user()->can('isManager', User::class)
+                                            && $request->user()->can('canManageNestedData', User::class)
+                                        ),
+                                    ],
+                                    'restore' => [
+                                        'dialog' => 'Do you want to restore this unit?|Do you want to restore this units?',
+                                        'toast' => 'Unit restored|Units restored.',
+                                        'toastClass' => 'warning',
+                                        'callback' => 'apps.roles.restore',
+                                        'method' => 'post',
+                                        'visible' => (
+                                            Gate::allows('apps.roles.restore')
+                                            && $request->user()->can('isManager', User::class)
+                                            && $request->user()->can('canManageNestedData', User::class)
+                                        ),
+                                    ],
+                                    // 'forceDestroy' => [
+                                    //     'dialog' => 'Do you want to erase this unit?|Do you want to erase this units?',
+                                    //     'dialogClass' => 'danger',
+                                    //     'toast' => 'Unit erased.',
+                                    //     'toastClass' => 'warning',
+                                    //     'callback' => 'apps.roles.forceDestroy',
+                                    //     'method' => 'delete',
+                                    //     'visible' => (
+                                    //         Gate::allows('apps.roles.forceDestroy')
+                                    //         && $request->user()->can('isManager', User::class)
+                                    //         && $request->user()->can('canManageNestedData', User::class)
+                                    //     ),
+                                    // ],
+                                    // 'reorder' => [
+                                    //     'toast' => 'Unit reordered.',
+                                    //     'toastClass' => 'warning',
+                                    //     'callback' => 'apps.roles.reorder',
+                                    //     'visible' => (
+                                    //         Gate::allows('apps.roles.reorder')
+                                    //         && $request->user()->can('isManager', User::class)
+                                    //         && $request->user()->can('canManageNestedData', User::class)
+                                    //     ),
+                                    // ]
+                                ],
+                                'menu' => [
+                                    [
+                                        'icon' => 'pi pi-cog',
+                                        'label' => 'Abilities',
+                                        'callback' => 'apps.roles.hierarchy',
+                                        'method' => 'post',
+                                        'visible' => $request->user()->can('isSuperAdmin', User::class),
+                                    ],
+                                ],
+                                'titles' => [
+                                    [
+                                        'type' => 'composite',
+                                        'header' => 'Name',
+                                        'field' => 'name',
+                                        'values' => [
+                                            [
+                                                'field' => 'name',
+                                            ],
+                                            [
+                                                'field' => 'description',
+                                                'class' => 'text-xs',
+                                            ],
+                                        ],
+                                    ],
+                                    [
+                                        'type' => 'text',
+                                        'header' => 'Abilities',
+                                        'field' => 'abilities_count',
+                                    ],
+                                    [
+                                        'type' => 'text',
+                                        'header' => 'Users',
+                                        'field' => 'users_count',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ]
+        ]);
+    }
+
+    public function __fields(Request $request): array
+    {
+        return [
+            [
+                'type' => 'input',
+                'name' => 'name',
+                'label' => 'Name',
+                'required' => true,
+                'autofocus' => true,
+            ],
+            [
+                'type' => 'input',
+                'name' => 'description',
+                'label' => 'Description',
+                'span' => 2,
+            ],
+            // [
+            //     'type' => 'select',
+            //     'name' => 'abilities',
+            //     'label' => 'Abilities',
+            //     'span' => 3,
+            //     'content' => $abilities,
+            //     'required' => true,
+            //     'multiple' => true,
+            // ],
+            [
+                'type' => 'toggle',
+                'name' => 'active',
+                'label' => 'Active',
+                'colorOn' => 'success',
+                'colorOff' => 'danger',
+            ],
+            [
+                'type' => 'toggle',
+                'name' => 'lock_on_expire',
+                'label' => 'Lock on expire',
+                'colorOn' => 'info',
+            ],
+            [
+                'type' => 'calendar',
+                'name' => 'expires_at',
+                'label' => 'Expires at',
+            ],
+            [
+                'type' => 'toggle',
+                'name' => 'full_access',
+                'label' => 'Full access',
+                'disabled' => $request->user()->cannot('hasFullAccess', User::class),
+                'colorOn' => 'info',
+            ],
+            [
+                'type' => 'toggle',
+                'name' => 'manage_nested',
+                'label' => 'Manage nested data',
+                'disabled' => $request->user()->cannot('canManageNestedData', User::class),
+                'colorOn' => 'info',
+            ],
+            [
+                'type' => 'toggle',
+                'name' => 'remove_on_change_unit',
+                'label' => 'Remove on transfer',
+                'disabled' => $request->user()->can('canRemoveOnChangeUnit', User::class) && $request->user()->cannot('isSuperAdmin', User::class),
+                'colorOn' => 'info',
+            ],
+        ];
+    }
+
+
+
+
+
+
+    public function index2(Request $request): Response
+    {
+        $this->authorize('access', User::class);
+
+
 
         return Inertia::render('Default', [
             'form' => [
@@ -130,7 +471,6 @@ class RolesController extends Controller
                                             'field' => 'users_count',
                                         ],
                                     ],
-                                    'items' => $roles,
                                 ],
                             ],
                         ],

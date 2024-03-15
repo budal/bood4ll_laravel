@@ -597,6 +597,7 @@ onBeforeUnmount(() => {
                 {{ $t("No items to show.") }}
             </template>
             <Column
+                style="width: 1rem"
                 v-bind="
                     (component.actions.destroy?.visible != false &&
                         isDefined(component.actions.destroy?.callback)) ||
@@ -679,6 +680,7 @@ onBeforeUnmount(() => {
                 "
                 frozen
                 alignFrozen="right"
+                style="width: 1rem"
             >
                 <template #body="{ data }">
                     <Button

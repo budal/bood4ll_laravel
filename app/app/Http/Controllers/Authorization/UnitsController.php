@@ -21,40 +21,6 @@ class UnitsController extends Controller
 {
     private $length = 0;
 
-    public function getUnits(Request $request, Unit $unit): JsonResponse
-    {
-        $units = Unit::leftJoin('unit_user', 'unit_user.unit_id', '=', 'units.id')
-            ->select('units.id', 'units.parent_id', 'units.shortpath as name', 'units.active')
-            ->groupBy('units.id', 'units.parent_id', 'name', 'units.active')
-            ->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
-                $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
-
-                if ($request->user()->cannot('hasFullAccess', User::class)) {
-                    $query->where('unit_user.user_id', $request->user()->id);
-                }
-            })
-            ->orderBy('units.shortpath')
-            ->get()
-            ->map(function ($item) use ($unit) {
-                $item->disabled = $item->active === true && $item->id != $unit->id ? false : true;
-
-                return $item;
-            });
-
-        if ($units->pluck('id')->contains($unit->parent_id) === false && $unit->id != null) {
-            $parent = Unit::where('id', $unit->parent_id)->first();
-
-            if ($parent !== null) {
-                $units->prepend([
-                    'id' => $parent->id,
-                    'name' => $parent->getParentsNames(),
-                ]);
-            }
-        }
-
-        return response()->json($units);
-    }
-
     public function getUnitsIndex(Request $request): JsonResponse
     {
         $units = Unit::leftJoin('unit_user', 'unit_user.unit_id', '=', 'units.id')
