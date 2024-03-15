@@ -67,6 +67,9 @@ class Menu
                                 'icon' => isset($item->defaults['icon']) ? $item->defaults['icon'] : null,
                                 'shortcut' => $value['shortcut'] ?? null,
                                 'route' => $item->action['as'],
+                                'passwordConfirm' => collect($item->action['middleware'])->first(function (string $value) {
+                                    return $value == 'password.confirm';
+                                }) ? true : false,
                                 'method' => $item->action['method'] ?? 'get',
                             ];
                         })->values(),
@@ -83,6 +86,8 @@ class Menu
                     ],
                 );
         });
+
+        dd($tree);
 
         return $tree;
     }
