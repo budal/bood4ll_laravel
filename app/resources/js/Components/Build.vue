@@ -21,14 +21,15 @@ const loading = ref(false);
 const formValue = ref<Record<string, any>>({});
 
 const send = () => {
-    console.log(props.component);
+    // console.log(props.component, formValue);
+    console.log(formValue.value);
 
     fetchData(props.component.callback, {
         complement: {
             id: props.id,
         },
         method: props.component.method,
-        data: props.component.data,
+        data: formValue.value,
         onBefore: () => {
             loading.value = true;
         },
@@ -42,9 +43,9 @@ const send = () => {
         },
         onSuccess: (content: any) => {
             toast.add({
-                severity: content.toastClass || "info",
-                summary: trans(content.toastTitle || "Confirmed"),
-                detail: transChoice(content.toast, 0, {}),
+                severity: content.type || "success",
+                summary: trans(content.title || "Confirmed"),
+                detail: transChoice(content.message, content.length, {}),
                 life: 3000,
             });
         },

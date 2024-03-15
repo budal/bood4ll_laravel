@@ -26,7 +26,8 @@ async function fetchData(
         id?: string | number | undefined;
         complement?: any;
         method?: "get" | "post" | "put" | "patch" | "delete";
-        data?: BodyInit | null | undefined;
+        data?: Object;
+        // data?: BodyInit | null | undefined;
         onBefore?: Function;
         onProgress?: Function;
         onCancel?: Function;
@@ -37,7 +38,7 @@ async function fetchData(
 ) {
     let routeUrl = route;
 
-    console.log(route, options?.method);
+    // console.log(route, options?.method);
 
     if (options?.complement) {
         routeUrl =

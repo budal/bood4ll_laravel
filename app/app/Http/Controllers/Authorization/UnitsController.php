@@ -525,7 +525,7 @@ class UnitsController extends Controller
         ];
     }
 
-    public function store(Request $request, Unit $unit): RedirectResponse
+    public function store(Request $request, Unit $unit): JsonResponse
     {
         $this->authorize('access', User::class);
         $this->authorize('isManager', User::class);
@@ -598,7 +598,7 @@ class UnitsController extends Controller
         return response()->json($unit);
     }
 
-    public function update(Unit $unit, Request $request): RedirectResponse
+    public function update(Unit $unit, Request $request): JsonResponse
     {
         // $this->authorize('access', User::class);
         // $this->authorize('isActive', $unit);
@@ -606,21 +606,16 @@ class UnitsController extends Controller
         // $this->authorize('canEdit', $unit);
         // $this->authorize('isOwner', $unit);
 
-        return response()->json([
-            'type' => 'success',
-            'title' => 'Refresh units hierarchy',
-            'message' => '{0} Nothing to refresh.|[1] Item refreshed successfully.|[2,*] :total items successfully refreshed.',
-            'length' => 1,
-        ]);
-
         if (
             $request->user()->cannot('isSuperAdmin', User::class)
             && $request->user()->unitsIds()->contains($unit->parent_id) === false
             && $unit->parent_id != $request->parent_id
         ) {
-            return Redirect::back()->with([
-                'toast_type' => 'error',
-                'toast_message' => "You cannot change the unit this record belongs to.",
+            return response()->json([
+                'type' => 'error',
+                'title' => 'Error',
+                'message' => 'You cannot change the unit this record belongs to.',
+                'length' => 1,
             ]);
         }
 
@@ -672,19 +667,21 @@ class UnitsController extends Controller
 
             DB::rollback();
 
-            return Redirect::back()->with([
-                'toast_type' => 'error',
-                'toast_message' => 'Error on edit selected item.|Error on edit selected items.',
-                'toast_count' => 1,
+            return response()->json([
+                'type' => 'error',
+                'title' => 'Error',
+                'message' => 'Error on edit selected item.|Error on edit selected items.',
+                'length' => 1,
             ]);
         }
 
         DB::commit();
 
-        return Redirect::back()->with([
-            'toast_type' => 'success',
-            'toast_message' => '{0} Nothing to edit.|[1] Item edited successfully.|[2,*] :total items successfully edited.',
-            'toast_count' => 1,
+        return response()->json([
+            'type' => 'success',
+            'title' => 'Edit',
+            'message' => '{0} Nothing to edit.|[1] Item edited successfully.|[2,*] :total items successfully edited.',
+            'length' => 1,
         ]);
     }
 
