@@ -148,7 +148,7 @@ const tableMenuToggle = (event: MouseEvent) => {
                 isDefined(props.structure.actions.forceDestroy?.callback) &&
                 listItems.value === "trashed",
             disabled: selectedItemsTotal.value.length < 1 ? true : false,
-            icon: "trash",
+            icon: "delete_forever",
             badge: selectedItemsTotal.value.length,
             badgeClass: "danger",
             command: () => {
@@ -175,7 +175,7 @@ const tableMenuToggle = (event: MouseEvent) => {
             icon: "rule",
             items: [
                 {
-                    label: "Active",
+                    label: "Activated",
                     icon: (listItems.value == null
                         ? "check_small"
                         : null) as string,
@@ -689,7 +689,7 @@ onBeforeUnmount(() => {
                     <Button
                         class="material-symbols-rounded"
                         type="button"
-                        v-html="'edit'"
+                        v-html="'edit_square'"
                         text
                         size="small"
                         @click="

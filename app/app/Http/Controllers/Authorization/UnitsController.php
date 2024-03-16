@@ -255,7 +255,7 @@ class UnitsController extends Controller
                                                             ],
                                                             'menu' => [
                                                                 [
-                                                                    'icon' => 'mdi:account-multiple',
+                                                                    'icon' => 'group',
                                                                     'label' => 'Local staff',
                                                                     'source' => [
                                                                         'route' => 'getUnitStaff',
@@ -265,7 +265,7 @@ class UnitsController extends Controller
                                                                     'visible' => $request->user()->can('canManageNestedData', User::class),
                                                                 ],
                                                                 [
-                                                                    'icon' => 'mdi:account-group-outline',
+                                                                    'icon' => 'groups',
                                                                     'label' => 'Total staff',
                                                                     'source' => [
                                                                         'route' => 'getUnitStaff',

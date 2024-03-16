@@ -258,35 +258,25 @@ class RolesController extends Controller
                                             && $request->user()->can('canManageNestedData', User::class)
                                         ),
                                     ],
-                                    // 'forceDestroy' => [
-                                    //     'dialog' => 'Do you want to erase this unit?|Do you want to erase this units?',
-                                    //     'dialogClass' => 'danger',
-                                    //     'toast' => 'Unit erased.',
-                                    //     'toastClass' => 'warning',
-                                    //     'callback' => 'apps.roles.forceDestroy',
-                                    //     'method' => 'delete',
-                                    //     'visible' => (
-                                    //         Gate::allows('apps.roles.forceDestroy')
-                                    //         && $request->user()->can('isManager', User::class)
-                                    //         && $request->user()->can('canManageNestedData', User::class)
-                                    //     ),
-                                    // ],
-                                    // 'reorder' => [
-                                    //     'toast' => 'Unit reordered.',
-                                    //     'toastClass' => 'warning',
-                                    //     'callback' => 'apps.roles.reorder',
-                                    //     'visible' => (
-                                    //         Gate::allows('apps.roles.reorder')
-                                    //         && $request->user()->can('isManager', User::class)
-                                    //         && $request->user()->can('canManageNestedData', User::class)
-                                    //     ),
-                                    // ]
+                                    'forceDestroy' => [
+                                        'dialog' => 'Do you want to erase this unit?|Do you want to erase this units?',
+                                        'dialogClass' => 'danger',
+                                        'toast' => 'Unit erased.',
+                                        'toastClass' => 'warning',
+                                        'callback' => 'apps.roles.forceDestroy',
+                                        'method' => 'delete',
+                                        'visible' => (
+                                            Gate::allows('apps.roles.forceDestroy')
+                                            && $request->user()->can('isManager', User::class)
+                                            && $request->user()->can('canManageNestedData', User::class)
+                                        ),
+                                    ],
                                 ],
                                 'menu' => [
                                     [
                                         'icon' => 'account_tree',
                                         'label' => 'Abilities',
-                                        'callback' => 'apps.roles.hierarchy',
+                                        'source' => 'apps.roles.hierarchy',
                                         'method' => 'post',
                                         'visible' => $request->user()->can('isSuperAdmin', User::class),
                                     ],
