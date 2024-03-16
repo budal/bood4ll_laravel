@@ -163,10 +163,9 @@ const menu = ref(false);
                         :href="item.url || ''"
                         :disabled="item.current === true"
                     >
-                        <Icon
-                            v-if="item.icon"
-                            :icon="item.icon || ''"
-                            class="h-5 w-5"
+                        <span
+                            class="material-symbols-sharp"
+                            v-html="item.icon"
                         />
                         <span
                             :class="{

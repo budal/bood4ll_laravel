@@ -67,7 +67,7 @@ const tableMenuToggle = (event: MouseEvent) => {
                 props.component.actions.create?.visible != false &&
                 isDefined(props.component.actions.destroy?.callback),
             disabled: props.component.actions.create?.disabled == true,
-            icon: "pi pi-plus",
+            icon: "add",
             command: () => {
                 openDialog({
                     header: "Add unit",
@@ -87,7 +87,7 @@ const tableMenuToggle = (event: MouseEvent) => {
                 ).length < 1
                     ? true
                     : false,
-            icon: "pi pi-trash",
+            icon: "remove",
             badge: selectedItemsTotal.value.filter(
                 (item: { deleted_at: string }) => item.deleted_at === null,
             ).length,
@@ -120,7 +120,7 @@ const tableMenuToggle = (event: MouseEvent) => {
                 ).length < 1
                     ? true
                     : false,
-            icon: "pi pi-replay",
+            icon: "settings_backup_restore",
             badge: selectedItemsTotal.value.filter(
                 (item: { deleted_at: string }) => item.deleted_at !== null,
             ).length,
@@ -148,7 +148,7 @@ const tableMenuToggle = (event: MouseEvent) => {
                 isDefined(props.component.actions.forceDestroy?.callback) &&
                 listItems.value === "trashed",
             disabled: selectedItemsTotal.value.length < 1 ? true : false,
-            icon: "pi pi-times",
+            icon: "trash",
             badge: selectedItemsTotal.value.length,
             badgeClass: "danger",
             command: () => {
@@ -171,14 +171,12 @@ const tableMenuToggle = (event: MouseEvent) => {
 
     const _tableMenuItemsShow: MenuItem[] = [
         {
-            label: "List",
-            icon: "pi pi-eye",
+            label: "Show items",
+            icon: "rule",
             items: [
                 {
                     label: "Active",
-                    icon: (listItems.value == null
-                        ? "pi pi-check text-xs"
-                        : null) as string,
+                    icon: (listItems.value == null ? "check" : null) as string,
                     command: () => {
                         listItems.value = null;
                         onTableDataLoad();
@@ -187,7 +185,7 @@ const tableMenuToggle = (event: MouseEvent) => {
                 {
                     label: "Trashed",
                     icon: (listItems.value == "trashed"
-                        ? "pi pi-check text-xs"
+                        ? "check"
                         : null) as string,
                     command: () => {
                         listItems.value = "trashed";
@@ -197,7 +195,7 @@ const tableMenuToggle = (event: MouseEvent) => {
                 {
                     label: "Both",
                     icon: (listItems.value == "both"
-                        ? "pi pi-check text-xs"
+                        ? "check"
                         : null) as string,
                     command: () => {
                         listItems.value = "both";
@@ -208,7 +206,7 @@ const tableMenuToggle = (event: MouseEvent) => {
         },
         {
             label: "Columns",
-            icon: "pi pi-list",
+            icon: "view_column",
             command: () => {
                 selectColumns.value = true;
             },
@@ -219,7 +217,7 @@ const tableMenuToggle = (event: MouseEvent) => {
         },
         {
             label: "Export CSV",
-            icon: "pi pi-file-export",
+            icon: "csv",
             visible: props.component.exportCSV === true,
             command: () => {
                 dt.value.exportCSV();
@@ -298,7 +296,7 @@ const tableMenuToggle = (event: MouseEvent) => {
     tableMenuItems.value = [
         {
             label: "Refresh",
-            icon: "pi pi-refresh",
+            icon: "refresh",
             command: () => {
                 onTableDataLoad();
             },
@@ -538,8 +536,11 @@ onBeforeUnmount(() => {
                                         v-bind="props.action"
                                         v-ripple
                                     >
-                                        <span class="w-4" :class="item.icon" />
-                                        <span class="ml-2">
+                                        <span
+                                            class="material-symbols-sharp"
+                                            v-html="item.icon"
+                                        />
+                                        <span class="ml-1">
                                             {{ $t(item.label as string) }}
                                         </span>
                                         <Badge
@@ -684,8 +685,9 @@ onBeforeUnmount(() => {
             >
                 <template #body="{ data }">
                     <Button
+                        class="material-symbols-sharp"
                         type="button"
-                        icon="pi pi-pencil"
+                        v-html="'edit'"
                         text
                         size="small"
                         @click="

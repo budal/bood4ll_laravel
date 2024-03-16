@@ -339,7 +339,7 @@ class UnitsController extends Controller
                                 ],
                                 'menu' => [
                                     [
-                                        'icon' => 'pi pi-refresh',
+                                        'icon' => 'schema',
                                         'label' => 'Refresh units hierarchy',
                                         'callback' => 'apps.units.hierarchy',
                                         'method' => 'post',
