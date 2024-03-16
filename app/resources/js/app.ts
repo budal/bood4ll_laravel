@@ -15,7 +15,7 @@ import Ripple from "primevue/ripple";
 import StyleClass from "primevue/styleclass";
 import ToastService from "primevue/toastservice";
 import Tooltip from "primevue/tooltip";
-import "material-symbols";
+import "@material-symbols/font-200";
 import "primevue/resources/themes/aura-light-blue/theme.css";
 // import "primevue/resources/themes/aura-dark-blue/theme.css";
 import "primeicons/primeicons.css";

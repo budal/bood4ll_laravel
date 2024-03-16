@@ -537,7 +537,7 @@ onBeforeUnmount(() => {
                                         v-ripple
                                     >
                                         <span
-                                            class="material-symbols-sharp"
+                                            class="material-symbols-rounded"
                                             v-html="item.icon"
                                         />
                                         <span class="ml-1">
@@ -685,7 +685,7 @@ onBeforeUnmount(() => {
             >
                 <template #body="{ data }">
                     <Button
-                        class="material-symbols-sharp"
+                        class="material-symbols-rounded"
                         type="button"
                         v-html="'edit'"
                         text

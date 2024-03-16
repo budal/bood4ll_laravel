@@ -152,7 +152,7 @@ Route::middleware('auth')->group(function () {
                 Route::get('/absences', 'index')->name('index')->breadcrumb('Absences')
                     ->defaults('title', 'Absences')
                     ->defaults('description', "Manage your staff's absences, vacations, layoffs and medical certificates.")
-                    ->defaults('icon', 'account_circle_off');
+                    ->defaults('icon', 'no_accounts');
                 Route::get('/absences/create', 'create')->name('create')->breadcrumb('Absence creation', 'apps.absences.index');
                 Route::post('/absences/create', 'store')->name('store');
                 Route::get('/absences/edit/{role}/{show?}', 'edit')->name('edit')->breadcrumb('Absence edition', 'apps.absences.index');

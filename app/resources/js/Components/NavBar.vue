@@ -40,7 +40,7 @@ const menu = ref(false);
                         v-ripple
                     >
                         <span
-                            class="material-symbols-sharp"
+                            class="material-symbols-rounded"
                             v-html="item.icon"
                         />
                         <span class="ml-2" v-html="$t(item.label as string)" />
@@ -56,12 +56,12 @@ const menu = ref(false);
                         />
                         <span
                             v-if="hasSubmenu && root"
-                            class="material-symbols-sharp"
+                            class="material-symbols-rounded"
                             v-html="'expand_more'"
                         />
                         <span
                             v-if="hasSubmenu && !root"
-                            class="material-symbols-sharp"
+                            class="material-symbols-rounded"
                             v-html="'chevron_right'"
                         />
                     </component>
@@ -129,7 +129,7 @@ const menu = ref(false);
                                         v-ripple
                                     >
                                         <span
-                                            class="material-symbols-sharp"
+                                            class="material-symbols-rounded"
                                             v-html="item.icon"
                                         />
                                         <span class="ml-2">
@@ -164,7 +164,7 @@ const menu = ref(false);
                         :disabled="item.current === true"
                     >
                         <span
-                            class="material-symbols-sharp"
+                            class="material-symbols-rounded"
                             v-html="item.icon"
                         />
                         <span
