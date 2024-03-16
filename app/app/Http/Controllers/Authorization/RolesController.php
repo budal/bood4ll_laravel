@@ -100,7 +100,7 @@ class RolesController extends Controller
                                         'component' => [
                                             [
                                                 'label' => 'Main data',
-                                                'description' => 'Unit data management.',
+                                                'description' => 'Role name, abilities and settings.',
                                                 'cols' => 3,
                                                 'fields' => $this->__fields($request),
                                                 'visible' => (
@@ -123,7 +123,7 @@ class RolesController extends Controller
                                         'component' => [
                                             [
                                                 'label' => 'Main data',
-                                                'description' => 'Unit data management.',
+                                                'description' => 'Role name, abilities and settings.',
                                                 'source' => [
                                                     'route' => 'getUnitInfo',
                                                     'transmute' => ['unit' => 'id'],
@@ -284,7 +284,7 @@ class RolesController extends Controller
                                 ],
                                 'menu' => [
                                     [
-                                        'icon' => 'pi pi-cog',
+                                        'icon' => 'account_tree',
                                         'label' => 'Abilities',
                                         'callback' => 'apps.roles.hierarchy',
                                         'method' => 'post',
@@ -341,6 +341,17 @@ class RolesController extends Controller
                 'label' => 'Description',
                 'span' => 2,
             ],
+            [
+                'type' => 'dropdown',
+                'name' => 'abilities',
+                'label' => 'Abilities',
+                'source' => [
+                    'route' => 'getUnits',
+                    'replace' => ['unit' => 'id']
+                ],
+                'span' => 3,
+                'required' => true,
+            ],
             // [
             //     'type' => 'select',
             //     'name' => 'abilities',
@@ -378,7 +389,7 @@ class RolesController extends Controller
             [
                 'type' => 'toggle',
                 'name' => 'manage_nested',
-                'label' => 'Manage nested data',
+                'label' => 'Nested data',
                 'disabled' => $request->user()->cannot('canManageNestedData', User::class),
                 'colorOn' => 'info',
             ],

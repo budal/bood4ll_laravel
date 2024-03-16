@@ -7,6 +7,7 @@ const props = withDefaults(
     defineProps<{
         id?: string;
         value?: any;
+        multiple?: boolean;
         component?: any;
         url?:
             | string
@@ -22,6 +23,7 @@ const props = withDefaults(
     }>(),
 
     {
+        multiple: false,
         optionValue: "id",
         optionLabel: "name",
         placeholder: trans("Select an item"),
@@ -61,6 +63,7 @@ const value = ref(props.value);
 
 <template>
     <Dropdown
+        v-if="multiple === false"
         :id="id"
         v-model="value"
         :options="dropdownItems"

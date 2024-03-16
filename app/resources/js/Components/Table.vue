@@ -70,7 +70,7 @@ const tableMenuToggle = (event: MouseEvent) => {
             icon: "add",
             command: () => {
                 openDialog({
-                    header: "Add unit",
+                    header: "Add",
                     action: props.component.actions.create,
                 });
             },
@@ -692,8 +692,7 @@ onBeforeUnmount(() => {
                         size="small"
                         @click="
                             openDialog({
-                                header: `Edit ':unit'`,
-                                headerReplacement: { unit: data.shortpath },
+                                header: `Edit`,
                                 action: component.actions.edit,
                                 id: data.id,
                             })
