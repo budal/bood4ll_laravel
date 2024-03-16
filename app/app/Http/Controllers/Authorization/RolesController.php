@@ -71,6 +71,60 @@ class RolesController extends Controller
         return response()->json($roles);
     }
 
+    public function getAbilitiesIndex(Request $request): JsonResponse
+    {
+        // $this->authorize('isSuperAdmin', User::class);
+
+        $prefixes = ['apps', 'reports'];
+
+        $routes = collect(Route::getRoutes())->filter(function ($route) use ($request, $prefixes) {
+            return Str::contains($route->uri, $prefixes)
+                && ($request->search ? Str::contains($route->action['as'], $request->search) : true);
+        });
+
+        $abilitiesInDB = Ability::filter($request, 'abilites')->get()->pluck('name');
+
+        $validAbilities = $routes->map(function ($route) use ($abilitiesInDB) {
+            $actionSegments = explode('\\', $route->action['controller']);
+            $id = $route->action['as'];
+            $route = $route->uri;
+            $command = end($actionSegments);
+            $title = $id;
+            $checked = $abilitiesInDB->contains($id);
+
+            return compact('id', 'route', 'command', 'title', 'checked');
+        })->values();
+
+        $invalidAbilities = $abilitiesInDB->diff(collect($validAbilities)->pluck('id'))->map(function ($zombie) {
+            $id = $zombie;
+            $route = $zombie;
+            $title = $zombie;
+            $checked = true;
+
+            return compact('id', 'route', 'title', 'checked');
+        })->values();
+
+        $validAbilities = $validAbilities->toArray();
+        $invalidAbilities = $invalidAbilities->toArray();
+
+        usort($validAbilities, function ($a, $b) use ($request) {
+            return ($request->query('validAbilities_sorted') == 'title' || !$request->query('validAbilities_sorted'))
+                ? $a['title'] <=> $b['title']
+                : $b['title'] <=> $a['title'];
+        });
+
+        usort($invalidAbilities, function ($a, $b) use ($request) {
+            return ($request->query('invalidAbilities_sorted') == 'title' || !$request->query('invalidAbilities_sorted'))
+                ? $a['title'] <=> $b['title']
+                : $b['title'] <=> $a['title'];
+        });
+
+        return response()->json([
+            'data' => $validAbilities,
+            "next_page_url" => null
+        ]);
+    }
+
     public function index(Request $request): Response
     {
         $this->authorize('access', User::class);
@@ -276,9 +330,80 @@ class RolesController extends Controller
                                     [
                                         'icon' => 'account_tree',
                                         'label' => 'Abilities',
-                                        'source' => 'apps.roles.hierarchy',
-                                        'method' => 'post',
+                                        'source' => 'getAbilitiesIndex',
+                                        'dialog' => true,
                                         'visible' => $request->user()->can('isSuperAdmin', User::class),
+                                        'components' => [
+                                            [
+                                                'label' => 'Staff',
+                                                'description' => 'Staff management of this unit.',
+                                                'visible' => (
+                                                    Gate::allows('apps.roles.update')
+                                                    && $request->user()->can('isManager', User::class)
+                                                    && $request->user()->can('canManageNestedData', User::class)
+                                                ),
+                                                'fields' => [
+                                                    [
+                                                        'type' => 'table',
+                                                        'name' => 'users',
+                                                        'structure' => [
+                                                            'actions' => [
+                                                                'index' => [
+                                                                    'source' => [
+                                                                        'route' => 'getAbilitiesIndex',
+                                                                    ],
+                                                                    'visible' => true,
+                                                                    'disabled' => true,
+                                                                ],
+                                                            ],
+                                                            'menu' => [
+                                                                [
+                                                                    'icon' => 'check',
+                                                                    'label' => 'Authorize',
+                                                                    'source' => 'postAbilitiesAuthorize',
+                                                                    'visible' => $request->user()->can('canManageNestedData', User::class),
+                                                                ],
+                                                                [
+                                                                    'icon' => 'close',
+                                                                    'label' => 'Deauthorize',
+                                                                    'source' => 'postAbilitiesDeauthorize',
+                                                                    'visible' => $request->user()->can('canManageNestedData', User::class)
+                                                                ],
+                                                            ],
+                                                            'titles' => [
+                                                                [
+                                                                    'type' => 'composite',
+                                                                    'header' => 'Ability',
+                                                                    'field' => 'title',
+                                                                    'values' => [
+                                                                        [
+                                                                            'field' => 'title',
+                                                                        ],
+                                                                        [
+                                                                            'field' => 'command',
+                                                                            'class' => 'text-xs',
+                                                                        ],
+                                                                    ],
+                                                                ],
+                                                                [
+                                                                    'type' => 'toggle',
+                                                                    'header' => 'Active',
+                                                                    'field' => 'checked',
+                                                                    'disableSort' => true,
+                                                                    'route' => [
+                                                                        'route' => 'apps.roles.abilities_update',
+                                                                        'attributes' => 'toggle',
+                                                                    ],
+                                                                    'method' => 'post',
+                                                                    'colorOn' => 'success',
+                                                                    'colorOff' => 'danger',
+                                                                ],
+                                                            ],
+                                                        ],
+                                                    ],
+                                                ],
+                                            ],
+                                        ],
                                     ],
                                 ],
                                 'titles' => [

@@ -34,10 +34,6 @@ const DialogBody = defineAsyncComponent(
     () => import("@/Components/DialogBody.vue"),
 );
 
-const DialogFooter = defineAsyncComponent(
-    () => import("@/Components/DialogFooter.vue"),
-);
-
 const contentItems = ref(props.structure.data?.data ?? []);
 
 const dialog = useDialog();
@@ -231,11 +227,13 @@ const tableMenuToggle = (event: MouseEvent) => {
 
     props.structure.menu?.forEach(
         (item: {
+            id: string | number | undefined;
             label: string;
             source: string;
             callback: string;
             method: "get" | "post" | "put" | "patch" | "delete";
             data: any;
+            dialog: boolean;
             disabled: boolean;
             visible: boolean;
             reload: boolean;
@@ -249,9 +247,17 @@ const tableMenuToggle = (event: MouseEvent) => {
                 icon: item.icon,
                 command: () => {
                     if (item.source) {
-                        indexUrlRef.value = item.source;
+                        if (item.dialog == true) {
+                            openDialog({
+                                header: item.label,
+                                action: item,
+                                id: item.id,
+                            });
+                        } else {
+                            indexUrlRef.value = item.source;
 
-                        onTableDataLoad();
+                            onTableDataLoad();
+                        }
                     } else {
                         fetchData(item.callback, {
                             complement: {
