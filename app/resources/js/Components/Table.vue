@@ -25,7 +25,7 @@ import { ReplacementsInterface } from "laravel-vue-i18n/interfaces/replacements"
 import debounce from "lodash.debounce";
 
 const props = defineProps<{
-    component?: any;
+    structure?: any;
     id?: string | number;
     formValue?: any;
 }>();
@@ -38,7 +38,7 @@ const DialogFooter = defineAsyncComponent(
     () => import("@/Components/DialogFooter.vue"),
 );
 
-const contentItems = ref(props.component.data?.data ?? []);
+const contentItems = ref(props.structure.data?.data ?? []);
 
 const dialog = useDialog();
 const toast = useToast();
@@ -53,33 +53,33 @@ const expandedRows = ref([]);
 const tableMenu = ref();
 const tableMenuItems = ref<MenuItem[]>([]);
 const selectColumns = ref(false);
-const tableColumns = ref(props.component.titles);
+const tableColumns = ref(props.structure.titles);
 const selectedColumns = ref(tableColumns.value);
 const search = ref(null);
 const listItems = ref();
-const indexUrlRef = ref(props.component.actions.index.source);
+const indexUrlRef = ref(props.structure.actions.index.source);
 
 const tableMenuToggle = (event: MouseEvent) => {
     const _tableMenuItemsEdit: MenuItem[] = [
         {
             label: "Add",
             visible:
-                props.component.actions.create?.visible != false &&
-                isDefined(props.component.actions.destroy?.callback),
-            disabled: props.component.actions.create?.disabled == true,
+                props.structure.actions.create?.visible != false &&
+                isDefined(props.structure.actions.destroy?.callback),
+            disabled: props.structure.actions.create?.disabled == true,
             icon: "add",
             command: () => {
                 openDialog({
                     header: "Add",
-                    action: props.component.actions.create,
+                    action: props.structure.actions.create,
                 });
             },
         },
         {
             label: "Remove",
             visible:
-                props.component.actions.destroy?.visible != false &&
-                isDefined(props.component.actions.destroy?.callback) &&
+                props.structure.actions.destroy?.visible != false &&
+                isDefined(props.structure.actions.destroy?.callback) &&
                 listItems.value !== "trashed",
             disabled:
                 selectedItemsTotal.value.filter(
@@ -95,7 +95,7 @@ const tableMenuToggle = (event: MouseEvent) => {
             command: () => {
                 confirmDialog({
                     header: "Remove",
-                    callback: props.component.actions.destroy?.callback,
+                    callback: props.structure.actions.destroy?.callback,
                     items: selectedItemsTotal.value.filter(
                         (item: { deleted_at: string }) =>
                             item.deleted_at === null,
@@ -111,8 +111,8 @@ const tableMenuToggle = (event: MouseEvent) => {
         {
             label: "Restore",
             visible:
-                props.component.actions.restore?.visible != false &&
-                isDefined(props.component.actions.restore?.callback) &&
+                props.structure.actions.restore?.visible != false &&
+                isDefined(props.structure.actions.restore?.callback) &&
                 (listItems.value === "trashed" || listItems.value === "both"),
             disabled:
                 selectedItemsTotal.value.filter(
@@ -128,7 +128,7 @@ const tableMenuToggle = (event: MouseEvent) => {
             command: () => {
                 confirmDialog({
                     header: "Restore",
-                    callback: props.component.actions.restore?.callback,
+                    callback: props.structure.actions.restore?.callback,
                     items: selectedItemsTotal.value.filter(
                         (item: { deleted_at: string }) =>
                             item.deleted_at !== null,
@@ -144,8 +144,8 @@ const tableMenuToggle = (event: MouseEvent) => {
         {
             label: "Erase",
             visible:
-                props.component.actions.forceDestroy?.visible != false &&
-                isDefined(props.component.actions.forceDestroy?.callback) &&
+                props.structure.actions.forceDestroy?.visible != false &&
+                isDefined(props.structure.actions.forceDestroy?.callback) &&
                 listItems.value === "trashed",
             disabled: selectedItemsTotal.value.length < 1 ? true : false,
             icon: "trash",
@@ -154,7 +154,7 @@ const tableMenuToggle = (event: MouseEvent) => {
             command: () => {
                 confirmDialog({
                     header: "Erase",
-                    callback: props.component.actions.forceDestroy?.callback,
+                    callback: props.structure.actions.forceDestroy?.callback,
                     items: selectedItemsTotal.value.filter(
                         (item: { deleted_at: string }) =>
                             item.deleted_at === null,
@@ -213,12 +213,12 @@ const tableMenuToggle = (event: MouseEvent) => {
         },
         {
             separator: true,
-            visible: props.component.exportCSV === true,
+            visible: props.structure.exportCSV === true,
         },
         {
             label: "Export CSV",
             icon: "csv",
-            visible: props.component.exportCSV === true,
+            visible: props.structure.exportCSV === true,
             command: () => {
                 dt.value.exportCSV();
             },
@@ -227,7 +227,7 @@ const tableMenuToggle = (event: MouseEvent) => {
 
     const _tableMenuItemsComplementar: MenuItem[] = [];
 
-    props.component.menu?.forEach(
+    props.structure.menu?.forEach(
         (item: {
             label: string;
             source: string;
@@ -487,12 +487,12 @@ onBeforeUnmount(() => {
             :value="contentItems"
             dataKey="id"
             v-bind="
-                (component.actions.destroy?.visible != false &&
-                    isDefined(component.actions.destroy?.callback)) ||
-                (component.actions.restore?.visible != false &&
-                    isDefined(component.actions.restore?.callback)) ||
-                (component.actions.forceDestroy?.visible != false &&
-                    isDefined(component.actions.forceDestroy?.callback))
+                (structure.actions.destroy?.visible != false &&
+                    isDefined(structure.actions.destroy?.callback)) ||
+                (structure.actions.restore?.visible != false &&
+                    isDefined(structure.actions.restore?.callback)) ||
+                (structure.actions.forceDestroy?.visible != false &&
+                    isDefined(structure.actions.forceDestroy?.callback))
                     ? { selectionMode: 'multiple' }
                     : null
             "
@@ -505,8 +505,8 @@ onBeforeUnmount(() => {
             scrollable
             :loading="loadingTable"
             :rowReorder="
-                component.actions.reorder?.visible != false &&
-                isDefined(component.actions.reorder?.callback)
+                structure.actions.reorder?.visible != false &&
+                isDefined(structure.actions.reorder?.callback)
             "
             @rowReorder="onRowReorder"
             class="w-full"
@@ -571,7 +571,7 @@ onBeforeUnmount(() => {
                             >
                                 <MultiSelect
                                     :modelValue="selectedColumns"
-                                    :options="component.titles"
+                                    :options="structure.titles"
                                     optionLabel="header"
                                     @update:modelValue="onToggleColumns"
                                     display="chip"
@@ -600,20 +600,20 @@ onBeforeUnmount(() => {
             <Column
                 style="width: 1rem"
                 v-bind="
-                    (component.actions.destroy?.visible != false &&
-                        isDefined(component.actions.destroy?.callback)) ||
-                    (component.actions.restore?.visible != false &&
-                        isDefined(component.actions.restore?.callback)) ||
-                    (component.actions.forceDestroy?.visible != false &&
-                        isDefined(component.actions.forceDestroy?.callback))
+                    (structure.actions.destroy?.visible != false &&
+                        isDefined(structure.actions.destroy?.callback)) ||
+                    (structure.actions.restore?.visible != false &&
+                        isDefined(structure.actions.restore?.callback)) ||
+                    (structure.actions.forceDestroy?.visible != false &&
+                        isDefined(structure.actions.forceDestroy?.callback))
                         ? { selectionMode: 'multiple' }
                         : null
                 "
             />
             <Column
                 v-if="
-                    component.actions.reorder?.visible != false &&
-                    isDefined(component.actions.reorder?.callback)
+                    structure.actions.reorder?.visible != false &&
+                    isDefined(structure.actions.reorder?.callback)
                 "
                 rowReorder
                 :reorderableColumn="false"
@@ -676,8 +676,8 @@ onBeforeUnmount(() => {
             </Column>
             <Column
                 v-if="
-                    component.actions.edit?.visible != false &&
-                    isDefined(component.actions.edit)
+                    structure.actions.edit?.visible != false &&
+                    isDefined(structure.actions.edit)
                 "
                 frozen
                 alignFrozen="right"
@@ -693,7 +693,7 @@ onBeforeUnmount(() => {
                         @click="
                             openDialog({
                                 header: `Edit`,
-                                action: component.actions.edit,
+                                action: structure.actions.edit,
                                 id: data.id,
                             })
                         "

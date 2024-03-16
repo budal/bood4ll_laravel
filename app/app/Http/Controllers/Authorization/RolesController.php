@@ -76,7 +76,7 @@ class RolesController extends Controller
         $this->authorize('access', User::class);
 
         return Inertia::render('Bood4ll', [
-            'structure' => [
+            'build' => [
                 [
                     'label' => Route::current()->title,
                     'description' => Route::current()->description,
@@ -84,7 +84,7 @@ class RolesController extends Controller
                         [
                             'type' => 'table',
                             'name' => 'name',
-                            'component' => [
+                            'structure' => [
                                 'actions' => [
                                     'index' => [
                                         'source' => 'getRolesIndex',
@@ -97,7 +97,7 @@ class RolesController extends Controller
                                             && $request->user()->can('isManager', User::class)
                                         ),
                                         'disabled' => $request->user()->cannot('isManager', User::class),
-                                        'component' => [
+                                        'components' => [
                                             [
                                                 'label' => 'Main data',
                                                 'description' => 'Role name, abilities and settings.',
@@ -120,7 +120,7 @@ class RolesController extends Controller
                                         ),
                                         'disabled' => $request->user()->cannot('isManager', User::class),
                                         // 'tabs' => false,
-                                        'component' => [
+                                        'components' => [
                                             [
                                                 'label' => 'Main data',
                                                 'description' => 'Role name, abilities and settings.',
@@ -157,7 +157,7 @@ class RolesController extends Controller
                                                     [
                                                         'type' => 'table',
                                                         'name' => 'users',
-                                                        'component' => [
+                                                        'structure' => [
                                                             'actions' => [
                                                                 'index' => [
                                                                     'source' => [

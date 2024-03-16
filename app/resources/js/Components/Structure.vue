@@ -3,7 +3,7 @@ import Build from "@/Components/Build.vue";
 
 withDefaults(
     defineProps<{
-        structure?: any;
+        build?: any;
         tabs?: boolean;
         id?: string | number;
     }>(),
@@ -21,10 +21,10 @@ withDefaults(
         {{ $t($page.props.status as string) }}
     </Message>
 
-    <template v-if="structure.length > 1 && tabs == true">
+    <template v-if="build.length > 1 && tabs == true">
         <TabView>
             <template
-                v-for="item in structure.filter(
+                v-for="item in build.filter(
                     (item: any) => item.visible != false,
                 )"
             >
@@ -40,7 +40,7 @@ withDefaults(
                             {{ $t(item.description) }}
                         </template>
                         <template #content>
-                            <Build :component="item" :id="id" />
+                            <Build :components="item" :id="id" />
                         </template>
                     </Card>
                 </TabPanel>
@@ -50,7 +50,7 @@ withDefaults(
     <template v-else>
         <div class="grid gap-4 grid-cols-1">
             <template
-                v-for="item in structure.filter(
+                v-for="item in build.filter(
                     (item: any) => item.visible != false,
                 )"
             >
@@ -62,7 +62,7 @@ withDefaults(
                         {{ $t(item.description) }}
                     </template>
                     <template #content>
-                        <Build :component="item" :id="id" />
+                        <Build :components="item" :id="id" />
                     </template>
                 </Card>
             </template>

@@ -32,7 +32,7 @@ class DashboardController extends Controller
     {
         return Inertia::render('Bood4ll', [
             // 'tabs' => false,
-            'structure' => [
+            'build' => [
                 [
                     'label' => Route::current()->title,
                     'description' => Route::current()->description,

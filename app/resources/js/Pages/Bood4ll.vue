@@ -4,9 +4,9 @@ import NavBar from "@/Components/NavBar.vue";
 import Structure from "@/Components/Structure.vue";
 import TailwindIndicator from "@/Components/TailwindIndicator.vue";
 
-const props = withDefaults(
+withDefaults(
     defineProps<{
-        structure: any;
+        build: any;
         tabs?: boolean;
     }>(),
     {
@@ -28,7 +28,7 @@ const props = withDefaults(
             </Card>
         </nav>
         <div class="max-w-7xl mx-auto py-4 px-2 sm:px-6 lg:px-8 space-y-6">
-            <Structure :structure="structure" :tabs="tabs" />
+            <Structure :build="build" :tabs="tabs" />
         </div>
         <Toast />
         <DynamicDialog />

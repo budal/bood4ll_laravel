@@ -10,7 +10,7 @@ const data = ref(dialogRef?.value.data);
 
 <template>
     <Structure
-        :structure="data.action.component"
+        :build="data.action.components"
         :tabs="data.action.tabs"
         :id="data.id"
     />

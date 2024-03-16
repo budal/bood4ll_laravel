@@ -10,7 +10,7 @@ import Dropdown2 from "@/Components/Dropdown2.vue";
 import { trans, transChoice } from "laravel-vue-i18n";
 
 const props = defineProps<{
-    component: any;
+    components: any;
     id?: string | number;
 }>();
 
@@ -21,14 +21,14 @@ const loading = ref(false);
 const formValue = ref<Record<string, any>>({});
 
 const send = () => {
-    // console.log(props.component, formValue);
+    // console.log(props.components, formValue);
     // console.log(formValue.value);
 
-    fetchData(props.component.callback, {
+    fetchData(props.components.callback, {
         complement: {
             id: props.id,
         },
-        method: props.component.method,
+        method: props.components.method,
         data: formValue.value,
         onBefore: () => (loading.value = true),
         onError: (error: { message: string }) => {
@@ -52,8 +52,8 @@ const send = () => {
 };
 
 const handleConfirm = (event: Event) => {
-    if (props.component?.visible != false) {
-        if (props.component?.confirm === true) {
+    if (props.components?.visible != false) {
+        if (props.components?.confirm === true) {
             confirmDialog(event);
         } else {
             send();
@@ -69,7 +69,7 @@ const handleConfirm = (event: Event) => {
 };
 
 const confirmDialog = (event: Event) => {
-    if (props.component) {
+    if (props.components) {
         confirm.require({
             group: "popup",
             target:
@@ -77,25 +77,25 @@ const confirmDialog = (event: Event) => {
                     ? event.currentTarget
                     : undefined,
             message: trans(
-                props.component.popup || "Do you want confirm this action?",
+                props.components.popup || "Do you want confirm this action?",
             ),
-            icon: props.component.popupIcon || "pi pi-info-circle",
+            icon: props.components.popupIcon || "pi pi-info-circle",
             rejectClass:
-                props.component.popupCancelClass ||
+                props.components.popupCancelClass ||
                 "p-button-secondary p-button-outlined p-button-sm",
             acceptClass:
-                props.component.popupConfirmClass ||
+                props.components.popupConfirmClass ||
                 "p-button-info p-button-sm",
-            rejectLabel: trans(props.component.popupCancel || "No"),
-            acceptLabel: trans(props.component.popupConfirm || "Yes"),
+            rejectLabel: trans(props.components.popupCancel || "No"),
+            acceptLabel: trans(props.components.popupConfirm || "Yes"),
             accept: () => send(),
         });
     }
 };
 
 const onFormDataLoad = () => {
-    if (props.component.source) {
-        fetchData(props.component.source, {
+    if (props.components.source) {
+        fetchData(props.components.source, {
             complement: {
                 id: props.id,
             },
@@ -123,24 +123,24 @@ const onFormDataLoad = () => {
 
 <template>
     <DeferredContent @load="onFormDataLoad" aria-live="polite">
-        <form v-if="component.showIf !== false" class="w-full space-y-6">
+        <form v-if="components.showIf !== false" class="w-full space-y-6">
             <div
                 class="grid sm:gap-2"
                 :class="{
-                    'sm:grid-cols-1': component.cols == 1,
-                    'sm:grid-cols-2': component.cols == 2,
-                    'sm:grid-cols-3': component.cols == 3,
-                    'sm:grid-cols-4': component.cols == 4,
-                    'sm:grid-cols-5': component.cols == 5,
-                    'sm:grid-cols-6': component.cols == 6,
-                    'sm:grid-cols-7': component.cols == 7,
-                    'sm:grid-cols-8': component.cols == 8,
-                    'sm:grid-cols-9': component.cols == 9,
-                    'sm:grid-cols-10': component.cols == 10,
+                    'sm:grid-cols-1': components.cols == 1,
+                    'sm:grid-cols-2': components.cols == 2,
+                    'sm:grid-cols-3': components.cols == 3,
+                    'sm:grid-cols-4': components.cols == 4,
+                    'sm:grid-cols-5': components.cols == 5,
+                    'sm:grid-cols-6': components.cols == 6,
+                    'sm:grid-cols-7': components.cols == 7,
+                    'sm:grid-cols-8': components.cols == 8,
+                    'sm:grid-cols-9': components.cols == 9,
+                    'sm:grid-cols-10': components.cols == 10,
                 }"
             >
                 <div
-                    v-for="field in component.fields"
+                    v-for="field in components.fields"
                     :class="{
                         'pt-6': field.type != 'table',
                         'sm:col-span-1': field.span == 1,
@@ -220,34 +220,34 @@ const onFormDataLoad = () => {
 
                         <Table
                             v-if="field.type === 'table'"
-                            :component="field.component"
+                            :structure="field.structure"
                             :id="id"
                             :formValue="formValue"
                         />
                     </template>
                 </div>
                 <div
-                    v-if="component.source"
+                    v-if="components.source"
                     class="flex sticky bottom-0 p-2 mt-4 justify-end gap-2 rounded-xl backdrop-blur-sm"
                     :class="{
-                        'sm:col-span-1': component.cols == 1,
-                        'sm:col-span-2': component.cols == 2,
-                        'sm:col-span-3': component.cols == 3,
-                        'sm:col-span-4': component.cols == 4,
-                        'sm:col-span-5': component.cols == 5,
-                        'sm:col-span-6': component.cols == 6,
-                        'sm:col-span-7': component.cols == 7,
-                        'sm:col-span-8': component.cols == 8,
-                        'sm:col-span-9': component.cols == 9,
-                        'sm:col-span-10': component.cols == 10,
+                        'sm:col-span-1': components.cols == 1,
+                        'sm:col-span-2': components.cols == 2,
+                        'sm:col-span-3': components.cols == 3,
+                        'sm:col-span-4': components.cols == 4,
+                        'sm:col-span-5': components.cols == 5,
+                        'sm:col-span-6': components.cols == 6,
+                        'sm:col-span-7': components.cols == 7,
+                        'sm:col-span-8': components.cols == 8,
+                        'sm:col-span-9': components.cols == 9,
+                        'sm:col-span-10': components.cols == 10,
                     }"
                 >
                     <Button
                         type="button"
                         :disabled="loading == true"
-                        :severity="component.dialogConfirmClass || 'success'"
-                        :icon="component.dialogConfirmIcon || 'pi pi-send'"
-                        :label="$t(component.dialogConfirm || 'Send')"
+                        :severity="components.dialogConfirmClass || 'success'"
+                        :icon="components.dialogConfirmIcon || 'pi pi-send'"
+                        :label="$t(components.dialogConfirm || 'Send')"
                         @click="handleConfirm"
                     />
                 </div>
