@@ -176,7 +176,9 @@ const tableMenuToggle = (event: MouseEvent) => {
             items: [
                 {
                     label: "Active",
-                    icon: (listItems.value == null ? "check" : null) as string,
+                    icon: (listItems.value == null
+                        ? "check_small"
+                        : null) as string,
                     command: () => {
                         listItems.value = null;
                         onTableDataLoad();
@@ -185,7 +187,7 @@ const tableMenuToggle = (event: MouseEvent) => {
                 {
                     label: "Trashed",
                     icon: (listItems.value == "trashed"
-                        ? "check"
+                        ? "check_small"
                         : null) as string,
                     command: () => {
                         listItems.value = "trashed";
@@ -195,7 +197,7 @@ const tableMenuToggle = (event: MouseEvent) => {
                 {
                     label: "Both",
                     icon: (listItems.value == "both"
-                        ? "check"
+                        ? "check_small"
                         : null) as string,
                     command: () => {
                         listItems.value = "both";
