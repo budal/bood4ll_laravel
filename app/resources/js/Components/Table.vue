@@ -244,8 +244,6 @@ const tableMenuToggle = (event: MouseEvent) => {
             badgeClass: string;
             condition: string[];
         }) => {
-            console.log(item.condition);
-
             _tableMenuItemsComplementar.push({
                 label: item.label,
                 method: item.method,
@@ -495,8 +493,6 @@ const debouncedWatch = debounce(() => {
 
 watch(search, debouncedWatch);
 
-// watch(selectedItemsTotal, () => console.log(selectedItemsTotal.value));
-
 onBeforeUnmount(() => {
     debouncedWatch.cancel();
 });
@@ -547,7 +543,6 @@ onBeforeUnmount(() => {
                                 aria-haspopup="true"
                                 aria-controls="overlay_tmenu"
                             />
-                            {{ console.log(tableMenuItems) }}
                             <TieredMenu
                                 ref="tableMenu"
                                 :model="tableMenuItems"
