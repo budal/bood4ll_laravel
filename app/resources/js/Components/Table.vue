@@ -145,7 +145,10 @@ const tableMenuToggle = (event: MouseEvent) => {
                 props.structure.actions.forceDestroy?.visible != false &&
                 isDefined(props.structure.actions.forceDestroy?.callback) &&
                 listItems.value === "trashed",
-            disabled: selectedItemsTotal.value.length < 1 ? true : false,
+            disabled:
+                selectedItemsTotal.value.filter(
+                    (item: { deleted_at: string }) => item.deleted_at === null,
+                ).length < 1,
             icon: "delete_forever",
             badge: selectedItemsTotal.value.filter(
                 (item: { deleted_at: string }) => item.deleted_at === null,
@@ -252,37 +255,19 @@ const tableMenuToggle = (event: MouseEvent) => {
                 ? Object.values(item.condition)
                 : [];
 
-            const v = selectedItemsTotal.value.filter((item, key) => {
-                conditionsKeys.every((v, k) => {
-                    console.log(item[v], key, conditionsValues[k]);
-                });
-
-                // console.log(
-                //     item,
-                //     key,
-                //     conditionsKeys[key],
-                //     conditionsValues[key],
-                // );
-
-                // conditionsKeys.every((v, k) => v === conditionsValues[key]);
-            }).length;
-
-            // console.log(conditionsKeys, v);
-
-            // if (item.condition) {
-            //     const chaves = Object.keys(item.condition); // Obter as chaves
-            //     const valores = Object.values(item.condition); // Obter os valores
-
-            //     console.log(item.condition[chaves[0]]);
-            // }
+            const items = selectedItemsTotal.value.filter((item) => {
+                return conditionsKeys.every(
+                    (v, k) => item[v] === conditionsValues[k],
+                );
+            });
 
             _tableMenuItemsComplementar.push({
                 label: item.label,
                 method: item.method,
-                disabled: item.disabled,
+                disabled: item.condition && items.length < 1,
                 visible: item.visible,
                 icon: item.icon,
-                badge: item.condition ? selectedItemsTotal.value.length : null,
+                badge: item.condition ? items.length : null,
                 badgeClass: item.badgeClass,
                 command: () => {
                     if (item.source) {
@@ -446,8 +431,6 @@ const openDialog = (options: {
         },
     });
 };
-
-const toggleItems = reactive(new Set());
 
 const onTableDataLoad = () => {
     selectedItems.value = [];
@@ -651,7 +634,7 @@ onBeforeUnmount(() => {
             <Column
                 style="width: 1rem"
                 v-bind="
-                    structure.actions.index?.multiSelect == true ||
+                    structure.actions.index?.selectBoxes == true ||
                     (structure.actions.destroy?.visible != false &&
                         isDefined(structure.actions.destroy?.callback)) ||
                     (structure.actions.restore?.visible != false &&

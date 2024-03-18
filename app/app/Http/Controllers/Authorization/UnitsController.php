@@ -212,7 +212,6 @@ class UnitsController extends Controller
                                                     'route' => 'getUnitInfo',
                                                     'transmute' => ['unit' => 'id'],
                                                 ],
-                                                'sourceAttributes' => ['unit' => 'id'],
                                                 'cols' => 4,
                                                 'visible' => (
                                                     Gate::allows('apps.units.update')
@@ -248,7 +247,6 @@ class UnitsController extends Controller
                                                                         'route' => 'getUnitStaff',
                                                                         'transmute' => ['unit' => 'id'],
                                                                     ],
-                                                                    'sourceAttributes' => ['unit' => 'id'],
                                                                     'visible' => true,
                                                                     'disabled' => true,
                                                                 ],
@@ -431,7 +429,6 @@ class UnitsController extends Controller
                     'route' => 'getUnits',
                     'replace' => ['unit' => 'id']
                 ],
-                'sourceAttributes' => ['unit' => 'id'],
                 'span' => 2,
                 'required' => true,
             ],

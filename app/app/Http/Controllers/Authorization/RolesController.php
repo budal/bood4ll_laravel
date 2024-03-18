@@ -137,7 +137,6 @@ class RolesController extends Controller
                     'fields' => [
                         [
                             'type' => 'table',
-                            'name' => 'name',
                             'structure' => [
                                 'actions' => [
                                     'index' => [
@@ -182,7 +181,6 @@ class RolesController extends Controller
                                                     'route' => 'getUnitInfo',
                                                     'transmute' => ['unit' => 'id'],
                                                 ],
-                                                'sourceAttributes' => ['unit' => 'id'],
                                                 'cols' => 3,
                                                 'visible' => (
                                                     Gate::allows('apps.roles.update')
@@ -218,7 +216,6 @@ class RolesController extends Controller
                                                                         'route' => 'getUnitStaff',
                                                                         'transmute' => ['unit' => 'id'],
                                                                     ],
-                                                                    'sourceAttributes' => ['unit' => 'id'],
                                                                     'visible' => true,
                                                                     'disabled' => true,
                                                                 ],
@@ -231,7 +228,6 @@ class RolesController extends Controller
                                                                         'route' => 'getUnitStaff',
                                                                         'transmute' => ['unit' => 'id'],
                                                                     ],
-                                                                    'reload' => true,
                                                                     'visible' => $request->user()->can('canManageNestedData', User::class),
                                                                 ],
                                                                 [
@@ -242,7 +238,6 @@ class RolesController extends Controller
                                                                         'attributes' => ['show' => 'all'],
                                                                         'transmute' => ['unit' => 'id'],
                                                                     ],
-                                                                    'reload' => true,
                                                                     'visible' => $request->user()->can('canManageNestedData', User::class)
                                                                 ],
                                                             ],
@@ -349,10 +344,8 @@ class RolesController extends Controller
                                                         'structure' => [
                                                             'actions' => [
                                                                 'index' => [
-                                                                    'source' => [
-                                                                        'route' => 'getAbilitiesIndex',
-                                                                    ],
-                                                                    'multiSelect' => true,
+                                                                    'source' => 'getAbilitiesIndex',
+                                                                    'selectBoxes' => true,
                                                                     'visible' => true,
                                                                     'disabled' => true,
                                                                 ],
@@ -361,19 +354,25 @@ class RolesController extends Controller
                                                                 [
                                                                     'icon' => 'check',
                                                                     'label' => 'Authorize',
-                                                                    'source' => 'postAbilitiesAuthorize',
+                                                                    'callback' => [
+                                                                        'route' => 'postAbilitiesAuthorize',
+                                                                        'attributes' => ['mode' => 'on']
+                                                                    ],
                                                                     'visible' => $request->user()->can('canManageNestedData', User::class),
-                                                                    'condition' => ['checked' => true],
+                                                                    'condition' => ['checked' => false],
                                                                     'badgeClass' => 'success',
                                                                 ],
-                                                                // [
-                                                                //     'icon' => 'close',
-                                                                //     'label' => 'Deauthorize',
-                                                                //     'source' => 'postAbilitiesDeauthorize',
-                                                                //     'visible' => $request->user()->can('canManageNestedData', User::class),
-                                                                //     'condition' => ['checked' => false],
-                                                                //     'badgeClass' => 'danger',
-                                                                // ],
+                                                                [
+                                                                    'icon' => 'close',
+                                                                    'label' => 'Deauthorize',
+                                                                    'callback' => [
+                                                                        'route' => 'postAbilitiesAuthorize',
+                                                                        'attributes' => ['mode' => 'off']
+                                                                    ],
+                                                                    'visible' => $request->user()->can('canManageNestedData', User::class),
+                                                                    'condition' => ['checked' => true],
+                                                                    'badgeClass' => 'danger',
+                                                                ],
                                                             ],
                                                             'titles' => [
                                                                 [
