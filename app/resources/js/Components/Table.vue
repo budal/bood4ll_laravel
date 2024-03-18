@@ -147,7 +147,9 @@ const tableMenuToggle = (event: MouseEvent) => {
                 listItems.value === "trashed",
             disabled: selectedItemsTotal.value.length < 1 ? true : false,
             icon: "delete_forever",
-            badge: selectedItemsTotal.value.length,
+            badge: selectedItemsTotal.value.filter(
+                (item: { deleted_at: string }) => item.deleted_at === null,
+            ).length,
             badgeClass: "danger",
             command: () => {
                 confirmDialog({
