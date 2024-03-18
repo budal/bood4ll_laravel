@@ -176,6 +176,7 @@ const tableMenuToggle = (event: MouseEvent) => {
         {
             label: "Show items",
             icon: "rule",
+            visible: isDefined(props.structure.actions.forceDestroy?.callback),
             items: [
                 {
                     label: "Activated",
