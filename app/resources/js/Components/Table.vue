@@ -244,6 +244,38 @@ const tableMenuToggle = (event: MouseEvent) => {
             badgeClass: string;
             condition: string[];
         }) => {
+            const conditionsKeys = item.condition
+                ? Object.keys(item.condition)
+                : [];
+
+            const conditionsValues = item.condition
+                ? Object.values(item.condition)
+                : [];
+
+            const v = selectedItemsTotal.value.filter((item, key) => {
+                conditionsKeys.every((v, k) => {
+                    console.log(item[v], key, conditionsValues[k]);
+                });
+
+                // console.log(
+                //     item,
+                //     key,
+                //     conditionsKeys[key],
+                //     conditionsValues[key],
+                // );
+
+                // conditionsKeys.every((v, k) => v === conditionsValues[key]);
+            }).length;
+
+            // console.log(conditionsKeys, v);
+
+            // if (item.condition) {
+            //     const chaves = Object.keys(item.condition); // Obter as chaves
+            //     const valores = Object.values(item.condition); // Obter os valores
+
+            //     console.log(item.condition[chaves[0]]);
+            // }
+
             _tableMenuItemsComplementar.push({
                 label: item.label,
                 method: item.method,

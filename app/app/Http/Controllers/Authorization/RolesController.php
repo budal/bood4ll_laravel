@@ -366,14 +366,14 @@ class RolesController extends Controller
                                                                     'condition' => ['checked' => true],
                                                                     'badgeClass' => 'success',
                                                                 ],
-                                                                [
-                                                                    'icon' => 'close',
-                                                                    'label' => 'Deauthorize',
-                                                                    'source' => 'postAbilitiesDeauthorize',
-                                                                    'visible' => $request->user()->can('canManageNestedData', User::class),
-                                                                    'condition' => ['checked' => false],
-                                                                    'badgeClass' => 'danger',
-                                                                ],
+                                                                // [
+                                                                //     'icon' => 'close',
+                                                                //     'label' => 'Deauthorize',
+                                                                //     'source' => 'postAbilitiesDeauthorize',
+                                                                //     'visible' => $request->user()->can('canManageNestedData', User::class),
+                                                                //     'condition' => ['checked' => false],
+                                                                //     'badgeClass' => 'danger',
+                                                                // ],
                                                             ],
                                                             'titles' => [
                                                                 [
