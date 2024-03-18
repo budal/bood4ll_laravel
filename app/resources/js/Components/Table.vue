@@ -7,6 +7,7 @@ import {
     markRaw,
     defineAsyncComponent,
     onBeforeUnmount,
+    reactive,
 } from "vue";
 import { Link } from "@inertiajs/vue3";
 import { isDefined, useIntersectionObserver } from "@vueuse/core";
@@ -54,6 +55,8 @@ const selectedColumns = ref(tableColumns.value);
 const search = ref(null);
 const listItems = ref();
 const indexUrlRef = ref(props.structure.actions.index.source);
+const toggleRef = ref([]);
+const toggleLoadingRef = ref(null);
 
 const tableMenuToggle = (event: MouseEvent) => {
     const _tableMenuItemsEdit: MenuItem[] = [
@@ -486,6 +489,41 @@ watch(search, debouncedWatch);
 onBeforeUnmount(() => {
     debouncedWatch.cancel();
 });
+
+const loading = ref(false);
+const toggleItem = reactive(new Set());
+
+const toggle = (id: number) => {
+    loading.value = true;
+
+    contentItems.value.forEach((item) => {
+        // if (item.checked == true)
+        toggleItem.add({
+            id: item.id,
+            icon: "pi pi-check",
+            severity: "success",
+        });
+        // else
+        //     toggleItem.add({
+        //         id: item.id,
+        //         icon: "pi pi-times",
+        //         severity: "danger",
+        //     });
+    });
+
+    // toggleItem.add({
+    //     item: id,
+    // });
+
+    // const defaultTab = props.items.find((item: any) => item.showIf !== false);
+
+    console.log(toggleRef.value[id], contentItems.value);
+
+    // loading.value = true;
+    setTimeout(() => {
+        // loading.value = false;
+    }, 2000);
+};
 </script>
 
 <template>
@@ -669,17 +707,32 @@ onBeforeUnmount(() => {
                         </template>
                         <p v-if="slotProps.data[col.field]?.length == 0">-</p>
                     </template>
-                    <p v-if="col.type == 'active'">
-                        <i
-                            class="pi"
-                            :class="{
-                                'pi-check-circle text-green-500':
-                                    slotProps.data[col.field],
-                                'pi-times-circle text-red-400':
-                                    !slotProps.data[col.field],
-                            }"
-                        ></i>
-                    </p>
+                    <template v-if="col.type == 'toggle'">
+                        <Button
+                            ref="contentItems"
+                            :id="slotProps.data.id"
+                            :icon="
+                                col.checked == true
+                                    ? 'pi pi-check'
+                                    : 'pi pi-times'
+                            "
+                            :severity="
+                                col.checked == true ? 'success' : 'danger'
+                            "
+                            rounded
+                            aria-label="Search"
+                            @click="toggle(index)"
+                        />
+                    </template>
+                    <span
+                        v-if="col.type == 'active'"
+                        class="material-symbols-rounded"
+                        :class="{
+                            'text-green-500': slotProps.data[col.field],
+                            'text-red-400': !slotProps.data[col.field],
+                        }"
+                        v-html="slotProps.data[col.field] ? 'check' : 'close'"
+                    />
                 </template>
             </Column>
             <Column
