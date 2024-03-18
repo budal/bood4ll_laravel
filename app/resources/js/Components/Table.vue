@@ -283,12 +283,14 @@ const tableMenuToggle = (event: MouseEvent) => {
                             onTableDataLoad();
                         }
                     } else {
+                        const data: string[] = items.map((item) => item.id);
+
                         fetchData(item.callback, {
                             complement: {
                                 id: props.id,
                             },
                             method: item.method,
-                            data: item.data,
+                            data: { list: data },
                             onBefore: () => {
                                 toast.add({
                                     severity: "contrast",
@@ -312,7 +314,7 @@ const tableMenuToggle = (event: MouseEvent) => {
                                     detail: transChoice(
                                         content.message,
                                         content.length,
-                                        { total: content.length },
+                                        content.replacements,
                                     ),
                                     life: 3000,
                                 });

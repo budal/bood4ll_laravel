@@ -1185,6 +1185,7 @@ class RolesController extends Controller
                 return response()->json([
                     'type' => 'success',
                     'deactivate' => $ability->action == 'delete',
+                    'title' => $ability->action == 'delete' ? 'Deactivation' : 'Activation',
                     'message' => $ability->action == 'delete'
                         ? "The ability ':ability' was deactivated."
                         : "The ability ':ability' was activated.",
@@ -1194,6 +1195,7 @@ class RolesController extends Controller
             } elseif ($mode == 'on') {
                 return response()->json([
                     'type' => 'success',
+                    'title' => 'Activation',
                     'message' => '{0} Nothing to activate.|[1] Item activated successfully.|[2,*] :total items successfully activated.',
                     'length' => $ability->total,
                     'replacements' => ['total' => $ability->total],
@@ -1201,6 +1203,7 @@ class RolesController extends Controller
             } elseif ($mode == 'off') {
                 return response()->json([
                     'type' => 'success',
+                    'title' => 'Deactivation',
                     'message' => '{0} Nothing to deactivate.|[1] Item deactivated successfully.|[2,*] :total items successfully deactivated.',
                     'length' => $ability->total,
                     'replacements' => ['total' => $ability->total],

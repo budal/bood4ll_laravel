@@ -45,6 +45,15 @@ const loadingState = () => {
             loading.value = true;
         },
         onSuccess: (success: {
+            type:
+                | "success"
+                | "secondary"
+                | "info"
+                | "contrast"
+                | "warn"
+                | "error"
+                | undefined;
+            title: string;
             message: string;
             deactivate: boolean;
             length: number;
@@ -63,8 +72,8 @@ const loadingState = () => {
             }
 
             toast.add({
-                severity: "success",
-                summary: trans("Success"),
+                severity: success.type,
+                summary: trans(success.title),
                 detail: transChoice(
                     success.message,
                     success.length,
