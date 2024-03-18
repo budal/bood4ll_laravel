@@ -24,6 +24,7 @@ import { MenuItem } from "primevue/menuitem";
 
 import { ReplacementsInterface } from "laravel-vue-i18n/interfaces/replacements";
 import debounce from "lodash.debounce";
+import TableToggle from "@/Components/TableToggle.vue";
 
 const props = defineProps<{
     structure?: any;
@@ -55,8 +56,6 @@ const selectedColumns = ref(tableColumns.value);
 const search = ref(null);
 const listItems = ref();
 const indexUrlRef = ref(props.structure.actions.index.source);
-const toggleRef = ref([]);
-const toggleLoadingRef = ref(null);
 
 const tableMenuToggle = (event: MouseEvent) => {
     const _tableMenuItemsEdit: MenuItem[] = [
@@ -410,6 +409,8 @@ const openDialog = (options: {
     });
 };
 
+const toggleItems = reactive(new Set());
+
 const onTableDataLoad = () => {
     selectedItems.value = [];
     loadingTable.value = true;
@@ -489,41 +490,6 @@ watch(search, debouncedWatch);
 onBeforeUnmount(() => {
     debouncedWatch.cancel();
 });
-
-const loading = ref(false);
-const toggleItem = reactive(new Set());
-
-const toggle = (id: number) => {
-    loading.value = true;
-
-    contentItems.value.forEach((item) => {
-        // if (item.checked == true)
-        toggleItem.add({
-            id: item.id,
-            icon: "pi pi-check",
-            severity: "success",
-        });
-        // else
-        //     toggleItem.add({
-        //         id: item.id,
-        //         icon: "pi pi-times",
-        //         severity: "danger",
-        //     });
-    });
-
-    // toggleItem.add({
-    //     item: id,
-    // });
-
-    // const defaultTab = props.items.find((item: any) => item.showIf !== false);
-
-    console.log(toggleRef.value[id], contentItems.value);
-
-    // loading.value = true;
-    setTimeout(() => {
-        // loading.value = false;
-    }, 2000);
-};
 </script>
 
 <template>
@@ -600,8 +566,9 @@ const toggle = (id: number) => {
                                         <span
                                             v-if="item.shortcut"
                                             class="ml-auto border-1 surface-border border-round surface-100 text-xs p-1"
-                                            >{{ item.shortcut }}</span
                                         >
+                                            {{ item.shortcut }}
+                                        </span>
                                         <span
                                             v-if="item.items"
                                             class="pi pi-chevron-right ml-auto border-1 surface-border border-round surface-100 text-xs p-1"
@@ -707,21 +674,12 @@ const toggle = (id: number) => {
                         </template>
                         <p v-if="slotProps.data[col.field]?.length == 0">-</p>
                     </template>
+
                     <template v-if="col.type == 'toggle'">
-                        <Button
-                            ref="contentItems"
+                        <TableToggle
+                            url="apps.roles.abilities_update"
                             :id="slotProps.data.id"
-                            :icon="
-                                col.checked == true
-                                    ? 'pi pi-check'
-                                    : 'pi pi-times'
-                            "
-                            :severity="
-                                col.checked == true ? 'success' : 'danger'
-                            "
-                            rounded
-                            aria-label="Search"
-                            @click="toggle(index)"
+                            :checked="slotProps.data.checked"
                         />
                     </template>
                     <span
@@ -765,3 +723,4 @@ const toggle = (id: number) => {
         <div ref="lastIntersection" class="-translate-y-96" />
     </DeferredContent>
 </template>
+./TableToggle.vue

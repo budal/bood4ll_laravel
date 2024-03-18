@@ -1168,43 +1168,45 @@ class RolesController extends Controller
         }
     }
 
-    public function abilitiesUpdate(Request $request, $mode): RedirectResponse
+    public function abilitiesUpdate(Request $request, $mode): JsonResponse
     {
-        $this->authorize('isSuperAdmin', User::class);
+        // $this->authorize('isSuperAdmin', User::class);
 
         try {
             $ability = Ability::sync($mode, $request->list);
 
             if ($mode == 'toggle') {
-                return Redirect::back()->with([
-                    'toast_type' => 'success',
-                    'toast_message' => $ability->action == 'delete'
+                return response()->json([
+                    'type' => 'success',
+                    'deactivate' => $ability->action == 'delete',
+                    'message' => $ability->action == 'delete'
                         ? "The ability ':ability' was deactivated."
                         : "The ability ':ability' was activated.",
-                    'toast_replacements' => ['ability' => $ability->name],
+                    'length' => 1,
+                    'replacements' => ['ability' => $ability->name],
                 ]);
             } elseif ($mode == 'on') {
-                return Redirect::back()->with([
-                    'toast_type' => 'success',
-                    'toast_message' => '{0} Nothing to activate.|[1] Item activated successfully.|[2,*] :total items successfully activated.',
-                    'toast_count' => $ability->total,
-                    'toast_replacements' => ['total' => $ability->total],
+                return response()->json([
+                    'type' => 'success',
+                    'message' => '{0} Nothing to activate.|[1] Item activated successfully.|[2,*] :total items successfully activated.',
+                    'length' => $ability->total,
+                    'replacements' => ['total' => $ability->total],
                 ]);
             } elseif ($mode == 'off') {
-                return Redirect::back()->with([
-                    'toast_type' => 'success',
-                    'toast_message' => '{0} Nothing to deactivate.|[1] Item deactivated successfully.|[2,*] :total items successfully deactivated.',
-                    'toast_count' => $ability->total,
-                    'toast_replacements' => ['total' => $ability->total],
+                return response()->json([
+                    'type' => 'success',
+                    'message' => '{0} Nothing to deactivate.|[1] Item deactivated successfully.|[2,*] :total items successfully deactivated.',
+                    'length' => $ability->total,
+                    'replacements' => ['total' => $ability->total],
                 ]);
             }
         } catch (\Throwable $e) {
             report($e);
 
-            return Redirect::back()->with([
-                'toast_type' => 'error',
-                'toast_message' => 'Error on edit selected item.|Error on edit selected items.',
-                'toast_count' => count($request->list),
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Error on edit selected item.|Error on edit selected items.',
+                'length' => count($request->list),
             ]);
         }
     }
