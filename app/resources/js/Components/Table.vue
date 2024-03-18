@@ -238,8 +238,8 @@ const tableMenuToggle = (event: MouseEvent) => {
             dialog: boolean;
             disabled: boolean;
             visible: boolean;
-            reload: boolean;
             icon: string;
+            condition: string[];
         }) =>
             _tableMenuItemsComplementar.push({
                 label: item.label,
@@ -247,6 +247,7 @@ const tableMenuToggle = (event: MouseEvent) => {
                 disabled: item.disabled,
                 visible: item.visible,
                 icon: item.icon,
+                badge: item.condition ? selectedItemsTotal.value.length : null,
                 command: () => {
                     if (item.source) {
                         if (item.dialog == true) {
@@ -487,6 +488,8 @@ const debouncedWatch = debounce(() => {
 
 watch(search, debouncedWatch);
 
+watch(selectedItemsTotal, () => console.log(selectedItemsTotal.value));
+
 onBeforeUnmount(() => {
     debouncedWatch.cancel();
 });
@@ -613,6 +616,7 @@ onBeforeUnmount(() => {
             <Column
                 style="width: 1rem"
                 v-bind="
+                    structure.actions.index?.multiSelect == true ||
                     (structure.actions.destroy?.visible != false &&
                         isDefined(structure.actions.destroy?.callback)) ||
                     (structure.actions.restore?.visible != false &&
@@ -723,4 +727,3 @@ onBeforeUnmount(() => {
         <div ref="lastIntersection" class="-translate-y-96" />
     </DeferredContent>
 </template>
-./TableToggle.vue

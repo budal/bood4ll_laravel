@@ -329,7 +329,7 @@ class RolesController extends Controller
                                 'menu' => [
                                     [
                                         'icon' => 'account_tree',
-                                        'label' => 'Abilities',
+                                        'label' => 'Abilities management',
                                         'source' => 'getAbilitiesIndex',
                                         'dialog' => true,
                                         'visible' => $request->user()->can('isSuperAdmin', User::class),
@@ -352,6 +352,7 @@ class RolesController extends Controller
                                                                     'source' => [
                                                                         'route' => 'getAbilitiesIndex',
                                                                     ],
+                                                                    'multiSelect' => true,
                                                                     'visible' => true,
                                                                     'disabled' => true,
                                                                 ],
@@ -362,12 +363,14 @@ class RolesController extends Controller
                                                                     'label' => 'Authorize',
                                                                     'source' => 'postAbilitiesAuthorize',
                                                                     'visible' => $request->user()->can('canManageNestedData', User::class),
+                                                                    'condition' => ['checked' => true],
                                                                 ],
                                                                 [
                                                                     'icon' => 'close',
                                                                     'label' => 'Deauthorize',
                                                                     'source' => 'postAbilitiesDeauthorize',
-                                                                    'visible' => $request->user()->can('canManageNestedData', User::class)
+                                                                    'visible' => $request->user()->can('canManageNestedData', User::class),
+                                                                    'condition' => ['checked' => false],
                                                                 ],
                                                             ],
                                                             'titles' => [
