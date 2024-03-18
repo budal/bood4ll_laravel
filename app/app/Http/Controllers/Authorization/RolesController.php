@@ -364,6 +364,7 @@ class RolesController extends Controller
                                                                     'source' => 'postAbilitiesAuthorize',
                                                                     'visible' => $request->user()->can('canManageNestedData', User::class),
                                                                     'condition' => ['checked' => true],
+                                                                    'badgeClass' => 'success',
                                                                 ],
                                                                 [
                                                                     'icon' => 'close',
@@ -371,6 +372,7 @@ class RolesController extends Controller
                                                                     'source' => 'postAbilitiesDeauthorize',
                                                                     'visible' => $request->user()->can('canManageNestedData', User::class),
                                                                     'condition' => ['checked' => false],
+                                                                    'badgeClass' => 'danger',
                                                                 ],
                                                             ],
                                                             'titles' => [

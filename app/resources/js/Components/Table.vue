@@ -241,8 +241,11 @@ const tableMenuToggle = (event: MouseEvent) => {
             disabled: boolean;
             visible: boolean;
             icon: string;
+            badgeClass: string;
             condition: string[];
-        }) =>
+        }) => {
+            console.log(item.condition);
+
             _tableMenuItemsComplementar.push({
                 label: item.label,
                 method: item.method,
@@ -250,6 +253,7 @@ const tableMenuToggle = (event: MouseEvent) => {
                 visible: item.visible,
                 icon: item.icon,
                 badge: item.condition ? selectedItemsTotal.value.length : null,
+                badgeClass: item.badgeClass,
                 command: () => {
                     if (item.source) {
                         if (item.dialog == true) {
@@ -303,7 +307,8 @@ const tableMenuToggle = (event: MouseEvent) => {
                         });
                     }
                 },
-            }),
+            });
+        },
     );
 
     tableMenuItems.value = [
@@ -490,7 +495,7 @@ const debouncedWatch = debounce(() => {
 
 watch(search, debouncedWatch);
 
-watch(selectedItemsTotal, () => console.log(selectedItemsTotal.value));
+// watch(selectedItemsTotal, () => console.log(selectedItemsTotal.value));
 
 onBeforeUnmount(() => {
     debouncedWatch.cancel();
@@ -542,6 +547,7 @@ onBeforeUnmount(() => {
                                 aria-haspopup="true"
                                 aria-controls="overlay_tmenu"
                             />
+                            {{ console.log(tableMenuItems) }}
                             <TieredMenu
                                 ref="tableMenu"
                                 :model="tableMenuItems"
