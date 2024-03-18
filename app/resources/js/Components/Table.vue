@@ -699,7 +699,7 @@ onBeforeUnmount(() => {
 
                     <template v-if="col.type == 'toggle'">
                         <TableToggle
-                            url="apps.roles.abilities_update"
+                            :url="col.callback"
                             :id="slotProps.data.id"
                             :checked="slotProps.data.checked"
                         />
