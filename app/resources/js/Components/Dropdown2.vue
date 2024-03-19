@@ -73,6 +73,7 @@ const value = ref(props.value);
         v-if="multiple === true"
         :id="id"
         v-model="value"
+        display="chip"
         :options="dropdownItems"
         :optionValue="optionValue"
         :optionLabel="optionLabel"
