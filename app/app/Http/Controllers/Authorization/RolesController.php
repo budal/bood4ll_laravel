@@ -23,6 +23,8 @@ class RolesController extends Controller
 {
     public function getAbilities(Request $request): JsonResponse
     {
+        // $this->authorize('isSuperAdmin', User::class);
+
         $abilities = Ability::get();
 
         return response()->json($abilities);
@@ -75,15 +77,6 @@ class RolesController extends Controller
             'data' => $abilities,
             "next_page_url" => null
         ]);
-    }
-
-    public function getAbilityInfo(Request $request, Role $role): JsonResponse
-    {
-        // $this->authorize('isSuperAdmin', User::class);
-
-        $role['abilities'] = $role->abilities;
-
-        return response()->json($role);
     }
 
     public function putAbilitiesUpdate(Request $request, $mode): JsonResponse
