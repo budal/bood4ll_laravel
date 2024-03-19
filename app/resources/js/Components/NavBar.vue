@@ -41,9 +41,9 @@ const menu = ref(false);
                     >
                         <span
                             class="material-symbols-rounded"
-                            v-html="item.icon"
+                            v-text="item.icon"
                         />
-                        <span class="ml-2" v-html="$t(item.label as string)" />
+                        <span class="ml-2" v-text="$t(item.label as string)" />
                         <Badge
                             v-if="item.badge"
                             :class="{ 'ml-auto': !root, 'ml-2': root }"
@@ -52,17 +52,17 @@ const menu = ref(false);
                         <span
                             v-if="item.shortcut"
                             class="ml-auto border-1 surface-border border-round surface-100 text-xs p-1"
-                            v-html="item.shortcut"
+                            v-text="item.shortcut"
                         />
                         <span
                             v-if="hasSubmenu && root"
                             class="material-symbols-rounded"
-                            v-html="'expand_more'"
+                            v-text="'expand_more'"
                         />
                         <span
                             v-if="hasSubmenu && !root"
                             class="material-symbols-rounded"
-                            v-html="'chevron_right'"
+                            v-text="'chevron_right'"
                         />
                     </component>
                 </template>
@@ -130,7 +130,7 @@ const menu = ref(false);
                                     >
                                         <span
                                             class="material-symbols-rounded"
-                                            v-html="item.icon"
+                                            v-text="item.icon"
                                         />
                                         <span class="ml-2">
                                             {{ $t(item.label as string) }}
@@ -143,7 +143,7 @@ const menu = ref(false);
                                         <span
                                             v-if="item.shortcut"
                                             class="ml-auto border-1 surface-border border-round surface-100 text-xs p-1"
-                                            v-html="item.shortcut"
+                                            v-text="item.shortcut"
                                         />
                                     </component>
                                 </template>
@@ -165,7 +165,7 @@ const menu = ref(false);
                     >
                         <span
                             class="material-symbols-rounded"
-                            v-html="item.icon"
+                            v-text="item.icon"
                         />
                         <span
                             :class="{

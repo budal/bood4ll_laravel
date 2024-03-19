@@ -5,6 +5,8 @@ import {
     watch,
     defineAsyncComponent,
     onBeforeUnmount,
+    onBeforeMount,
+    reactive,
 } from "vue";
 import { Link } from "@inertiajs/vue3";
 import { isDefined, useIntersectionObserver } from "@vueuse/core";
@@ -53,6 +55,7 @@ const selectedColumns = ref(tableColumns.value);
 const search = ref(null);
 const listItems = ref();
 const indexUrlRef = ref(props.structure.actions.index.source);
+const toggleRef = reactive(new Set());
 
 const tableMenuToggle = (event: MouseEvent) => {
     const _tableMenuItemsEdit: MenuItem[] = [
@@ -514,9 +517,7 @@ onBeforeUnmount(() => {
     debouncedWatch.cancel();
 });
 
-const onToggle = (route: any, source: any, el: MouseEvent) => {
-    console.log(el);
-
+const onToggle = (route: any, source: any) => {
     fetchData(route, {
         method: "post",
         data: { list: [source.data.id] },
@@ -637,7 +638,7 @@ const onToggle = (route: any, source: any, el: MouseEvent) => {
                                     >
                                         <span
                                             class="material-symbols-rounded"
-                                            v-html="item.icon"
+                                            v-text="item.icon"
                                         />
                                         <span class="ml-1">
                                             {{ $t(item.label as string) }}
@@ -765,6 +766,7 @@ const onToggle = (route: any, source: any, el: MouseEvent) => {
 
                     <template v-if="col.type == 'toggle'">
                         <Button
+                            ref="toggleRef"
                             rounded
                             :icon="
                                 slotProps.data.checked == true
@@ -776,7 +778,7 @@ const onToggle = (route: any, source: any, el: MouseEvent) => {
                                     ? 'success'
                                     : 'danger'
                             "
-                            @click="onToggle(col.callback, slotProps, $event)"
+                            @click="onToggle(col.callback, slotProps)"
                         >
                         </Button>
                     </template>
@@ -787,7 +789,7 @@ const onToggle = (route: any, source: any, el: MouseEvent) => {
                             'text-green-500': slotProps.data[col.field],
                             'text-red-400': !slotProps.data[col.field],
                         }"
-                        v-html="slotProps.data[col.field] ? 'check' : 'close'"
+                        v-text="slotProps.data[col.field] ? 'check' : 'close'"
                     />
                 </template>
             </Column>
@@ -804,7 +806,7 @@ const onToggle = (route: any, source: any, el: MouseEvent) => {
                     <Button
                         class="material-symbols-rounded"
                         type="button"
-                        v-html="'edit_square'"
+                        v-text="'edit_square'"
                         text
                         size="small"
                         @click="
