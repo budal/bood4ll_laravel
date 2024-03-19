@@ -525,7 +525,7 @@ const onToggle = (route: any, source: any) => {
             mode: "toggle",
         },
         onBefore: () => {
-            // loading.value = true;
+            source.data.loading = true;
         },
         onSuccess: (success: {
             type:
@@ -539,20 +539,18 @@ const onToggle = (route: any, source: any) => {
             title: string;
             message: string;
             deactivate: boolean;
+            checked: boolean;
             length: number;
             replacements: ReplacementsInterface;
         }) => {
-            // if (success.deactivate === true) {
-            //     checkedRef.value = {
-            //         icon: "pi pi-times",
-            //         severity: "danger",
-            //     };
-            // } else {
-            //     checkedRef.value = {
-            //         icon: "pi pi-check",
-            //         severity: "success",
-            //     };
-            // }
+            const icon =
+                success.checked === true ? "pi pi-check" : "pi pi-times";
+            const severity = success.checked === true ? "success" : "danger";
+
+            source.data.icon = icon;
+            source.data.severity = severity;
+
+            source.data.checked = success.deactivate === true ? false : true;
 
             toast.add({
                 severity: success.type,
@@ -566,7 +564,7 @@ const onToggle = (route: any, source: any) => {
             });
         },
         onFinish: () => {
-            // loading.value = false;
+            source.data.loading = false;
         },
         onError: (error: { message: string; length: number }) => {
             toast.add({
@@ -768,6 +766,7 @@ const onToggle = (route: any, source: any) => {
                         <Button
                             ref="toggleRef"
                             rounded
+                            :loading="slotProps.data.loading"
                             :icon="
                                 slotProps.data.checked == true
                                     ? 'pi pi-check'
@@ -779,8 +778,7 @@ const onToggle = (route: any, source: any) => {
                                     : 'danger'
                             "
                             @click="onToggle(col.callback, slotProps)"
-                        >
-                        </Button>
+                        />
                     </template>
                     <span
                         v-if="col.type == 'active'"
