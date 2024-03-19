@@ -1,13 +1,10 @@
 <script setup lang="ts">
 import {
     ref,
-    onMounted,
     computed,
     watch,
-    markRaw,
     defineAsyncComponent,
     onBeforeUnmount,
-    reactive,
 } from "vue";
 import { Link } from "@inertiajs/vue3";
 import { isDefined, useIntersectionObserver } from "@vueuse/core";
@@ -284,7 +281,9 @@ const tableMenuToggle = (event: MouseEvent) => {
                             onTableDataLoad();
                         }
                     } else {
-                        const data: string[] = items.map((item) => item.id);
+                        const data: string[] = items.map(
+                            (item: any) => item.id,
+                        );
 
                         fetchData(item.callback, {
                             complement: {

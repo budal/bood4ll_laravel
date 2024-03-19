@@ -18,7 +18,7 @@ const props = withDefaults(
 
 const toast = useToast();
 
-const checked = ref(
+const checkedRef = ref(
     props.checked === true
         ? {
               icon: "pi pi-check",
@@ -59,17 +59,17 @@ const loadingState = () => {
             length: number;
             replacements: ReplacementsInterface;
         }) => {
-            if (success.deactivate === true) {
-                checked.value = {
-                    icon: "pi pi-times",
-                    severity: "danger",
-                };
-            } else {
-                checked.value = {
-                    icon: "pi pi-check",
-                    severity: "success",
-                };
-            }
+            // if (success.deactivate === true) {
+            //     checkedRef.value = {
+            //         icon: "pi pi-times",
+            //         severity: "danger",
+            //     };
+            // } else {
+            //     checkedRef.value = {
+            //         icon: "pi pi-check",
+            //         severity: "success",
+            //     };
+            // }
 
             toast.add({
                 severity: success.type,
@@ -98,10 +98,11 @@ const loadingState = () => {
 </script>
 
 <template>
+    {{ props.checked }}
     <Button
         rounded
-        :icon="checked.icon"
-        :severity="checked.severity"
+        :icon="checkedRef.icon"
+        :severity="checkedRef.severity"
         :loading="loading"
         @click="
             loadingState();
