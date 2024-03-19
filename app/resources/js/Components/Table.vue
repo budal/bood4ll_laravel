@@ -5,8 +5,6 @@ import {
     watch,
     defineAsyncComponent,
     onBeforeUnmount,
-    onBeforeMount,
-    reactive,
 } from "vue";
 import { Link } from "@inertiajs/vue3";
 import { isDefined, useIntersectionObserver } from "@vueuse/core";
@@ -34,7 +32,7 @@ const DialogBody = defineAsyncComponent(
     () => import("@/Components/DialogBody.vue"),
 );
 
-const contentItems = ref(props.structure.data?.data ?? []);
+const contentItems = ref<any[]>([]);
 
 const dialog = useDialog();
 const toast = useToast();
