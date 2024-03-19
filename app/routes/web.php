@@ -90,7 +90,7 @@ Route::middleware('auth')->group(function () {
                     ->defaults('title', 'Abilities')
                     ->defaults('description', 'Define which abilities will be showed in the roles management.')
                     ->defaults('icon', 'ballot');
-                Route::post('/roles/abilities/update/{mode?}', 'abilitiesUpdate')->name('abilities_update')->whereIn('mode', ['toggle', 'on', 'off']);
+                Route::put('/roles/abilities/update/{mode?}', 'putAbilitiesUpdate')->name('abilities_update')->whereIn('mode', ['toggle', 'on', 'off']);
             });
         });
 

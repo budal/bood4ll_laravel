@@ -28,58 +28,6 @@ class RolesController extends Controller
         return response()->json($abilities);
     }
 
-    public function getRolesIndex(Request $request): JsonResponse
-    {
-        // $this->authorize('access', User::class);
-
-        $roles = Role::leftjoin('role_user', 'role_user.role_id', '=', 'roles.id')
-            ->select('roles.id', 'roles.name', 'roles.description', 'roles.deleted_at')
-            ->groupBy('roles.id', 'roles.name', 'roles.description', 'roles.deleted_at')
-            ->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
-                $query->where('roles.superadmin', false);
-                $query->where('roles.manager', false);
-                $query->where('roles.active', true);
-                $query->where(function ($query) {
-                    $query->where('roles.lock_on_expire', false);
-                    $query->orWhere(function ($query) {
-                        $query->where('roles.lock_on_expire', true);
-                        $query->where('roles.expires_at', '>=', 'NOW()');
-                    });
-                });
-                $query->where('role_user.user_id', $request->user()->id);
-            })
-            ->orderBy('name')
-            ->when($request->listItems ?? null, function ($query, $listItems) {
-                if ($listItems == 'both') {
-                    $query->withTrashed();
-                } elseif ($listItems == 'trashed') {
-                    $query->onlyTrashed();
-                }
-            })
-            ->where('name', 'ilike', "%$request->search%")
-            ->withCount([
-                'abilities',
-                'users' => function ($query) use ($request) {
-                    $query->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
-                        $query->join('unit_user', function (JoinClause $join) use ($request, $query) {
-                            $join->on('unit_user.user_id', '=', 'role_user.user_id')
-                                ->where('unit_user.primary', true);
-
-                            if ($request->user()->cannot('hasFullAccess', User::class)) {
-                                $query->where('unit_user.user_id', $request->user()->id);
-                            }
-
-                            $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
-                        });
-                    });
-                }
-            ])
-            ->cursorPaginate(30)
-            ->withQueryString();
-
-        return response()->json($roles);
-    }
-
     public function getAbilitiesIndex(Request $request): JsonResponse
     {
         // $this->authorize('isSuperAdmin', User::class);
@@ -136,6 +84,104 @@ class RolesController extends Controller
         $role['abilities'] = $role->abilities;
 
         return response()->json($role);
+    }
+
+    public function putAbilitiesUpdate(Request $request, $mode): JsonResponse
+    {
+        // $this->authorize('isSuperAdmin', User::class);
+
+        try {
+            $ability = Ability::sync($mode, $request->list);
+
+            if ($mode == 'toggle') {
+                return response()->json([
+                    'type' => 'success',
+                    'deactivate' => $ability->action == 'delete',
+                    'title' => $ability->action == 'delete' ? 'Deactivation' : 'Activation',
+                    'message' => $ability->action == 'delete'
+                        ? "The ability ':ability' was deactivated."
+                        : "The ability ':ability' was activated.",
+                    'length' => 1,
+                    'replacements' => ['ability' => $ability->name],
+                ]);
+            } elseif ($mode == 'on') {
+                return response()->json([
+                    'type' => 'success',
+                    'title' => 'Activation',
+                    'message' => '{0} Nothing to activate.|[1] Item activated successfully.|[2,*] :total items successfully activated.',
+                    'length' => $ability->total,
+                    'replacements' => ['total' => $ability->total],
+                ]);
+            } elseif ($mode == 'off') {
+                return response()->json([
+                    'type' => 'success',
+                    'title' => 'Deactivation',
+                    'message' => '{0} Nothing to deactivate.|[1] Item deactivated successfully.|[2,*] :total items successfully deactivated.',
+                    'length' => $ability->total,
+                    'replacements' => ['total' => $ability->total],
+                ]);
+            }
+        } catch (\Throwable $e) {
+            report($e);
+
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Error on edit selected item.|Error on edit selected items.',
+                'length' => count($request->list),
+            ]);
+        }
+    }
+
+    public function getRolesIndex(Request $request): JsonResponse
+    {
+        // $this->authorize('access', User::class);
+
+        $roles = Role::leftjoin('role_user', 'role_user.role_id', '=', 'roles.id')
+            ->select('roles.id', 'roles.name', 'roles.description', 'roles.deleted_at')
+            ->groupBy('roles.id', 'roles.name', 'roles.description', 'roles.deleted_at')
+            ->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
+                $query->where('roles.superadmin', false);
+                $query->where('roles.manager', false);
+                $query->where('roles.active', true);
+                $query->where(function ($query) {
+                    $query->where('roles.lock_on_expire', false);
+                    $query->orWhere(function ($query) {
+                        $query->where('roles.lock_on_expire', true);
+                        $query->where('roles.expires_at', '>=', 'NOW()');
+                    });
+                });
+                $query->where('role_user.user_id', $request->user()->id);
+            })
+            ->orderBy('name')
+            ->when($request->listItems ?? null, function ($query, $listItems) {
+                if ($listItems == 'both') {
+                    $query->withTrashed();
+                } elseif ($listItems == 'trashed') {
+                    $query->onlyTrashed();
+                }
+            })
+            ->where('name', 'ilike', "%$request->search%")
+            ->withCount([
+                'abilities',
+                'users' => function ($query) use ($request) {
+                    $query->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
+                        $query->join('unit_user', function (JoinClause $join) use ($request, $query) {
+                            $join->on('unit_user.user_id', '=', 'role_user.user_id')
+                                ->where('unit_user.primary', true);
+
+                            if ($request->user()->cannot('hasFullAccess', User::class)) {
+                                $query->where('unit_user.user_id', $request->user()->id);
+                            }
+
+                            $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
+                        });
+                    });
+                }
+            ])
+            ->cursorPaginate(30)
+            ->withQueryString();
+
+        return response()->json($roles);
     }
 
     public function index(Request $request): Response
@@ -413,7 +459,7 @@ class RolesController extends Controller
                                                                         'route' => 'apps.roles.abilities_update',
                                                                         'attributes' => ['mode' => 'toggle']
                                                                     ],
-                                                                    'method' => 'post',
+                                                                    'method' => 'put',
                                                                     'colorOn' => 'success',
                                                                     'colorOff' => 'danger',
                                                                 ],
@@ -1181,52 +1227,6 @@ class RolesController extends Controller
                 'toast_type' => 'error',
                 'toast_message' => 'Error on restore selected item.|Error on restore selected items.',
                 'toast_count' => $request->list,
-            ]);
-        }
-    }
-
-    public function abilitiesUpdate(Request $request, $mode): JsonResponse
-    {
-        // $this->authorize('isSuperAdmin', User::class);
-
-        try {
-            $ability = Ability::sync($mode, $request->list);
-
-            if ($mode == 'toggle') {
-                return response()->json([
-                    'type' => 'success',
-                    'deactivate' => $ability->action == 'delete',
-                    'title' => $ability->action == 'delete' ? 'Deactivation' : 'Activation',
-                    'message' => $ability->action == 'delete'
-                        ? "The ability ':ability' was deactivated."
-                        : "The ability ':ability' was activated.",
-                    'length' => 1,
-                    'replacements' => ['ability' => $ability->name],
-                ]);
-            } elseif ($mode == 'on') {
-                return response()->json([
-                    'type' => 'success',
-                    'title' => 'Activation',
-                    'message' => '{0} Nothing to activate.|[1] Item activated successfully.|[2,*] :total items successfully activated.',
-                    'length' => $ability->total,
-                    'replacements' => ['total' => $ability->total],
-                ]);
-            } elseif ($mode == 'off') {
-                return response()->json([
-                    'type' => 'success',
-                    'title' => 'Deactivation',
-                    'message' => '{0} Nothing to deactivate.|[1] Item deactivated successfully.|[2,*] :total items successfully deactivated.',
-                    'length' => $ability->total,
-                    'replacements' => ['total' => $ability->total],
-                ]);
-            }
-        } catch (\Throwable $e) {
-            report($e);
-
-            return response()->json([
-                'type' => 'error',
-                'message' => 'Error on edit selected item.|Error on edit selected items.',
-                'length' => count($request->list),
             ]);
         }
     }

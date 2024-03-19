@@ -515,9 +515,9 @@ onBeforeUnmount(() => {
     debouncedWatch.cancel();
 });
 
-const onToggle = (route: any, source: any) => {
+const onToggle = (route: any, method: any, source: any) => {
     fetchData(route, {
-        method: "post",
+        method: method,
         data: { list: [source.data.id] },
         complement: {
             mode: "toggle",
@@ -778,7 +778,9 @@ const onToggle = (route: any, source: any) => {
                                         : 'success'
                                     : 'danger'
                             "
-                            @click="onToggle(col.callback, slotProps)"
+                            @click="
+                                onToggle(col.callback, col.method, slotProps)
+                            "
                         />
                     </template>
                     <span
