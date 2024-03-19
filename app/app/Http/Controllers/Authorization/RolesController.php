@@ -421,7 +421,7 @@ class RolesController extends Controller
                                                                     'icon' => 'check',
                                                                     'label' => 'Authorize',
                                                                     'callback' => [
-                                                                        'route' => 'apps.roles.abilities_update',
+                                                                        'route' => 'putAbilitiesUpdate',
                                                                         'attributes' => ['mode' => 'on']
                                                                     ],
                                                                     'method' => 'put',
@@ -433,7 +433,7 @@ class RolesController extends Controller
                                                                     'icon' => 'close',
                                                                     'label' => 'Deauthorize',
                                                                     'callback' => [
-                                                                        'route' => 'apps.roles.abilities_update',
+                                                                        'route' => 'putAbilitiesUpdate',
                                                                         'attributes' => ['mode' => 'off']
                                                                     ],
                                                                     'method' => 'put',
@@ -463,7 +463,7 @@ class RolesController extends Controller
                                                                     'field' => 'checked',
                                                                     'disableSort' => true,
                                                                     'callback' => [
-                                                                        'route' => 'apps.roles.abilities_update',
+                                                                        'route' => 'putAbilitiesUpdate',
                                                                         'attributes' => ['mode' => 'toggle']
                                                                     ],
                                                                     'method' => 'put',
@@ -1055,29 +1055,6 @@ class RolesController extends Controller
             'toast_type' => 'success',
             'toast_message' => '{0} Nothing to add.|[1] Item added successfully.|[2,*] :total items successfully added.',
             'toast_count' => 1,
-        ]);
-    }
-
-    public function edit(Request $request, Role $role): Response
-    {
-        $this->authorize('access', User::class);
-        $this->authorize('isActive', $role);
-        $this->authorize('canEdit', $role);
-        $this->authorize('canEditManagementRoles', $role);
-
-        $role['abilities'] = $role->abilities;
-
-        return Inertia::render('Default', [
-            'form' => $this->__form($request, $role),
-            'routes' => [
-                'role' => [
-                    'route' => route('apps.roles.edit', $role->id),
-                    'method' => 'patch',
-                    'reset' => true,
-                    'fieldsToReset' => ['expires_at'],
-                ],
-            ],
-            'data' => $role,
         ]);
     }
 

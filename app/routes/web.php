@@ -78,20 +78,14 @@ Route::middleware('auth')->group(function () {
                     ->defaults('description', 'Define roles, grouping abilities to define specific access.')
                     ->defaults('icon', 'badge');
 
-
-                Route::get('/roles/create', 'create')->name('create')->breadcrumb('Role creation', 'apps.roles.index');
                 Route::post('/roles/create', 'store')->name('store');
                 Route::patch('/roles/edit/{role}', 'update')->name('update');
-                Route::post('/roles/authorization/{role}/{mode?}', 'authorization')->name('authorization');
                 Route::delete('/roles/destroy', 'destroy')->name('destroy');
                 Route::delete('/roles/forcedestroy', 'forceDestroy')->name('forcedestroy');
                 Route::post('/roles/restore', 'restore')->name('restore');
+                Route::post('/roles/authorization/{role}/{mode?}', 'authorization')->name('authorization');
 
-                Route::get('/roles/abilities', 'abilitiesIndex')->name('abilities_index')->breadcrumb('Abilities', 'apps.roles.index')
-                    ->defaults('title', 'Abilities')
-                    ->defaults('description', 'Define which abilities will be showed in the roles management.')
-                    ->defaults('icon', 'ballot');
-                Route::put('/roles/abilities/update/{mode?}', 'putAbilitiesUpdate')->name('abilities_update')->whereIn('mode', ['toggle', 'on', 'off']);
+                Route::get('/roles/create', 'create')->name('create')->breadcrumb('Role creation', 'apps.roles.index');
             });
         });
 

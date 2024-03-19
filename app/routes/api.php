@@ -14,6 +14,7 @@ Route::controller(RolesController::class)->middleware('auth:sanctum')->group(fun
     Route::get('/getAbilitiesIndex', 'getAbilitiesIndex')->name('getAbilitiesIndex');
     Route::get('/getRolesIndex', 'getRolesIndex')->name('getRolesIndex');
     Route::get('/getRoleInfo/{role}/{show?}', 'getRoleInfo')->name('getRoleInfo');
+    Route::put('/putAbilitiesUpdate/{mode?}', 'putAbilitiesUpdate')->name('putAbilitiesUpdate')->whereIn('mode', ['toggle', 'on', 'off']);
 });
 
 Route::controller(UnitsController::class)->middleware('auth:sanctum')->group(function () {
