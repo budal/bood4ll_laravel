@@ -30,6 +30,8 @@ class RolesController extends Controller
 
     public function getRolesIndex(Request $request): JsonResponse
     {
+        // $this->authorize('access', User::class);
+
         $roles = Role::leftjoin('role_user', 'role_user.role_id', '=', 'roles.id')
             ->select('roles.id', 'roles.name', 'roles.description', 'roles.deleted_at')
             ->groupBy('roles.id', 'roles.name', 'roles.description', 'roles.deleted_at')
@@ -129,10 +131,7 @@ class RolesController extends Controller
 
     public function getAbilityInfo(Request $request, Role $role): JsonResponse
     {
-        // $this->authorize('access', User::class);
-        // $this->authorize('isActive', $role);
-        // $this->authorize('canEdit', $role);
-        // $this->authorize('canEditManagementRoles', $role);
+        // $this->authorize('isSuperAdmin', User::class);
 
         $role['abilities'] = $role->abilities;
 
@@ -141,7 +140,7 @@ class RolesController extends Controller
 
     public function index(Request $request): Response
     {
-        $this->authorize('access', User::class);
+        // $this->authorize('access', User::class);
 
         return Inertia::render('Bood4ll', [
             'build' => [
