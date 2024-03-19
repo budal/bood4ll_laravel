@@ -224,7 +224,7 @@
   "Role": "Função",
   "Define roles, grouping abilities to define specific access.": "Defina funções, agrupando abilitações para definir acessos específicos.",
   "Role name, abilities and settings.": "Nome da função, abilitações e configurações.",
-  "Define which users will have access to this authorization": "Defina quais usuários terão acesso a essa autorização",
+  "Define which users will have access to this authorization.": "Defina quais usuários terão acesso a essa autorização.",
   "Authorized users": "Usuários autorizados",
   "All users": "Todos os usuários",
   "Role creation": "Criação de função",
