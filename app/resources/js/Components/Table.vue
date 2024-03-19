@@ -765,14 +765,14 @@ const onToggle = (route: any, method: any, source: any) => {
                             :icon="
                                 slotProps.data.checked == true
                                     ? slotProps.data.deleteOnly === true
-                                        ? 'pi pi-exclamation-circle'
+                                        ? 'pi pi-trash'
                                         : 'pi pi-check'
                                     : 'pi pi-times'
                             "
                             :severity="
                                 slotProps.data.checked == true
                                     ? slotProps.data.deleteOnly === true
-                                        ? 'warn'
+                                        ? 'warning'
                                         : 'success'
                                     : 'danger'
                             "

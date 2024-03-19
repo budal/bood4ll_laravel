@@ -23,16 +23,19 @@ class RolesController extends Controller
 {
     public function getAbilities(Request $request): JsonResponse
     {
-        // $this->authorize('isSuperAdmin', User::class);
-
-        $abilities = Ability::get();
+        $abilities = Ability::select('abilities.*')
+            ->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
+                $query->whereIn('name', $request->user()->getAllAbilities->whereNotNull('ability')->pluck('ability'));
+            })
+            ->orderBy('name')
+            ->get();
 
         return response()->json($abilities);
     }
 
     public function getAbilitiesIndex(Request $request): JsonResponse
     {
-        // $this->authorize('isSuperAdmin', User::class);
+        $this->authorize('isSuperAdmin', User::class);
 
         $prefixes = ['apps', 'reports'];
 
@@ -52,22 +55,22 @@ class RolesController extends Controller
             $checked = $abilitiesInDB->contains($id);
             $deleteOnly = false;
 
-            return compact('id', 'route', 'command', 'title', 'checked');
+            return compact('id', 'route', 'command', 'title', 'checked', 'deleteOnly');
         })->values();
 
         $invalidAbilities = $abilitiesInDB->diff(collect($validAbilities)->pluck('id'))->map(function ($zombie) {
             $id = $zombie;
             $route = $zombie;
-            $command = "-- delete only --";
+            $command = "< delete only >";
             $title = $zombie;
-            $checked = false;
+            $checked = true;
             $deleteOnly = true;
 
-            return compact('id', 'route', 'title', 'checked');
+            // if (Route::has($zombie))
+            return compact('id', 'route', 'command', 'title', 'checked', 'deleteOnly');
         })->values();
 
-        $abilities = [...$validAbilities];
-        // $abilities = [...$validAbilities, ...$invalidAbilities];
+        $abilities = [...$validAbilities, ...$invalidAbilities];
 
         usort($abilities, function ($a, $b) use ($request) {
             return $a['title'] <=> $b['title'];
@@ -537,15 +540,6 @@ class RolesController extends Controller
                 'span' => 3,
                 'required' => true,
             ],
-            // [
-            //     'type' => 'select',
-            //     'name' => 'abilities',
-            //     'label' => 'Abilities',
-            //     'span' => 3,
-            //     'content' => $abilities,
-            //     'required' => true,
-            //     'multiple' => true,
-            // ],
             [
                 'type' => 'toggle',
                 'name' => 'active',
@@ -592,89 +586,6 @@ class RolesController extends Controller
 
 
 
-
-    public function index2(Request $request): Response
-    {
-        $this->authorize('access', User::class);
-
-
-
-        return Inertia::render('Default', [
-            'form' => [
-                [
-                    'id' => 'roles',
-                    'title' => Route::current()->title,
-                    'subtitle' => Route::current()->description,
-                    'fields' => [
-                        [
-                            [
-                                'type' => 'table',
-                                'name' => 'roles',
-                                'content' => [
-                                    'routes' => [
-                                        'createRoute' => [
-                                            'route' => 'apps.roles.create',
-                                            'showIf' => Gate::allows('apps.roles.create') && $request->user()->can('isManager', User::class),
-                                        ],
-                                        'editRoute' => [
-                                            'route' => 'apps.roles.edit',
-                                            'showIf' => Gate::allows('apps.roles.edit')
-                                        ],
-                                        'destroyRoute' => [
-                                            'route' => 'apps.roles.destroy',
-                                            'showIf' => Gate::allows('apps.roles.destroy') && $request->user()->can('isManager', User::class),
-                                        ],
-                                        'forceDestroyRoute' => [
-                                            'route' => 'apps.roles.forcedestroy',
-                                            'showIf' => Gate::allows('apps.roles.forcedestroy') && $request->user()->can('isSuperAdmin', User::class),
-                                        ],
-                                        'restoreRoute' => [
-                                            'route' => 'apps.roles.restore',
-                                            'showIf' => Gate::allows('apps.roles.restore') && $request->user()->can('isManager', User::class),
-                                        ],
-                                    ],
-                                    'menu' => [
-                                        [
-                                            'icon' => 'mdi:book-cog-outline',
-                                            'title' => 'Abilities',
-                                            'route' => 'apps.roles.abilities_index',
-                                            'showIf' => Gate::allows('apps.roles.abilities_index') && $request->user()->can('isSuperAdmin', User::class),
-                                        ],
-                                    ],
-                                    'titles' => [
-                                        [
-                                            'type' => 'composite',
-                                            'title' => 'Role',
-                                            'field' => 'name',
-                                            'values' => [
-                                                [
-                                                    'field' => 'name',
-                                                ],
-                                                [
-                                                    'field' => 'description',
-                                                    'class' => 'text-xs',
-                                                ],
-                                            ],
-                                        ],
-                                        [
-                                            'type' => 'text',
-                                            'title' => 'Abilities',
-                                            'field' => 'abilities_count',
-                                        ],
-                                        [
-                                            'type' => 'text',
-                                            'title' => 'Users',
-                                            'field' => 'users_count',
-                                        ],
-                                    ],
-                                ],
-                            ],
-                        ],
-                    ],
-                ],
-            ],
-        ]);
-    }
 
     public function __form(Request $request, Role $role): array
     {
