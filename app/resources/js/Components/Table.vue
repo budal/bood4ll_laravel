@@ -513,6 +513,70 @@ watch(search, debouncedWatch);
 onBeforeUnmount(() => {
     debouncedWatch.cancel();
 });
+
+const onToggle = (route: any, source: any, el: MouseEvent) => {
+    console.log(el);
+
+    fetchData(route, {
+        method: "post",
+        data: { list: [source.data.id] },
+        complement: {
+            mode: "toggle",
+        },
+        onBefore: () => {
+            // loading.value = true;
+        },
+        onSuccess: (success: {
+            type:
+                | "success"
+                | "secondary"
+                | "info"
+                | "contrast"
+                | "warn"
+                | "error"
+                | undefined;
+            title: string;
+            message: string;
+            deactivate: boolean;
+            length: number;
+            replacements: ReplacementsInterface;
+        }) => {
+            // if (success.deactivate === true) {
+            //     checkedRef.value = {
+            //         icon: "pi pi-times",
+            //         severity: "danger",
+            //     };
+            // } else {
+            //     checkedRef.value = {
+            //         icon: "pi pi-check",
+            //         severity: "success",
+            //     };
+            // }
+
+            toast.add({
+                severity: success.type,
+                summary: trans(success.title),
+                detail: transChoice(
+                    success.message,
+                    success.length,
+                    success.replacements,
+                ),
+                life: 3000,
+            });
+        },
+        onFinish: () => {
+            // loading.value = false;
+        },
+        onError: (error: { message: string; length: number }) => {
+            toast.add({
+                severity: "error",
+                summary: trans("Error"),
+                detail: transChoice(error.message, error.length),
+                life: 3000,
+            });
+        },
+    });
+};
 </script>
 
 <template>
@@ -700,11 +764,21 @@ onBeforeUnmount(() => {
                     </template>
 
                     <template v-if="col.type == 'toggle'">
-                        <TableToggle
-                            :url="col.callback"
-                            :id="slotProps.data.id"
-                            :checked="slotProps.data.checked"
-                        />
+                        <Button
+                            rounded
+                            :icon="
+                                slotProps.data.checked == true
+                                    ? 'pi pi-check'
+                                    : 'pi pi-times'
+                            "
+                            :severity="
+                                slotProps.data.checked == true
+                                    ? 'success'
+                                    : 'danger'
+                            "
+                            @click="onToggle(col.callback, slotProps, $event)"
+                        >
+                        </Button>
                     </template>
                     <span
                         v-if="col.type == 'active'"

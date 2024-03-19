@@ -3,7 +3,7 @@ import { fetchData } from "@/helpers";
 import { trans, transChoice } from "laravel-vue-i18n";
 import { ReplacementsInterface } from "laravel-vue-i18n/interfaces/replacements";
 import { useToast } from "primevue/usetoast";
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 
 const props = withDefaults(
     defineProps<{
@@ -18,17 +18,22 @@ const props = withDefaults(
 
 const toast = useToast();
 
-const checkedRef = ref(
-    props.checked === true
-        ? {
-              icon: "pi pi-check",
-              severity: "success",
-          }
-        : {
-              icon: "pi pi-times",
-              severity: "danger",
-          },
-);
+let checked3 = props.checked;
+
+const checkedRef = ref();
+
+onMounted(() => {
+    checkedRef.value =
+        props.checked === true
+            ? {
+                  icon: "pi pi-check",
+                  severity: "success",
+              }
+            : {
+                  icon: "pi pi-times",
+                  severity: "danger",
+              };
+});
 
 const emit = defineEmits(["click"]);
 
@@ -59,17 +64,17 @@ const loadingState = () => {
             length: number;
             replacements: ReplacementsInterface;
         }) => {
-            // if (success.deactivate === true) {
-            //     checkedRef.value = {
-            //         icon: "pi pi-times",
-            //         severity: "danger",
-            //     };
-            // } else {
-            //     checkedRef.value = {
-            //         icon: "pi pi-check",
-            //         severity: "success",
-            //     };
-            // }
+            if (success.deactivate === true) {
+                checkedRef.value = {
+                    icon: "pi pi-times",
+                    severity: "danger",
+                };
+            } else {
+                checkedRef.value = {
+                    icon: "pi pi-check",
+                    severity: "success",
+                };
+            }
 
             toast.add({
                 severity: success.type,
@@ -95,14 +100,25 @@ const loadingState = () => {
         },
     });
 };
+
+const checked2 =
+    props.checked === true
+        ? {
+              icon: "pi pi-check",
+              severity: "success",
+          }
+        : {
+              icon: "pi pi-times",
+              severity: "danger",
+          };
 </script>
 
 <template>
     {{ props.checked }}
     <Button
         rounded
-        :icon="checkedRef.icon"
-        :severity="checkedRef.severity"
+        :icon="checked2.icon"
+        :severity="checked2.severity"
         :loading="loading"
         @click="
             loadingState();
@@ -110,4 +126,5 @@ const loadingState = () => {
         "
     >
     </Button>
+    {{ checkedRef }}
 </template>
