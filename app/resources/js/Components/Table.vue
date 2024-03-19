@@ -23,7 +23,6 @@ import { MenuItem } from "primevue/menuitem";
 
 import { ReplacementsInterface } from "laravel-vue-i18n/interfaces/replacements";
 import debounce from "lodash.debounce";
-import TableToggle from "@/Components/TableToggle.vue";
 
 const props = defineProps<{
     structure?: any;
@@ -55,7 +54,6 @@ const selectedColumns = ref(tableColumns.value);
 const search = ref(null);
 const listItems = ref();
 const indexUrlRef = ref(props.structure.actions.index.source);
-const toggleRef = reactive(new Set());
 
 const tableMenuToggle = (event: MouseEvent) => {
     const _tableMenuItemsEdit: MenuItem[] = [
@@ -764,7 +762,6 @@ const onToggle = (route: any, source: any) => {
 
                     <template v-if="col.type == 'toggle'">
                         <Button
-                            ref="toggleRef"
                             rounded
                             :loading="slotProps.data.loading"
                             :icon="
