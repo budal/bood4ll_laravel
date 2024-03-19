@@ -177,6 +177,20 @@ class RolesController extends Controller
         return response()->json($roles);
     }
 
+    public function getRoleInfo(Request $request, Role $role): JsonResponse
+    {
+        // $this->authorize('access', User::class);
+        // $this->authorize('isActive', $role);
+        // $this->authorize('canEdit', $role);
+        // $this->authorize('canEditManagementRoles', $role);
+
+        $role['abilities'] = $role->abilities;
+
+        return response()->json($role);
+    }
+
+
+
     public function index(Request $request): Response
     {
         // $this->authorize('access', User::class);
@@ -230,8 +244,8 @@ class RolesController extends Controller
                                                 'label' => 'Main data',
                                                 'description' => 'Role name, abilities and settings.',
                                                 'source' => [
-                                                    'route' => 'getUnitInfo',
-                                                    'transmute' => ['unit' => 'id'],
+                                                    'route' => 'getRoleInfo',
+                                                    'transmute' => ['role' => 'id'],
                                                 ],
                                                 'cols' => 3,
                                                 'visible' => (

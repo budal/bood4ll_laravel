@@ -77,9 +77,10 @@ Route::middleware('auth')->group(function () {
                     ->defaults('title', 'Roles')
                     ->defaults('description', 'Define roles, grouping abilities to define specific access.')
                     ->defaults('icon', 'badge');
+
+
                 Route::get('/roles/create', 'create')->name('create')->breadcrumb('Role creation', 'apps.roles.index');
                 Route::post('/roles/create', 'store')->name('store');
-                Route::get('/roles/edit/{role}/{show?}', 'edit')->name('edit')->breadcrumb('Role edition', 'apps.roles.index');
                 Route::patch('/roles/edit/{role}', 'update')->name('update');
                 Route::post('/roles/authorization/{role}/{mode?}', 'authorization')->name('authorization');
                 Route::delete('/roles/destroy', 'destroy')->name('destroy');
