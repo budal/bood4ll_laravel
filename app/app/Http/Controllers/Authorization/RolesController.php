@@ -891,26 +891,6 @@ class RolesController extends Controller
         }
     }
 
-    public function create(Request $request, Role $role): Response
-    {
-        $this->authorize('access', User::class);
-        $this->authorize('isManager', User::class);
-
-        return Inertia::render('Default', [
-            'form' => $this->__form($request, $role),
-            'routes' => [
-                'role' => [
-                    'route' => route('apps.roles.store'),
-                    'method' => 'post',
-                ],
-            ],
-            'data' => [
-                'active' => true,
-                'remove_on_change_unit' => true,
-            ],
-        ]);
-    }
-
     public function store(RolesRequest $request): RedirectResponse
     {
         $this->authorize('access', User::class);

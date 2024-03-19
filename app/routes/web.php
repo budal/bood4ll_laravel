@@ -84,8 +84,6 @@ Route::middleware('auth')->group(function () {
                 Route::delete('/roles/forcedestroy', 'forceDestroy')->name('forcedestroy');
                 Route::post('/roles/restore', 'restore')->name('restore');
                 Route::post('/roles/authorization/{role}/{mode?}', 'authorization')->name('authorization');
-
-                Route::get('/roles/create', 'create')->name('create')->breadcrumb('Role creation', 'apps.roles.index');
             });
         });
 
