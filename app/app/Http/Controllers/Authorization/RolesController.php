@@ -91,6 +91,7 @@ class RolesController extends Controller
             $command = end($actionSegments);
             $title = $id;
             $checked = $abilitiesInDB->contains($id);
+            $deleteOnly = false;
 
             return compact('id', 'route', 'command', 'title', 'checked');
         })->values();
@@ -98,29 +99,22 @@ class RolesController extends Controller
         $invalidAbilities = $abilitiesInDB->diff(collect($validAbilities)->pluck('id'))->map(function ($zombie) {
             $id = $zombie;
             $route = $zombie;
+            $command = "-- delete only --";
             $title = $zombie;
-            $checked = true;
+            $checked = false;
+            $deleteOnly = true;
 
             return compact('id', 'route', 'title', 'checked');
         })->values();
 
-        $validAbilities = $validAbilities->toArray();
-        $invalidAbilities = $invalidAbilities->toArray();
+        $abilities = [...$validAbilities, ...$invalidAbilities];
 
-        usort($validAbilities, function ($a, $b) use ($request) {
-            return ($request->query('validAbilities_sorted') == 'title' || !$request->query('validAbilities_sorted'))
-                ? $a['title'] <=> $b['title']
-                : $b['title'] <=> $a['title'];
-        });
-
-        usort($invalidAbilities, function ($a, $b) use ($request) {
-            return ($request->query('invalidAbilities_sorted') == 'title' || !$request->query('invalidAbilities_sorted'))
-                ? $a['title'] <=> $b['title']
-                : $b['title'] <=> $a['title'];
+        usort($abilities, function ($a, $b) use ($request) {
+            return $a['title'] <=> $b['title'];
         });
 
         return response()->json([
-            'data' => $validAbilities,
+            'data' => $abilities,
             "next_page_url" => null
         ]);
     }
@@ -222,8 +216,8 @@ class RolesController extends Controller
                                                             ],
                                                             'menu' => [
                                                                 [
-                                                                    'icon' => 'mdi:account-multiple',
-                                                                    'label' => 'Local staff',
+                                                                    'icon' => 'verified_user',
+                                                                    'label' => 'Authorized users',
                                                                     'source' => [
                                                                         'route' => 'getUnitStaff',
                                                                         'transmute' => ['unit' => 'id'],
@@ -231,8 +225,8 @@ class RolesController extends Controller
                                                                     'visible' => $request->user()->can('canManageNestedData', User::class),
                                                                 ],
                                                                 [
-                                                                    'icon' => 'mdi:account-group-outline',
-                                                                    'label' => 'Total staff',
+                                                                    'icon' => 'group',
+                                                                    'label' => 'All users',
                                                                     'source' => [
                                                                         'route' => 'getUnitStaff',
                                                                         'attributes' => ['show' => 'all'],

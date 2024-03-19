@@ -766,12 +766,16 @@ const onToggle = (route: any, source: any) => {
                             :loading="slotProps.data.loading"
                             :icon="
                                 slotProps.data.checked == true
-                                    ? 'pi pi-check'
+                                    ? slotProps.data.deleteOnly === true
+                                        ? 'pi pi-exclamation-circle'
+                                        : 'pi pi-check'
                                     : 'pi pi-times'
                             "
                             :severity="
                                 slotProps.data.checked == true
-                                    ? 'success'
+                                    ? slotProps.data.deleteOnly === true
+                                        ? 'warn'
+                                        : 'success'
                                     : 'danger'
                             "
                             @click="onToggle(col.callback, slotProps)"
