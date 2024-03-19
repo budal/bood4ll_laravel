@@ -209,6 +209,7 @@ const onFormDataLoad = () => {
                                 }"
                                 :optionValue="field.optionValue || 'id'"
                                 :optionLabel="field.optionLabel || 'name'"
+                                :multiple="field.multiple"
                             />
                             <label
                                 v-if="field.type !== 'toggle'"

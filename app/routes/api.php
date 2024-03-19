@@ -10,6 +10,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::controller(RolesController::class)->middleware('auth:sanctum')->group(function () {
+    Route::get('/getAbilities', 'getAbilities')->name('getAbilities');
     Route::get('/getRolesIndex', 'getRolesIndex')->name('getRolesIndex');
     Route::get('/getAbilitiesIndex', 'getAbilitiesIndex')->name('getAbilitiesIndex');
 });

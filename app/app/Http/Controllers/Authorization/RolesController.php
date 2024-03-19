@@ -21,6 +21,13 @@ use Inertia\Response;
 
 class RolesController extends Controller
 {
+    public function getAbilities(Request $request): JsonResponse
+    {
+        $abilities = Ability::get();
+
+        return response()->json($abilities);
+    }
+
     public function getRolesIndex(Request $request): JsonResponse
     {
         $roles = Role::leftjoin('role_user', 'role_user.role_id', '=', 'roles.id')
@@ -107,7 +114,8 @@ class RolesController extends Controller
             return compact('id', 'route', 'title', 'checked');
         })->values();
 
-        $abilities = [...$validAbilities, ...$invalidAbilities];
+        $abilities = [...$validAbilities];
+        // $abilities = [...$validAbilities, ...$invalidAbilities];
 
         usort($abilities, function ($a, $b) use ($request) {
             return $a['title'] <=> $b['title'];
@@ -117,6 +125,18 @@ class RolesController extends Controller
             'data' => $abilities,
             "next_page_url" => null
         ]);
+    }
+
+    public function getAbilityInfo(Request $request, Role $role): JsonResponse
+    {
+        // $this->authorize('access', User::class);
+        // $this->authorize('isActive', $role);
+        // $this->authorize('canEdit', $role);
+        // $this->authorize('canEditManagementRoles', $role);
+
+        $role['abilities'] = $role->abilities;
+
+        return response()->json($role);
     }
 
     public function index(Request $request): Response
@@ -460,10 +480,8 @@ class RolesController extends Controller
                 'type' => 'dropdown',
                 'name' => 'abilities',
                 'label' => 'Abilities',
-                'source' => [
-                    'route' => 'getUnits',
-                    'replace' => ['unit' => 'id']
-                ],
+                'source' => "getAbilities",
+                'multiple' => true,
                 'span' => 3,
                 'required' => true,
             ],

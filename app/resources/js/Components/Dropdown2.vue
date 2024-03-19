@@ -26,16 +26,23 @@ const props = withDefaults(
         multiple: false,
         optionValue: "id",
         optionLabel: "name",
-        placeholder: trans("Select an item"),
         itemSize: 40,
     },
+);
+
+const placeholderValue = trans(
+    props.placeholder
+        ? props.placeholder
+        : props.multiple === true
+          ? "Select an item or more"
+          : "Select an item",
 );
 
 const loading = ref(false);
 const dropdownItems = ref([]);
 
 onMounted(() => {
-    if (props.url?.id !== undefined) {
+    if (typeof props.url !== "string" && props.url?.id !== undefined) {
         // console.log(props.url);
 
         fetchData(props.url.route, {
@@ -62,14 +69,30 @@ const value = ref(props.value);
 </script>
 
 <template>
-    <Dropdown
-        v-if="multiple === false"
+    <MultiSelect
+        v-if="multiple === true"
         :id="id"
         v-model="value"
         :options="dropdownItems"
         :optionValue="optionValue"
         :optionLabel="optionLabel"
-        :placeholder="$t(placeholder)"
+        :placeholder="$t(placeholderValue)"
+        :virtualScrollerOptions="{ itemSize: props.itemSize }"
+        showClear
+        checkmark
+        filter
+        :loading="loading"
+        :highlightOnSelect="true"
+        class="w-full"
+    />
+    <Dropdown
+        v-else
+        :id="id"
+        v-model="value"
+        :options="dropdownItems"
+        :optionValue="optionValue"
+        :optionLabel="optionLabel"
+        :placeholder="$t(placeholderValue)"
         :virtualScrollerOptions="{ itemSize: props.itemSize }"
         showClear
         checkmark
