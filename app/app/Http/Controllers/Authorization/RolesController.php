@@ -417,7 +417,7 @@ class RolesController extends Controller
                                                                         'route' => 'apps.roles.abilities_update',
                                                                         'attributes' => ['mode' => 'on']
                                                                     ],
-                                                                    'method' => 'post',
+                                                                    'method' => 'put',
                                                                     'visible' => $request->user()->can('canManageNestedData', User::class),
                                                                     'condition' => ['checked' => false],
                                                                     'badgeClass' => 'success',
@@ -429,7 +429,7 @@ class RolesController extends Controller
                                                                         'route' => 'apps.roles.abilities_update',
                                                                         'attributes' => ['mode' => 'off']
                                                                     ],
-                                                                    'method' => 'post',
+                                                                    'method' => 'put',
                                                                     'visible' => $request->user()->can('canManageNestedData', User::class),
                                                                     'condition' => ['checked' => true],
                                                                     'badgeClass' => 'danger',
