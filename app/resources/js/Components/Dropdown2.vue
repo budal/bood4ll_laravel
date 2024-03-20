@@ -85,7 +85,14 @@ const value = ref(props.value);
         :loading="loading"
         :highlightOnSelect="true"
         class="w-full"
-    />
+    >
+        <template #empty>
+            {{ $t("No items to show.") }}
+        </template>
+        <template #emptyfilter>
+            {{ $t("No items to show.") }}
+        </template>
+    </MultiSelect>
     <Dropdown
         v-else
         :id="id"
@@ -101,5 +108,12 @@ const value = ref(props.value);
         :loading="loading"
         :highlightOnSelect="true"
         class="w-full"
-    />
+    >
+        <template #empty>
+            {{ $t("No items to show.") }}
+        </template>
+        <template #emptyfilter>
+            {{ $t("No items to show.") }}
+        </template></Dropdown
+    >
 </template>

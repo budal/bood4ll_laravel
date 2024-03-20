@@ -12,10 +12,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::controller(RolesController::class)->middleware('auth:sanctum')->group(function () {
     Route::get('/getAbilities', 'getAbilities')->name('getAbilities');
     Route::get('/getAbilitiesIndex', 'getAbilitiesIndex')->name('getAbilitiesIndex');
+    Route::put('/putAbilitiesUpdate/{mode?}', 'putAbilitiesUpdate')->name('putAbilitiesUpdate')->whereIn('mode', ['toggle', 'on', 'off']);
     Route::get('/getRolesIndex', 'getRolesIndex')->name('getRolesIndex');
     Route::get('/getRoleInfo/{role}/{show?}', 'getRoleInfo')->name('getRoleInfo');
-    Route::put('/putAbilitiesUpdate/{mode?}', 'putAbilitiesUpdate')->name('putAbilitiesUpdate')->whereIn('mode', ['toggle', 'on', 'off']);
-
     Route::get('/getRoleAuthorizedUsers/{role}/{show?}', 'getRoleAuthorizedUsers')->name('getRoleAuthorizedUsers');
 });
 
