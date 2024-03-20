@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { ref } from "vue";
 import { fetchData } from "@/helpers";
 
 import { useConfirm } from "primevue/useconfirm";
@@ -21,8 +21,6 @@ const loading = ref(false);
 const formValue = ref<Record<string, any>>({});
 
 const inputsWithError = ref({});
-
-watch(inputsWithError, () => console.log(inputsWithError.value));
 
 const send = () => {
     // console.log(props.components, formValue);

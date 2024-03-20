@@ -387,7 +387,6 @@ class RolesController extends Controller
                                                 'disabled' => $request->user()->cannot('isManager', User::class),
                                                 'fields' => $this->__fields($request),
                                                 'confirm' => true,
-                                                'popup' => 'Do you confirm this role edition?',
                                                 'toastTitle' => 'Edit',
                                                 'toast' => '{0} Nothing to edit.|[1] Item edited successfully.|[2,*] :total items successfully edited.',
                                                 'toastClass' => 'success',
