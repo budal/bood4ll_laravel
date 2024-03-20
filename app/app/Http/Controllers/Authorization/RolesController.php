@@ -358,7 +358,12 @@ class RolesController extends Controller
                                                     Gate::allows('apps.roles.store')
                                                     && $request->user()->can('isManager', User::class)
                                                 ),
-                                                'callback' => 'apps.roles.create',
+                                                'disabled' => $request->user()->cannot('isManager', User::class),
+                                                'confirm' => true,
+                                                'toastTitle' => 'Add',
+                                                'toast' => '{0} Nothing to add.|[1] Item added successfully.|[2,*] :total items successfully added.',
+                                                'toastClass' => 'success',
+                                                'callback' => 'apps.roles.store',
                                                 'method' => 'post',
                                             ],
                                         ],
@@ -372,20 +377,20 @@ class RolesController extends Controller
                                         'disabled' => $request->user()->cannot('isManager', User::class),
                                         'components' => [
                                             [
-                                                'label' => 'Main data',
-                                                'description' => 'Role name, abilities and settings.',
                                                 'source' => [
                                                     'route' => 'getRoleInfo',
                                                     'transmute' => ['role' => 'id'],
                                                 ],
+                                                'label' => 'Main data',
+                                                'description' => 'Role name, abilities and settings.',
                                                 'cols' => 3,
+                                                'fields' => $this->__fields($request),
                                                 'visible' => (
                                                     Gate::allows('apps.roles.update')
                                                     && $request->user()->can('isManager', User::class)
                                                     && $request->user()->can('canManageNestedData', User::class)
                                                 ),
                                                 'disabled' => $request->user()->cannot('isManager', User::class),
-                                                'fields' => $this->__fields($request),
                                                 'confirm' => true,
                                                 'toastTitle' => 'Edit',
                                                 'toast' => '{0} Nothing to edit.|[1] Item edited successfully.|[2,*] :total items successfully edited.',

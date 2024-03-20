@@ -5,17 +5,10 @@ import { onMounted, ref } from "vue";
 
 const props = withDefaults(
     defineProps<{
-        id?: string;
+        id?: string | number;
         value?: any;
         multiple?: boolean;
-        component?: any;
-        url?:
-            | string
-            | {
-                  route: string;
-                  id?: string | number | undefined;
-              };
-        urlAttributes?: any;
+        source?: any;
         optionValue?: string;
         optionLabel?: string;
         placeholder?: string;
@@ -42,27 +35,23 @@ const loading = ref(false);
 const dropdownItems = ref([]);
 
 onMounted(() => {
-    if (typeof props.url !== "string" && props.url?.id !== undefined) {
-        // console.log(props.url);
-
-        fetchData(props.url.route, {
-            complement: {
-                id: props.url.id,
-            },
-            onBefore: () => {
-                loading.value = true;
-            },
-            onSuccess: (content: never[]) => {
-                dropdownItems.value = content;
-            },
-            onFinish: () => {
-                loading.value = false;
-            },
-            onError: (error: { message: string }) => {
-                console.log(error.message);
-            },
-        });
-    }
+    fetchData(props.source, {
+        complement: {
+            id: props.id,
+        },
+        onBefore: () => {
+            loading.value = true;
+        },
+        onSuccess: (content: never[]) => {
+            dropdownItems.value = content;
+        },
+        onFinish: () => {
+            loading.value = false;
+        },
+        onError: (error: { message: string }) => {
+            console.log(error.message);
+        },
+    });
 });
 
 const value = ref(props.value);

@@ -84,28 +84,25 @@ const handleConfirm = (event: Event) => {
 };
 
 const confirmDialog = (event: Event) => {
-    if (props.components) {
-        confirm.require({
-            group: "popup",
-            target:
-                event.currentTarget instanceof HTMLElement
-                    ? event.currentTarget
-                    : undefined,
-            message: trans(
-                props.components.popup || "Do you want confirm this action?",
-            ),
-            icon: props.components.popupIcon || "pi pi-info-circle",
-            rejectClass:
-                props.components.popupCancelClass ||
-                "p-button-secondary p-button-outlined p-button-sm",
-            acceptClass:
-                props.components.popupConfirmClass ||
-                "p-button-info p-button-sm",
-            rejectLabel: trans(props.components.popupCancel || "No"),
-            acceptLabel: trans(props.components.popupConfirm || "Yes"),
-            accept: () => send(),
-        });
-    }
+    confirm.require({
+        group: "popup",
+        target:
+            event.currentTarget instanceof HTMLElement
+                ? event.currentTarget
+                : undefined,
+        message: trans(
+            props.components.popup || "Do you want confirm this action?",
+        ),
+        icon: props.components.popupIcon || "pi pi-info-circle",
+        rejectClass:
+            props.components.popupCancelClass ||
+            "p-button-secondary p-button-outlined p-button-sm",
+        acceptClass:
+            props.components.popupConfirmClass || "p-button-info p-button-sm",
+        rejectLabel: trans(props.components.popupCancel || "No"),
+        acceptLabel: trans(props.components.popupConfirm || "Yes"),
+        accept: () => send(),
+    });
 };
 
 const getFormValuesonLoad = () => {
@@ -233,12 +230,9 @@ const getFormValuesonLoad = () => {
                             />
                             <Dropdown2
                                 v-else-if="field.type === 'dropdown'"
-                                :id="field.name"
+                                :id="props.id"
                                 v-model="formValue[field.name]"
-                                :url="{
-                                    route: field.source,
-                                    id: props.id,
-                                }"
+                                :source="field.source"
                                 :optionValue="field.optionValue || 'id'"
                                 :optionLabel="field.optionLabel || 'name'"
                                 :multiple="field.multiple"
@@ -276,7 +270,7 @@ const getFormValuesonLoad = () => {
                     </template>
                 </div>
                 <div
-                    v-if="components.source"
+                    v-if="components.callback"
                     class="flex sticky bottom-0 p-2 mt-4 justify-end gap-2 rounded-xl backdrop-blur-sm"
                     :class="{
                         'sm:col-span-1': components.cols == 1,
