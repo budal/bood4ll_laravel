@@ -31,11 +31,19 @@ const send = () => {
         method: props.components.method,
         data: formValue.value,
         onBefore: () => (loading.value = true),
-        onError: (error: { message: string }) => {
+        onError: (error: {
+            response: {
+                status: number;
+                statusText: string;
+                data: {
+                    message: string;
+                };
+            };
+        }) => {
             toast.add({
                 severity: "error",
-                summary: trans("Error"),
-                detail: trans(error.message),
+                summary: `${trans(error.response.statusText)} (${error.response.status})`,
+                detail: trans(error.response.data.message),
                 life: 3000,
             });
         },
@@ -108,11 +116,19 @@ const onFormDataLoad = () => {
             onFinish: () => {
                 loading.value = false;
             },
-            onError: (error: { message: string }) => {
+            onError: (error: {
+                response: {
+                    status: number;
+                    statusText: string;
+                    data: {
+                        message: string;
+                    };
+                };
+            }) => {
                 toast.add({
                     severity: "error",
-                    summary: trans("Error"),
-                    detail: trans(error.message),
+                    summary: `${trans(error.response.statusText)} (${error.response.status})`,
+                    detail: trans(error.response.data.message),
                     life: 3000,
                 });
             },

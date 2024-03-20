@@ -512,11 +512,19 @@ const onTableDataLoad = () => {
         onFinish: () => {
             loadingTable.value = false;
         },
-        onError: (error: { message: string }) => {
+        onError: (error: {
+            response: {
+                status: number;
+                statusText: string;
+                data: {
+                    message: string;
+                };
+            };
+        }) => {
             toast.add({
                 severity: "error",
-                summary: trans("Error"),
-                detail: trans(error.message),
+                summary: `${trans(error.response.statusText)} (${error.response.status})`,
+                detail: trans(error.response.data.message),
                 life: 3000,
             });
         },
@@ -538,11 +546,19 @@ useIntersectionObserver(lastIntersection, ([{ isIntersecting }]) => {
             onFinish: () => {
                 loadingTable.value = false;
             },
-            onError: (error: { message: string }) => {
+            onError: (error: {
+                response: {
+                    status: number;
+                    statusText: string;
+                    data: {
+                        message: string;
+                    };
+                };
+            }) => {
                 toast.add({
                     severity: "error",
-                    summary: trans("Error"),
-                    detail: trans(error.message),
+                    summary: `${trans(error.response.statusText)} (${error.response.status})`,
+                    detail: trans(error.response.data.message),
                     life: 3000,
                 });
             },
@@ -639,11 +655,19 @@ const onToggle = (
         onFinish: () => {
             toggle.data.loading = false;
         },
-        onError: (error: { message: string; length: number }) => {
+        onError: (error: {
+            response: {
+                status: number;
+                statusText: string;
+                data: {
+                    message: string;
+                };
+            };
+        }) => {
             toast.add({
                 severity: "error",
-                summary: trans("Error"),
-                detail: transChoice(error.message, error.length),
+                summary: `${trans(error.response.statusText)} (${error.response.status})`,
+                detail: trans(error.response.data.message),
                 life: 3000,
             });
         },
