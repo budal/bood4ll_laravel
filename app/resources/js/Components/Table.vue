@@ -824,6 +824,14 @@ const onToggle = (
                 :showFilterMenu="true"
             >
                 <template #body="slotProps">
+                    <Avatar
+                        v-if="col.type === 'avatar'"
+                        :label="
+                            slotProps.data[col.fallback].charAt(0).toUpperCase()
+                        "
+                        shape="circle"
+                        size="large"
+                    />
                     <p v-if="col.type == 'text'">
                         {{ slotProps.data[col.field] ?? "-" }}
                     </p>
