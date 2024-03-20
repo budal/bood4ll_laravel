@@ -640,7 +640,7 @@ class RolesController extends Controller
     // 'modalTitle' => 'Are you sure you want to deauthorize the selected users?|Are you sure you want to deauthorize the selected users?',
     // 'modalSubTitle' => 'The selected user will lose the rights to access this role. Do you want to continue?|The selected users will lose the rights to access this role. Do you want to continue?',
 
-    public function putAuthorizeUserInRole(Request $request, Role $role, $mode): RedirectResponse
+    public function putAuthorizeUserInRole(Request $request, Role $role, $mode): JsonResponse
     {
         $this->authorize('access', User::class);
         $this->authorize('fullAccess', [$role, $request]);

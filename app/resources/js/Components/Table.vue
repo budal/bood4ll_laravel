@@ -534,6 +534,9 @@ const onToggle = (
     },
 ) => {
     fetchData(source, {
+        complement: {
+            id: props.id,
+        },
         method: method,
         data: { list: [toggle.data.id] },
         onBefore: () => {

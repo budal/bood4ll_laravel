@@ -34,7 +34,6 @@ async function fetchData(
         onFinish?: Function;
     },
 ) {
-    console.log(route);
     let routeUrl = route;
 
     if (options?.complement) {

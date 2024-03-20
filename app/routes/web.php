@@ -83,7 +83,7 @@ Route::middleware('auth')->group(function () {
                 Route::delete('/roles/destroy', 'destroy')->name('destroy');
                 Route::delete('/roles/forcedestroy', 'forceDestroy')->name('forcedestroy');
                 Route::post('/roles/restore', 'restore')->name('restore');
-                Route::post('/roles/authorize/{role}/{mode?}', 'putAuthorizeUserInRole')->name('authorize');
+                Route::put('/roles/authorize/{role}/{mode?}', 'putAuthorizeUserInRole')->name('authorize');
             });
         });
 
