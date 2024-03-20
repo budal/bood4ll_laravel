@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import { fetchData } from "@/helpers";
 
 import { useConfirm } from "primevue/useconfirm";
@@ -20,6 +20,10 @@ const toast = useToast();
 const loading = ref(false);
 const formValue = ref<Record<string, any>>({});
 
+const inputsWithError = ref({});
+
+watch(inputsWithError, () => console.log(inputsWithError.value));
+
 const send = () => {
     // console.log(props.components, formValue);
     // console.log(formValue.value);
@@ -36,10 +40,13 @@ const send = () => {
                 status: number;
                 statusText: string;
                 data: {
+                    errors: string;
                     message: string;
                 };
             };
         }) => {
+            inputsWithError.value = error.response.data.errors;
+
             toast.add({
                 severity: "error",
                 summary: `${trans(error.response.statusText)} (${error.response.status})`,
@@ -187,6 +194,7 @@ const getFormValuesonLoad = () => {
                                     field.name === true ? field.name : 'off'
                                 "
                                 v-tooltip="''"
+                                :invalid="true"
                             />
                             <Calendar
                                 v-if="field.type === 'calendar'"
@@ -231,8 +239,8 @@ const getFormValuesonLoad = () => {
                                 v-if="field.type !== 'toggle'"
                                 :for="field.name"
                             >
-                                {{ $t(field.label || "") }}</label
-                            >
+                                {{ $t(field.label || "") }}
+                            </label>
                         </FloatLabel>
 
                         <Table
