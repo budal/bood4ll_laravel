@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Authorization;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\RolesRequest;
 use App\Models\Ability;
 use App\Models\Role;
 use App\Models\User;
@@ -16,6 +15,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -726,7 +726,7 @@ class RolesController extends Controller
         }
     }
 
-    public function store(RolesRequest $request): RedirectResponse
+    public function store(Request $request): RedirectResponse
     {
         $this->authorize('access', User::class);
         $this->authorize('isManager', User::class);
@@ -784,35 +784,42 @@ class RolesController extends Controller
         ]);
     }
 
-    public function update(RolesRequest $request, Role $role): JsonResponse
+    public function update(Request $request, Role $role): JsonResponse
     {
         $this->authorize('access', User::class);
-        $this->authorize('isActive', $role);
         $this->authorize('isManager', User::class);
+        $this->authorize('isActive', $role);
         $this->authorize('canEdit', $role);
         $this->authorize('canEditManagementRoles', $role);
         $this->authorize('isOwner', $role);
 
         $abilities = collect($request->abilities)->pluck('id');
 
+        $request->validate([
+            'name' => ['required', 'string', 'max:100', Rule::unique(Role::class)->ignore($role->id)],
+            'description' => ['string', 'max:255'],
+            'active' => ['boolean'],
+            'lock_on_expire' => ['boolean'],
+            'expires_at' => ['nullable', 'date', Rule::requiredIf($request->lock_on_expire == true)],
+            'full_access' => ['nullable', 'boolean', Rule::requiredIf($request->manage_nested == false)],
+            'manage_nested' => ['boolean'],
+            'remove_on_change_unit' => ['boolean'],
+        ], $messages = [
+            // 'required' => 'The :attribute field is required.',
+        ], $attributes = [
+            // 'email' => 'email address',
+        ],);
+
         DB::beginTransaction();
 
         try {
-            if ($request->lock_on_expire && !$request->expires_at) {
-                return response()->json([
-                    'type' => 'info',
-                    'summary' => 'Attention!',
-                    'message' => "When selecting 'lock on expire', it is mandatory to set an expiration date.",
-                ]);
-            }
-
-            if ($request->manage_nested && !$request->full_access) {
-                return response()->json([
-                    'type' => 'info',
-                    'summary' => 'Attention!',
-                    'message' => "It is impossible to manage nested data without enabling 'full access'.",
-                ]);
-            }
+            // if ($request->manage_nested && !$request->full_access) {
+            //     return response()->json([
+            //         'type' => 'info',
+            //         'summary' => 'Attention!',
+            //         'message' => "It is impossible to manage nested data without enabling 'full access'.",
+            //     ]);
+            // }
 
             $role->name = $request->name;
             $role->description = $request->description;

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\RolesRequest;
 use App\Models\Calendar;
 use App\Models\Holiday;
 use App\Models\User;

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\RolesRequest;
 use App\Models\Absence;
 use App\Models\AbsencesType;
 use App\Models\Calendar;
@@ -237,7 +236,7 @@ class AbsencesController extends Controller
         ]);
     }
 
-    public function store(RolesRequest $request): RedirectResponse
+    public function store(Request $request): RedirectResponse
     {
         $this->authorize('access', User::class);
 

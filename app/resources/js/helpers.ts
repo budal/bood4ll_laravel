@@ -105,8 +105,6 @@ async function fetchData(
                 if (options?.onSuccess) options.onSuccess(response.data);
             })
             .catch((error) => {
-                console.log(error);
-
                 if (error.code === "ECONNABORTED") {
                     setTimeout(() =>
                         options?.onCancel ? options.onCancel() : null,

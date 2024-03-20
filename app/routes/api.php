@@ -9,7 +9,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::controller(RolesController::class)->middleware('auth:sanctum')->group(function () {
+Route::controller(RolesController::class)->middleware('auth:sanctum', 'verified', 'password.confirm')->group(function () {
     Route::get('/getAbilities', 'getAbilities')->name('getAbilities');
     Route::get('/getAbilitiesIndex', 'getAbilitiesIndex')->name('getAbilitiesIndex');
     Route::put('/putAbilitiesUpdate/{mode?}', 'putAbilitiesUpdate')->name('putAbilitiesUpdate')->whereIn('mode', ['toggle', 'on', 'off']);
@@ -18,7 +18,7 @@ Route::controller(RolesController::class)->middleware('auth:sanctum')->group(fun
     Route::get('/getRoleAuthorizedUsers/{role}/{show?}', 'getRoleAuthorizedUsers')->name('getRoleAuthorizedUsers');
 });
 
-Route::controller(UnitsController::class)->middleware('auth:sanctum')->group(function () {
+Route::controller(UnitsController::class)->middleware('auth:sanctum', 'verified', 'password.confirm')->group(function () {
     Route::get('/getUnits/{unit?}', 'getUnits')->name('getUnits');
     Route::get('/getUnitsIndex', 'getUnitsIndex')->name('getUnitsIndex');
     Route::get('/getUnitInfo/{unit?}', 'edit')->name('getUnitInfo');
