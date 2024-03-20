@@ -243,87 +243,97 @@ const tableMenuToggle = (event: MouseEvent) => {
             icon: string;
             badgeClass: string;
             condition: string[];
+            separator: boolean;
         }) => {
-            const conditionsKeys = item.condition
-                ? Object.keys(item.condition)
-                : [];
+            if (item.separator === true) {
+                _tableMenuItemsComplementar.push({
+                    separator: true,
+                    visible: true,
+                    // _tableMenuItemsEdit.filter((item: any) => item.visible == true)
+                    //     .length > 0,
+                });
+            } else {
+                const conditionsKeys = item.condition
+                    ? Object.keys(item.condition)
+                    : [];
 
-            const conditionsValues = item.condition
-                ? Object.values(item.condition)
-                : [];
+                const conditionsValues = item.condition
+                    ? Object.values(item.condition)
+                    : [];
 
-            const items = selectedItemsTotal.value.filter((item) => {
-                return conditionsKeys.every(
-                    (v, k) => item[v] === conditionsValues[k],
-                );
-            });
+                const items = selectedItemsTotal.value.filter((item) => {
+                    return conditionsKeys.every(
+                        (v, k) => item[v] === conditionsValues[k],
+                    );
+                });
 
-            _tableMenuItemsComplementar.push({
-                label: item.label,
-                method: item.method,
-                disabled: item.condition && items.length < 1,
-                visible: item.visible,
-                icon: item.icon,
-                badge: item.condition ? items.length : null,
-                badgeClass: item.badgeClass,
-                command: () => {
-                    if (item.source) {
-                        if (item.dialog == true) {
-                            openDialog({
-                                header: item.label,
-                                action: item,
-                                id: item.id,
-                            });
-                        } else {
-                            indexUrlRef.value = item.source;
-
-                            onTableDataLoad();
-                        }
-                    } else {
-                        const data: string[] = items.map(
-                            (item: any) => item.id,
-                        );
-
-                        fetchData(item.callback, {
-                            complement: {
-                                id: props.id,
-                            },
-                            method: item.method,
-                            data: { list: data },
-                            onBefore: () => {
-                                toast.add({
-                                    severity: "contrast",
-                                    summary: trans("Loading"),
-                                    detail: trans("Please wait..."),
-                                    life: 3000,
+                _tableMenuItemsComplementar.push({
+                    label: item.label,
+                    method: item.method,
+                    disabled: item.condition && items.length < 1,
+                    visible: item.visible,
+                    icon: item.icon,
+                    badge: item.condition ? items.length : null,
+                    badgeClass: item.badgeClass,
+                    command: () => {
+                        if (item.source) {
+                            if (item.dialog == true) {
+                                openDialog({
+                                    header: item.label,
+                                    action: item,
+                                    id: item.id,
                                 });
-                            },
-                            onError: (error: { message: string }) => {
-                                toast.add({
-                                    severity: "error",
-                                    summary: trans("Error"),
-                                    detail: trans(error.message),
-                                    life: 3000,
-                                });
-                            },
-                            onSuccess: (content: any) => {
-                                toast.add({
-                                    severity: content.type || "secondary",
-                                    summary: trans(content.title),
-                                    detail: transChoice(
-                                        content.message,
-                                        content.length,
-                                        content.replacements,
-                                    ),
-                                    life: 3000,
-                                });
+                            } else {
+                                indexUrlRef.value = item.source;
 
                                 onTableDataLoad();
-                            },
-                        });
-                    }
-                },
-            });
+                            }
+                        } else {
+                            const data: string[] = items.map(
+                                (item: any) => item.id,
+                            );
+
+                            fetchData(item.callback, {
+                                complement: {
+                                    id: props.id,
+                                },
+                                method: item.method,
+                                data: { list: data },
+                                onBefore: () => {
+                                    toast.add({
+                                        severity: "contrast",
+                                        summary: trans("Loading"),
+                                        detail: trans("Please wait..."),
+                                        life: 3000,
+                                    });
+                                },
+                                onError: (error: { message: string }) => {
+                                    toast.add({
+                                        severity: "error",
+                                        summary: trans("Error"),
+                                        detail: trans(error.message),
+                                        life: 3000,
+                                    });
+                                },
+                                onSuccess: (content: any) => {
+                                    toast.add({
+                                        severity: content.type || "secondary",
+                                        summary: trans(content.title),
+                                        detail: transChoice(
+                                            content.message,
+                                            content.length,
+                                            content.replacements,
+                                        ),
+                                        life: 3000,
+                                    });
+
+                                    onTableDataLoad();
+                                },
+                            });
+                        }
+                    },
+                });
+            }
         },
     );
 

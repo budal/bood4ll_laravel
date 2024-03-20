@@ -84,7 +84,7 @@ class RolesController extends Controller
 
     public function putAbilitiesUpdate(Request $request, $mode): JsonResponse
     {
-        // $this->authorize('isSuperAdmin', User::class);
+        $this->authorize('isSuperAdmin', User::class);
 
         try {
             $ability = Ability::sync($mode, $request->list);
@@ -225,8 +225,6 @@ class RolesController extends Controller
 
         return response()->json($role);
     }
-
-
 
     public function index(Request $request): Response
     {
@@ -419,6 +417,35 @@ class RolesController extends Controller
                                                                 ],
                                                             ],
                                                             'menu' => [
+                                                                [
+                                                                    'icon' => 'check',
+                                                                    'label' => 'Authorize',
+                                                                    'callback' => [
+                                                                        'route' => 'apps.roles.authorize',
+                                                                        'attributes' => ['mode' => 'on'],
+                                                                        'transmute' => ['role' => 'id'],
+                                                                    ],
+                                                                    'method' => 'put',
+                                                                    'visible' => $request->user()->can('canManageNestedData', User::class),
+                                                                    'condition' => ['checked' => false],
+                                                                    'badgeClass' => 'success',
+                                                                ],
+                                                                [
+                                                                    'icon' => 'close',
+                                                                    'label' => 'Deauthorize',
+                                                                    'callback' => [
+                                                                        'route' => 'apps.roles.authorize',
+                                                                        'attributes' => ['mode' => 'off'],
+                                                                        'transmute' => ['role' => 'id'],
+                                                                    ],
+                                                                    'method' => 'put',
+                                                                    'visible' => $request->user()->can('canManageNestedData', User::class),
+                                                                    'condition' => ['checked' => true],
+                                                                    'badgeClass' => 'danger',
+                                                                ],
+                                                                [
+                                                                    'separator' => true,
+                                                                ],
                                                                 [
                                                                     'icon' => 'verified_user',
                                                                     'label' => 'Authorized users',
@@ -673,7 +700,7 @@ class RolesController extends Controller
                 return response()->json([
                     'type' => 'success',
                     'title' => 'Authorize',
-                    'message' => '{0} Nobody to authorize.|[1] User successfully authorized.|[2,*] :total users successfully authorized.',
+                    'message' => '{0} Nothing to authorize.|[1] Item authorized successfully.|[2,*] :total items successfully authorized.',
                     'length' => count($request->list),
                     'replacements' => ['total' => count($request->list)],
                 ]);
@@ -683,7 +710,7 @@ class RolesController extends Controller
                 return response()->json([
                     'type' => 'success',
                     'title' => 'Deauthorize',
-                    'message' => '{0} Nobody to deauthorize.|[1] User successfully deauthorized.|[2,*] :total users successfully deauthorized.',
+                    'message' => '{0} Nothing to deauthorize.|[1] Item deauthorized successfully.|[2,*] :total items successfully deauthorized.',
                     'length' => $total,
                     'replacements' => ['total' => $total],
                 ]);
