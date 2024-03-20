@@ -213,7 +213,7 @@ const tableMenuToggle = (event: MouseEvent) => {
                 },
                 {
                     label: "Trashed",
-                    icon: (listItems.value == "trashed"
+                    icon: (listItems.value === "trashed"
                         ? "check_small"
                         : null) as string,
                     command: () => {
@@ -223,7 +223,7 @@ const tableMenuToggle = (event: MouseEvent) => {
                 },
                 {
                     label: "Both",
-                    icon: (listItems.value == "both"
+                    icon: (listItems.value === "both"
                         ? "check_small"
                         : null) as string,
                     command: () => {
@@ -316,8 +316,8 @@ const tableMenuToggle = (event: MouseEvent) => {
                                 onTableDataLoad();
                             }
                         } else {
-                            const data: string[] = items.map(
-                                (item: any) => item.id,
+                            const data = items.map(
+                                (item: { id: string | number }) => item.id,
                             );
 
                             fetchData(item.callback, {
@@ -342,7 +342,19 @@ const tableMenuToggle = (event: MouseEvent) => {
                                         life: 3000,
                                     });
                                 },
-                                onSuccess: (content: any) => {
+                                onSuccess: (content: {
+                                    type:
+                                        | "success"
+                                        | "secondary"
+                                        | "info"
+                                        | "contrast"
+                                        | "error"
+                                        | "warn";
+                                    title: string;
+                                    message: string;
+                                    length: number;
+                                    replacements: ReplacementsInterface;
+                                }) => {
                                     toast.add({
                                         severity: content.type || "secondary",
                                         summary: trans(content.title),
