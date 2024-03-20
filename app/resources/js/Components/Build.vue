@@ -193,8 +193,10 @@ const getFormValuesonLoad = () => {
                                 :autocomplete="
                                     field.name === true ? field.name : 'off'
                                 "
-                                v-tooltip="''"
-                                :invalid="true"
+                                v-tooltip="inputsWithError[field.name]"
+                                :invalid="
+                                    inputsWithError.hasOwnProperty(field.name)
+                                "
                             />
                             <Calendar
                                 v-if="field.type === 'calendar'"
@@ -203,6 +205,9 @@ const getFormValuesonLoad = () => {
                                 :dateFormat="field.dateFormat"
                                 class="w-full"
                                 v-tooltip="'Enter your username'"
+                                :invalid="
+                                    inputsWithError.hasOwnProperty(field.name)
+                                "
                             />
                             <InputMask
                                 v-else-if="field.type === 'mask'"
@@ -211,6 +216,9 @@ const getFormValuesonLoad = () => {
                                 :mask="field.mask"
                                 class="w-full"
                                 v-tooltip="'Enter your username'"
+                                :invalid="
+                                    inputsWithError.hasOwnProperty(field.name)
+                                "
                             />
                             <ToggleButton
                                 v-else-if="field.type === 'toggle'"
@@ -222,6 +230,9 @@ const getFormValuesonLoad = () => {
                                 offIcon="pi pi-times"
                                 :onLabel="$t(field.label)"
                                 :offLabel="$t(field.label)"
+                                :invalid="
+                                    inputsWithError.hasOwnProperty(field.name)
+                                "
                             />
                             <Dropdown2
                                 v-else-if="field.type === 'dropdown'"
@@ -234,6 +245,9 @@ const getFormValuesonLoad = () => {
                                 :optionValue="field.optionValue || 'id'"
                                 :optionLabel="field.optionLabel || 'name'"
                                 :multiple="field.multiple"
+                                :invalid="
+                                    inputsWithError.hasOwnProperty(field.name)
+                                "
                             />
                             <label
                                 v-if="field.type !== 'toggle'"
