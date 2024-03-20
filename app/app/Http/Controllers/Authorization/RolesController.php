@@ -784,7 +784,7 @@ class RolesController extends Controller
         ]);
     }
 
-    public function update(Request $request, Role $role): RedirectResponse
+    public function update(Request $request, Role $role): JsonResponse
     {
         $this->authorize('access', User::class);
         $this->authorize('isActive', $role);
@@ -799,16 +799,18 @@ class RolesController extends Controller
 
         try {
             if ($request->lock_on_expire && !$request->expires_at) {
-                return Redirect::back()->with([
-                    'toast_type' => 'error',
-                    'toast_message' => 'Define the expiration date.',
+                return response()->json([
+                    'type' => 'info',
+                    'summary' => 'Attention!',
+                    'message' => "When selecting 'lock on expire', it is mandatory to set an expiration date.",
                 ]);
             }
 
             if ($request->manage_nested && !$request->full_access) {
-                return Redirect::back()->with([
-                    'toast_type' => 'error',
-                    'toast_message' => "It is impossible to manage nested data without enabling 'full access'.",
+                return response()->json([
+                    'type' => 'info',
+                    'summary' => 'Attention!',
+                    'message' => "It is impossible to manage nested data without enabling 'full access'.",
                 ]);
             }
 
@@ -830,9 +832,9 @@ class RolesController extends Controller
 
                 DB::rollback();
 
-                return Redirect::back()->with([
-                    'toast_type' => 'error',
-                    'toast_message' => 'Error when syncing abilities to the role.',
+                return response()->json([
+                    'type' => 'error',
+                    'message' => 'Error when syncing abilities to the role.',
                 ]);
             }
         } catch (\Exception $e) {
@@ -840,19 +842,20 @@ class RolesController extends Controller
 
             DB::rollback();
 
-            return Redirect::back()->with([
-                'toast_type' => 'error',
-                'toast_message' => 'Error on edit selected item.|Error on edit selected items.',
-                'toast_count' => 1,
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Error on edit selected item.|Error on edit selected items.',
+                'length' => 1,
             ]);
         }
 
         DB::commit();
 
-        return Redirect::back()->with([
-            'toast_type' => 'success',
-            'toast_message' => '{0} Nothing to edit.|[1] Item edited successfully.|[2,*] :total items successfully edited.',
-            'toast_count' => 1,
+        return response()->json([
+            'type' => 'success',
+            'title' => 'Edit',
+            'message' => '{0} Nothing to edit.|[1] Item edited successfully.|[2,*] :total items successfully edited.',
+            'length' => 1,
         ]);
     }
 

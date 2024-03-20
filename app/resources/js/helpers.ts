@@ -81,6 +81,8 @@ async function fetchData(
 
         const instance = axios;
 
+        // console.log(isValidUrl(routeUrl));
+
         await instance({
             url: isValidUrl(routeUrl) as string,
             method: options?.method,
@@ -103,6 +105,8 @@ async function fetchData(
                 if (options?.onSuccess) options.onSuccess(response.data);
             })
             .catch((error) => {
+                console.log(error);
+
                 if (error.code === "ECONNABORTED") {
                     setTimeout(() =>
                         options?.onCancel ? options.onCancel() : null,

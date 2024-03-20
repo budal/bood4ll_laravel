@@ -85,7 +85,7 @@
   "All": "Tudo",
   "No items to show.": "Sem itens para exibir.",
   "Showing :from to :to of :total results": "Exibindo :from a :to de :total resultados",
-  "Define the expiration date.": "Defina a data de expiração.",
+  "When selecting 'lock on expire', it is mandatory to set an expiration date.": "Ao selecionar 'travar ao expirar', é obrigatória a definição de uma data de validade.",
   "It is impossible to manage nested data without enabling 'full access'.": "É impossível gerenciar dados aninhados sem ativar o 'acesso completo'.",
   "Nested data": "Dados aninhados",
   "Remove on transfer": "Remover na transferência",

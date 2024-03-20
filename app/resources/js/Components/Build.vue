@@ -51,7 +51,7 @@ const send = () => {
             toast.add({
                 severity: content.type || "success",
                 summary: trans(content.title || "Confirmed"),
-                detail: transChoice(content.message, content.length, {}),
+                detail: transChoice(content.message, content.length || 1, {}),
                 life: 3000,
             });
         },
@@ -101,7 +101,7 @@ const confirmDialog = (event: Event) => {
     }
 };
 
-const onFormDataLoad = () => {
+const getFormValuesonLoad = () => {
     if (props.components.source) {
         fetchData(props.components.source, {
             complement: {
@@ -138,7 +138,7 @@ const onFormDataLoad = () => {
 </script>
 
 <template>
-    <DeferredContent @load="onFormDataLoad" aria-live="polite">
+    <DeferredContent @load="getFormValuesonLoad" aria-live="polite">
         <form v-if="components.showIf !== false" class="w-full space-y-6">
             <div
                 class="grid sm:gap-2"
