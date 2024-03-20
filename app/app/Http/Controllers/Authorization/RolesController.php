@@ -654,7 +654,7 @@ class RolesController extends Controller
 
                 return response()->json([
                     'type' => 'success',
-                    'deactivate' => $hasRole,
+                    'deactivate' => $hasRole == true ? true : false,
                     'title' => $hasRole ? 'Deauthorize' : 'Authorize',
                     'message' => $hasRole
                         ? "The user ':user' has been disabled in the ':role' role."
