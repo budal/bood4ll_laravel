@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { Ref, ref } from "vue";
 import { fetchData } from "@/helpers";
 
 import { useConfirm } from "primevue/useconfirm";
@@ -20,7 +20,7 @@ const toast = useToast();
 const loading = ref(false);
 const formValue = ref<Record<string, any>>({});
 
-const inputsWithError = ref({});
+const inputsWithError: Ref<{ [key: string]: boolean }> = ref({});
 
 const send = () => {
     // console.log(props.components, formValue);
@@ -38,7 +38,7 @@ const send = () => {
                 status: number;
                 statusText: string;
                 data: {
-                    errors: string;
+                    errors: any;
                     message: string;
                 };
             };
@@ -193,7 +193,6 @@ const getFormValuesonLoad = () => {
                                 :autocomplete="
                                     field.name === true ? field.name : 'off'
                                 "
-                                v-tooltip="''"
                                 :invalid="
                                     inputsWithError.hasOwnProperty(field.name)
                                 "
@@ -204,7 +203,6 @@ const getFormValuesonLoad = () => {
                                 v-model="formValue[field.name]"
                                 :dateFormat="field.dateFormat"
                                 class="w-full"
-                                v-tooltip="'Enter your username'"
                                 :invalid="
                                     inputsWithError.hasOwnProperty(field.name)
                                 "
@@ -215,7 +213,6 @@ const getFormValuesonLoad = () => {
                                 v-model="formValue[field.name]"
                                 :mask="field.mask"
                                 class="w-full"
-                                v-tooltip="'Enter your username'"
                                 :invalid="
                                     inputsWithError.hasOwnProperty(field.name)
                                 "
@@ -230,7 +227,6 @@ const getFormValuesonLoad = () => {
                                 offIcon="pi pi-times"
                                 :onLabel="$t(field.label)"
                                 :offLabel="$t(field.label)"
-                                v-tooltip="'Enter your username'"
                                 :invalid="
                                     inputsWithError.hasOwnProperty(field.name)
                                 "
