@@ -513,9 +513,9 @@ onBeforeUnmount(() => {
 });
 
 const onToggle = (
-    route: any,
+    source: any,
     method: "delete" | "get" | "post" | "put" | "patch",
-    source: {
+    toggle: {
         data: {
             id: string | number;
             loading: boolean;
@@ -533,11 +533,11 @@ const onToggle = (
         };
     },
 ) => {
-    fetchData(route, {
+    fetchData(source, {
         method: method,
-        data: { list: [source.data.id] },
+        data: { list: [toggle.data.id] },
         onBefore: () => {
-            source.data.loading = true;
+            toggle.data.loading = true;
         },
         onSuccess: (success: {
             type:
@@ -559,10 +559,10 @@ const onToggle = (
                 success.checked === true ? "pi pi-check" : "pi pi-times";
             const severity = success.checked === true ? "success" : "danger";
 
-            source.data.icon = icon;
-            source.data.severity = severity;
+            toggle.data.icon = icon;
+            toggle.data.severity = severity;
 
-            source.data.checked = success.deactivate === true ? false : true;
+            toggle.data.checked = success.deactivate === true ? false : true;
 
             toast.add({
                 severity: success.type,
@@ -576,7 +576,7 @@ const onToggle = (
             });
         },
         onFinish: () => {
-            source.data.loading = false;
+            toggle.data.loading = false;
         },
         onError: (error: { message: string; length: number }) => {
             toast.add({
