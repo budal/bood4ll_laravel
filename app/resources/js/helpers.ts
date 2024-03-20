@@ -27,7 +27,6 @@ async function fetchData(
         complement?: any;
         method?: "get" | "post" | "put" | "patch" | "delete";
         data?: Object;
-        // data?: BodyInit | null | undefined;
         onBefore?: Function;
         onProgress?: Function;
         onCancel?: Function;
@@ -37,8 +36,6 @@ async function fetchData(
     },
 ) {
     let routeUrl = route;
-
-    // console.log(route, options?.method);
 
     if (options?.complement) {
         routeUrl =
@@ -88,11 +85,6 @@ async function fetchData(
             url: isValidUrl(routeUrl) as string,
             method: options?.method,
             data: options?.data,
-            // headers: {
-            //     Accept: "application/json",
-            //     "Content-Type": "application/json;charset=UTF-8",
-            //     "X-CSRF-TOKEN": usePage().props.csrf as string,
-            // },
             timeout: 10000,
             // onUploadProgress: function (progressEvent) {
             //     var percentCompleted = Math.round(

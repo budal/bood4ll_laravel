@@ -513,7 +513,27 @@ onBeforeUnmount(() => {
     debouncedWatch.cancel();
 });
 
-const onToggle = (route: any, method: any, source: any) => {
+const onToggle = (
+    route: any,
+    method: "delete" | "get" | "post" | "put" | "patch",
+    source: {
+        data: {
+            id: string | number;
+            loading: boolean;
+            icon: string;
+            severity:
+                | "success"
+                | "secondary"
+                | "info"
+                | "danger"
+                | "warning"
+                | "help"
+                | "contrast"
+                | undefined;
+            checked: boolean;
+        };
+    },
+) => {
     fetchData(route, {
         method: method,
         data: { list: [source.data.id] },

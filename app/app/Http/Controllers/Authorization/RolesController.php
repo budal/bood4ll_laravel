@@ -412,6 +412,7 @@ class RolesController extends Controller
                                                                         'route' => 'getRoleAuthorizedUsers',
                                                                         'transmute' => ['role' => 'id'],
                                                                     ],
+                                                                    'selectBoxes' => true,
                                                                     'visible' => true,
                                                                     'disabled' => true,
                                                                 ],
@@ -478,7 +479,8 @@ class RolesController extends Controller
                                                                     'disableSort' => true,
                                                                     'callback' => [
                                                                         'route' => 'apps.roles.authorize',
-                                                                        'attributes' => ['mode' => 'toggle']
+                                                                        'attributes' => ['mode' => 'toggle'],
+                                                                        'transmute' => ['role' => 'id'],
                                                                     ],
                                                                     'method' => 'put',
                                                                     'colorOn' => 'success',
