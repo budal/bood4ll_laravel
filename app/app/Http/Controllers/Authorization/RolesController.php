@@ -800,8 +800,8 @@ class RolesController extends Controller
             'description' => ['string', 'max:255'],
             'active' => ['boolean'],
             'lock_on_expire' => ['boolean'],
-            'expires_at' => ['nullable', 'date', Rule::requiredIf($request->lock_on_expire == true)],
-            'full_access' => ['nullable', 'boolean', Rule::requiredIf($request->manage_nested == false)],
+            'expires_at' => ['nullable', 'date', 'required_if:lock_on_expire,true'],
+            'full_access' => ['boolean', 'accepted_if:manage_nested,true'],
             'manage_nested' => ['boolean'],
             'remove_on_change_unit' => ['boolean'],
         ], $messages = [
