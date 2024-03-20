@@ -55,6 +55,8 @@ const send = () => {
             });
         },
         onSuccess: (content: any) => {
+            inputsWithError.value = {};
+
             toast.add({
                 severity: content.type || "success",
                 summary: trans(content.title || "Confirmed"),
@@ -193,7 +195,7 @@ const getFormValuesonLoad = () => {
                                 :autocomplete="
                                     field.name === true ? field.name : 'off'
                                 "
-                                v-tooltip="inputsWithError[field.name]"
+                                v-tooltip="''"
                                 :invalid="
                                     inputsWithError.hasOwnProperty(field.name)
                                 "
@@ -230,6 +232,7 @@ const getFormValuesonLoad = () => {
                                 offIcon="pi pi-times"
                                 :onLabel="$t(field.label)"
                                 :offLabel="$t(field.label)"
+                                v-tooltip="'Enter your username'"
                                 :invalid="
                                     inputsWithError.hasOwnProperty(field.name)
                                 "
@@ -256,6 +259,19 @@ const getFormValuesonLoad = () => {
                                 {{ $t(field.label || "") }}
                             </label>
                         </FloatLabel>
+                        <InlineMessage
+                            v-if="inputsWithError[field.name]"
+                            severity="error"
+                        >
+                            <ol>
+                                <li
+                                    class="text-xs"
+                                    v-for="error in inputsWithError[field.name]"
+                                >
+                                    {{ error }}
+                                </li>
+                            </ol>
+                        </InlineMessage>
 
                         <Table
                             v-if="field.type === 'table'"
