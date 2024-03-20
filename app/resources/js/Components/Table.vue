@@ -334,11 +334,21 @@ const tableMenuToggle = (event: MouseEvent) => {
                                         life: 3000,
                                     });
                                 },
-                                onError: (error: { message: string }) => {
+                                onError: (error: {
+                                    response: {
+                                        status: number;
+                                        statusText: string;
+                                        data: {
+                                            message: string;
+                                        };
+                                    };
+                                }) => {
                                     toast.add({
                                         severity: "error",
-                                        summary: trans("Error"),
-                                        detail: trans(error.message),
+                                        summary: `${trans(error.response.statusText)} (${error.response.status})`,
+                                        detail: trans(
+                                            error.response.data.message,
+                                        ),
                                         life: 3000,
                                     });
                                 },

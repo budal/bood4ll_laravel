@@ -51,6 +51,7 @@ async function fetchData(
 
         if (route.transmute) {
             const transmuteAttributes: any = {};
+
             for (const key in route.transmute) {
                 if (
                     Object.prototype.hasOwnProperty.call(
@@ -107,9 +108,9 @@ async function fetchData(
                         options?.onCancel ? options.onCancel() : null,
                     );
                 }
+
                 if (options?.onError) options.onError(error);
             });
-
         setTimeout(() => (options?.onFinish ? options.onFinish() : null));
     } catch (error) {
         console.error(error);
