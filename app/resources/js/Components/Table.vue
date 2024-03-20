@@ -427,9 +427,8 @@ const onToggleColumns = (val: string | any[]) => {
 };
 
 const confirmDialog = (options: {
-    message: string;
     header?: string;
-    callback?: Function;
+    message: string;
     items?: number;
     icon?: string;
     rejectIcon?: string;
@@ -438,13 +437,15 @@ const confirmDialog = (options: {
     acceptIcon?: string;
     acceptClass?: string;
     acceptLabel?: string;
+    callback?: Function;
 }) => {
     confirm.require({
         group: "dialog",
+        defaultFocus: "reject",
+        header: trans(options.header || "Confirmation"),
         message:
             transChoice(options.message, options.items || 1) ||
             trans("Are you sure you want to proceed?"),
-        header: trans(options.header || "Confirmation"),
         icon: options.icon || "pi pi-exclamation-triangle",
         rejectIcon: options.rejectIcon,
         rejectClass:
@@ -453,7 +454,6 @@ const confirmDialog = (options: {
         acceptIcon: options.acceptIcon || "pi pi-check",
         acceptClass: options.acceptClass || "p-button-primary",
         acceptLabel: trans(options.acceptLabel || "Confirm"),
-        defaultFocus: "reject",
         accept: () => {
             if (options.callback) options.callback();
         },

@@ -280,8 +280,8 @@ class RolesController extends Controller
                                                                     'visible' => $request->user()->can('canManageNestedData', User::class),
                                                                     'condition' => ['checked' => false],
                                                                     'badgeClass' => 'success',
-                                                                    'modalTitle' => 'Are you sure you want to authorize the selected users?|Are you sure you want to authorize the selected users?',
-                                                                    'modalSubTitle' => 'The selected user will have the rights to access this role. Do you want to continue?|The selected user will have the rights to access this role. Do you want to continue?',
+                                                                    'dialogTitle' => 'Are you sure you want to authorize the selected users?|Are you sure you want to authorize the selected users?',
+                                                                    'dialogSubTitle' => 'The selected user will have the rights to access this role. Do you want to continue?|The selected user will have the rights to access this role. Do you want to continue?',
 
 
                                                                 ],
@@ -296,8 +296,8 @@ class RolesController extends Controller
                                                                     'visible' => $request->user()->can('canManageNestedData', User::class),
                                                                     'condition' => ['checked' => true],
                                                                     'badgeClass' => 'danger',
-                                                                    'modalTitle' => 'Are you sure you want to deauthorize the selected users?|Are you sure you want to deauthorize the selected users?',
-                                                                    'modalSubTitle' => 'The selected user will lose the rights to access this role. Do you want to continue?|The selected users will lose the rights to access this role. Do you want to continue?',
+                                                                    'dialogTitle' => 'Are you sure you want to deauthorize the selected users?|Are you sure you want to deauthorize the selected users?',
+                                                                    'dialogSubTitle' => 'The selected user will lose the rights to access this role. Do you want to continue?|The selected users will lose the rights to access this role. Do you want to continue?',
                                                                 ],
                                                             ],
                                                             'titles' => [
@@ -387,7 +387,7 @@ class RolesController extends Controller
                                                 'disabled' => $request->user()->cannot('isManager', User::class),
                                                 'fields' => $this->__fields($request),
                                                 'confirm' => true,
-                                                'popup' => 'Do you want to edit unit?',
+                                                'popup' => 'Do you confirm this role edition?',
                                                 'toastTitle' => 'Edit',
                                                 'toast' => '{0} Nothing to edit.|[1] Item edited successfully.|[2,*] :total items successfully edited.',
                                                 'toastClass' => 'success',

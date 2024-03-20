@@ -43,9 +43,13 @@
   "Do you want confirm this action?": "Você quer confirmar esta ação?",
   "Loading": "Carregando",
   "Please wait...": "Por favor aguarde...",
+ 
   "Locked": "Travado",
   "Password confirmation required.": "Confirmação da senha requerida",
-
+  "Unauthorized": "Não autorizado",
+  "Unauthenticated.": "Não autenticado.",
+  "Method Not Allowed": "Método não permitido",
+  
   "Current Password": "Senha atual",
   "New Password": "Nova Senha",
   "Update Password": "Atualizar senha",
@@ -241,6 +245,7 @@
   "There are no abilities to select. Click here to manage them.": "Não há abilitações para selecionar. Clique aqui para gerenciá-las.",
   "The user ':user' has been disabled in the ':role' role.": "O usuário ':user' foi desativado na função ':role'.",
   "The user ':user' was enabled in the ':role' role.": "O usuário ':user' foi ativado na função ':role'.",
+  "Do you confirm this role edition?": "Você confirma a edição deste item?",
 
   "Units": "Unidades",
   "Unit": "Unidade",
