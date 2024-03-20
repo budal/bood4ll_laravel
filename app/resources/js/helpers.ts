@@ -23,7 +23,6 @@ const isValidUrl = (url: string | { route: string; attributes?: string[] }) => {
 async function fetchData(
     route: any,
     options?: {
-        id?: string | number | undefined;
         complement?: any;
         method?: "get" | "post" | "put" | "patch" | "delete";
         data?: Object;

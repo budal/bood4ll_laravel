@@ -470,7 +470,6 @@ useIntersectionObserver(lastIntersection, ([{ isIntersecting }]) => {
         loadingTable.value = true;
 
         fetchData(nextPageURL.value, {
-            id: props.id,
             onBefore: () => {
                 loadingTable.value = true;
             },
@@ -537,9 +536,6 @@ const onToggle = (
     fetchData(route, {
         method: method,
         data: { list: [source.data.id] },
-        complement: {
-            mode: "toggle",
-        },
         onBefore: () => {
             source.data.loading = true;
         },
