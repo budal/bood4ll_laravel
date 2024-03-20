@@ -784,7 +784,7 @@ class RolesController extends Controller
         ]);
     }
 
-    public function update(Request $request, Role $role): JsonResponse
+    public function update(RolesRequest $request, Role $role): JsonResponse
     {
         $this->authorize('access', User::class);
         $this->authorize('isActive', $role);
@@ -844,7 +844,8 @@ class RolesController extends Controller
 
             return response()->json([
                 'type' => 'error',
-                'message' => 'Error on edit selected item.|Error on edit selected items.',
+                'message' => $e,
+                // 'message' => 'Error on edit selected item.|Error on edit selected items.',
                 'length' => 1,
             ]);
         }
