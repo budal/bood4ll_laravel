@@ -44,7 +44,7 @@ class RolesController extends Controller
                 && ($request->search ? Str::contains($route->action['as'], $request->search) : true);
         });
 
-        $abilitiesInDB = Ability::filter($request, 'abilites')->get()->pluck('name');
+        $abilitiesInDB = Ability::where('name', 'ilike', "%$request->search%")->get()->pluck('name');
 
         $validAbilities = $routes->map(function ($route) use ($abilitiesInDB) {
             $actionSegments = explode('\\', $route->action['controller']);
@@ -182,11 +182,13 @@ class RolesController extends Controller
 
     public function getRoleAuthorizedUsers(Request $request, Role $role): JsonResponse
     {
-        $users = User::filter($request, 'users')
-            ->leftjoin('unit_user', 'unit_user.user_id', '=', 'users.id')
+        $users = User::leftjoin('unit_user', 'unit_user.user_id', '=', 'users.id')
             ->leftjoin('role_user', 'role_user.user_id', '=', 'users.id')
             ->select('users.id', 'users.name', 'users.email')
             ->groupBy('users.id', 'users.name', 'users.email')
+            ->with('unitsClassified', 'unitsWorking')
+            ->where('name', 'ilike', "%$request->search%")
+            ->orderBy("name")
             ->when(
                 $request->show == 'all',
                 function () {
@@ -201,7 +203,6 @@ class RolesController extends Controller
                 }
                 $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
             })
-            ->with('unitsClassified', 'unitsWorking')
             ->cursorPaginate(30)
             ->withQueryString()
             ->through(function ($item) use ($role) {
@@ -633,261 +634,11 @@ class RolesController extends Controller
         ];
     }
 
+    // 'modalTitle' => 'Are you sure you want to authorize the selected users?|Are you sure you want to authorize the selected users?',
+    // 'modalSubTitle' => 'The selected user will have the rights to access this role. Do you want to continue?|The selected user will have the rights to access this role. Do you want to continue?',
 
-    public function __form(Request $request, Role $role): array
-    {
-        $abilities = Ability::select('abilities.*')
-            ->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
-                $query->whereIn('name', $request->user()->getAllAbilities->whereNotNull('ability')->pluck('ability'));
-            })
-            ->orderBy('name')
-            ->get();
-
-        $users = User::filter($request, 'users')
-            ->leftjoin('unit_user', 'unit_user.user_id', '=', 'users.id')
-            ->leftjoin('role_user', 'role_user.user_id', '=', 'users.id')
-            ->select('users.id', 'users.name', 'users.email')
-            ->groupBy('users.id', 'users.name', 'users.email')
-            ->when(
-                $request->show == 'all',
-                function () {
-                },
-                function ($query) use ($role) {
-                    $query->where('role_user.role_id', $role->id);
-                }
-            )
-            ->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
-                if ($request->user()->cannot('hasFullAccess', User::class)) {
-                    $query->where('unit_user.user_id', $request->user()->id);
-                }
-                $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
-            })
-            ->with('unitsClassified', 'unitsWorking')
-            ->paginate(20)
-            ->onEachSide(2)
-            ->appends(collect($request->query)->toArray())
-            ->through(function ($item) use ($role) {
-                $item->checked = $item->roles->pluck('id')->contains($role->id);
-
-                return $item;
-            });
-
-        return [
-            [
-                'id' => 'role',
-                'title' => 'Main data',
-                'subtitle' => 'Role name, abilities and settings',
-                'showIf' => $role->id === null || $request->user()->can('isOwner', $role),
-                'disabledIf' => $role->inalterable == true || $role->id !== null && $request->user()->cannot('isOwner', $role),
-                'cols' => 3,
-                'fields' => [
-                    [
-                        [
-                            'type' => 'input',
-                            'name' => 'name',
-                            'title' => 'Name',
-                            'required' => true,
-                            'autofocus' => true,
-                        ],
-                        [
-                            'type' => 'input',
-                            'name' => 'description',
-                            'title' => 'Description',
-                            'span' => 2,
-                        ],
-                        [
-                            'type' => 'select',
-                            'name' => 'abilities',
-                            'title' => 'Abilities',
-                            'span' => 3,
-                            'content' => $abilities,
-                            'required' => true,
-                            'multiple' => true,
-                        ],
-                        [
-                            'type' => 'toggle',
-                            'name' => 'active',
-                            'title' => 'Active',
-                            'colorOn' => 'success',
-                            'colorOff' => 'danger',
-                        ],
-                        [
-                            'type' => 'toggle',
-                            'name' => 'lock_on_expire',
-                            'title' => 'Lock on expire',
-                            'colorOn' => 'info',
-                        ],
-                        [
-                            'type' => 'date',
-                            'name' => 'expires_at',
-                            'title' => 'Expires at',
-                        ],
-                        [
-                            'type' => 'toggle',
-                            'name' => 'full_access',
-                            'title' => 'Full access',
-                            'disabled' => $request->user()->cannot('hasFullAccess', User::class),
-                            'colorOn' => 'info',
-                        ],
-                        [
-                            'type' => 'toggle',
-                            'name' => 'manage_nested',
-                            'title' => 'Manage nested data',
-                            'disabled' => $request->user()->cannot('canManageNestedData', User::class),
-                            'colorOn' => 'info',
-                        ],
-                        [
-                            'type' => 'toggle',
-                            'name' => 'remove_on_change_unit',
-                            'title' => 'Remove on transfer',
-                            'disabled' => $request->user()->can('canRemoveOnChangeUnit', User::class) && $request->user()->cannot('isSuperAdmin', User::class),
-                            'colorOn' => 'info',
-                        ],
-                    ],
-                ],
-            ],
-            [
-                'id' => 'users',
-                'title' => 'Authorizations',
-                'subtitle' => 'Define which users will have access to this authorization',
-                'showIf' => $role->id != null,
-                'fields' => [
-                    [
-                        [
-                            'type' => 'table',
-                            'name' => 'users',
-                            'content' => [
-                                'routes' => [
-                                    'showCheckboxes' => true,
-                                ],
-                                'menu' => [
-                                    [
-                                        'icon' => 'mdi:plus-circle-outline',
-                                        'title' => 'Authorize',
-                                        'route' => [
-                                            'route' => 'apps.roles.authorization',
-                                            'attributes' => [
-                                                $role->id,
-                                                'on',
-                                            ],
-                                        ],
-                                        'method' => 'post',
-                                        'list' => 'checkboxes',
-                                        'listCondition' => false,
-                                        'modalTitle' => 'Are you sure you want to authorize the selected users?|Are you sure you want to authorize the selected users?',
-                                        'modalSubTitle' => 'The selected user will have the rights to access this role. Do you want to continue?|The selected user will have the rights to access this role. Do you want to continue?',
-                                        'buttonTitle' => 'Authorize',
-                                        'buttonIcon' => 'mdi:plus-circle-outline',
-                                        'buttonColor' => 'success',
-                                    ],
-                                    [
-                                        'icon' => 'mdi:minus-circle-outline',
-                                        'title' => 'Deauthorize',
-                                        'route' => [
-                                            'route' => 'apps.roles.authorization',
-                                            'attributes' => [
-                                                $role->id,
-                                                'off',
-                                            ],
-                                        ],
-                                        'method' => 'post',
-                                        'list' => 'checkboxes',
-                                        'listCondition' => true,
-                                        'modalTitle' => 'Are you sure you want to deauthorize the selected users?|Are you sure you want to deauthorize the selected users?',
-                                        'modalSubTitle' => 'The selected user will lose the rights to access this role. Do you want to continue?|The selected users will lose the rights to access this role. Do you want to continue?',
-                                        'buttonTitle' => 'Deauthorize',
-                                        'buttonIcon' => 'mdi:minus-circle-outline',
-                                        'buttonColor' => 'danger',
-                                    ],
-                                    [
-                                        'title' => '-',
-                                    ],
-
-                                    [
-                                        'icon' => 'mdi:format-list-checkbox',
-                                        'title' => 'List',
-                                        'showIf' => $request->user()->can('hasFullAccess', User::class),
-                                        'items' => [
-                                            [
-                                                'icon' => 'mdi:account-key-outline',
-                                                'title' => 'Authorized users',
-                                                'route' => [
-                                                    'route' => 'apps.roles.edit',
-                                                    'attributes' => $role->id,
-                                                ],
-                                            ],
-                                            [
-                                                'icon' => 'mdi:account-multiple-outline',
-                                                'title' => 'All users',
-                                                'route' => [
-                                                    'route' => 'apps.roles.edit',
-                                                    'attributes' => [$role->id, 'all'],
-                                                ],
-                                            ],
-                                        ],
-                                    ],
-                                ],
-                                'titles' => [
-                                    [
-                                        'type' => 'composite',
-                                        'title' => 'User',
-                                        'field' => 'name',
-                                        'values' => [
-                                            [
-                                                'field' => 'name',
-                                            ],
-                                            [
-                                                'field' => 'email',
-                                                'class' => 'text-xs',
-                                            ],
-                                        ],
-                                    ],
-                                    [
-                                        'type' => 'composite',
-                                        'title' => 'Classified',
-                                        'class' => 'collapse',
-                                        'field' => 'units_classified',
-                                        'options' => [
-                                            [
-                                                'field' => 'name',
-                                            ],
-                                        ],
-                                    ],
-                                    [
-                                        'type' => 'composite',
-                                        'title' => 'Working',
-                                        'class' => 'collapse',
-                                        'field' => 'units_working',
-                                        'options' => [
-                                            [
-                                                'field' => 'name',
-                                            ],
-                                        ],
-                                    ],
-                                    [
-                                        'type' => 'toggle',
-                                        'title' => '',
-                                        'field' => 'checked',
-                                        'disableSort' => true,
-                                        'route' => [
-                                            'route' => 'apps.roles.authorization',
-                                            'attributes' => [
-                                                $role->id,
-                                                'toggle',
-                                            ],
-                                        ],
-                                        'method' => 'post',
-                                        'colorOn' => 'info',
-                                    ],
-                                ],
-                                'items' => $users,
-                            ],
-                        ],
-                    ],
-                ],
-            ],
-        ];
-    }
+    // 'modalTitle' => 'Are you sure you want to deauthorize the selected users?|Are you sure you want to deauthorize the selected users?',
+    // 'modalSubTitle' => 'The selected user will lose the rights to access this role. Do you want to continue?|The selected users will lose the rights to access this role. Do you want to continue?',
 
     public function putAuthorizeUserInRole(Request $request, Role $role, $mode): RedirectResponse
     {
