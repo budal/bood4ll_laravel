@@ -280,6 +280,10 @@ class RolesController extends Controller
                                                                     'visible' => $request->user()->can('canManageNestedData', User::class),
                                                                     'condition' => ['checked' => false],
                                                                     'badgeClass' => 'success',
+                                                                    'modalTitle' => 'Are you sure you want to authorize the selected users?|Are you sure you want to authorize the selected users?',
+                                                                    'modalSubTitle' => 'The selected user will have the rights to access this role. Do you want to continue?|The selected user will have the rights to access this role. Do you want to continue?',
+
+
                                                                 ],
                                                                 [
                                                                     'icon' => 'close',
@@ -292,6 +296,8 @@ class RolesController extends Controller
                                                                     'visible' => $request->user()->can('canManageNestedData', User::class),
                                                                     'condition' => ['checked' => true],
                                                                     'badgeClass' => 'danger',
+                                                                    'modalTitle' => 'Are you sure you want to deauthorize the selected users?|Are you sure you want to deauthorize the selected users?',
+                                                                    'modalSubTitle' => 'The selected user will lose the rights to access this role. Do you want to continue?|The selected users will lose the rights to access this role. Do you want to continue?',
                                                                 ],
                                                             ],
                                                             'titles' => [
@@ -660,12 +666,6 @@ class RolesController extends Controller
             ],
         ];
     }
-
-    // 'modalTitle' => 'Are you sure you want to authorize the selected users?|Are you sure you want to authorize the selected users?',
-    // 'modalSubTitle' => 'The selected user will have the rights to access this role. Do you want to continue?|The selected user will have the rights to access this role. Do you want to continue?',
-
-    // 'modalTitle' => 'Are you sure you want to deauthorize the selected users?|Are you sure you want to deauthorize the selected users?',
-    // 'modalSubTitle' => 'The selected user will lose the rights to access this role. Do you want to continue?|The selected users will lose the rights to access this role. Do you want to continue?',
 
     public function putAuthorizeUserInRole(Request $request, Role $role, $mode): JsonResponse
     {

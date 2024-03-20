@@ -89,16 +89,25 @@ const tableMenuToggle = (event: MouseEvent) => {
             command: () => {
                 confirmDialog({
                     header: "Remove",
-                    callback: props.structure.actions.destroy?.callback,
                     items: selectedItemsTotal.value.filter(
                         (item: { deleted_at: string }) =>
                             item.deleted_at === null,
-                    ),
+                    ).length,
                     message:
                         "Are you sure you want to remove the selected item?|Are you sure you want to remove the selected items?",
                     icon: "pi pi-trash",
                     acceptClass: "p-button-warning",
                     acceptLabel: "Remove",
+                    callback: () => {
+                        console.log(
+                            props.structure.actions.destroy?.callback,
+                            selectedItemsTotal.value.filter(
+                                (item: { deleted_at: string }) =>
+                                    item.deleted_at === null,
+                            ),
+                        );
+                        onTableDataLoad();
+                    },
                 });
             },
         },
@@ -122,16 +131,25 @@ const tableMenuToggle = (event: MouseEvent) => {
             command: () => {
                 confirmDialog({
                     header: "Restore",
-                    callback: props.structure.actions.restore?.callback,
                     items: selectedItemsTotal.value.filter(
                         (item: { deleted_at: string }) =>
                             item.deleted_at !== null,
-                    ),
+                    ).length,
                     message:
                         "Are you sure you want to restore the selected item?|Are you sure you want to restore the selected items?",
                     icon: "pi pi-replay",
                     acceptClass: "p-button-info",
                     acceptLabel: "Restore",
+                    callback: () => {
+                        console.log(
+                            props.structure.actions.restore?.callback,
+                            selectedItemsTotal.value.filter(
+                                (item: { deleted_at: string }) =>
+                                    item.deleted_at !== null,
+                            ),
+                        );
+                        onTableDataLoad();
+                    },
                 });
             },
         },
@@ -153,16 +171,25 @@ const tableMenuToggle = (event: MouseEvent) => {
             command: () => {
                 confirmDialog({
                     header: "Erase",
-                    callback: props.structure.actions.forceDestroy?.callback,
                     items: selectedItemsTotal.value.filter(
                         (item: { deleted_at: string }) =>
                             item.deleted_at === null,
-                    ),
+                    ).length,
                     message:
                         "Are you sure you want to erase the selected item?|Are you sure you want to erase the selected items?",
                     icon: "pi pi-times",
                     acceptClass: "p-button-danger",
                     acceptLabel: "Erase",
+                    callback: () => {
+                        console.log(
+                            props.structure.actions.forceDestroy?.callback,
+                            selectedItemsTotal.value.filter(
+                                (item: { deleted_at: string }) =>
+                                    item.deleted_at === null,
+                            ),
+                        );
+                        onTableDataLoad();
+                    },
                 });
             },
         },
@@ -380,8 +407,8 @@ const onToggleColumns = (val: string | any[]) => {
 const confirmDialog = (options: {
     message: string;
     header?: string;
-    callback?: any;
-    items?: any;
+    callback?: Function;
+    items?: number;
     icon?: string;
     rejectIcon?: string;
     rejectClass?: string;
@@ -393,7 +420,7 @@ const confirmDialog = (options: {
     confirm.require({
         group: "dialog",
         message:
-            transChoice(options.message, options.items.length) ||
+            transChoice(options.message, options.items || 1) ||
             trans("Are you sure you want to proceed?"),
         header: trans(options.header || "Confirmation"),
         icon: options.icon || "pi pi-exclamation-triangle",
@@ -406,8 +433,7 @@ const confirmDialog = (options: {
         acceptLabel: trans(options.acceptLabel || "Confirm"),
         defaultFocus: "reject",
         accept: () => {
-            console.log(options.callback, options.items);
-            onTableDataLoad();
+            if (options.callback) options.callback();
         },
     });
 };
