@@ -421,16 +421,12 @@ const tableMenuToggle = (event: MouseEvent) => {
                                 onTableDataLoad();
                             }
                         } else {
-                            const data = items.map(
-                                (item: { id: string | number }) => item.id,
-                            );
-
                             fetchData(item.callback, {
                                 complement: {
                                     id: props.id,
                                 },
                                 method: item.method,
-                                data: { list: data },
+                                data: { list: items },
                                 onBefore: () => {
                                     toast.add({
                                         severity: "contrast",
@@ -717,7 +713,7 @@ const onToggle = (
             id: props.id,
         },
         method: method,
-        data: { list: [toggle.data.id] },
+        data: { list: [toggle.data] },
         onBefore: () => {
             toggle.data.loading = true;
         },

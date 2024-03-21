@@ -86,35 +86,57 @@ class RolesController extends Controller
     {
         $this->authorize('isSuperAdmin', User::class);
 
-        try {
-            $ability = Ability::sync($mode, $request->list);
+        $list = collect($request->list)->pluck('id');
 
+        try {
             if ($mode == 'toggle') {
+                $name = $list[0];
+
+                if ($ability = Ability::where('name', $name)->first()) {
+                    if ($ability->delete()) {
+                        $action = 'delete';
+                    }
+                } else {
+                    if ($ability = Ability::updateOrCreate(['name' => $name])) {
+                        $action = 'insert';
+                    }
+                }
+
                 return response()->json([
                     'type' => 'success',
-                    'deactivate' => $ability->action == 'delete',
-                    'title' => $ability->action == 'delete' ? 'Deactivation' : 'Activation',
-                    'message' => $ability->action == 'delete'
+                    'deactivate' => $action == 'delete',
+                    'title' => $action == 'delete' ? 'Deactivation' : 'Activation',
+                    'message' => $action == 'delete'
                         ? "The ability ':ability' was deactivated."
                         : "The ability ':ability' was activated.",
                     'length' => 1,
                     'replacements' => ['ability' => $ability->name],
                 ]);
             } elseif ($mode == 'on') {
+                $total = 0;
+
+                foreach ($list as $name) {
+                    if (Ability::updateOrCreate(['name' => $name])) {
+                        ++$total;
+                    }
+                }
+
                 return response()->json([
                     'type' => 'success',
                     'title' => 'Activation',
                     'message' => '{0} Nothing to activate.|[1] Item activated successfully.|[2,*] :total items successfully activated.',
-                    'length' => $ability->total,
-                    'replacements' => ['total' => $ability->total],
+                    'length' => $total,
+                    'replacements' => ['total' => $total],
                 ]);
             } elseif ($mode == 'off') {
+                $total = Ability::whereIn('name', $list)->delete();
+
                 return response()->json([
                     'type' => 'success',
                     'title' => 'Deactivation',
                     'message' => '{0} Nothing to deactivate.|[1] Item deactivated successfully.|[2,*] :total items successfully deactivated.',
-                    'length' => $ability->total,
-                    'replacements' => ['total' => $ability->total],
+                    'length' => $total,
+                    'replacements' => ['total' => $total],
                 ]);
             }
         } catch (\Throwable $e) {
@@ -123,7 +145,7 @@ class RolesController extends Controller
             return response()->json([
                 'type' => 'error',
                 'message' => 'Error on edit selected item.|Error on edit selected items.',
-                'length' => count($request->list),
+                'length' => count($list),
             ]);
         }
     }
@@ -665,12 +687,13 @@ class RolesController extends Controller
         $this->authorize('access', User::class);
         $this->authorize('fullAccess', [$role, $request]);
 
-        $hasRole = $role->users()->whereIn('user_id', $request->list)->first();
+        $list = collect($request->list)->pluck('id');
 
         try {
             if ($mode == 'toggle') {
-                $user = User::whereIn('id', $request->list)->first();
-                $hasRole ? $role->users()->detach($request->list) : $role->users()->attach($request->list);
+                $user = User::whereIn('id', $list)->first();
+                $hasRole = $role->users()->whereIn('user_id', $list)->first();
+                $hasRole ? $role->users()->detach($list) : $role->users()->attach($list);
 
                 return response()->json([
                     'type' => 'success',
@@ -688,17 +711,17 @@ class RolesController extends Controller
                     'toast_message' => $hasRole
                 ]);
             } elseif ($mode == 'on') {
-                $total = $role->users()->attach($request->list);
+                $role->users()->attach($list);
 
                 return response()->json([
                     'type' => 'success',
                     'title' => 'Authorize',
                     'message' => '{0} Nothing to authorize.|[1] Item authorized successfully.|[2,*] :total items successfully authorized.',
-                    'length' => count($request->list),
-                    'replacements' => ['total' => count($request->list)],
+                    'length' => count($list),
+                    'replacements' => ['total' => count($list)],
                 ]);
             } elseif ($mode == 'off') {
-                $total = $role->users()->detach($request->list);
+                $total = $role->users()->detach($list);
 
                 return response()->json([
                     'type' => 'success',
