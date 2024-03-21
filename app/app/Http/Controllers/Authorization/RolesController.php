@@ -541,9 +541,6 @@ class RolesController extends Controller
                                         ),
                                     ],
                                     'restore' => [
-                                        'title' => 'Restore',
-                                        'message' => 'Do you want to restore this unit?|Do you want to restore this units?',
-                                        'toast' => 'Unit restored|Units restored.',
                                         'callback' => 'apps.roles.restore',
                                         'method' => 'post',
                                         'visible' => (
@@ -874,7 +871,7 @@ class RolesController extends Controller
         ]);
     }
 
-    public function destroy(Request $request): RedirectResponse
+    public function destroy(Request $request): JsonResponse
     {
         $this->authorize('access', User::class);
         $this->authorize('isManager', User::class);
@@ -887,24 +884,25 @@ class RolesController extends Controller
                     $query->orWhere('inalterable', false);
                 })->delete();
 
-            return back()->with([
-                'toast_type' => 'success',
-                'toast_message' => '{0} Nothing to remove.|[1] Item removed successfully.|[2,*] :total items successfully removed.',
-                'toast_count' => $total,
-                'toast_replacements' => ['total' => $total],
+            return response()->json([
+                'type' => 'success',
+                'title' => 'Destroy',
+                'message' => '{0} Nothing to remove.|[1] Item removed successfully.|[2,*] :total items successfully removed.',
+                'length' => $total,
+                'replacements' => ['total' => $total],
             ]);
         } catch (\Throwable $e) {
             report($e);
 
-            return back()->with([
-                'toast_type' => 'error',
-                'toast_message' => 'Error on remove selected item.|Error on remove selected items.',
-                'toast_count' => count($request->list),
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Error on remove selected item.|Error on remove selected items.',
+                'length' => count($request->list),
             ]);
         }
     }
 
-    public function forceDestroy(Request $request): RedirectResponse
+    public function forceDestroy(Request $request): JsonResponse
     {
         $this->authorize('access', User::class);
         $this->authorize('isSuperAdmin', User::class);
@@ -916,24 +914,25 @@ class RolesController extends Controller
                     $query->orWhere('inalterable', false);
                 })->forceDelete();
 
-            return back()->with([
-                'toast_type' => 'success',
-                'toast_message' => '{0} Nothing to erase.|[1] Item erased successfully.|[2,*] :total items successfully erased.',
-                'toast_count' => $total,
-                'toast_replacements' => ['total' => $total],
+            return response()->json([
+                'type' => 'success',
+                'title' => 'Erase',
+                'message' => '{0} Nothing to erase.|[1] Item erased successfully.|[2,*] :total items successfully erased.',
+                'length' => $total,
+                'replacements' => ['total' => $total],
             ]);
         } catch (\Throwable $e) {
             report($e);
 
-            return back()->with([
-                'toast_type' => 'error',
-                'toast_message' => 'Error on erase selected item.|Error on erase selected items.',
-                'toast_count' => $request->list,
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Error on erase selected item.|Error on erase selected items.',
+                'length' => $request->list,
             ]);
         }
     }
 
-    public function restore(Request $request): RedirectResponse
+    public function restore(Request $request): JsonResponse
     {
         $this->authorize('access', User::class);
         $this->authorize('isManager', User::class);
@@ -942,19 +941,20 @@ class RolesController extends Controller
         try {
             $total = Role::whereIn('id', $request->list)->restore();
 
-            return back()->with([
-                'toast_type' => 'success',
-                'toast_message' => '{0} Nothing to restore.|[1] Item restored successfully.|[2,*] :total items successfully restored.',
-                'toast_count' => $total,
-                'toast_replacements' => ['total' => $total],
+            return response()->json([
+                'type' => 'success',
+                'title' => 'Restore',
+                'message' => '{0} Nothing to restore.|[1] Item restored successfully.|[2,*] :total items successfully restored.',
+                'length' => $total,
+                'replacements' => ['total' => $total],
             ]);
         } catch (\Throwable $e) {
             report($e);
 
-            return back()->with([
-                'toast_type' => 'error',
-                'toast_message' => 'Error on restore selected item.|Error on restore selected items.',
-                'toast_count' => $request->list,
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Error on restore selected item.|Error on restore selected items.',
+                'length' => $request->list,
             ]);
         }
     }

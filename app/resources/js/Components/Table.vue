@@ -97,28 +97,50 @@ const tableMenuToggle = (event: MouseEvent) => {
                     acceptLabel:
                         props.structure.actions.destroy?.title || "Remove",
                     callback: () => {
-                        toast.add({
-                            severity:
-                                props.structure.actions.destroy?.toastClass ||
-                                "success",
-                            summary: trans(
-                                props.structure.actions.destroy?.title ||
-                                    "Remove",
-                            ),
-                            detail: transChoice(
-                                props.structure.actions.destroy?.toast ||
-                                    "{0} Nothing to remove.|[1] Item removed successfully.|[2,*] :total items successfully removed.",
-                                activeItems.length,
-                                { total: activeItems.length },
-                            ),
-                            life: 3000,
-                        });
-
-                        console.log(
-                            props.structure.actions.destroy?.callback,
-                            activeItems,
+                        const data = activeItems.map(
+                            (item: { id: string | number }) => item.id,
                         );
-                        onTableDataLoad();
+
+                        fetchData(props.structure.actions.destroy?.callback, {
+                            method: props.structure.actions.destroy?.method,
+                            data: { list: data },
+                            onError: (error: {
+                                response: {
+                                    status: number;
+                                    statusText: string;
+                                    data: {
+                                        message: string;
+                                    };
+                                };
+                            }) => {
+                                toast.add({
+                                    severity: "error",
+                                    summary: `${trans(error.response.statusText)} (${error.response.status})`,
+                                    detail: trans(error.response.data.message),
+                                    life: 3000,
+                                });
+                            },
+                            onSuccess: () => {
+                                toast.add({
+                                    severity:
+                                        props.structure.actions.destroy
+                                            ?.toastClass || "success",
+                                    summary: trans(
+                                        props.structure.actions.destroy
+                                            ?.title || "Remove",
+                                    ),
+                                    detail: transChoice(
+                                        props.structure.actions.destroy
+                                            ?.toast ||
+                                            "{0} Nothing to remove.|[1] Item removed successfully.|[2,*] :total items successfully removed.",
+                                        activeItems.length,
+                                        { total: activeItems.length },
+                                    ),
+                                    life: 3000,
+                                });
+                                onTableDataLoad();
+                            },
+                        });
                     },
                 });
             },
@@ -145,28 +167,50 @@ const tableMenuToggle = (event: MouseEvent) => {
                     acceptLabel:
                         props.structure.actions.restore?.title || "Restore",
                     callback: () => {
-                        toast.add({
-                            severity:
-                                props.structure.actions.restore?.toastClass ||
-                                "success",
-                            summary: trans(
-                                props.structure.actions.restore?.title ||
-                                    "Remove",
-                            ),
-                            detail: transChoice(
-                                props.structure.actions.restore?.toast ||
-                                    "{0} Nothing to restore.|[1] Item restored successfully.|[2,*] :total items successfully restored.",
-                                deletedItems.length,
-                                { total: deletedItems.length },
-                            ),
-                            life: 3000,
-                        });
-
-                        console.log(
-                            props.structure.actions.restore?.callback,
-                            deletedItems,
+                        const data = deletedItems.map(
+                            (item: { id: string | number }) => item.id,
                         );
-                        onTableDataLoad();
+
+                        fetchData(props.structure.actions.restore?.callback, {
+                            method: props.structure.actions.restore?.method,
+                            data: { list: data },
+                            onError: (error: {
+                                response: {
+                                    status: number;
+                                    statusText: string;
+                                    data: {
+                                        message: string;
+                                    };
+                                };
+                            }) => {
+                                toast.add({
+                                    severity: "error",
+                                    summary: `${trans(error.response.statusText)} (${error.response.status})`,
+                                    detail: trans(error.response.data.message),
+                                    life: 3000,
+                                });
+                            },
+                            onSuccess: () => {
+                                toast.add({
+                                    severity:
+                                        props.structure.actions.restore
+                                            ?.toastClass || "success",
+                                    summary: trans(
+                                        props.structure.actions.restore
+                                            ?.title || "Restore",
+                                    ),
+                                    detail: transChoice(
+                                        props.structure.actions.restore
+                                            ?.toast ||
+                                            "{0} Nothing to restore.|[1] Item restored successfully.|[2,*] :total items successfully restored.",
+                                        activeItems.length,
+                                        { total: deletedItems.length },
+                                    ),
+                                    life: 3000,
+                                });
+                                onTableDataLoad();
+                            },
+                        });
                     },
                 });
             },
@@ -177,13 +221,13 @@ const tableMenuToggle = (event: MouseEvent) => {
                 props.structure.actions.forceDestroy?.visible != false &&
                 isDefined(props.structure.actions.forceDestroy?.callback) &&
                 listItems.value === "trashed",
-            disabled: activeItems.length < 1,
+            disabled: deletedItems.length < 1,
             icon: "delete_forever",
-            badge: activeItems.length,
+            badge: deletedItems.length,
             badgeClass: props.structure.actions.forceDestroy?.class || "danger",
             command: () => {
                 confirmDialog({
-                    items: activeItems.length,
+                    items: deletedItems.length,
                     header:
                         props.structure.actions.forceDestroy?.title || "Erase",
                     message:
@@ -194,28 +238,56 @@ const tableMenuToggle = (event: MouseEvent) => {
                     acceptLabel:
                         props.structure.actions.forceDestroy?.title || "Erase",
                     callback: () => {
-                        toast.add({
-                            severity:
-                                props.structure.actions.forceDestroy
-                                    ?.toastClass || "success",
-                            summary: trans(
-                                props.structure.actions.forceDestroy?.title ||
-                                    "Erase",
-                            ),
-                            detail: transChoice(
-                                props.structure.actions.forceDestroy?.toast ||
-                                    "{0} Nothing to erase.|[1] Item erased successfully.|[2,*] :total items successfully erased.",
-                                activeItems.length,
-                                { total: activeItems.length },
-                            ),
-                            life: 3000,
-                        });
-
-                        console.log(
-                            props.structure.actions.forceDestroy?.callback,
-                            activeItems,
+                        const data = deletedItems.map(
+                            (item: { id: string | number }) => item.id,
                         );
-                        onTableDataLoad();
+
+                        fetchData(
+                            props.structure.actions.forceDestroy?.callback,
+                            {
+                                method: props.structure.actions.forceDestroy
+                                    ?.method,
+                                data: { list: data },
+                                onError: (error: {
+                                    response: {
+                                        status: number;
+                                        statusText: string;
+                                        data: {
+                                            message: string;
+                                        };
+                                    };
+                                }) => {
+                                    toast.add({
+                                        severity: "error",
+                                        summary: `${trans(error.response.statusText)} (${error.response.status})`,
+                                        detail: trans(
+                                            error.response.data.message,
+                                        ),
+                                        life: 3000,
+                                    });
+                                },
+                                onSuccess: () => {
+                                    toast.add({
+                                        severity:
+                                            props.structure.actions.forceDestroy
+                                                ?.toastClass || "success",
+                                        summary: trans(
+                                            props.structure.actions.forceDestroy
+                                                ?.title || "Erase",
+                                        ),
+                                        detail: transChoice(
+                                            props.structure.actions.forceDestroy
+                                                ?.toast ||
+                                                "{0} Nothing to erase.|[1] Item erased successfully.|[2,*] :total items successfully erased.",
+                                            deletedItems.length,
+                                            { total: deletedItems.length },
+                                        ),
+                                        life: 3000,
+                                    });
+                                    onTableDataLoad();
+                                },
+                            },
+                        );
                     },
                 });
             },
