@@ -874,8 +874,10 @@ class RolesController extends Controller
         $this->authorize('isManager', User::class);
         $this->authorize('canDestroyOrRestore', [Role::class, $request]);
 
+        $list = collect($request->list)->pluck('id');
+
         try {
-            $total = Role::whereIn('id', $request->list)
+            $total = Role::whereIn('id', $list)
                 ->where(function ($query) {
                     $query->where('inalterable', null);
                     $query->orWhere('inalterable', false);
@@ -899,13 +901,44 @@ class RolesController extends Controller
         }
     }
 
+    public function postRestoreRole(Request $request): JsonResponse
+    {
+        $this->authorize('access', User::class);
+        $this->authorize('isManager', User::class);
+        $this->authorize('canDestroyOrRestore', [Role::class, $request]);
+
+        $list = collect($request->list)->pluck('id');
+
+        try {
+            $total = Role::whereIn('id', $list)->restore();
+
+            return response()->json([
+                'type' => 'success',
+                'title' => 'Restore',
+                'message' => '{0} Nothing to restore.|[1] Item restored successfully.|[2,*] :total items successfully restored.',
+                'length' => $total,
+                'replacements' => ['total' => $total],
+            ]);
+        } catch (\Throwable $e) {
+            report($e);
+
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Error on restore selected item.|Error on restore selected items.',
+                'length' => $request->list,
+            ]);
+        }
+    }
+
     public function deleteForceDestroyRole(Request $request): JsonResponse
     {
         $this->authorize('access', User::class);
         $this->authorize('isSuperAdmin', User::class);
 
+        $list = collect($request->list)->pluck('id');
+
         try {
-            $total = Role::whereIn('id', $request->list)
+            $total = Role::whereIn('id', $list)
                 ->where(function ($query) {
                     $query->where('inalterable', null);
                     $query->orWhere('inalterable', false);
@@ -924,33 +957,6 @@ class RolesController extends Controller
             return response()->json([
                 'type' => 'error',
                 'message' => 'Error on erase selected item.|Error on erase selected items.',
-                'length' => $request->list,
-            ]);
-        }
-    }
-
-    public function postRestoreRole(Request $request): JsonResponse
-    {
-        $this->authorize('access', User::class);
-        $this->authorize('isManager', User::class);
-        $this->authorize('canDestroyOrRestore', [Role::class, $request]);
-
-        try {
-            $total = Role::whereIn('id', $request->list)->restore();
-
-            return response()->json([
-                'type' => 'success',
-                'title' => 'Restore',
-                'message' => '{0} Nothing to restore.|[1] Item restored successfully.|[2,*] :total items successfully restored.',
-                'length' => $total,
-                'replacements' => ['total' => $total],
-            ]);
-        } catch (\Throwable $e) {
-            report($e);
-
-            return response()->json([
-                'type' => 'error',
-                'message' => 'Error on restore selected item.|Error on restore selected items.',
                 'length' => $request->list,
             ]);
         }

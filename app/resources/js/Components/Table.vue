@@ -97,13 +97,9 @@ const tableMenuToggle = (event: MouseEvent) => {
                     acceptLabel:
                         props.structure.actions.destroy?.title || "Remove",
                     callback: () => {
-                        const data = activeItems.map(
-                            (item: { id: string | number }) => item.id,
-                        );
-
                         fetchData(props.structure.actions.destroy?.callback, {
                             method: props.structure.actions.destroy?.method,
-                            data: { list: data },
+                            data: { list: activeItems },
                             onError: (error: {
                                 response: {
                                     status: number;
@@ -173,13 +169,9 @@ const tableMenuToggle = (event: MouseEvent) => {
                     acceptLabel:
                         props.structure.actions.restore?.title || "Restore",
                     callback: () => {
-                        const data = deletedItems.map(
-                            (item: { id: string | number }) => item.id,
-                        );
-
                         fetchData(props.structure.actions.restore?.callback, {
                             method: props.structure.actions.restore?.method,
-                            data: { list: data },
+                            data: { list: deletedItems },
                             onError: (error: {
                                 response: {
                                     status: number;
@@ -250,16 +242,12 @@ const tableMenuToggle = (event: MouseEvent) => {
                     acceptLabel:
                         props.structure.actions.forceDestroy?.title || "Erase",
                     callback: () => {
-                        const data = deletedItems.map(
-                            (item: { id: string | number }) => item.id,
-                        );
-
                         fetchData(
                             props.structure.actions.forceDestroy?.callback,
                             {
                                 method: props.structure.actions.forceDestroy
                                     ?.method,
-                                data: { list: data },
+                                data: { list: deletedItems },
                                 onError: (error: {
                                     response: {
                                         status: number;
