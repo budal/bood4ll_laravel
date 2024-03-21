@@ -65,7 +65,7 @@ const tableMenuToggle = (event: MouseEvent) => {
     const _tableMenuItemsEdit: MenuItem[] = [
         {
             label: props.structure.actions.create?.title || "Add",
-            visible: props.structure.actions.create?.visible != false,
+            visible: props.structure.actions.create?.visible == true,
             disabled: props.structure.actions.create?.disabled == true,
             icon: "add",
             command: () => {
@@ -78,7 +78,7 @@ const tableMenuToggle = (event: MouseEvent) => {
         {
             label: props.structure.actions.destroy?.title || "Remove",
             visible:
-                props.structure.actions.destroy?.visible != false &&
+                props.structure.actions.destroy?.visible == true &&
                 isDefined(props.structure.actions.destroy?.callback) &&
                 listItems.value !== "trashed",
             disabled: activeItems.length < 1 ? true : false,
@@ -154,7 +154,7 @@ const tableMenuToggle = (event: MouseEvent) => {
         {
             label: props.structure.actions.restore?.title || "Restore",
             visible:
-                props.structure.actions.restore?.visible != false &&
+                props.structure.actions.restore?.visible == true &&
                 isDefined(props.structure.actions.restore?.callback) &&
                 (listItems.value === "trashed" || listItems.value === "both"),
             disabled: deletedItems.length < 1 ? true : false,
@@ -230,7 +230,7 @@ const tableMenuToggle = (event: MouseEvent) => {
         {
             label: props.structure.actions.forceDestroy?.title || "Erase",
             visible:
-                props.structure.actions.forceDestroy?.visible != false &&
+                props.structure.actions.forceDestroy?.visible == true &&
                 isDefined(props.structure.actions.forceDestroy?.callback) &&
                 listItems.value === "trashed",
             disabled: deletedItems.length < 1,
