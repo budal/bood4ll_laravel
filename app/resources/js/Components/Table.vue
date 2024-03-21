@@ -54,6 +54,14 @@ const listItems = ref();
 const indexUrlRef = ref(props.structure.actions.index.source);
 
 const tableMenuToggle = (event: MouseEvent) => {
+    const activeItems = selectedItemsTotal.value.filter(
+        (item: { deleted_at: string }) => item.deleted_at === null,
+    );
+
+    const deletedItems = selectedItemsTotal.value.filter(
+        (item: { deleted_at: string }) => item.deleted_at !== null,
+    );
+
     const _tableMenuItemsEdit: MenuItem[] = [
         {
             label: "Add",
@@ -70,41 +78,47 @@ const tableMenuToggle = (event: MouseEvent) => {
             },
         },
         {
-            label: "Remove",
+            label: props.structure.actions.destroy?.title || "Remove",
             visible:
                 props.structure.actions.destroy?.visible != false &&
                 isDefined(props.structure.actions.destroy?.callback) &&
                 listItems.value !== "trashed",
-            disabled:
-                selectedItemsTotal.value.filter(
-                    (item: { deleted_at: string }) => item.deleted_at === null,
-                ).length < 1
-                    ? true
-                    : false,
+            disabled: activeItems.length < 1 ? true : false,
             icon: "remove",
-            badge: selectedItemsTotal.value.filter(
-                (item: { deleted_at: string }) => item.deleted_at === null,
-            ).length,
-            badgeClass: "warning",
+            badge: activeItems.length,
+            badgeClass: props.structure.actions.destroy?.class || "warning",
             command: () => {
                 confirmDialog({
-                    header: "Remove",
-                    items: selectedItemsTotal.value.filter(
-                        (item: { deleted_at: string }) =>
-                            item.deleted_at === null,
-                    ).length,
+                    items: activeItems.length,
+                    header: props.structure.actions.destroy?.title || "Remove",
                     message:
+                        props.structure.actions.destroy?.message ||
                         "Are you sure you want to remove the selected item?|Are you sure you want to remove the selected items?",
                     icon: "pi pi-trash",
                     acceptClass: "p-button-warning",
-                    acceptLabel: "Remove",
+                    acceptLabel:
+                        props.structure.actions.destroy?.title || "Remove",
                     callback: () => {
+                        toast.add({
+                            severity:
+                                props.structure.actions.destroy?.toastClass ||
+                                "success",
+                            summary: trans(
+                                props.structure.actions.destroy?.title ||
+                                    "Remove",
+                            ),
+                            detail: transChoice(
+                                props.structure.actions.destroy?.toast ||
+                                    "{0} Nothing to remove.|[1] Item removed successfully.|[2,*] :total items successfully removed.",
+                                activeItems.length,
+                                { ":total": activeItems.length },
+                            ),
+                            life: 3000,
+                        });
+
                         console.log(
                             props.structure.actions.destroy?.callback,
-                            selectedItemsTotal.value.filter(
-                                (item: { deleted_at: string }) =>
-                                    item.deleted_at === null,
-                            ),
+                            activeItems,
                         );
                         onTableDataLoad();
                     },
@@ -112,41 +126,47 @@ const tableMenuToggle = (event: MouseEvent) => {
             },
         },
         {
-            label: "Restore",
+            label: props.structure.actions.restore?.title || "Restore",
             visible:
                 props.structure.actions.restore?.visible != false &&
                 isDefined(props.structure.actions.restore?.callback) &&
                 (listItems.value === "trashed" || listItems.value === "both"),
-            disabled:
-                selectedItemsTotal.value.filter(
-                    (item: { deleted_at: string }) => item.deleted_at !== null,
-                ).length < 1
-                    ? true
-                    : false,
+            disabled: deletedItems.length < 1 ? true : false,
             icon: "settings_backup_restore",
-            badge: selectedItemsTotal.value.filter(
-                (item: { deleted_at: string }) => item.deleted_at !== null,
-            ).length,
-            badgeClass: "info",
+            badge: deletedItems.length,
+            badgeClass: props.structure.actions.restore?.class || "info",
             command: () => {
                 confirmDialog({
-                    header: "Restore",
-                    items: selectedItemsTotal.value.filter(
-                        (item: { deleted_at: string }) =>
-                            item.deleted_at !== null,
-                    ).length,
+                    items: deletedItems.length,
+                    header: props.structure.actions.restore?.title || "Restore",
                     message:
+                        props.structure.actions.restore?.message ||
                         "Are you sure you want to restore the selected item?|Are you sure you want to restore the selected items?",
                     icon: "pi pi-replay",
                     acceptClass: "p-button-info",
-                    acceptLabel: "Restore",
+                    acceptLabel:
+                        props.structure.actions.restore?.title || "Restore",
                     callback: () => {
+                        toast.add({
+                            severity:
+                                props.structure.actions.restore?.toastClass ||
+                                "success",
+                            summary: trans(
+                                props.structure.actions.restore?.title ||
+                                    "Remove",
+                            ),
+                            detail: transChoice(
+                                props.structure.actions.restore?.toast ||
+                                    "{0} Nothing to restore.|[1] Item restored successfully.|[2,*] :total items successfully restored.",
+                                deletedItems.length,
+                                { ":total": deletedItems.length },
+                            ),
+                            life: 3000,
+                        });
+
                         console.log(
                             props.structure.actions.restore?.callback,
-                            selectedItemsTotal.value.filter(
-                                (item: { deleted_at: string }) =>
-                                    item.deleted_at !== null,
-                            ),
+                            deletedItems,
                         );
                         onTableDataLoad();
                     },
@@ -154,39 +174,48 @@ const tableMenuToggle = (event: MouseEvent) => {
             },
         },
         {
-            label: "Erase",
+            label: props.structure.actions.forceDestroy?.title || "Erase",
             visible:
                 props.structure.actions.forceDestroy?.visible != false &&
                 isDefined(props.structure.actions.forceDestroy?.callback) &&
                 listItems.value === "trashed",
-            disabled:
-                selectedItemsTotal.value.filter(
-                    (item: { deleted_at: string }) => item.deleted_at === null,
-                ).length < 1,
+            disabled: activeItems.length < 1,
             icon: "delete_forever",
-            badge: selectedItemsTotal.value.filter(
-                (item: { deleted_at: string }) => item.deleted_at === null,
-            ).length,
-            badgeClass: "danger",
+            badge: activeItems.length,
+            badgeClass: props.structure.actions.forceDestroy?.class || "danger",
             command: () => {
                 confirmDialog({
-                    header: "Erase",
-                    items: selectedItemsTotal.value.filter(
-                        (item: { deleted_at: string }) =>
-                            item.deleted_at === null,
-                    ).length,
+                    items: activeItems.length,
+                    header:
+                        props.structure.actions.forceDestroy?.title || "Erase",
                     message:
+                        props.structure.actions.forceDestroy?.message ||
                         "Are you sure you want to erase the selected item?|Are you sure you want to erase the selected items?",
                     icon: "pi pi-times",
                     acceptClass: "p-button-danger",
-                    acceptLabel: "Erase",
+                    acceptLabel:
+                        props.structure.actions.forceDestroy?.title || "Erase",
                     callback: () => {
+                        toast.add({
+                            severity:
+                                props.structure.actions.forceDestroy
+                                    ?.toastClass || "success",
+                            summary: trans(
+                                props.structure.actions.forceDestroy?.title ||
+                                    "Erase",
+                            ),
+                            detail: transChoice(
+                                props.structure.actions.forceDestroy?.toast ||
+                                    "{0} Nothing to erase.|[1] Item erased successfully.|[2,*] :total items successfully erased.",
+                                activeItems.length,
+                                { ":total": activeItems.length },
+                            ),
+                            life: 3000,
+                        });
+
                         console.log(
                             props.structure.actions.forceDestroy?.callback,
-                            selectedItemsTotal.value.filter(
-                                (item: { deleted_at: string }) =>
-                                    item.deleted_at === null,
-                            ),
+                            activeItems,
                         );
                         onTableDataLoad();
                     },

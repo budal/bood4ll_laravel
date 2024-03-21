@@ -532,10 +532,6 @@ class RolesController extends Controller
                                         ],
                                     ],
                                     'destroy' => [
-                                        'dialog' => 'Do you want to destroy this unit?|Do you want to destroy this units?',
-                                        'dialogClass' => 'warning',
-                                        'toast' => 'Unit destroyed|Units destroyed.',
-                                        'toastClass' => 'warning',
                                         'callback' => 'apps.roles.destroy',
                                         'method' => 'delete',
                                         'visible' => (
@@ -545,9 +541,9 @@ class RolesController extends Controller
                                         ),
                                     ],
                                     'restore' => [
-                                        'dialog' => 'Do you want to restore this unit?|Do you want to restore this units?',
+                                        'title' => 'Restore',
+                                        'message' => 'Do you want to restore this unit?|Do you want to restore this units?',
                                         'toast' => 'Unit restored|Units restored.',
-                                        'toastClass' => 'warning',
                                         'callback' => 'apps.roles.restore',
                                         'method' => 'post',
                                         'visible' => (
@@ -557,10 +553,9 @@ class RolesController extends Controller
                                         ),
                                     ],
                                     'forceDestroy' => [
-                                        'dialog' => 'Do you want to erase this unit?|Do you want to erase this units?',
-                                        'dialogClass' => 'danger',
-                                        'toast' => 'Unit erased.',
-                                        'toastClass' => 'warning',
+                                        'title' => 'Erase',
+                                        'message' => 'Do you want to erase this unit?|Do you want to erase this units?',
+                                        'toast' => 'Unit erased.|Units erased.',
                                         'callback' => 'apps.roles.forceDestroy',
                                         'method' => 'delete',
                                         'visible' => (
@@ -730,12 +725,27 @@ class RolesController extends Controller
         }
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request): JsonResponse
     {
         $this->authorize('access', User::class);
         $this->authorize('isManager', User::class);
 
         $abilities = collect($request->abilities)->pluck('id');
+
+        $request->validate([
+            'name' => ['required', 'string', 'max:100', Rule::unique(Role::class)],
+            'description' => ['nullable', 'string', 'max:255'],
+            'active' => ['boolean'],
+            'lock_on_expire' => ['boolean'],
+            'expires_at' => ['nullable', 'date', 'required_if:lock_on_expire,true'],
+            'full_access' => ['boolean', 'accepted_if:manage_nested,true'],
+            'manage_nested' => ['boolean'],
+            'remove_on_change_unit' => ['boolean'],
+        ], $messages = [
+            // 'required' => 'The :attribute field is required.',
+        ], $attributes = [
+            // 'email' => 'email address',
+        ],);
 
         DB::beginTransaction();
 
@@ -762,29 +772,31 @@ class RolesController extends Controller
 
                 DB::rollback();
 
-                return Redirect::back()->with([
-                    'toast_type' => 'error',
-                    'toast_message' => 'Error when syncing abilities to the role.',
+                return response()->json([
+                    'type' => 'error',
+                    'message' => 'Error when syncing abilities to the role.',
                 ]);
             }
         } catch (\Throwable $e) {
+            print_r($e);
             report($e);
 
             DB::rollback();
 
-            return Redirect::back()->with([
-                'toast_type' => 'error',
-                'toast_message' => 'Error on add this item.|Error on add the items.',
-                'toast_count' => 1,
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Error on add this item.|Error on add the items.',
+                'length' => 1,
             ]);
         }
 
         DB::commit();
 
-        return Redirect::route('apps.roles.edit', $role->id)->with([
-            'toast_type' => 'success',
-            'toast_message' => '{0} Nothing to add.|[1] Item added successfully.|[2,*] :total items successfully added.',
-            'toast_count' => 1,
+        return response()->json([
+            'type' => 'success',
+            'title' => 'Add',
+            'message' => '{0} Nothing to add.|[1] Item added successfully.|[2,*] :total items successfully added.',
+            'length' => 1,
         ]);
     }
 
@@ -801,7 +813,7 @@ class RolesController extends Controller
 
         $request->validate([
             'name' => ['required', 'string', 'max:100', Rule::unique(Role::class)->ignore($role->id)],
-            'description' => ['string', 'max:255'],
+            'description' => ['nullable', 'string', 'max:255'],
             'active' => ['boolean'],
             'lock_on_expire' => ['boolean'],
             'expires_at' => ['nullable', 'date', 'required_if:lock_on_expire,true'],
@@ -817,14 +829,6 @@ class RolesController extends Controller
         DB::beginTransaction();
 
         try {
-            // if ($request->manage_nested && !$request->full_access) {
-            //     return response()->json([
-            //         'type' => 'info',
-            //         'summary' => 'Attention!',
-            //         'message' => "It is impossible to manage nested data without enabling 'full access'.",
-            //     ]);
-            // }
-
             $role->name = $request->name;
             $role->description = $request->description;
             $role->active = $request->active;
@@ -855,8 +859,7 @@ class RolesController extends Controller
 
             return response()->json([
                 'type' => 'error',
-                'message' => $e,
-                // 'message' => 'Error on edit selected item.|Error on edit selected items.',
+                'message' => 'Error on edit selected item.|Error on edit selected items.',
                 'length' => 1,
             ]);
         }
