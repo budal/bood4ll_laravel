@@ -6,7 +6,7 @@ import { onMounted, ref } from "vue";
 const props = withDefaults(
     defineProps<{
         id?: string | number;
-        value?: any;
+        modelValue?: any;
         multiple?: boolean;
         source?: any;
         optionValue?: string;
@@ -54,9 +54,7 @@ onMounted(() => {
     });
 });
 
-const value = ref(props.value);
-
-console.log(props.value?.abilities);
+const value = ref(props.modelValue?.map((i: { id: string | number }) => i.id));
 </script>
 
 <template>
