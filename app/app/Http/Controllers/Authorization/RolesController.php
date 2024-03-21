@@ -719,7 +719,7 @@ class RolesController extends Controller
         }
     }
 
-    public function store(Request $request): JsonResponse
+    public function postStoreRole(Request $request): JsonResponse
     {
         $this->authorize('access', User::class);
         $this->authorize('isManager', User::class);
@@ -794,7 +794,7 @@ class RolesController extends Controller
         ]);
     }
 
-    public function update(Request $request, Role $role): JsonResponse
+    public function patchUpdateRole(Request $request, Role $role): JsonResponse
     {
         $this->authorize('access', User::class);
         $this->authorize('isManager', User::class);
@@ -868,7 +868,7 @@ class RolesController extends Controller
         ]);
     }
 
-    public function destroy(Request $request): JsonResponse
+    public function deleteDestroyRole(Request $request): JsonResponse
     {
         $this->authorize('access', User::class);
         $this->authorize('isManager', User::class);
@@ -899,7 +899,7 @@ class RolesController extends Controller
         }
     }
 
-    public function forceDestroy(Request $request): JsonResponse
+    public function deleteForceDestroyRole(Request $request): JsonResponse
     {
         $this->authorize('access', User::class);
         $this->authorize('isSuperAdmin', User::class);
@@ -929,7 +929,7 @@ class RolesController extends Controller
         }
     }
 
-    public function restore(Request $request): JsonResponse
+    public function postRestoreRole(Request $request): JsonResponse
     {
         $this->authorize('access', User::class);
         $this->authorize('isManager', User::class);

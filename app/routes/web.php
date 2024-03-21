@@ -79,11 +79,11 @@ Route::middleware('auth')->group(function () {
                     ->defaults('icon', 'badge');
 
                 Route::put('/roles/authorize/{role}/{mode?}', 'putAuthorizeUserInRole')->name('authorize');
-                Route::post('/roles/create', 'store')->name('store');
-                Route::patch('/roles/edit/{role}', 'update')->name('update');
-                Route::delete('/roles/destroy', 'destroy')->name('destroy');
-                Route::delete('/roles/forcedestroy', 'forceDestroy')->name('forceDestroy');
-                Route::post('/roles/restore', 'restore')->name('restore');
+                Route::post('/roles/create', 'postStoreRole')->name('store');
+                Route::patch('/roles/edit/{role}', 'patchUpdateRole')->name('update');
+                Route::delete('/roles/destroy', 'deleteDestroyRole')->name('destroy');
+                Route::delete('/roles/forcedestroy', 'deleteForceDestroyRole')->name('forceDestroy');
+                Route::post('/roles/restore', 'postRestoreRole')->name('restore');
             });
         });
 
