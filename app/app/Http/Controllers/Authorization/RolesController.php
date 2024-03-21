@@ -852,6 +852,8 @@ class RolesController extends Controller
 
             $role->save();
 
+            // print_r(collect($request->abilities)->pluck('name'));
+
             try {
                 $role->abilities()->sync($request->abilities);
             } catch (\Exception $e) {
