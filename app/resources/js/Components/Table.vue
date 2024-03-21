@@ -64,15 +64,13 @@ const tableMenuToggle = (event: MouseEvent) => {
 
     const _tableMenuItemsEdit: MenuItem[] = [
         {
-            label: "Add",
-            visible:
-                props.structure.actions.create?.visible != false &&
-                isDefined(props.structure.actions.destroy?.callback),
+            label: props.structure.actions.create?.title || "Add",
+            visible: props.structure.actions.create?.visible != false,
             disabled: props.structure.actions.create?.disabled == true,
             icon: "add",
             command: () => {
                 openDialog({
-                    header: "Add",
+                    header: props.structure.actions.create?.title || "Add",
                     action: props.structure.actions.create,
                 });
             },
@@ -111,7 +109,7 @@ const tableMenuToggle = (event: MouseEvent) => {
                                 props.structure.actions.destroy?.toast ||
                                     "{0} Nothing to remove.|[1] Item removed successfully.|[2,*] :total items successfully removed.",
                                 activeItems.length,
-                                { ":total": activeItems.length },
+                                { total: activeItems.length },
                             ),
                             life: 3000,
                         });
@@ -159,7 +157,7 @@ const tableMenuToggle = (event: MouseEvent) => {
                                 props.structure.actions.restore?.toast ||
                                     "{0} Nothing to restore.|[1] Item restored successfully.|[2,*] :total items successfully restored.",
                                 deletedItems.length,
-                                { ":total": deletedItems.length },
+                                { total: deletedItems.length },
                             ),
                             life: 3000,
                         });
@@ -208,7 +206,7 @@ const tableMenuToggle = (event: MouseEvent) => {
                                 props.structure.actions.forceDestroy?.toast ||
                                     "{0} Nothing to erase.|[1] Item erased successfully.|[2,*] :total items successfully erased.",
                                 activeItems.length,
-                                { ":total": activeItems.length },
+                                { total: activeItems.length },
                             ),
                             life: 3000,
                         });
