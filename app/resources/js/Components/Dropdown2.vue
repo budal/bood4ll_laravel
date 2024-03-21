@@ -55,6 +55,8 @@ onMounted(() => {
 });
 
 const value = ref(props.value);
+
+console.log(props.value?.abilities);
 </script>
 
 <template>
