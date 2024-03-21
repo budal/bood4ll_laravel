@@ -885,7 +885,7 @@ class RolesController extends Controller
 
             return response()->json([
                 'type' => 'success',
-                'title' => 'Destroy',
+                'title' => 'Remove',
                 'message' => '{0} Nothing to remove.|[1] Item removed successfully.|[2,*] :total items successfully removed.',
                 'length' => $total,
                 'replacements' => ['total' => $total],
