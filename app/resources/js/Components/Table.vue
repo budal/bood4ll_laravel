@@ -120,24 +120,30 @@ const tableMenuToggle = (event: MouseEvent) => {
                                     life: 3000,
                                 });
                             },
-                            onSuccess: () => {
+                            onSuccess: (content: {
+                                type:
+                                    | "success"
+                                    | "secondary"
+                                    | "info"
+                                    | "contrast"
+                                    | "error"
+                                    | "warn";
+                                title: string;
+                                message: string;
+                                length: number;
+                                replacements: ReplacementsInterface;
+                            }) => {
                                 toast.add({
-                                    severity:
-                                        props.structure.actions.destroy
-                                            ?.toastClass || "success",
-                                    summary: trans(
-                                        props.structure.actions.destroy
-                                            ?.title || "Remove",
-                                    ),
+                                    severity: content.type || "secondary",
+                                    summary: trans(content.title),
                                     detail: transChoice(
-                                        props.structure.actions.destroy
-                                            ?.toast ||
-                                            "{0} Nothing to remove.|[1] Item removed successfully.|[2,*] :total items successfully removed.",
-                                        activeItems.length,
-                                        { total: activeItems.length },
+                                        content.message,
+                                        content.length,
+                                        content.replacements,
                                     ),
                                     life: 3000,
                                 });
+
                                 onTableDataLoad();
                             },
                         });
@@ -190,24 +196,30 @@ const tableMenuToggle = (event: MouseEvent) => {
                                     life: 3000,
                                 });
                             },
-                            onSuccess: () => {
+                            onSuccess: (content: {
+                                type:
+                                    | "success"
+                                    | "secondary"
+                                    | "info"
+                                    | "contrast"
+                                    | "error"
+                                    | "warn";
+                                title: string;
+                                message: string;
+                                length: number;
+                                replacements: ReplacementsInterface;
+                            }) => {
                                 toast.add({
-                                    severity:
-                                        props.structure.actions.restore
-                                            ?.toastClass || "success",
-                                    summary: trans(
-                                        props.structure.actions.restore
-                                            ?.title || "Restore",
-                                    ),
+                                    severity: content.type || "secondary",
+                                    summary: trans(content.title),
                                     detail: transChoice(
-                                        props.structure.actions.restore
-                                            ?.toast ||
-                                            "{0} Nothing to restore.|[1] Item restored successfully.|[2,*] :total items successfully restored.",
-                                        activeItems.length,
-                                        { total: deletedItems.length },
+                                        content.message,
+                                        content.length,
+                                        content.replacements,
                                     ),
                                     life: 3000,
                                 });
+
                                 onTableDataLoad();
                             },
                         });
@@ -266,24 +278,30 @@ const tableMenuToggle = (event: MouseEvent) => {
                                         life: 3000,
                                     });
                                 },
-                                onSuccess: () => {
+                                onSuccess: (content: {
+                                    type:
+                                        | "success"
+                                        | "secondary"
+                                        | "info"
+                                        | "contrast"
+                                        | "error"
+                                        | "warn";
+                                    title: string;
+                                    message: string;
+                                    length: number;
+                                    replacements: ReplacementsInterface;
+                                }) => {
                                     toast.add({
-                                        severity:
-                                            props.structure.actions.forceDestroy
-                                                ?.toastClass || "success",
-                                        summary: trans(
-                                            props.structure.actions.forceDestroy
-                                                ?.title || "Erase",
-                                        ),
+                                        severity: content.type || "secondary",
+                                        summary: trans(content.title),
                                         detail: transChoice(
-                                            props.structure.actions.forceDestroy
-                                                ?.toast ||
-                                                "{0} Nothing to erase.|[1] Item erased successfully.|[2,*] :total items successfully erased.",
-                                            deletedItems.length,
-                                            { total: deletedItems.length },
+                                            content.message,
+                                            content.length,
+                                            content.replacements,
                                         ),
                                         life: 3000,
                                     });
+
                                     onTableDataLoad();
                                 },
                             },

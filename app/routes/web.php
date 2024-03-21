@@ -78,12 +78,12 @@ Route::middleware('auth')->group(function () {
                     ->defaults('description', 'Define roles, grouping abilities to define specific access.')
                     ->defaults('icon', 'badge');
 
+                Route::put('/roles/authorize/{role}/{mode?}', 'putAuthorizeUserInRole')->name('authorize');
                 Route::post('/roles/create', 'store')->name('store');
                 Route::patch('/roles/edit/{role}', 'update')->name('update');
                 Route::delete('/roles/destroy', 'destroy')->name('destroy');
-                Route::delete('/roles/forcedestroy', 'forceDestroy')->name('forcedestroy');
+                Route::delete('/roles/forcedestroy', 'forceDestroy')->name('forceDestroy');
                 Route::post('/roles/restore', 'restore')->name('restore');
-                Route::put('/roles/authorize/{role}/{mode?}', 'putAuthorizeUserInRole')->name('authorize');
             });
         });
 

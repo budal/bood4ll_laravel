@@ -550,9 +550,6 @@ class RolesController extends Controller
                                         ),
                                     ],
                                     'forceDestroy' => [
-                                        'title' => 'Erase',
-                                        'message' => 'Do you want to erase this unit?|Do you want to erase this units?',
-                                        'toast' => 'Unit erased.|Units erased.',
                                         'callback' => 'apps.roles.forceDestroy',
                                         'method' => 'delete',
                                         'visible' => (
