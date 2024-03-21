@@ -747,8 +747,6 @@ class RolesController extends Controller
         $this->authorize('access', User::class);
         $this->authorize('isManager', User::class);
 
-        $abilities = collect($request->abilities)->pluck('id');
-
         $request->validate([
             'name' => ['required', 'string', 'max:100', Rule::unique(Role::class)],
             'description' => ['nullable', 'string', 'max:255'],
@@ -783,7 +781,7 @@ class RolesController extends Controller
 
             try {
                 $role->users()->attach($request->user()->id);
-                $role->abilities()->sync($abilities);
+                $role->abilities()->sync($request->abilities);
             } catch (\Exception $e) {
                 report($e);
 
@@ -826,8 +824,6 @@ class RolesController extends Controller
         $this->authorize('canEditManagementRoles', $role);
         $this->authorize('isOwner', $role);
 
-        $abilities = collect($request->abilities)->pluck('id');
-
         $request->validate([
             'name' => ['required', 'string', 'max:100', Rule::unique(Role::class)->ignore($role->id)],
             'description' => ['nullable', 'string', 'max:255'],
@@ -858,7 +854,7 @@ class RolesController extends Controller
             $role->save();
 
             try {
-                $role->abilities()->sync($abilities);
+                $role->abilities()->sync($request->abilities);
             } catch (\Exception $e) {
                 report($e);
 

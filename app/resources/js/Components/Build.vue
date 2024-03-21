@@ -8,10 +8,12 @@ import { useToast } from "primevue/usetoast";
 import Table from "@/Components/Table.vue";
 import Dropdown2 from "@/Components/Dropdown2.vue";
 import { trans, transChoice } from "laravel-vue-i18n";
+import { DynamicDialogInstance } from "primevue/dynamicdialogoptions";
 
 const props = defineProps<{
     components: any;
     id?: string | number;
+    dialogRef?: DynamicDialogInstance;
 }>();
 
 const confirm = useConfirm();
@@ -54,6 +56,10 @@ const send = () => {
         },
         onSuccess: (content: any) => {
             inputsWithError.value = {};
+
+            if (!props.id) {
+                props.dialogRef?.close();
+            }
 
             toast.add({
                 severity: content.type || "success",

@@ -13,5 +13,6 @@ const data = ref(dialogRef?.value.data);
         :build="data.action.components"
         :tabs="data.action.tabs"
         :id="data.id"
+        :dialogRef="dialogRef"
     />
 </template>

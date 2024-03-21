@@ -576,7 +576,6 @@ const openDialog = (options: {
             ) as unknown as string,
             style: {
                 width: "70vw",
-                height: "90vw",
             },
             breakpoints: {
                 "960px": "75vw",

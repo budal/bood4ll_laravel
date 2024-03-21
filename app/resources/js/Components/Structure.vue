@@ -1,11 +1,16 @@
 <script setup lang="ts">
 import Build from "@/Components/Build.vue";
+import {
+    DynamicDialogCloseOptions,
+    DynamicDialogInstance,
+} from "primevue/dynamicdialogoptions";
 
 withDefaults(
     defineProps<{
         build?: any;
         tabs?: boolean;
         id?: string | number;
+        dialogRef?: DynamicDialogInstance;
     }>(),
     {
         tabs: true,
@@ -40,7 +45,11 @@ withDefaults(
                             {{ $t(item.description) }}
                         </template>
                         <template #content>
-                            <Build :components="item" :id="id" />
+                            <Build
+                                :components="item"
+                                :id="id"
+                                :dialogRef="dialogRef"
+                            />
                         </template>
                     </Card>
                 </TabPanel>
@@ -62,7 +71,11 @@ withDefaults(
                         {{ $t(item.description) }}
                     </template>
                     <template #content>
-                        <Build :components="item" :id="id" />
+                        <Build
+                            :components="item"
+                            :id="id"
+                            :dialogRef="dialogRef"
+                        />
                     </template>
                 </Card>
             </template>
