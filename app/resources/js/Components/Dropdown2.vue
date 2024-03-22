@@ -24,6 +24,8 @@ const props = withDefaults(
     },
 );
 
+const selectedItems = ref([]);
+
 const emit = defineEmits(["update:modelValue"]);
 
 const placeholderValue = trans(
@@ -38,6 +40,10 @@ const loading = ref(false);
 const dropdownItems = ref([]);
 
 onMounted(() => {
+    selectedItems.value = props.modelValue?.map(
+        (i: { id: string | number }) => i.id,
+    );
+
     fetchData(props.source, {
         complement: {
             id: props.id,
@@ -57,10 +63,9 @@ onMounted(() => {
     });
 });
 
-const value = ref(props.modelValue?.map((i: { id: string | number }) => i.id));
-
 const onChange = (event: MultiSelectChangeEvent) => {
     emit("update:modelValue", event.value);
+    console.log(event.value);
 };
 // const value = ref(props.modelValue);
 </script>
@@ -69,7 +74,7 @@ const onChange = (event: MultiSelectChangeEvent) => {
     <MultiSelect
         v-if="multiple === true"
         :id="id"
-        v-model="value"
+        v-model="selectedItems"
         display="chip"
         :options="dropdownItems"
         :optionValue="optionValue"
@@ -94,7 +99,7 @@ const onChange = (event: MultiSelectChangeEvent) => {
     <Dropdown
         v-else
         :id="id"
-        v-model="value"
+        v-model="selectedItems"
         :options="dropdownItems"
         :optionValue="optionValue"
         :optionLabel="optionLabel"
