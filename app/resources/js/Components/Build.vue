@@ -25,9 +25,6 @@ const formValue = ref<Record<string, any>>({});
 const inputsWithError: Ref<{ [key: string]: boolean }> = ref({});
 
 const send = () => {
-    // console.log(props.components, formValue);
-    // console.log(formValue.value);
-
     fetchData(props.components.callback, {
         complement: {
             id: props.id,

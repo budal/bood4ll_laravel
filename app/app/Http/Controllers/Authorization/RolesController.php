@@ -774,12 +774,12 @@ class RolesController extends Controller
             $role->name = $request->name;
             $role->description = $request->description;
             $role->owner = $request->user()->id;
-            $role->active = $request->active;
-            $role->lock_on_expire = $request->lock_on_expire;
+            $role->active = $request->active ?? false;
+            $role->lock_on_expire = $request->lock_on_expire ?? false;
             $role->expires_at = $request->expires_at;
-            $role->full_access = $request->full_access;
-            $role->manage_nested = $request->manage_nested;
-            $role->remove_on_change_unit = $request->remove_on_change_unit;
+            $role->full_access = $request->full_access ?? false;
+            $role->manage_nested = $request->manage_nested ?? false;
+            $role->remove_on_change_unit = $request->remove_on_change_unit ?? false;
 
             $role->save();
 

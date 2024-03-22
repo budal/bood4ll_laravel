@@ -41,7 +41,7 @@ const dropdownItems = ref([]);
 
 onMounted(() => {
     selectedItems.value = props.modelValue?.map(
-        (item) => item[props.optionValue],
+        (item: any) => item[props.optionValue],
     );
 
     fetchData(props.source, {
