@@ -40,9 +40,11 @@ const loading = ref(false);
 const dropdownItems = ref([]);
 
 onMounted(() => {
-    selectedItems.value = props.modelValue?.map(
-        (item: any) => item[props.optionValue],
-    );
+    props.multiple === true
+        ? (selectedItems.value = props.modelValue?.map(
+              (item: any) => item[props.optionValue],
+          ))
+        : props.modelValue;
 
     fetchData(props.source, {
         complement: {

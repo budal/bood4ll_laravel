@@ -920,7 +920,7 @@ const onToggle = (
                 :field="col.field"
                 :header="$t(col.header || '')"
                 :key="col.field + '_' + index"
-                sortable
+                :sortable="col.disableSort === true ? false : true"
                 :showFilterMenu="true"
             >
                 <template #body="slotProps">

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Authorization\RolesController;
 use App\Http\Controllers\Authorization\UnitsController;
+use App\Http\Controllers\Authorization\UsersController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -23,4 +24,8 @@ Route::controller(UnitsController::class)->middleware('auth:sanctum', 'verified'
     Route::get('/getUnitsIndex', 'getUnitsIndex')->name('getUnitsIndex');
     Route::get('/getUnitInfo/{unit?}', 'edit')->name('getUnitInfo');
     Route::get('/getUnitStaff/{unit?}/{show?}', 'getUnitStaff')->name('getUnitStaff');
+});
+
+Route::controller(UsersController::class)->middleware('auth:sanctum', 'verified', 'password.confirm')->group(function () {
+    Route::get('/getUsersIndex', 'getUsersIndex')->name('getUsersIndex');
 });

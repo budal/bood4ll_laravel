@@ -7,6 +7,7 @@ use App\Http\Requests\ProfileUpdateRequest;
 use App\Models\Role;
 use App\Models\Unit;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -19,16 +20,18 @@ use Inertia\Response;
 
 class UsersController extends Controller
 {
-    public function index(Request $request): Response
+
+    public function getUsersIndex(Request $request): JsonResponse
     {
         $this->authorize('access', User::class);
 
-        $users = User::filter($request, 'users', [
-            'where' => [
-                'name',
-                'email',
-            ],
-        ])
+        $users = User::where(function ($query) use ($request) {
+            $query->where('name', 'ilike', "%$request->search%");
+            $query->orWhere('email', 'ilike', "%$request->search%");
+        })
+            ->orderBy('name')
+            ->with('unitsClassified', 'unitsWorking')
+            ->withCount('roles')
             ->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
                 $query->join('unit_user', 'unit_user.user_id', '=', 'users.id');
                 $query->select('users.id', 'users.name', 'users.email');
@@ -40,116 +43,461 @@ class UsersController extends Controller
 
                 $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
             })
-            ->with('unitsClassified', 'unitsWorking')
-            ->withCount('roles')
-            ->paginate(20)
-            ->onEachSide(2)
-            ->appends(collect($request->query)->toArray());
+            ->cursorPaginate(30)
+            ->withQueryString();
 
-        return Inertia::render('Default', [
-            'form' => [
+        return response()->json($users);
+    }
+
+    public function index(Request $request): Response
+    {
+        $this->authorize('access', User::class);
+
+        return Inertia::render('Bood4ll', [
+            'build' => [
                 [
-                    'id' => 'users',
-                    'title' => Route::current()->title,
-                    'subtitle' => Route::current()->description,
+                    'label' => Route::current()->title,
+                    'description' => Route::current()->description,
                     'fields' => [
                         [
-                            [
-                                'type' => 'table',
-                                'name' => 'users',
-                                'content' => [
-                                    'routes' => [
-                                        'createRoute' => [
-                                            'route' => 'apps.users.create',
-                                            'showIf' => Gate::allows('apps.users.create'),
-                                        ],
-                                        'editRoute' => [
-                                            'route' => 'apps.users.edit',
-                                            'showIf' => Gate::allows('apps.users.edit'),
-                                        ],
-                                        'destroyRoute' => [
-                                            'route' => 'apps.users.destroy',
-                                            'showIf' => Gate::allows('apps.users.destroy'),
-                                        ],
-                                        'forceDestroyRoute' => [
-                                            'route' => 'apps.users.forcedestroy',
-                                            'showIf' => Gate::allows('apps.users.forcedestroy'),
-                                        ],
-                                        'restoreRoute' => [
-                                            'route' => 'apps.users.restore',
-                                            'showIf' => Gate::allows('apps.users.restore'),
+                            'type' => 'table',
+                            'structure' => [
+                                // 'menu' => [
+                                //     [
+                                //         'icon' => 'account_tree',
+                                //         'label' => 'Abilities management',
+                                //         'source' => 'getAbilitiesIndex',
+                                //         'dialog' => true,
+                                //         'visible' => $request->user()->can('isSuperAdmin', User::class),
+                                //         'components' => [
+                                //             [
+                                //                 'label' => 'Abilities',
+                                //                 'description' => 'Define which abilities will be showed in the roles management.',
+                                //                 'visible' => (
+                                //                     Gate::allows('apps.roles.update')
+                                //                     && $request->user()->can('isManager', User::class)
+                                //                     && $request->user()->can('canManageNestedData', User::class)
+                                //                 ),
+                                //                 'fields' => [
+                                //                     [
+                                //                         'type' => 'table',
+                                //                         'name' => 'users',
+                                //                         'structure' => [
+                                //                             'actions' => [
+                                //                                 'index' => [
+                                //                                     'source' => 'getAbilitiesIndex',
+                                //                                     'selectBoxes' => true,
+                                //                                     'visible' => true,
+                                //                                     'disabled' => true,
+                                //                                 ],
+                                //                             ],
+                                //                             'menu' => [
+                                //                                 [
+                                //                                     'icon' => 'check',
+                                //                                     'label' => 'Authorize',
+                                //                                     'callback' => [
+                                //                                         'route' => 'putAbilitiesUpdate',
+                                //                                         'attributes' => ['mode' => 'on']
+                                //                                     ],
+                                //                                     'method' => 'put',
+                                //                                     'visible' => $request->user()->can('canManageNestedData', User::class),
+                                //                                     'condition' => ['checked' => false],
+                                //                                     'badgeClass' => 'success',
+                                //                                     'dialogTitle' => 'Are you sure you want to authorize the selected users?|Are you sure you want to authorize the selected users?',
+                                //                                     'dialogSubTitle' => 'The selected user will have the rights to access this role. Do you want to continue?|The selected user will have the rights to access this role. Do you want to continue?',
+
+
+                                //                                 ],
+                                //                                 [
+                                //                                     'icon' => 'close',
+                                //                                     'label' => 'Deauthorize',
+                                //                                     'callback' => [
+                                //                                         'route' => 'putAbilitiesUpdate',
+                                //                                         'attributes' => ['mode' => 'off']
+                                //                                     ],
+                                //                                     'method' => 'put',
+                                //                                     'visible' => $request->user()->can('canManageNestedData', User::class),
+                                //                                     'condition' => ['checked' => true],
+                                //                                     'badgeClass' => 'danger',
+                                //                                     'dialogTitle' => 'Are you sure you want to deauthorize the selected users?|Are you sure you want to deauthorize the selected users?',
+                                //                                     'dialogSubTitle' => 'The selected user will lose the rights to access this role. Do you want to continue?|The selected users will lose the rights to access this role. Do you want to continue?',
+                                //                                 ],
+                                //                             ],
+                                //                             'titles' => [
+                                //                                 [
+                                //                                     'type' => 'composite',
+                                //                                     'header' => 'Ability',
+                                //                                     'field' => 'title',
+                                //                                     'values' => [
+                                //                                         [
+                                //                                             'field' => 'title',
+                                //                                         ],
+                                //                                         [
+                                //                                             'field' => 'command',
+                                //                                             'class' => 'text-xs',
+                                //                                         ],
+                                //                                     ],
+                                //                                 ],
+                                //                                 [
+                                //                                     'type' => 'toggle',
+                                //                                     'header' => 'Active',
+                                //                                     'field' => 'checked',
+                                //                                     'disableSort' => true,
+                                //                                     'callback' => [
+                                //                                         'route' => 'putAbilitiesUpdate',
+                                //                                         'attributes' => ['mode' => 'toggle']
+                                //                                     ],
+                                //                                     'method' => 'put',
+                                //                                     'colorOn' => 'success',
+                                //                                     'colorOff' => 'danger',
+                                //                                 ],
+                                //                             ],
+                                //                         ],
+                                //                     ],
+                                //                 ],
+                                //             ],
+                                //         ],
+                                //     ],
+                                // ],
+                                'actions' => [
+                                    'index' => [
+                                        'source' => 'getUsersIndex',
+                                        'visible' => Gate::allows('apps.users.index'),
+                                        'disabled' => $request->user()->cannot('isManager', User::class),
+                                    ],
+                                    'create' => [
+                                        'visible' => (
+                                            Gate::allows('apps.users.store')
+                                            && $request->user()->can('isManager', User::class)
+                                        ),
+                                        'disabled' => $request->user()->cannot('isManager', User::class),
+                                        'components' => [
+                                            [
+                                                'label' => 'Main data',
+                                                'description' => 'Role name, abilities and settings.',
+                                                'cols' => 3,
+                                                'fields' => $this->__fields($request),
+                                                'visible' => (
+                                                    Gate::allows('apps.users.store')
+                                                    && $request->user()->can('isManager', User::class)
+                                                ),
+                                                'disabled' => $request->user()->cannot('isManager', User::class),
+                                                'confirm' => true,
+                                                'toastTitle' => 'Add',
+                                                'toast' => '{0} Nothing to add.|[1] Item added successfully.|[2,*] :total items successfully added.',
+                                                'toastClass' => 'success',
+                                                'callback' => 'apps.users.store',
+                                                'method' => 'post',
+                                            ],
                                         ],
                                     ],
-                                    'titles' => [
-                                        [
-                                            'type' => 'avatar',
-                                            'title' => 'Avatar',
-                                            'field' => 'id',
-                                            'fallback' => 'name',
-                                            'disableSort' => true,
-                                        ],
-                                        [
-                                            'type' => 'composite',
-                                            'title' => 'User',
-                                            'field' => 'name',
-                                            'values' => [
-                                                [
-                                                    'field' => 'name',
+                                    'edit' => [
+                                        'visible' => (
+                                            Gate::allows('apps.users.update')
+                                            && $request->user()->can('isManager', User::class)
+                                            && $request->user()->can('canManageNestedData', User::class)
+                                        ),
+                                        'disabled' => $request->user()->cannot('isManager', User::class),
+                                        'components' => [
+                                            [
+                                                'source' => [
+                                                    'route' => 'getRoleInfo',
+                                                    'transmute' => ['role' => 'id'],
                                                 ],
-                                                [
-                                                    'field' => 'email',
-                                                    'class' => 'text-xs',
+                                                'label' => 'Main data',
+                                                'description' => 'Role name, abilities and settings.',
+                                                'cols' => 3,
+                                                'fields' => $this->__fields($request),
+                                                'visible' => (
+                                                    Gate::allows('apps.users.update')
+                                                    && $request->user()->can('isManager', User::class)
+                                                    && $request->user()->can('canManageNestedData', User::class)
+                                                ),
+                                                'disabled' => $request->user()->cannot('isManager', User::class),
+                                                'confirm' => true,
+                                                'toastTitle' => 'Edit',
+                                                'toast' => '{0} Nothing to edit.|[1] Item edited successfully.|[2,*] :total items successfully edited.',
+                                                'toastClass' => 'success',
+                                                'callback' => 'apps.users.update',
+                                                'method' => 'patch',
+                                            ],
+                                            [
+                                                'label' => 'Authorized users',
+                                                'description' => 'Define which users will have access to this authorization.',
+                                                'visible' => (
+                                                    Gate::allows('apps.users.update')
+                                                    && $request->user()->can('isManager', User::class)
+                                                    && $request->user()->can('canManageNestedData', User::class)
+                                                ),
+
+                                                // 'showIf' => $role->id === null || $request->user()->can('isOwner', $role),
+                                                // 'disabledIf' => $role->inalterable == true || $role->id !== null && $request->user()->cannot('isOwner', $role),
+
+                                                'fields' => [
+                                                    [
+                                                        'type' => 'table',
+                                                        'name' => 'users',
+                                                        'structure' => [
+                                                            'actions' => [
+                                                                'index' => [
+                                                                    'source' => [
+                                                                        'route' => 'getRoleAuthorizedUsers',
+                                                                        'transmute' => ['role' => 'id'],
+                                                                    ],
+                                                                    'selectBoxes' => true,
+                                                                    'visible' => true,
+                                                                    'disabled' => true,
+                                                                ],
+                                                            ],
+                                                            'menu' => [
+                                                                [
+                                                                    'icon' => 'check',
+                                                                    'label' => 'Authorize',
+                                                                    'callback' => [
+                                                                        'route' => 'apps.users.authorize',
+                                                                        'attributes' => ['mode' => 'on'],
+                                                                        'transmute' => ['role' => 'id'],
+                                                                    ],
+                                                                    'method' => 'put',
+                                                                    'visible' => $request->user()->can('canManageNestedData', User::class),
+                                                                    'condition' => ['checked' => false],
+                                                                    'badgeClass' => 'success',
+                                                                ],
+                                                                [
+                                                                    'icon' => 'close',
+                                                                    'label' => 'Deauthorize',
+                                                                    'callback' => [
+                                                                        'route' => 'apps.users.authorize',
+                                                                        'attributes' => ['mode' => 'off'],
+                                                                        'transmute' => ['role' => 'id'],
+                                                                    ],
+                                                                    'method' => 'put',
+                                                                    'visible' => $request->user()->can('canManageNestedData', User::class),
+                                                                    'condition' => ['checked' => true],
+                                                                    'badgeClass' => 'danger',
+                                                                ],
+                                                                [
+                                                                    'separator' => true,
+                                                                ],
+                                                                [
+                                                                    'icon' => 'verified_user',
+                                                                    'label' => 'Authorized users',
+                                                                    'source' => [
+                                                                        'route' => 'getRoleAuthorizedUsers',
+                                                                        'transmute' => ['role' => 'id'],
+                                                                    ],
+                                                                    'visible' => $request->user()->can('canManageNestedData', User::class),
+                                                                ],
+                                                                [
+                                                                    'icon' => 'group',
+                                                                    'label' => 'All users',
+                                                                    'source' => [
+                                                                        'route' => 'getRoleAuthorizedUsers',
+                                                                        'attributes' => ['show' => 'all'],
+                                                                        'transmute' => ['role' => 'id'],
+                                                                    ],
+                                                                    'visible' => $request->user()->can('canManageNestedData', User::class)
+                                                                ],
+                                                            ],
+                                                            'titles' => [
+                                                                [
+                                                                    'type' => 'avatar',
+                                                                    'header' => 'Avatar',
+                                                                    'field' => 'id',
+                                                                    'fallback' => 'name',
+                                                                ],
+                                                                [
+                                                                    'type' => 'text',
+                                                                    'header' => 'User',
+                                                                    'field' => 'name',
+                                                                ],
+                                                                [
+                                                                    'type' => 'composite',
+                                                                    'header' => 'Classified',
+                                                                    'class' => 'collapse',
+                                                                    'field' => 'units_classified',
+                                                                    'options' => [
+                                                                        [
+                                                                            'field' => 'name',
+                                                                        ],
+                                                                    ],
+                                                                ],
+                                                                [
+                                                                    'type' => 'composite',
+                                                                    'header' => 'Working',
+                                                                    'class' => 'collapse',
+                                                                    'field' => 'units_working',
+                                                                    'options' => [
+                                                                        [
+                                                                            'field' => 'name',
+                                                                        ],
+                                                                    ],
+                                                                ],
+                                                                [
+                                                                    'type' => 'toggle',
+                                                                    'header' => 'Active',
+                                                                    'field' => 'checked',
+                                                                    'disableSort' => true,
+                                                                    'callback' => [
+                                                                        'route' => 'apps.users.authorize',
+                                                                        'attributes' => ['mode' => 'toggle'],
+                                                                        'transmute' => ['role' => 'id'],
+                                                                    ],
+                                                                    'method' => 'put',
+                                                                    'colorOn' => 'success',
+                                                                    'colorOff' => 'danger',
+                                                                ],
+                                                            ],
+                                                        ],
+                                                    ],
                                                 ],
                                             ],
-                                        ],
-                                        [
-                                            'type' => 'composite',
-                                            'title' => 'Classified',
-                                            'class' => 'collapse',
-                                            'field' => 'units_classified',
-                                            'options' => [
-                                                [
-                                                    'field' => 'name',
-                                                ],
-                                            ],
-                                        ],
-                                        [
-                                            'type' => 'composite',
-                                            'title' => 'Working',
-                                            'class' => 'collapse',
-                                            'field' => 'units_working',
-                                            'options' => [
-                                                [
-                                                    'field' => 'name',
-                                                ],
-                                            ],
-                                        ],
-                                        [
-                                            'type' => 'text',
-                                            'title' => 'Roles',
-                                            'class' => 'collapse',
-                                            'field' => 'roles_count',
-                                        ],
-                                        [
-                                            'type' => 'button',
-                                            'title' => 'Login as',
-                                            'theme' => 'warning',
-                                            'showIf' => Gate::allows('apps.users.change_user') && !$request->session()->has('previousUser'),
-                                            'icon' => 'mdi:account-convert',
-                                            'disableSort' => true,
-                                            'preserveScroll' => true,
-                                            'route' => 'apps.users.change_user',
-                                            'method' => 'post',
                                         ],
                                     ],
-                                    'items' => $users,
+                                    'destroy' => [
+                                        'callback' => 'apps.users.destroy',
+                                        'method' => 'delete',
+                                        'visible' => (
+                                            Gate::allows('apps.users.destroy')
+                                            && $request->user()->can('isManager', User::class)
+                                            && $request->user()->can('canManageNestedData', User::class)
+                                        ),
+                                    ],
+                                    'restore' => [
+                                        'callback' => 'apps.users.restore',
+                                        'method' => 'post',
+                                        'visible' => (
+                                            Gate::allows('apps.users.restore')
+                                            && $request->user()->can('isManager', User::class)
+                                            && $request->user()->can('canManageNestedData', User::class)
+                                        ),
+                                    ],
+                                    'forceDestroy' => [
+                                        'callback' => 'apps.users.forceDestroy',
+                                        'method' => 'delete',
+                                        'visible' => (
+                                            Gate::allows('apps.users.forceDestroy')
+                                            && $request->user()->can('isManager', User::class)
+                                            && $request->user()->can('canManageNestedData', User::class)
+                                        ),
+                                    ],
+                                ],
+                                'titles' => [
+                                    [
+                                        'type' => 'avatar',
+                                        'header' => 'Avatar',
+                                        'field' => 'id',
+                                        'fallback' => 'name',
+                                        'disableSort' => true,
+                                    ],
+                                    [
+                                        'type' => 'composite',
+                                        'header' => 'User',
+                                        'field' => 'name',
+                                        'values' => [
+                                            [
+                                                'field' => 'name',
+                                            ],
+                                            [
+                                                'field' => 'email',
+                                                'class' => 'text-xs',
+                                            ],
+                                        ],
+                                    ],
+                                    [
+                                        'type' => 'composite',
+                                        'header' => 'Classified',
+                                        'class' => 'collapse',
+                                        'field' => 'units_classified',
+                                        'options' => [
+                                            [
+                                                'field' => 'name',
+                                            ],
+                                        ],
+                                    ],
+                                    [
+                                        'type' => 'composite',
+                                        'header' => 'Working',
+                                        'class' => 'collapse',
+                                        'field' => 'units_working',
+                                        'options' => [
+                                            [
+                                                'field' => 'name',
+                                            ],
+                                        ],
+                                    ],
+                                    [
+                                        'type' => 'text',
+                                        'header' => 'Roles',
+                                        'class' => 'collapse',
+                                        'field' => 'roles_count',
+                                    ],
+                                    [
+                                        'type' => 'button',
+                                        'header' => 'Login as',
+                                        'theme' => 'warning',
+                                        'showIf' => Gate::allows('apps.users.change_user') && !$request->session()->has('previousUser'),
+                                        'icon' => 'mdi:account-convert',
+                                        'disableSort' => true,
+                                        'preserveScroll' => true,
+                                        'route' => 'apps.users.change_user',
+                                        'method' => 'post',
+                                    ],
                                 ],
                             ],
                         ],
                     ],
                 ],
-            ],
+            ]
         ]);
+
+
+        // return Inertia::render('Default', [
+        //     'form' => [
+        //         [
+        //             'id' => 'users',
+        //             'title' => Route::current()->title,
+        //             'subtitle' => Route::current()->description,
+        //             'fields' => [
+        //                 [
+        //                     [
+        //                         'type' => 'table',
+        //                         'name' => 'users',
+        //                         'content' => [
+        //                             'routes' => [
+        //                                 'createRoute' => [
+        //                                     'route' => 'apps.users.create',
+        //                                     'showIf' => Gate::allows('apps.users.create'),
+        //                                 ],
+        //                                 'editRoute' => [
+        //                                     'route' => 'apps.users.edit',
+        //                                     'showIf' => Gate::allows('apps.users.edit'),
+        //                                 ],
+        //                                 'destroyRoute' => [
+        //                                     'route' => 'apps.users.destroy',
+        //                                     'showIf' => Gate::allows('apps.users.destroy'),
+        //                                 ],
+        //                                 'forceDestroyRoute' => [
+        //                                     'route' => 'apps.users.forcedestroy',
+        //                                     'showIf' => Gate::allows('apps.users.forcedestroy'),
+        //                                 ],
+        //                                 'restoreRoute' => [
+        //                                     'route' => 'apps.users.restore',
+        //                                     'showIf' => Gate::allows('apps.users.restore'),
+        //                                 ],
+        //                             ],
+        //                         ],
+        //                     ],
+        //                 ],
+        //             ],
+        //         ],
+        //     ],
+        // ]);
+    }
+
+    public function __fields(Request $request): array
+    {
+        return [];
     }
 
     public function activate(): RedirectResponse
