@@ -23,6 +23,8 @@ const props = withDefaults(
     },
 );
 
+const emit = defineEmits(["update:modelValue"]);
+
 const placeholderValue = trans(
     props.placeholder
         ? props.placeholder
@@ -54,7 +56,8 @@ onMounted(() => {
     });
 });
 
-const value = ref(props.modelValue?.map((i: { id: string | number }) => i.id));
+const value = ref(props.modelValue);
+// const value = ref(props.modelValue?.map((i: { id: string | number }) => i.id));
 </script>
 
 <template>
@@ -74,6 +77,7 @@ const value = ref(props.modelValue?.map((i: { id: string | number }) => i.id));
         :loading="loading"
         :highlightOnSelect="true"
         class="w-full"
+        @change="$emit('update:modelValue', $event.value)"
     >
         <template #empty>
             {{ $t("No items to show.") }}
@@ -97,6 +101,7 @@ const value = ref(props.modelValue?.map((i: { id: string | number }) => i.id));
         :loading="loading"
         :highlightOnSelect="true"
         class="w-full"
+        @change="$emit('update:modelValue', $event.value)"
     >
         <template #empty>
             {{ $t("No items to show.") }}

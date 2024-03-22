@@ -792,7 +792,6 @@ class RolesController extends Controller
                 ]);
             }
         } catch (\Throwable $e) {
-            print_r($e);
             report($e);
 
             DB::rollback();
