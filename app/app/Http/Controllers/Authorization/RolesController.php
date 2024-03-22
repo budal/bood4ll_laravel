@@ -779,7 +779,10 @@ class RolesController extends Controller
             $role->save();
 
             try {
-                $role->users()->attach($request->user()->id);
+                if ($request->user()->cannot('isSuperAdmin', User::class)) {
+                    $role->users()->attach($request->user()->id);
+                }
+
                 $role->abilities()->sync($request->abilities);
             } catch (\Exception $e) {
                 report($e);
