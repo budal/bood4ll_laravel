@@ -154,8 +154,8 @@ class RolesController extends Controller
         // $this->authorize('access', User::class);
 
         $roles = Role::leftjoin('role_user', 'role_user.role_id', '=', 'roles.id')
-            ->select('roles.id', 'roles.name', 'roles.description', 'roles.deleted_at')
-            ->groupBy('roles.id', 'roles.name', 'roles.description', 'roles.deleted_at')
+            ->select('roles.id', 'roles.name', 'roles.description', 'roles.active', 'roles.deleted_at')
+            ->groupBy('roles.id', 'roles.name', 'roles.description', 'roles.active', 'roles.deleted_at')
             ->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
                 $query->where('roles.superadmin', false);
                 $query->where('roles.manager', false);
@@ -594,6 +594,11 @@ class RolesController extends Controller
                                                 'class' => 'text-xs',
                                             ],
                                         ],
+                                    ],
+                                    [
+                                        'type' => 'active',
+                                        'header' => 'Active',
+                                        'field' => 'active',
                                     ],
                                     [
                                         'type' => 'text',

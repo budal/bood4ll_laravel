@@ -24,7 +24,7 @@ const props = withDefaults(
     },
 );
 
-const selectedItems = ref([]);
+const selectedItems = ref(props.modelValue);
 
 const emit = defineEmits(["update:modelValue"]);
 
@@ -41,10 +41,8 @@ const dropdownItems = ref([]);
 
 onMounted(() => {
     selectedItems.value = props.modelValue?.map(
-        (i: { id: string | number }) => i.id,
+        (item) => item[props.optionValue],
     );
-
-    console.log(props.modelValue);
 
     fetchData(props.source, {
         complement: {
