@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { fetchData } from "@/helpers";
 import { trans } from "laravel-vue-i18n";
+import { MultiSelectChangeEvent } from "primevue/multiselect";
 import { onMounted, ref } from "vue";
 
 const props = withDefaults(
@@ -55,8 +56,12 @@ onMounted(() => {
         },
     });
 });
+
 const value = ref(props.modelValue?.map((i: { id: string | number }) => i.id));
 
+const onChange = (event: MultiSelectChangeEvent) => {
+    emit("update:modelValue", event.value);
+};
 // const value = ref(props.modelValue);
 </script>
 
@@ -77,7 +82,7 @@ const value = ref(props.modelValue?.map((i: { id: string | number }) => i.id));
         :loading="loading"
         :highlightOnSelect="true"
         class="w-full"
-        @change="$emit('update:modelValue', $event.value)"
+        @change="onChange"
     >
         <template #empty>
             {{ $t("No items to show.") }}
