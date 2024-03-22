@@ -66,10 +66,13 @@ onMounted(() => {
 });
 
 const onChange = (event: MultiSelectChangeEvent) => {
-    emit("update:modelValue", event.value);
-    console.log(event.value);
+    emit(
+        "update:modelValue",
+        dropdownItems.value.filter((item) =>
+            event.value.includes(item[props.optionValue]),
+        ),
+    );
 };
-// const value = ref(props.modelValue);
 </script>
 
 <template>
@@ -113,7 +116,7 @@ const onChange = (event: MultiSelectChangeEvent) => {
         :loading="loading"
         :highlightOnSelect="true"
         class="w-full"
-        @change="$emit('update:modelValue', $event.value)"
+        @change="onChange"
     >
         <template #empty>
             {{ $t("No items to show.") }}

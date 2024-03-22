@@ -778,12 +778,14 @@ class RolesController extends Controller
 
             $role->save();
 
+            $abilities = collect($request->abilities)->pluck('id');
+
             try {
                 if ($request->user()->cannot('isSuperAdmin', User::class)) {
                     $role->users()->attach($request->user()->id);
                 }
 
-                $role->abilities()->sync($request->abilities);
+                $role->abilities()->sync($abilities);
             } catch (\Exception $e) {
                 report($e);
 
@@ -854,10 +856,10 @@ class RolesController extends Controller
 
             $role->save();
 
-            // print_r(collect($request->abilities)->pluck('name'));
+            $abilities = collect($request->abilities)->pluck('id');
 
             try {
-                $role->abilities()->sync($request->abilities);
+                $role->abilities()->sync($abilities);
             } catch (\Exception $e) {
                 report($e);
 
