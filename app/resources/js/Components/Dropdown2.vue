@@ -56,8 +56,8 @@ onMounted(() => {
     });
 });
 
-const value = ref(props.modelValue);
-// const value = ref(props.modelValue?.map((i: { id: string | number }) => i.id));
+// const value = ref(props.modelValue);
+const value = ref(props.modelValue?.map((i: { id: string | number }) => i.id));
 </script>
 
 <template>
