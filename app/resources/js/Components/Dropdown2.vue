@@ -44,6 +44,8 @@ onMounted(() => {
         (i: { id: string | number }) => i.id,
     );
 
+    console.log(props.modelValue);
+
     fetchData(props.source, {
         complement: {
             id: props.id,
