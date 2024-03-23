@@ -315,7 +315,7 @@ class HolidaysController extends Controller
 
     public function index(Request $request): Response
     {
-        $this->authorize('access', User::class);
+        // $this->authorize('access', User::class);
 
         return Inertia::render('Bood4ll', [
             'build' => [
