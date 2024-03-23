@@ -152,33 +152,6 @@ const menu = ref(false);
                     </div>
                 </template>
             </Menubar>
-            <Breadcrumb
-                :model="$page.props.breadcrumbs"
-                class="text-sm py-1 px-10 mt-1"
-            >
-                <template #item="{ item, props }">
-                    <Link
-                        as="button"
-                        v-bind="props.action"
-                        :href="item.url || ''"
-                        :disabled="item.current === true"
-                    >
-                        <span
-                            class="material-symbols-rounded"
-                            v-text="item.icon"
-                        />
-                        <span
-                            :class="{
-                                'text-primary font-semibold':
-                                    item.current === true,
-                            }"
-                        >
-                            {{ $t(item.title) }}
-                        </span>
-                    </Link>
-                </template>
-                <template #separator> / </template>
-            </Breadcrumb>
         </div>
     </div>
 </template>
