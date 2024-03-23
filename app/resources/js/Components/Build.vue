@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Ref, ref } from "vue";
-import { fetchData } from "@/helpers";
+import { fetchData, isValidUrl } from "@/helpers";
 
 import { useConfirm } from "primevue/useconfirm";
 import { useToast } from "primevue/usetoast";
@@ -9,6 +9,7 @@ import Table from "@/Components/Table.vue";
 import Dropdown2 from "@/Components/Dropdown2.vue";
 import { trans, transChoice } from "laravel-vue-i18n";
 import { DynamicDialogInstance } from "primevue/dynamicdialogoptions";
+import { Link, router } from "@inertiajs/vue3";
 
 const props = defineProps<{
     components: any;
@@ -47,7 +48,7 @@ const send = () => {
             toast.add({
                 severity: "error",
                 summary: `${trans(error.response.statusText)} (${error.response.status})`,
-                detail: trans(error.response.data.message),
+                detail: trans(error.response.data.message || "Unknown error."),
                 life: 3000,
             });
         },
@@ -58,12 +59,19 @@ const send = () => {
                 props.dialogRef?.close();
             }
 
-            toast.add({
-                severity: content.type || "success",
-                summary: trans(content.title || "Confirmed"),
-                detail: transChoice(content.message, content.length || 1, {}),
-                life: 3000,
-            });
+            if (content.message)
+                toast.add({
+                    severity: content.type || "success",
+                    summary: trans(content.title || "Confirmed"),
+                    detail: transChoice(
+                        content.message,
+                        content.length || 1,
+                        {},
+                    ),
+                    life: 3000,
+                });
+
+            if (content?.redirectUrl) router.visit(content.redirectUrl);
         },
         onFinish: () => (loading.value = false),
     });
@@ -279,6 +287,22 @@ const getFormValuesonLoad = () => {
                                 </span>
                             </InlineMessage>
                         </template>
+
+                        <div
+                            v-if="field.type == 'links'"
+                            class="flex justify-between underline text-sm text-zero-light dark:text-zero-dark"
+                        >
+                            <template v-for="link in field.values">
+                                <Link
+                                    :href="isValidUrl(link.route) as string"
+                                    :method="link.method || 'get'"
+                                    as="button"
+                                    type="button"
+                                >
+                                    {{ $t(link.label) }}
+                                </Link>
+                            </template>
+                        </div>
 
                         <Table
                             v-if="field.type === 'table'"

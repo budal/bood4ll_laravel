@@ -3,31 +3,27 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class EmailVerificationNotificationController extends Controller
 {
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request): JsonResponse
     {
         if ($request->user()->hasVerifiedEmail()) {
-            return back()->with(
-                [
-                    'toast_type' => 'success',
-                    'toast_message' => "The email address ':email' is verified.",
-                    'toast_replacements' => ['email' => $request->user()->email],
-                ]
-            );
+            return response()->json([
+                'type' => 'success',
+                'message' => "The email address ':email' is verified.",
+                'replacements' => ['email' => $request->user()->email],
+            ]);
         }
 
         $request->user()->sendEmailVerificationNotification();
 
-        return back()->with(
-            [
-                'toast_type' => 'success',
-                'toast_message' => "A new verification link has been sent to the email ':email'.",
-                'toast_replacements' => ['email' => $request->user()->email],
-            ]
-        );
+        return response()->json([
+            'type' => 'success',
+            'message' => "A new verification link has been sent to the email ':email'.",
+            'replacements' => ['email' => $request->user()->email],
+        ]);
     }
 }

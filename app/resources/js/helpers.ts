@@ -99,12 +99,8 @@ async function fetchData(
             // },
         })
             .then((response) => {
-                if (response.data.redirect === true) {
-                    router.visit(response.data.url);
-                } else {
-                    if (options?.onSuccess) {
-                        options.onSuccess(response.data);
-                    }
+                if (options?.onSuccess) {
+                    options.onSuccess(response.data);
                 }
             })
             .catch((error) => {
