@@ -15,8 +15,8 @@ Route::controller(RolesController::class)->middleware('auth:sanctum', 'verified'
     Route::get('/getAbilitiesIndex', 'getAbilitiesIndex')->name('getAbilitiesIndex');
     Route::put('/putAbilitiesUpdate/{mode?}', 'putAbilitiesUpdate')->name('putAbilitiesUpdate')->whereIn('mode', ['toggle', 'on', 'off']);
     Route::get('/getRolesIndex', 'getRolesIndex')->name('getRolesIndex');
-    Route::get('/getRoleInfo/{role}/{show?}', 'getRoleInfo')->name('getRoleInfo');
-    Route::get('/getRoleAuthorizedUsers/{role}/{show?}', 'getRoleAuthorizedUsers')->name('getRoleAuthorizedUsers');
+    Route::get('/getRoleInfo/{role}', 'getRoleInfo')->name('getRoleInfo');
+    Route::get('/getRoleAuthorized/{role}/{show?}', 'getRoleAuthorized')->name('getRoleAuthorized');
 });
 
 Route::controller(UnitsController::class)->middleware('auth:sanctum', 'verified', 'password.confirm')->group(function () {
@@ -28,4 +28,7 @@ Route::controller(UnitsController::class)->middleware('auth:sanctum', 'verified'
 
 Route::controller(UsersController::class)->middleware('auth:sanctum', 'verified', 'password.confirm')->group(function () {
     Route::get('/getUsersIndex', 'getUsersIndex')->name('getUsersIndex');
+    Route::get('/getUserInfo/{user?}', 'getUserInfo')->name('getUserInfo');
+    Route::get('/getUserUnits/{user?}/{show?}', 'getUserUnits')->name('getUserUnits');
+    Route::get('/getUserRoles/{user?}/{show?}', 'getUserRoles')->name('getUserRoles');
 });

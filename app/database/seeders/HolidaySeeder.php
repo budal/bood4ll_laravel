@@ -28,6 +28,7 @@ class HolidaySeeder extends Seeder
         ];
 
         \App\Models\Holiday::factory(count($holidays))
-            ->state(new Sequence(...$holidays));
+            ->state(new Sequence(...$holidays))
+            ->create();
     }
 }

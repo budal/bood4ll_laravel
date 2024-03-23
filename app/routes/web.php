@@ -78,7 +78,7 @@ Route::middleware('auth')->group(function () {
                     ->defaults('description', 'Define roles, grouping abilities to define specific access.')
                     ->defaults('icon', 'badge');
 
-                Route::put('/roles/authorize/{role}/{mode?}', 'putAuthorizeUserInRole')->name('authorize');
+                Route::put('/roles/authorize/{role}/{mode?}', 'putAuthorize')->name('authorize');
                 Route::post('/roles/create', 'postStoreRole')->name('store');
                 Route::patch('/roles/edit/{role}', 'patchUpdateRole')->name('update');
                 Route::delete('/roles/destroy', 'deleteDestroyRole')->name('destroy');
@@ -110,16 +110,14 @@ Route::middleware('auth')->group(function () {
                     ->defaults('icon', 'group');
                 Route::post('/users/changeuser/{user}', 'changeUser')->name('change_user');
                 Route::post('/users/returnToMyUser', 'returnToMyUser')->name('return_to_my_user');
-                Route::post('/users/activate/{user}/{mode?}', 'activate')->name('activate');
-                Route::get('/users/create', 'create')->name('create')->breadcrumb('User creation', 'apps.users.index');
-                Route::post('/users/create', 'store')->name('store');
-                Route::get('/users/edit/{user}/{show?}', 'edit')->name('edit')->breadcrumb('User edition', 'apps.users.index');
-                Route::patch('/users/edit/{user}', 'update')->name('update');
-                Route::post('/users/authorize_unit/{user}/{mode?}', 'authorizeUnit')->name('authorize_unit');
-                Route::post('/users/authorize_role/{user}/{mode?}', 'authorizeRole')->name('authorize_role');
-                Route::delete('/users/destroy', 'destroy')->name('destroy');
-                Route::delete('/users/forcedestroy', 'forceDestroy')->name('forcedestroy');
-                Route::post('/users/restore', 'restore')->name('restore');
+                Route::post('/users/create', 'postUserStore')->name('store');
+                Route::patch('/users/edit/{user}', 'patchUserUpdate')->name('update');
+                Route::put('/users/authorize/unit/{user}/{mode?}', 'putAuthorizeUnit')->name('authorizeUnit');
+                Route::put('/users/authorize/role/{user}/{mode?}', 'putAuthorizeRole')->name('authorizeRole');
+
+                Route::delete('/users/destroy', 'deleteDestroyRole')->name('destroy');
+                Route::post('/users/restore', 'postRestoreRole')->name('restore');
+                Route::delete('/users/forcedestroy', 'deleteForceDestroyRole')->name('forcedestroy');
             });
         });
 

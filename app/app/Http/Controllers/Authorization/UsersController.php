@@ -3,15 +3,12 @@
 namespace App\Http\Controllers\Authorization;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\ProfileUpdateRequest;
 use App\Models\Role;
 use App\Models\Unit;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Route;
@@ -25,13 +22,13 @@ class UsersController extends Controller
     {
         $this->authorize('access', User::class);
 
-        $users = User::where(function ($query) use ($request) {
-            $query->where('name', 'ilike', "%$request->search%");
-            $query->orWhere('email', 'ilike', "%$request->search%");
-        })
-            ->orderBy('name')
-            ->with('unitsClassified', 'unitsWorking')
+        $users = User::with('unitsClassified', 'unitsWorking')
             ->withCount('roles')
+            ->where(function ($query) use ($request) {
+                $query->where('name', 'ilike', "%$request->search%");
+                $query->orWhere('email', 'ilike', "%$request->search%");
+            })
+            ->orderBy('name')
             ->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
                 $query->join('unit_user', 'unit_user.user_id', '=', 'users.id');
                 $query->select('users.id', 'users.name', 'users.email');
@@ -49,6 +46,532 @@ class UsersController extends Controller
         return response()->json($users);
     }
 
+    public function getUserInfo(Request $request, User $user): JsonResponse
+    {
+        $this->authorize('access', User::class);
+        $this->authorize('fullAccess', $user);
+        $this->authorize('allowedUnits', $user);
+
+        return response()->json($user);
+    }
+
+    public function postUserStore(Request $request): JsonResponse
+    {
+        $this->authorize('access', User::class);
+
+        // $request->validate([
+        //     'name' => ['required', 'string', 'max:100', Rule::unique(Role::class)],
+        //     'description' => ['nullable', 'string', 'max:255'],
+        //     'active' => ['boolean'],
+        //     'lock_on_expire' => ['boolean'],
+        //     'expires_at' => ['nullable', 'date', 'required_if:lock_on_expire,true'],
+        //     'full_access' => ['boolean', 'accepted_if:manage_nested,true'],
+        //     'manage_nested' => ['boolean'],
+        //     'remove_on_change_unit' => ['boolean'],
+        // ], $messages = [
+        //     // 'required' => 'The :attribute field is required.',
+        // ], $attributes = [
+        //     // 'email' => 'email address',
+        // ],);
+
+        // DB::beginTransaction();
+
+        // try {
+        //     $role = new Role();
+
+        //     $role->name = $request->name;
+        //     $role->description = $request->description;
+        //     $role->owner = $request->user()->id;
+        //     $role->active = $request->active ?? false;
+        //     $role->lock_on_expire = $request->lock_on_expire ?? false;
+        //     $role->expires_at = $request->expires_at;
+        //     $role->full_access = $request->full_access ?? false;
+        //     $role->manage_nested = $request->manage_nested ?? false;
+        //     $role->remove_on_change_unit = $request->remove_on_change_unit ?? false;
+
+        //     $role->save();
+
+        //     $abilities = collect($request->abilities)->pluck('id');
+
+        //     try {
+        //         if ($request->user()->cannot('isSuperAdmin', User::class)) {
+        //             $role->users()->attach($request->user()->id);
+        //         }
+
+        //         $role->abilities()->sync($abilities);
+        //     } catch (\Exception $e) {
+        //         report($e);
+
+        //         DB::rollback();
+
+        //         return response()->json([
+        //             'type' => 'error',
+        //             'message' => 'Error when syncing abilities to the role.',
+        //         ]);
+        //     }
+        // } catch (\Throwable $e) {
+        //     report($e);
+
+        //     DB::rollback();
+
+        //     return response()->json([
+        //         'type' => 'error',
+        //         'message' => 'Error on add this item.|Error on add the items.',
+        //         'length' => 1,
+        //     ]);
+        // }
+
+        // DB::commit();
+
+        return response()->json([
+            'type' => 'success',
+            'title' => 'Users',
+            'message' => '{0} Nothing to add.|[1] Item added successfully.|[2,*] :total items successfully added.',
+            'length' => 1,
+        ]);
+    }
+
+    public function patchUserUpdate(Request $request, User $user): JsonResponse
+    {
+        $this->authorize('access', User::class);
+        $this->authorize('fullAccess', $user);
+        $this->authorize('allowedUnits', $user);
+
+        // $this->authorize('access', User::class);
+        // $this->authorize('isManager', User::class);
+        // $this->authorize('isActive', $role);
+        // $this->authorize('canEdit', $role);
+        // $this->authorize('canEditManagementRoles', $role);
+        // $this->authorize('isOwner', $role);
+
+        // $request->validate([
+        //     'name' => ['required', 'string', 'max:100', Rule::unique(Role::class)->ignore($role->id)],
+        //     'description' => ['nullable', 'string', 'max:255'],
+        //     'active' => ['boolean'],
+        //     'lock_on_expire' => ['boolean'],
+        //     'expires_at' => ['nullable', 'date', 'required_if:lock_on_expire,true'],
+        //     'full_access' => ['boolean', 'accepted_if:manage_nested,true'],
+        //     'manage_nested' => ['boolean'],
+        //     'remove_on_change_unit' => ['boolean'],
+        // ], $messages = [
+        //     // 'required' => 'The :attribute field is required.',
+        // ], $attributes = [
+        //     // 'email' => 'email address',
+        // ],);
+
+        // DB::beginTransaction();
+
+        // try {
+        //     $role->name = $request->name;
+        //     $role->description = $request->description;
+        //     $role->active = $request->active;
+        //     $role->lock_on_expire = $request->lock_on_expire ? $request->lock_on_expire : false;
+        //     $role->expires_at = $request->lock_on_expire ? $request->expires_at : null;
+        //     $role->full_access = $request->full_access;
+        //     $role->manage_nested = $request->manage_nested;
+        //     $role->remove_on_change_unit = $request->remove_on_change_unit;
+
+        //     $role->save();
+
+        //     $abilities = collect($request->abilities)->pluck('id');
+
+        //     try {
+        //         $role->abilities()->sync($abilities);
+        //     } catch (\Exception $e) {
+        //         report($e);
+
+        //         DB::rollback();
+
+        //         return response()->json([
+        //             'type' => 'error',
+        //             'message' => 'Error when syncing abilities to the role.',
+        //         ]);
+        //     }
+        // } catch (\Exception $e) {
+        //     report($e);
+
+        //     DB::rollback();
+
+        //     return response()->json([
+        //         'type' => 'error',
+        //         'message' => 'Error on edit selected item.|Error on edit selected items.',
+        //         'length' => 1,
+        //     ]);
+        // }
+
+        // DB::commit();
+
+        return response()->json([
+            'type' => 'success',
+            'title' => 'Users',
+            'message' => '{0} Nothing to edit.|[1] Item edited successfully.|[2,*] :total items successfully edited.',
+            'length' => 1,
+        ]);
+    }
+
+    public function getUserUnits(Request $request, User $user, string $show = null): JsonResponse
+    {
+        $this->authorize('access', User::class);
+
+        $units = Unit::leftJoin('unit_user', 'unit_user.unit_id', '=', 'units.id')
+            ->select('units.id', 'units.parent_id', 'units.shortpath', 'units.active')
+            ->groupBy('units.id', 'units.parent_id', 'units.shortpath', 'units.active')
+            ->where('shortpath', 'ilike', "%$request->search%")
+            ->orderBy('shortpath')
+            ->when(
+                $show == 'all',
+                function ($query) use ($request, $user) {
+                    $query->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request, $user) {
+                        $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
+                    });
+                },
+                function ($query) use ($user) {
+                    $query->where('unit_user.user_id', $user->id);
+                }
+            )
+            ->cursorPaginate(30)
+            ->withQueryString()
+            ->through(function ($item) use ($user) {
+                $item->checked = $item->users->pluck('id')->contains($user->id);
+
+                return $item;
+            });
+
+        return response()->json($units);
+    }
+
+    public function getUserRoles(Request $request, User $user, string $show = null): JsonResponse
+    {
+        $this->authorize('access', User::class);
+
+        $roles = Role::leftjoin('role_user', 'role_user.role_id', '=', 'roles.id')
+            ->select('roles.id', 'roles.name')
+            ->groupBy('roles.id', 'roles.name')
+            ->where('name', 'ilike', "%$request->search%")
+            ->orderBy('name')
+            ->when(
+                $show == 'all',
+                function ($query) use ($request) {
+                    $query->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
+                        $query->whereIn(
+                            'role_user.role_id',
+                            $request->user()
+                                ->roles()
+                                ->where('roles.active', true)
+                                ->where('roles.superadmin', false)
+                                ->where('roles.manager', false)
+                                ->where(function ($query) {
+                                    $query->where('roles.lock_on_expire', false);
+                                    $query->orWhere(function ($query) {
+                                        $query->where('roles.lock_on_expire', true);
+                                        $query->where('roles.expires_at', '>=', 'NOW()');
+                                    });
+                                })
+                                ->pluck('roles.id')
+                        );
+                    });
+                },
+                function ($query) use ($user) {
+                    $query
+                        ->where('roles.active', true)
+                        ->where('roles.superadmin', false)
+                        ->where('roles.manager', false)
+                        ->where('role_user.user_id', $user->id);
+                }
+            )
+            ->cursorPaginate(30)
+            ->withQueryString()
+            ->through(function ($item) use ($user) {
+                $item->checked = $item->users->pluck('id')->contains($user->id);
+
+                return $item;
+            });
+
+        return response()->json($roles);
+    }
+
+    public function changeUser(Request $request, User $user): JsonResponse
+    {
+        $this->authorize('access', User::class);
+        $this->authorize('fullAccess', $user);
+        $this->authorize('allowedUnits', $user);
+
+        if (!$request->session()->has('previousUser')) {
+            $request->session()->put('previousUser', [
+                'id' => Auth::user()->id,
+                'name' => Auth::user()->name,
+            ]);
+
+            Auth::loginUsingId($user->id, true);
+
+            if ($user->getAllAbilities->whereNotNull('ability')->pluck('ability')->contains(Route::current()->getName())) {
+                return Redirect::back()->with([
+                    'toast_type' => 'warning',
+                    'toast_message' => "Logged as ':user'.",
+                    'toast_replacements' => ['user' => $user->name],
+                ]);
+            } else {
+                return Redirect::route('dashboard.index')->with([
+                    'toast_type' => 'warning',
+                    'toast_message' => "Logged as ':user'.",
+                    'toast_replacements' => ['user' => $user->name],
+                ]);
+            }
+        } else {
+            return Redirect::back()->with([
+                'toast_type' => 'error',
+                'toast_message' => 'This action is unauthorized.',
+            ]);
+        }
+    }
+
+    public function returnToMyUser(Request $request): JsonResponse
+    {
+        $previousUser = $request->session()->all()['previousUser'];
+
+        $request->session()->put('previousUser', [
+            'id' => Auth::user()->id,
+            'name' => Auth::user()->name,
+        ]);
+
+        Auth::loginUsingId($previousUser['id'], true);
+
+        $request->session()->forget('previousUser');
+
+        return Redirect::back()->with([
+            'toast_type' => 'info',
+            'toast_message' => "Logged as ':user'.",
+            'toast_replacements' => ['user' => $previousUser['name']],
+        ]);
+    }
+
+    public function putAuthorizeUnit(Request $request, User $user, string $mode = null): JsonResponse
+    {
+        $this->authorize('access', User::class);
+        // $this->authorize('fullAccess', [$user, $request]);
+
+        $list = collect($request->list)->pluck('id');
+
+        try {
+            if ($mode == 'toggle') {
+                $unit = Unit::whereIn('id', $list)->first();
+                $hasUnit = $user->units()->whereIn('units.id', $list)->first();
+                $hasUnit ? $user->units()->detach($list) : $user->units()->attach($list);
+
+                return response()->json([
+                    'type' => 'success',
+                    'deactivate' => $hasUnit == true ? true : false,
+                    'title' => $hasUnit ? 'Attach' : 'Authorize',
+                    'message' => $hasUnit
+                        ? "The user ':user' was detached in the unit ':unit'."
+                        : "The user ':user' was attached in the unit ':unit'.",
+                    'length' => 1,
+                    'replacements' => ['user' => $user->name, 'unit' => $unit->name],
+                ]);
+            } elseif ($mode == 'on') {
+                $user->units()->attach($list);
+
+                return response()->json([
+                    'type' => 'success',
+                    'title' => 'Attach',
+                    'message' => '{0} Nothing to attach.|[1] Item attached successfully.|[2,*] :total items successfully attached.',
+                    'length' => count($list),
+                    'replacements' => ['total' => count($list)],
+                ]);
+            } elseif ($mode == 'off') {
+                $total = $user->units()->detach($list);
+
+                return response()->json([
+                    'type' => 'success',
+                    'title' => 'Detach',
+                    'message' => '{0} Nothing to detach.|[1] Item detached successfully.|[2,*] :total items successfully detached.',
+                    'length' => $total,
+                    'replacements' => ['total' => $total],
+                ]);
+            }
+        } catch (\Throwable $e) {
+            report($e);
+
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Error on edit selected item.|Error on edit selected items.',
+                'length' => count($list),
+            ]);
+        }
+    }
+
+    public function putAuthorizeRole(Request $request, User $user, string $mode = null): JsonResponse
+    {
+        $this->authorize('access', User::class);
+        // $this->authorize('fullAccess', [$user, $request]);
+
+        $list = collect($request->list)->pluck('id');
+
+        try {
+            if ($mode == 'toggle') {
+                $role = Role::whereIn('id', $list)->first();
+                $hasRole = $user->roles()->whereIn('roles.id', $list)->first();
+                $hasRole ? $user->roles()->detach($list) : $user->roles()->attach($list);
+
+                return response()->json([
+                    'type' => 'success',
+                    'deactivate' => $hasRole == true ? true : false,
+                    'title' => $hasRole ? 'Deauthorize' : 'Authorize',
+                    'message' => $hasRole
+                        ? "The user ':user' has been disabled in the ':role' role."
+                        : "The user ':user' was enabled in the ':role' role.",
+                    'length' => 1,
+                    'replacements' => ['user' => $user->name, 'role' => $role->name],
+                ]);
+            } elseif ($mode == 'on') {
+                $user->roles()->attach($list);
+
+                return response()->json([
+                    'type' => 'success',
+                    'title' => 'Authorize',
+                    'message' => '{0} Nothing to authorize.|[1] Item authorized successfully.|[2,*] :total items successfully authorized.',
+                    'length' => count($list),
+                    'replacements' => ['total' => count($list)],
+                ]);
+            } elseif ($mode == 'off') {
+                $total = $user->roles()->detach($list);
+
+                return response()->json([
+                    'type' => 'success',
+                    'title' => 'Deauthorize',
+                    'message' => '{0} Nothing to deauthorize.|[1] Item deauthorized successfully.|[2,*] :total items successfully deauthorized.',
+                    'length' => $total,
+                    'replacements' => ['total' => $total],
+                ]);
+            }
+        } catch (\Throwable $e) {
+            report($e);
+
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Error on edit selected item.|Error on edit selected items.',
+                'length' => count($list),
+            ]);
+        }
+    }
+
+    public function deleteDestroyRole(Request $request): JsonResponse
+    {
+        // $this->authorize('access', User::class);
+        // $this->authorize('isManager', User::class);
+        // $this->authorize('canDestroyOrRestore', [Role::class, $request]);
+
+        $list = collect($request->list)->pluck('id');
+
+        try {
+            $total = User::whereIn('id', $list)->delete();
+
+            return response()->json([
+                'type' => 'success',
+                'title' => 'Roles',
+                'message' => '{0} Nothing to remove.|[1] Item removed successfully.|[2,*] :total items successfully removed.',
+                'length' => $total,
+                'replacements' => ['total' => $total],
+            ]);
+        } catch (\Throwable $e) {
+            report($e);
+
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Error on remove selected item.|Error on remove selected items.',
+                'length' => count($list),
+            ]);
+        }
+    }
+
+    public function postRestoreRole(Request $request): JsonResponse
+    {
+        // $this->authorize('access', User::class);
+        // $this->authorize('isManager', User::class);
+        // $this->authorize('canDestroyOrRestore', [Role::class, $request]);
+
+        $list = collect($request->list)->pluck('id');
+
+        try {
+            $total = User::whereIn('id', $list)->restore();
+
+            return response()->json([
+                'type' => 'success',
+                'title' => 'Roles',
+                'message' => '{0} Nothing to restore.|[1] Item restored successfully.|[2,*] :total items successfully restored.',
+                'length' => $total,
+                'replacements' => ['total' => $total],
+            ]);
+        } catch (\Throwable $e) {
+            report($e);
+
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Error on remove selected item.|Error on remove selected items.',
+                'length' => count($list),
+            ]);
+        }
+    }
+
+    public function deleteForceDestroyRole(Request $request): JsonResponse
+    {
+        $this->authorize('access', User::class);
+        $this->authorize('isSuperAdmin', User::class);
+
+        $list = collect($request->list)->pluck('id');
+
+        try {
+            $total = User::whereIn('id', $list)->forceDelete();
+
+            return response()->json([
+                'type' => 'success',
+                'title' => 'Roles',
+                'message' => '{0} Nothing to erase.|[1] Item erased successfully.|[2,*] :total items successfully erased.',
+                'length' => $total,
+                'replacements' => ['total' => $total],
+            ]);
+        } catch (\Throwable $e) {
+            report($e);
+
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Error on erase selected item.|Error on erase selected items.',
+                'length' => $list,
+            ]);
+        }
+    }
+
+    public function __fields(Request $request): array
+    {
+        return [
+            [
+                'type' => 'input',
+                'name' => 'name',
+                'label' => 'Name',
+                'span' => 2,
+            ],
+            [
+                'type' => 'toggle',
+                'name' => 'active',
+                'label' => 'Active',
+                'colorOn' => 'success',
+                'colorOff' => 'danger',
+            ],
+            [
+                'type' => 'input',
+                'name' => 'email',
+                'label' => 'Email',
+                'span' => 2,
+            ],
+            [
+                'type' => 'text',
+                'name' => 'email_verified_at',
+                'label' => 'Email verified at',
+                'readonly' => true,
+            ],
+        ];
+    }
+
     public function index(Request $request): Response
     {
         $this->authorize('access', User::class);
@@ -62,103 +585,6 @@ class UsersController extends Controller
                         [
                             'type' => 'table',
                             'structure' => [
-                                // 'menu' => [
-                                //     [
-                                //         'icon' => 'account_tree',
-                                //         'label' => 'Abilities management',
-                                //         'source' => 'getAbilitiesIndex',
-                                //         'dialog' => true,
-                                //         'visible' => $request->user()->can('isSuperAdmin', User::class),
-                                //         'components' => [
-                                //             [
-                                //                 'label' => 'Abilities',
-                                //                 'description' => 'Define which abilities will be showed in the roles management.',
-                                //                 'visible' => (
-                                //                     Gate::allows('apps.roles.update')
-                                //                     && $request->user()->can('isManager', User::class)
-                                //                     && $request->user()->can('canManageNestedData', User::class)
-                                //                 ),
-                                //                 'fields' => [
-                                //                     [
-                                //                         'type' => 'table',
-                                //                         'name' => 'users',
-                                //                         'structure' => [
-                                //                             'actions' => [
-                                //                                 'index' => [
-                                //                                     'source' => 'getAbilitiesIndex',
-                                //                                     'selectBoxes' => true,
-                                //                                     'visible' => true,
-                                //                                     'disabled' => true,
-                                //                                 ],
-                                //                             ],
-                                //                             'menu' => [
-                                //                                 [
-                                //                                     'icon' => 'check',
-                                //                                     'label' => 'Authorize',
-                                //                                     'callback' => [
-                                //                                         'route' => 'putAbilitiesUpdate',
-                                //                                         'attributes' => ['mode' => 'on']
-                                //                                     ],
-                                //                                     'method' => 'put',
-                                //                                     'visible' => $request->user()->can('canManageNestedData', User::class),
-                                //                                     'condition' => ['checked' => false],
-                                //                                     'badgeClass' => 'success',
-                                //                                     'dialogTitle' => 'Are you sure you want to authorize the selected users?|Are you sure you want to authorize the selected users?',
-                                //                                     'dialogSubTitle' => 'The selected user will have the rights to access this role. Do you want to continue?|The selected user will have the rights to access this role. Do you want to continue?',
-
-
-                                //                                 ],
-                                //                                 [
-                                //                                     'icon' => 'close',
-                                //                                     'label' => 'Deauthorize',
-                                //                                     'callback' => [
-                                //                                         'route' => 'putAbilitiesUpdate',
-                                //                                         'attributes' => ['mode' => 'off']
-                                //                                     ],
-                                //                                     'method' => 'put',
-                                //                                     'visible' => $request->user()->can('canManageNestedData', User::class),
-                                //                                     'condition' => ['checked' => true],
-                                //                                     'badgeClass' => 'danger',
-                                //                                     'dialogTitle' => 'Are you sure you want to deauthorize the selected users?|Are you sure you want to deauthorize the selected users?',
-                                //                                     'dialogSubTitle' => 'The selected user will lose the rights to access this role. Do you want to continue?|The selected users will lose the rights to access this role. Do you want to continue?',
-                                //                                 ],
-                                //                             ],
-                                //                             'titles' => [
-                                //                                 [
-                                //                                     'type' => 'composite',
-                                //                                     'header' => 'Ability',
-                                //                                     'field' => 'title',
-                                //                                     'values' => [
-                                //                                         [
-                                //                                             'field' => 'title',
-                                //                                         ],
-                                //                                         [
-                                //                                             'field' => 'command',
-                                //                                             'class' => 'text-xs',
-                                //                                         ],
-                                //                                     ],
-                                //                                 ],
-                                //                                 [
-                                //                                     'type' => 'toggle',
-                                //                                     'header' => 'Active',
-                                //                                     'field' => 'checked',
-                                //                                     'disableSort' => true,
-                                //                                     'callback' => [
-                                //                                         'route' => 'putAbilitiesUpdate',
-                                //                                         'attributes' => ['mode' => 'toggle']
-                                //                                     ],
-                                //                                     'method' => 'put',
-                                //                                     'colorOn' => 'success',
-                                //                                     'colorOff' => 'danger',
-                                //                                 ],
-                                //                             ],
-                                //                         ],
-                                //                     ],
-                                //                 ],
-                                //             ],
-                                //         ],
-                                //     ],
-                                // ],
                                 'actions' => [
                                     'index' => [
                                         'source' => 'getUsersIndex',
@@ -174,7 +600,7 @@ class UsersController extends Controller
                                         'components' => [
                                             [
                                                 'label' => 'Main data',
-                                                'description' => 'Role name, abilities and settings.',
+                                                'description' => 'User account profile information.',
                                                 'cols' => 3,
                                                 'fields' => $this->__fields($request),
                                                 'visible' => (
@@ -201,11 +627,11 @@ class UsersController extends Controller
                                         'components' => [
                                             [
                                                 'source' => [
-                                                    'route' => 'getRoleInfo',
-                                                    'transmute' => ['role' => 'id'],
+                                                    'route' => 'getUserInfo',
+                                                    'transmute' => ['user' => 'id'],
                                                 ],
                                                 'label' => 'Main data',
-                                                'description' => 'Role name, abilities and settings.',
+                                                'description' => 'User account profile information.',
                                                 'cols' => 3,
                                                 'fields' => $this->__fields($request),
                                                 'visible' => (
@@ -222,17 +648,9 @@ class UsersController extends Controller
                                                 'method' => 'patch',
                                             ],
                                             [
-                                                'label' => 'Authorized users',
-                                                'description' => 'Define which users will have access to this authorization.',
-                                                'visible' => (
-                                                    Gate::allows('apps.users.update')
-                                                    && $request->user()->can('isManager', User::class)
-                                                    && $request->user()->can('canManageNestedData', User::class)
-                                                ),
-
-                                                // 'showIf' => $role->id === null || $request->user()->can('isOwner', $role),
-                                                // 'disabledIf' => $role->inalterable == true || $role->id !== null && $request->user()->cannot('isOwner', $role),
-
+                                                'label' => 'Units',
+                                                'description' => 'User units management.',
+                                                'visible' => $request->user()->can('canManageNestedData', User::class),
                                                 'fields' => [
                                                     [
                                                         'type' => 'table',
@@ -241,8 +659,8 @@ class UsersController extends Controller
                                                             'actions' => [
                                                                 'index' => [
                                                                     'source' => [
-                                                                        'route' => 'getRoleAuthorizedUsers',
-                                                                        'transmute' => ['role' => 'id'],
+                                                                        'route' => 'getUserUnits',
+                                                                        'transmute' => ['user' => 'id'],
                                                                     ],
                                                                     'selectBoxes' => true,
                                                                     'visible' => true,
@@ -254,9 +672,9 @@ class UsersController extends Controller
                                                                     'icon' => 'check',
                                                                     'label' => 'Authorize',
                                                                     'callback' => [
-                                                                        'route' => 'apps.users.authorize',
+                                                                        'route' => 'apps.users.authorizeUnit',
                                                                         'attributes' => ['mode' => 'on'],
-                                                                        'transmute' => ['role' => 'id'],
+                                                                        'transmute' => ['user' => 'id'],
                                                                     ],
                                                                     'method' => 'put',
                                                                     'visible' => $request->user()->can('canManageNestedData', User::class),
@@ -267,9 +685,9 @@ class UsersController extends Controller
                                                                     'icon' => 'close',
                                                                     'label' => 'Deauthorize',
                                                                     'callback' => [
-                                                                        'route' => 'apps.users.authorize',
+                                                                        'route' => 'apps.users.authorizeUnit',
                                                                         'attributes' => ['mode' => 'off'],
-                                                                        'transmute' => ['role' => 'id'],
+                                                                        'transmute' => ['user' => 'id'],
                                                                     ],
                                                                     'method' => 'put',
                                                                     'visible' => $request->user()->can('canManageNestedData', User::class),
@@ -280,58 +698,30 @@ class UsersController extends Controller
                                                                     'separator' => true,
                                                                 ],
                                                                 [
-                                                                    'icon' => 'verified_user',
-                                                                    'label' => 'Authorized users',
+                                                                    'icon' => 'house_with_shield',
+                                                                    'label' => 'Authorized units',
                                                                     'source' => [
-                                                                        'route' => 'getRoleAuthorizedUsers',
-                                                                        'transmute' => ['role' => 'id'],
+                                                                        'route' => 'getUserUnits',
+                                                                        'transmute' => ['user' => 'id'],
                                                                     ],
                                                                     'visible' => $request->user()->can('canManageNestedData', User::class),
                                                                 ],
                                                                 [
-                                                                    'icon' => 'group',
-                                                                    'label' => 'All users',
+                                                                    'icon' => 'other_houses',
+                                                                    'label' => 'All units',
                                                                     'source' => [
-                                                                        'route' => 'getRoleAuthorizedUsers',
+                                                                        'route' => 'getUserUnits',
                                                                         'attributes' => ['show' => 'all'],
-                                                                        'transmute' => ['role' => 'id'],
+                                                                        'transmute' => ['user' => 'id'],
                                                                     ],
                                                                     'visible' => $request->user()->can('canManageNestedData', User::class)
                                                                 ],
                                                             ],
                                                             'titles' => [
                                                                 [
-                                                                    'type' => 'avatar',
-                                                                    'header' => 'Avatar',
-                                                                    'field' => 'id',
-                                                                    'fallback' => 'name',
-                                                                ],
-                                                                [
                                                                     'type' => 'text',
-                                                                    'header' => 'User',
-                                                                    'field' => 'name',
-                                                                ],
-                                                                [
-                                                                    'type' => 'composite',
-                                                                    'header' => 'Classified',
-                                                                    'class' => 'collapse',
-                                                                    'field' => 'units_classified',
-                                                                    'options' => [
-                                                                        [
-                                                                            'field' => 'name',
-                                                                        ],
-                                                                    ],
-                                                                ],
-                                                                [
-                                                                    'type' => 'composite',
-                                                                    'header' => 'Working',
-                                                                    'class' => 'collapse',
-                                                                    'field' => 'units_working',
-                                                                    'options' => [
-                                                                        [
-                                                                            'field' => 'name',
-                                                                        ],
-                                                                    ],
+                                                                    'header' => 'Name',
+                                                                    'field' => 'shortpath',
                                                                 ],
                                                                 [
                                                                     'type' => 'toggle',
@@ -339,9 +729,104 @@ class UsersController extends Controller
                                                                     'field' => 'checked',
                                                                     'disableSort' => true,
                                                                     'callback' => [
-                                                                        'route' => 'apps.users.authorize',
+                                                                        'route' => 'apps.users.authorizeUnit',
                                                                         'attributes' => ['mode' => 'toggle'],
-                                                                        'transmute' => ['role' => 'id'],
+                                                                        'transmute' => ['user' => 'id'],
+                                                                    ],
+                                                                    'method' => 'put',
+                                                                    'colorOn' => 'success',
+                                                                    'colorOff' => 'danger',
+                                                                ],
+                                                            ],
+                                                        ],
+                                                    ],
+                                                ],
+                                            ],
+                                            [
+                                                'label' => 'Roles',
+                                                'description' => 'User roles management.',
+                                                'visible' => $request->user()->can('canManageNestedData', User::class),
+                                                'fields' => [
+                                                    [
+                                                        'type' => 'table',
+                                                        'name' => 'users',
+                                                        'structure' => [
+                                                            'actions' => [
+                                                                'index' => [
+                                                                    'source' => [
+                                                                        'route' => 'getUserRoles',
+                                                                        'transmute' => ['user' => 'id'],
+                                                                    ],
+                                                                    'selectBoxes' => true,
+                                                                    'visible' => true,
+                                                                    'disabled' => true,
+                                                                ],
+                                                            ],
+                                                            'menu' => [
+                                                                [
+                                                                    'icon' => 'check',
+                                                                    'label' => 'Authorize',
+                                                                    'callback' => [
+                                                                        'route' => 'apps.users.authorizeRole',
+                                                                        'attributes' => ['mode' => 'on'],
+                                                                        'transmute' => ['user' => 'id'],
+                                                                    ],
+                                                                    'method' => 'put',
+                                                                    'visible' => $request->user()->can('canManageNestedData', User::class),
+                                                                    'condition' => ['checked' => false],
+                                                                    'badgeClass' => 'success',
+                                                                ],
+                                                                [
+                                                                    'icon' => 'close',
+                                                                    'label' => 'Deauthorize',
+                                                                    'callback' => [
+                                                                        'route' => 'apps.users.authorizeRole',
+                                                                        'attributes' => ['mode' => 'off'],
+                                                                        'transmute' => ['user' => 'id'],
+                                                                    ],
+                                                                    'method' => 'put',
+                                                                    'visible' => $request->user()->can('canManageNestedData', User::class),
+                                                                    'condition' => ['checked' => true],
+                                                                    'badgeClass' => 'danger',
+                                                                ],
+                                                                [
+                                                                    'separator' => true,
+                                                                ],
+                                                                [
+                                                                    'icon' => 'badge',
+                                                                    'label' => 'Authorized roles',
+                                                                    'source' => [
+                                                                        'route' => 'getUserRoles',
+                                                                        'transmute' => ['user' => 'id'],
+                                                                    ],
+                                                                    'visible' => $request->user()->can('canManageNestedData', User::class),
+                                                                ],
+                                                                [
+                                                                    'icon' => 'list_alt',
+                                                                    'label' => 'All roles',
+                                                                    'source' => [
+                                                                        'route' => 'getUserRoles',
+                                                                        'attributes' => ['show' => 'all'],
+                                                                        'transmute' => ['user' => 'id'],
+                                                                    ],
+                                                                    'visible' => $request->user()->can('canManageNestedData', User::class)
+                                                                ],
+                                                            ],
+                                                            'titles' => [
+                                                                [
+                                                                    'type' => 'text',
+                                                                    'header' => 'Name',
+                                                                    'field' => 'name',
+                                                                ],
+                                                                [
+                                                                    'type' => 'toggle',
+                                                                    'header' => 'Active',
+                                                                    'field' => 'checked',
+                                                                    'disableSort' => true,
+                                                                    'callback' => [
+                                                                        'route' => 'apps.users.authorizeRole',
+                                                                        'attributes' => ['mode' => 'toggle'],
+                                                                        'transmute' => ['user' => 'id'],
                                                                     ],
                                                                     'method' => 'put',
                                                                     'colorOn' => 'success',
@@ -450,716 +935,5 @@ class UsersController extends Controller
                 ],
             ]
         ]);
-
-
-        // return Inertia::render('Default', [
-        //     'form' => [
-        //         [
-        //             'id' => 'users',
-        //             'title' => Route::current()->title,
-        //             'subtitle' => Route::current()->description,
-        //             'fields' => [
-        //                 [
-        //                     [
-        //                         'type' => 'table',
-        //                         'name' => 'users',
-        //                         'content' => [
-        //                             'routes' => [
-        //                                 'createRoute' => [
-        //                                     'route' => 'apps.users.create',
-        //                                     'showIf' => Gate::allows('apps.users.create'),
-        //                                 ],
-        //                                 'editRoute' => [
-        //                                     'route' => 'apps.users.edit',
-        //                                     'showIf' => Gate::allows('apps.users.edit'),
-        //                                 ],
-        //                                 'destroyRoute' => [
-        //                                     'route' => 'apps.users.destroy',
-        //                                     'showIf' => Gate::allows('apps.users.destroy'),
-        //                                 ],
-        //                                 'forceDestroyRoute' => [
-        //                                     'route' => 'apps.users.forcedestroy',
-        //                                     'showIf' => Gate::allows('apps.users.forcedestroy'),
-        //                                 ],
-        //                                 'restoreRoute' => [
-        //                                     'route' => 'apps.users.restore',
-        //                                     'showIf' => Gate::allows('apps.users.restore'),
-        //                                 ],
-        //                             ],
-        //                         ],
-        //                     ],
-        //                 ],
-        //             ],
-        //         ],
-        //     ],
-        // ]);
-    }
-
-    public function __fields(Request $request): array
-    {
-        return [];
-    }
-
-    public function activate(): RedirectResponse
-    {
-        return Redirect::back()->with('status', 'Error on edit selected item.|Error on edit selected items.');
-    }
-
-    public function changeUser(Request $request, User $user): RedirectResponse
-    {
-        $this->authorize('access', User::class);
-        $this->authorize('fullAccess', $user);
-        $this->authorize('allowedUnits', $user);
-
-        if (!$request->session()->has('previousUser')) {
-            $request->session()->put('previousUser', [
-                'id' => Auth::user()->id,
-                'name' => Auth::user()->name,
-            ]);
-
-            Auth::loginUsingId($user->id, true);
-
-            if ($user->getAllAbilities->whereNotNull('ability')->pluck('ability')->contains(Route::current()->getName())) {
-                return Redirect::back()->with([
-                    'toast_type' => 'warning',
-                    'toast_message' => "Logged as ':user'.",
-                    'toast_replacements' => ['user' => $user->name],
-                ]);
-            } else {
-                return Redirect::route('dashboard.index')->with([
-                    'toast_type' => 'warning',
-                    'toast_message' => "Logged as ':user'.",
-                    'toast_replacements' => ['user' => $user->name],
-                ]);
-            }
-        } else {
-            return Redirect::back()->with([
-                'toast_type' => 'error',
-                'toast_message' => 'This action is unauthorized.',
-            ]);
-        }
-    }
-
-    public function returnToMyUser(Request $request): RedirectResponse
-    {
-        $previousUser = $request->session()->all()['previousUser'];
-
-        $request->session()->put('previousUser', [
-            'id' => Auth::user()->id,
-            'name' => Auth::user()->name,
-        ]);
-
-        Auth::loginUsingId($previousUser['id'], true);
-
-        $request->session()->forget('previousUser');
-
-        return Redirect::back()->with([
-            'toast_type' => 'info',
-            'toast_message' => "Logged as ':user'.",
-            'toast_replacements' => ['user' => $previousUser['name']],
-        ]);
-    }
-
-    public function authorizeRole(Request $request, User $user, $mode): RedirectResponse
-    {
-        $this->authorize('access', User::class);
-        // $this->authorize('fullAccess', [$user, $request]);
-
-        $hasRole = $user->roles()->whereIn('roles.id', $request->list)->first();
-
-        try {
-            if ($mode == 'toggle') {
-                $role = Role::whereIn('id', $request->list)->first();
-                $hasRole ? $user->roles()->detach($request->list) : $user->roles()->attach($request->list);
-
-                return Redirect::back()->with([
-                    'toast_type' => 'success',
-                    'toast_message' => $hasRole
-                        ? "The user ':user' has been disabled in the ':role' role."
-                        : "The user ':user' was enabled in the ':role' role.",
-                    'toast_replacements' => ['user' => $user->name, 'role' => $role->name],
-                ]);
-            } elseif ($mode == 'on') {
-                $total = $user->roles()->attach($request->list);
-
-                return Redirect::back()->with([
-                    'toast_type' => 'success',
-                    'toast_message' => '{0} Nothing to authorize.|[1] Item authorized successfully.|[2,*] :total items successfully authorized.',
-                    'toast_count' => count($request->list),
-                    'toast_replacements' => ['total' => count($request->list)],
-                ]);
-            } elseif ($mode == 'off') {
-                $total = $user->roles()->detach($request->list);
-
-                return Redirect::back()->with([
-                    'toast_type' => 'success',
-                    'toast_message' => '{0} Nothing to deauthorize.|[1] Item deauthorized successfully.|[2,*] :total items successfully deauthorized.',
-                    'toast_count' => $total,
-                    'toast_replacements' => ['total' => $total],
-                ]);
-            }
-        } catch (\Throwable $e) {
-            report($e);
-
-            return Redirect::back()->with([
-                'toast_type' => 'error',
-                'toast_message' => 'Error on authorize selected item.|Error on authorize selected items.',
-                'toast_count' => count($request->list),
-            ]);
-        }
-    }
-
-    public function authorizeUnit(Request $request, User $user, $mode): RedirectResponse
-    {
-        $this->authorize('access', User::class);
-        // $this->authorize('fullAccess', [$user, $request]);
-
-        $hasUnit = $user->units()->whereIn('units.id', $request->list)->first();
-
-        try {
-            if ($mode == 'toggle') {
-                $unit = Unit::whereIn('id', $request->list)->first();
-                $hasUnit ? $user->units()->detach($request->list) : $user->units()->attach($request->list);
-
-                return Redirect::back()->with([
-                    'toast_type' => 'success',
-                    'toast_message' => $hasUnit
-                        ? "The user ':user' was detached in the ':unit'."
-                        : "The user ':user' was attached in the ':unit'.",
-                    'toast_replacements' => ['user' => $user->name, 'unit' => $unit->name],
-                ]);
-            } elseif ($mode == 'on') {
-                $total = $user->units()->attach($request->list);
-
-                return Redirect::back()->with([
-                    'toast_type' => 'success',
-                    'toast_message' => '{0} Nothing to attach.|[1] Item attached successfully.|[2,*] :total items successfully attached.',
-                    'toast_count' => count($request->list),
-                    'toast_replacements' => ['total' => count($request->list)],
-                ]);
-            } elseif ($mode == 'off') {
-                $total = $user->units()->detach($request->list);
-
-                return Redirect::back()->with([
-                    'toast_type' => 'success',
-                    'toast_message' => '{0} Nothing to detach.|[1] Item detached successfully.|[2,*] :total items successfully detached.',
-                    'toast_count' => $total,
-                    'toast_replacements' => ['total' => $total],
-                ]);
-            }
-        } catch (\Throwable $e) {
-            report($e);
-
-            return Redirect::back()->with([
-                'toast_type' => 'error',
-                'toast_message' => 'Error on attach selected item.|Error on attach selected items.',
-                'toast_count' => count($request->list),
-            ]);
-        }
-    }
-
-    public function __form(Request $request, User $user): array
-    {
-        $units = Unit::leftJoin('unit_user', 'unit_user.unit_id', '=', 'units.id')
-            ->filter($request, 'units', [
-                'where' => ['shortpath'],
-                'order' => ['shortpath'],
-            ])
-            ->select('units.id', 'units.parent_id', 'units.shortpath', 'units.active')
-            ->groupBy('units.id', 'units.parent_id', 'units.shortpath', 'units.active')
-            ->when(
-                $request->show == 'all_units',
-                function ($query) use ($request, $user) {
-                    $query->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request, $user) {
-                        $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
-                    });
-                },
-                function ($query) use ($user) {
-                    $query->where('unit_user.user_id', $user->id);
-                }
-            )
-            ->paginate($perPage = 20, $columns = ['*'], $pageName = 'units')
-            ->onEachSide(2)
-            ->withQueryString()
-            ->through(function ($item) use ($user) {
-                $item->checked = $item->users->pluck('id')->contains($user->id);
-
-                return $item;
-            });
-
-        $roles = Role::filter($request, 'roles')
-            ->leftjoin('role_user', 'role_user.role_id', '=', 'roles.id')
-            ->select('roles.id', 'roles.name')
-            ->groupBy('roles.id', 'roles.name')
-            ->when(
-                $request->show == 'all_roles',
-                function ($query) use ($request) {
-                    $query->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
-                        $query->whereIn(
-                            'role_user.role_id',
-                            $request->user()
-                                ->roles()
-                                ->where('roles.active', true)
-                                ->where('roles.superadmin', false)
-                                ->where('roles.manager', false)
-                                ->where(function ($query) {
-                                    $query->where('roles.lock_on_expire', false);
-                                    $query->orWhere(function ($query) {
-                                        $query->where('roles.lock_on_expire', true);
-                                        $query->where('roles.expires_at', '>=', 'NOW()');
-                                    });
-                                })
-                                ->pluck('roles.id')
-                        );
-                    });
-                },
-                function ($query) use ($user) {
-                    $query
-                        ->where('roles.active', true)
-                        ->where('roles.superadmin', false)
-                        ->where('roles.manager', false)
-                        ->where('role_user.user_id', $user->id);
-                }
-            )
-            ->paginate($perPage = 20, $columns = ['*'], $pageName = 'roles')
-            ->onEachSide(2)
-            ->withQueryString()
-            ->through(function ($item) use ($user) {
-                $item->checked = $item->users->pluck('id')->contains($user->id);
-
-                return $item;
-            });
-
-        return [
-            [
-                'id' => 'profile',
-                'title' => 'Main data',
-                'subtitle' => 'User account profile information.',
-                'cols' => 3,
-                'fields' => [
-                    [
-                        [
-                            'type' => 'input',
-                            'name' => 'name',
-                            'title' => 'Name',
-                            'span' => 2,
-                        ],
-                        [
-                            'type' => 'toggle',
-                            'name' => 'active',
-                            'title' => 'Active',
-                            'colorOn' => 'success',
-                            'colorOff' => 'danger',
-                        ],
-                        [
-                            'type' => 'input',
-                            'name' => 'email',
-                            'title' => 'Email',
-                            'span' => 2,
-                        ],
-                        [
-                            'type' => 'text',
-                            'name' => 'email_verified_at',
-                            'title' => 'Email verified at',
-                            'readonly' => true,
-                        ],
-                    ],
-                    [
-                        [
-                            'type' => 'modal',
-                            'title' => 'Reset password',
-                            'description' => "By clicking the button below, an email will be sent to the user to reset their password.",
-                            'span' => 3,
-                        ],
-                    ]
-                ]
-            ],
-            [
-                'id' => 'units',
-                'title' => 'Units',
-                'subtitle' => "User units management.",
-                'showIf' => $user->id != null && $request->user()->can('canManageNestedData', User::class),
-                'fields' => [
-                    [
-                        [
-                            'type' => 'table',
-                            'name' => 'units',
-                            'content' => [
-                                'routes' => [
-                                    'showCheckboxes' => true,
-                                ],
-                                'menu' => [
-                                    [
-                                        'icon' => 'mdi:plus-circle-outline',
-                                        'title' => 'Attach',
-                                        'route' => [
-                                            'route' => 'apps.users.authorize_unit',
-                                            'attributes' => [
-                                                $user->id,
-                                                'on',
-                                            ],
-                                        ],
-                                        'method' => 'post',
-                                        'list' => 'checkboxes',
-                                        'listCondition' => false,
-                                        'modalTitle' => 'Are you sure you want to attach the selected item?|Are you sure you want to attach the selected items?',
-                                        'modalSubTitle' => 'The selected item will be attached. Do you want to continue?|The selected items will be attached. Do you want to continue?',
-                                        'buttonTitle' => 'Attach',
-                                        'buttonIcon' => 'mdi:plus-circle-outline',
-                                        'buttonColor' => 'success',
-                                    ],
-                                    [
-                                        'icon' => 'mdi:minus-circle-outline',
-                                        'title' => 'Detach',
-                                        'route' => [
-                                            'route' => 'apps.users.authorize_unit',
-                                            'attributes' => [
-                                                $user->id,
-                                                'off',
-                                            ],
-                                        ],
-                                        'method' => 'post',
-                                        'list' => 'checkboxes',
-                                        'listCondition' => true,
-                                        'modalTitle' => 'Are you sure you want to detach the selected item?|Are you sure you want to detach the selected items?',
-                                        'modalSubTitle' => 'The selected item will be detached. Do you want to continue?|The selected items will be detached. Do you want to continue?',
-                                        'buttonTitle' => 'Detach',
-                                        'buttonIcon' => 'mdi:minus-circle-outline',
-                                        'buttonColor' => 'danger',
-                                    ],
-                                    [
-                                        'title' => '-',
-                                    ],
-
-                                    [
-                                        'icon' => 'mdi:format-list-checkbox',
-                                        'title' => 'List',
-                                        'items' => [
-                                            [
-                                                'icon' => 'mdi:home-lock',
-                                                'title' => 'Authorized units',
-                                                'route' => [
-                                                    'route' => 'apps.users.edit',
-                                                    'attributes' => [
-                                                        $user->id,
-                                                    ]
-                                                ],
-                                            ],
-                                            [
-                                                'icon' => 'mdi:home-city',
-                                                'title' => 'All units',
-                                                'route' => [
-                                                    'route' => 'apps.users.edit',
-                                                    'attributes' => [
-                                                        $user->id,
-                                                        'all_units'
-                                                    ]
-                                                ],
-                                                'showIf' => $request->user()->can('canManageNestedData', User::class)
-                                            ],
-                                        ],
-                                    ],
-                                ],
-                                'titles' => [
-                                    [
-                                        'type' => 'text',
-                                        'title' => 'Name',
-                                        'field' => 'shortpath',
-                                    ],
-                                    [
-                                        'type' => 'toggle',
-                                        'title' => '',
-                                        'field' => 'checked',
-                                        'disableSort' => true,
-                                        'route' => [
-                                            'route' => 'apps.users.authorize_unit',
-                                            'attributes' => [
-                                                $user->id,
-                                                'toggle',
-                                            ],
-                                        ],
-                                        'method' => 'post',
-                                        'colorOn' => 'info',
-                                    ],
-
-                                ],
-                                'items' => $units,
-                            ],
-                        ],
-                    ],
-                ],
-            ],
-            [
-                'id' => 'roles',
-                'title' => 'Roles',
-                'subtitle' => "User roles management.",
-                'showIf' => $user->id != null && $request->user()->can('canManageNestedData', User::class),
-                'fields' => [
-                    [
-                        [
-                            'type' => 'table',
-                            'name' => 'subunits',
-                            'content' => [
-                                'routes' => [
-                                    'showCheckboxes' => true,
-                                ],
-                                'menu' => [
-                                    [
-                                        'icon' => 'mdi:plus-circle-outline',
-                                        'title' => 'Authorize',
-                                        'route' => [
-                                            'route' => 'apps.users.authorize_role',
-                                            'attributes' => [
-                                                $user->id,
-                                                'on',
-                                            ],
-                                        ],
-                                        'method' => 'post',
-                                        'list' => 'checkboxes',
-                                        'listCondition' => false,
-                                        'modalTitle' => 'Are you sure you want to authorize the selected item?|Are you sure you want to authorize the selected items?',
-                                        'modalSubTitle' => 'The selected item will be authorized. Do you want to continue?|The selected items will be authorized. Do you want to continue?',
-                                        'buttonTitle' => 'Authorize',
-                                        'buttonIcon' => 'mdi:plus-circle-outline',
-                                        'buttonColor' => 'success',
-                                    ],
-                                    [
-                                        'icon' => 'mdi:minus-circle-outline',
-                                        'title' => 'Deauthorize',
-                                        'route' => [
-                                            'route' => 'apps.users.authorize_role',
-                                            'attributes' => [
-                                                $user->id,
-                                                'off',
-                                            ],
-                                        ],
-                                        'method' => 'post',
-                                        'list' => 'checkboxes',
-                                        'listCondition' => true,
-                                        'modalTitle' => 'Are you sure you want to deauthorize the selected item?|Are you sure you want to deauthorize the selected items?',
-                                        'modalSubTitle' => 'The selected item will be deauthorized. Do you want to continue?|The selected items will be deauthorized. Do you want to continue?',
-                                        'buttonTitle' => 'Deauthorize',
-                                        'buttonIcon' => 'mdi:minus-circle-outline',
-                                        'buttonColor' => 'danger',
-                                    ],
-                                    [
-                                        'title' => '-',
-                                    ],
-
-                                    [
-                                        'icon' => 'mdi:format-list-checkbox',
-                                        'title' => 'List',
-                                        'items' => [
-                                            [
-                                                'icon' => 'mdi:account-key-outline',
-                                                'title' => 'Authorized roles',
-                                                'route' => [
-                                                    'route' => 'apps.users.edit',
-                                                    'attributes' => $user->id,
-                                                ],
-                                            ],
-                                            [
-                                                'icon' => 'mdi:account-multiple-outline',
-                                                'title' => 'All roles',
-                                                'route' => [
-                                                    'route' => 'apps.users.edit',
-                                                    'attributes' => [
-                                                        $user->id,
-                                                        'all_roles'
-                                                    ],
-                                                ],
-                                            ],
-                                        ],
-                                    ],
-                                ],
-                                'titles' => [
-                                    [
-                                        'type' => 'text',
-                                        'title' => 'Name',
-                                        'field' => 'name',
-                                    ],
-                                    [
-                                        'type' => 'toggle',
-                                        'title' => '',
-                                        'field' => 'checked',
-                                        'disableSort' => true,
-                                        'route' => [
-                                            'route' => 'apps.users.authorize_role',
-                                            'attributes' => [
-                                                $user->id,
-                                                'toggle',
-                                            ],
-                                        ],
-                                        'method' => 'post',
-                                        'colorOn' => 'info',
-                                    ],
-                                ],
-                                'items' => $roles,
-                            ],
-                        ],
-                    ],
-                ],
-            ],
-        ];
-    }
-
-    public function create(Request $request, User $user): Response
-    {
-        $this->authorize('access', User::class);
-
-        return Inertia::render('Default', [
-            'form' => $this->__form($request, $user),
-            'routes' => [
-                'profile' => [
-                    'route' => route('apps.users.store'),
-                    'method' => 'post',
-                ],
-            ],
-        ]);
-    }
-
-    public function store(ProfileUpdateRequest $request): RedirectResponse
-    {
-        $this->authorize('access', User::class);
-
-        // dd($request);
-        // $request->user()->fill($request->validated());
-
-        // if ($request->user()->isDirty('email')) {
-        //     $request->user()->email_verified_at = null;
-        // }
-
-        // $request->user()->save();
-
-        return Redirect::route('apps.users.index')->with([
-            'toast_type' => 'success',
-            'toast_message' => 'Item added.|Items added.',
-            'toast_count' => 1,
-        ]);
-    }
-
-    public function edit(Request $request, User $user): Response
-    {
-        $this->authorize('access', User::class);
-        $this->authorize('fullAccess', $user);
-        $this->authorize('allowedUnits', $user);
-
-        return Inertia::render('Default', [
-            'form' => $this->__form($request, $user),
-            'routes' => [
-                'profile' => [
-                    'route' => route('apps.users.edit', $user->id),
-                    'method' => 'patch',
-                ],
-            ],
-            'data' => $user,
-        ]);
-    }
-
-    public function update(Request $request, User $user): RedirectResponse
-    {
-        $this->authorize('access', User::class);
-        $this->authorize('fullAccess', $user);
-        $this->authorize('allowedUnits', $user);
-
-        DB::beginTransaction();
-
-        try {
-            $user->name = $request->name;
-            $user->email = $request->email;
-            $user->active = $request->active;
-
-            // $user->fill($request->validated());
-
-            if ($user->isDirty('email')) {
-                $user->email_verified_at = null;
-            }
-
-            $user->save();
-        } catch (\Throwable $e) {
-            report($e);
-
-            DB::rollback();
-
-            return Redirect::back()->with([
-                'toast_type' => 'error',
-                'toast_message' => 'Error on edit selected item.|Error on edit selected items.',
-                'toast_count' => 1,
-            ]);
-        }
-
-        DB::commit();
-
-        return Redirect::back()->with([
-            'toast_type' => 'success',
-            'toast_message' => '{0} Nothing to edit.|[1] Item edited successfully.|[2,*] :total items successfully edited.',
-            'toast_count' => 1,
-        ]);
-    }
-
-    public function destroy(Request $request): RedirectResponse
-    {
-        try {
-            $total = User::whereIn('id', $request->list)->delete();
-
-            return back()->with([
-                'toast_type' => 'success',
-                'toast_message' => '{0} Nothing to remove.|[1] Item removed successfully.|[2,*] :total items successfully removed.',
-                'toast_count' => $total,
-                'toast_replacements' => ['total' => $total],
-            ]);
-        } catch (\Throwable $e) {
-            report($e);
-
-            return back()->with([
-                'toast_type' => 'error',
-                'toast_message' => 'Error on remove selected item.|Error on remove selected items.',
-                'toast_count' => count($request->list),
-            ]);
-        }
-    }
-
-    public function forceDestroy(Request $request): RedirectResponse
-    {
-        try {
-            $total = User::whereIn('id', $request->list)->forceDelete();
-
-            return back()->with([
-                'toast_type' => 'success',
-                'toast_message' => '{0} Nothing to erase.|[1] Item erased successfully.|[2,*] :total items successfully erased.',
-                'toast_count' => $total,
-                'toast_replacements' => ['total' => $total],
-            ]);
-        } catch (\Throwable $e) {
-            report($e);
-
-            return back()->with([
-                'toast_type' => 'error',
-                'toast_message' => 'Error on erase selected item.|Error on erase selected items.',
-                'toast_count' => count($request->list),
-            ]);
-        }
-    }
-
-    public function restore(Request $request): RedirectResponse
-    {
-        try {
-            $total = User::whereIn('id', $request->list)->restore();
-
-            return back()->with([
-                'toast_type' => 'success',
-                'toast_message' => '{0} Nothing to restore.|[1] Item restored successfully.|[2,*] :total items successfully restored.',
-                'toast_count' => $total,
-                'toast_replacements' => ['total' => $total],
-            ]);
-        } catch (\Throwable $e) {
-            report($e);
-
-            return back()->with([
-                'toast_type' => 'error',
-                'toast_message' => 'Error on restore selected item.|Error on restore selected items.',
-                'toast_count' => count($request->list),
-            ]);
-        }
     }
 }

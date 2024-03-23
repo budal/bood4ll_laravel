@@ -201,7 +201,7 @@ class RolesController extends Controller
         return response()->json($roles);
     }
 
-    public function getRoleAuthorizedUsers(Request $request, Role $role): JsonResponse
+    public function getRoleAuthorized(Request $request, Role $role): JsonResponse
     {
         $users = User::leftjoin('unit_user', 'unit_user.user_id', '=', 'users.id')
             ->leftjoin('role_user', 'role_user.user_id', '=', 'users.id')
@@ -245,6 +245,373 @@ class RolesController extends Controller
         $role['abilities'] = $role->abilities;
 
         return response()->json($role);
+    }
+
+    public function putAuthorize(Request $request, Role $role, $mode): JsonResponse
+    {
+        $this->authorize('access', User::class);
+        $this->authorize('fullAccess', [$role, $request]);
+
+        $list = collect($request->list)->pluck('id');
+
+        try {
+            if ($mode == 'toggle') {
+                $user = User::whereIn('id', $list)->first();
+                $hasRole = $role->users()->whereIn('user_id', $list)->first();
+                $hasRole ? $role->users()->detach($list) : $role->users()->attach($list);
+
+                return response()->json([
+                    'type' => 'success',
+                    'deactivate' => $hasRole == true ? true : false,
+                    'title' => $hasRole ? 'Deauthorize' : 'Authorize',
+                    'message' => $hasRole
+                        ? "The user ':user' has been disabled in the ':role' role."
+                        : "The user ':user' was enabled in the ':role' role.",
+                    'length' => 1,
+                    'replacements' => ['user' => $user->name, 'role' => $role->name],
+                ]);
+            } elseif ($mode == 'on') {
+                $role->users()->attach($list);
+
+                return response()->json([
+                    'type' => 'success',
+                    'title' => 'Authorize',
+                    'message' => '{0} Nothing to authorize.|[1] Item authorized successfully.|[2,*] :total items successfully authorized.',
+                    'length' => count($list),
+                    'replacements' => ['total' => count($list)],
+                ]);
+            } elseif ($mode == 'off') {
+                $total = $role->users()->detach($list);
+
+                return response()->json([
+                    'type' => 'success',
+                    'title' => 'Deauthorize',
+                    'message' => '{0} Nothing to deauthorize.|[1] Item deauthorized successfully.|[2,*] :total items successfully deauthorized.',
+                    'length' => $total,
+                    'replacements' => ['total' => $total],
+                ]);
+            }
+        } catch (\Throwable $e) {
+            report($e);
+
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Error on edit selected item.|Error on edit selected items.',
+                'length' => count($list),
+            ]);
+        }
+    }
+
+    public function postStoreRole(Request $request): JsonResponse
+    {
+        $this->authorize('access', User::class);
+        $this->authorize('isManager', User::class);
+
+        $request->validate([
+            'name' => ['required', 'string', 'max:100', Rule::unique(Role::class)],
+            'description' => ['nullable', 'string', 'max:255'],
+            'active' => ['boolean'],
+            'lock_on_expire' => ['boolean'],
+            'expires_at' => ['nullable', 'date', 'required_if:lock_on_expire,true'],
+            'full_access' => ['boolean', 'accepted_if:manage_nested,true'],
+            'manage_nested' => ['boolean'],
+            'remove_on_change_unit' => ['boolean'],
+        ], $messages = [
+            // 'required' => 'The :attribute field is required.',
+        ], $attributes = [
+            // 'email' => 'email address',
+        ],);
+
+        DB::beginTransaction();
+
+        try {
+            $role = new Role();
+
+            $role->name = $request->name;
+            $role->description = $request->description;
+            $role->owner = $request->user()->id;
+            $role->active = $request->active ?? false;
+            $role->lock_on_expire = $request->lock_on_expire ?? false;
+            $role->expires_at = $request->expires_at;
+            $role->full_access = $request->full_access ?? false;
+            $role->manage_nested = $request->manage_nested ?? false;
+            $role->remove_on_change_unit = $request->remove_on_change_unit ?? false;
+
+            $role->save();
+
+            $abilities = collect($request->abilities)->pluck('id');
+
+            try {
+                if ($request->user()->cannot('isSuperAdmin', User::class)) {
+                    $role->users()->attach($request->user()->id);
+                }
+
+                $role->abilities()->sync($abilities);
+            } catch (\Exception $e) {
+                report($e);
+
+                DB::rollback();
+
+                return response()->json([
+                    'type' => 'error',
+                    'message' => 'Error when syncing abilities to the role.',
+                ]);
+            }
+        } catch (\Throwable $e) {
+            report($e);
+
+            DB::rollback();
+
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Error on add this item.|Error on add the items.',
+                'length' => 1,
+            ]);
+        }
+
+        DB::commit();
+
+        return response()->json([
+            'type' => 'success',
+            'title' => 'Roles',
+            'message' => '{0} Nothing to add.|[1] Item added successfully.|[2,*] :total items successfully added.',
+            'length' => 1,
+        ]);
+    }
+
+    public function patchUpdateRole(Request $request, Role $role): JsonResponse
+    {
+        $this->authorize('access', User::class);
+        $this->authorize('isManager', User::class);
+        $this->authorize('isActive', $role);
+        $this->authorize('canEdit', $role);
+        $this->authorize('canEditManagementRoles', $role);
+        $this->authorize('isOwner', $role);
+
+        $request->validate([
+            'name' => ['required', 'string', 'max:100', Rule::unique(Role::class)->ignore($role->id)],
+            'description' => ['nullable', 'string', 'max:255'],
+            'active' => ['boolean'],
+            'lock_on_expire' => ['boolean'],
+            'expires_at' => ['nullable', 'date', 'required_if:lock_on_expire,true'],
+            'full_access' => ['boolean', 'accepted_if:manage_nested,true'],
+            'manage_nested' => ['boolean'],
+            'remove_on_change_unit' => ['boolean'],
+        ], $messages = [
+            // 'required' => 'The :attribute field is required.',
+        ], $attributes = [
+            // 'email' => 'email address',
+        ],);
+
+        DB::beginTransaction();
+
+        try {
+            $role->name = $request->name;
+            $role->description = $request->description;
+            $role->active = $request->active;
+            $role->lock_on_expire = $request->lock_on_expire ? $request->lock_on_expire : false;
+            $role->expires_at = $request->lock_on_expire ? $request->expires_at : null;
+            $role->full_access = $request->full_access;
+            $role->manage_nested = $request->manage_nested;
+            $role->remove_on_change_unit = $request->remove_on_change_unit;
+
+            $role->save();
+
+            $abilities = collect($request->abilities)->pluck('id');
+
+            try {
+                $role->abilities()->sync($abilities);
+            } catch (\Exception $e) {
+                report($e);
+
+                DB::rollback();
+
+                return response()->json([
+                    'type' => 'error',
+                    'message' => 'Error when syncing abilities to the role.',
+                ]);
+            }
+        } catch (\Exception $e) {
+            report($e);
+
+            DB::rollback();
+
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Error on edit selected item.|Error on edit selected items.',
+                'length' => 1,
+            ]);
+        }
+
+        DB::commit();
+
+        return response()->json([
+            'type' => 'success',
+            'title' => 'Roles',
+            'message' => '{0} Nothing to edit.|[1] Item edited successfully.|[2,*] :total items successfully edited.',
+            'length' => 1,
+        ]);
+    }
+
+    public function deleteDestroyRole(Request $request): JsonResponse
+    {
+        $this->authorize('access', User::class);
+        $this->authorize('isManager', User::class);
+        $this->authorize('canDestroyOrRestore', [Role::class, $request]);
+
+        $list = collect($request->list)->pluck('id');
+
+        try {
+            $total = Role::whereIn('id', $list)
+                ->where(function ($query) {
+                    $query->where('inalterable', null);
+                    $query->orWhere('inalterable', false);
+                })->delete();
+
+            return response()->json([
+                'type' => 'success',
+                'title' => 'Roles',
+                'message' => '{0} Nothing to remove.|[1] Item removed successfully.|[2,*] :total items successfully removed.',
+                'length' => $total,
+                'replacements' => ['total' => $total],
+            ]);
+        } catch (\Throwable $e) {
+            report($e);
+
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Error on remove selected item.|Error on remove selected items.',
+                'length' => count($list),
+            ]);
+        }
+    }
+
+    public function postRestoreRole(Request $request): JsonResponse
+    {
+        $this->authorize('access', User::class);
+        $this->authorize('isManager', User::class);
+        $this->authorize('canDestroyOrRestore', [Role::class, $request]);
+
+        $list = collect($request->list)->pluck('id');
+
+        try {
+            $total = Role::whereIn('id', $list)->restore();
+
+            return response()->json([
+                'type' => 'success',
+                'title' => 'Roles',
+                'message' => '{0} Nothing to restore.|[1] Item restored successfully.|[2,*] :total items successfully restored.',
+                'length' => $total,
+                'replacements' => ['total' => $total],
+            ]);
+        } catch (\Throwable $e) {
+            report($e);
+
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Error on remove selected item.|Error on remove selected items.',
+                'length' => count($list),
+            ]);
+        }
+    }
+
+    public function deleteForceDestroyRole(Request $request): JsonResponse
+    {
+        $this->authorize('access', User::class);
+        $this->authorize('isSuperAdmin', User::class);
+
+        $list = collect($request->list)->pluck('id');
+
+        try {
+            $total = Role::whereIn('id', $list)
+                ->where(function ($query) {
+                    $query->where('inalterable', null);
+                    $query->orWhere('inalterable', false);
+                })->forceDelete();
+
+            return response()->json([
+                'type' => 'success',
+                'title' => 'Roles',
+                'message' => '{0} Nothing to erase.|[1] Item erased successfully.|[2,*] :total items successfully erased.',
+                'length' => $total,
+                'replacements' => ['total' => $total],
+            ]);
+        } catch (\Throwable $e) {
+            report($e);
+
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Error on erase selected item.|Error on erase selected items.',
+                'length' => $list,
+            ]);
+        }
+    }
+
+    public function __fields(Request $request): array
+    {
+        return [
+            [
+                'type' => 'input',
+                'name' => 'name',
+                'label' => 'Name',
+                'required' => true,
+                'autofocus' => true,
+            ],
+            [
+                'type' => 'input',
+                'name' => 'description',
+                'label' => 'Description',
+                'span' => 2,
+            ],
+            [
+                'type' => 'dropdown',
+                'name' => 'abilities',
+                'label' => 'Abilities',
+                'source' => "getAbilities",
+                'multiple' => true,
+                'span' => 3,
+                'required' => true,
+            ],
+            [
+                'type' => 'toggle',
+                'name' => 'active',
+                'label' => 'Active',
+                'colorOn' => 'success',
+                'colorOff' => 'danger',
+            ],
+            [
+                'type' => 'toggle',
+                'name' => 'lock_on_expire',
+                'label' => 'Lock on expire',
+                'colorOn' => 'info',
+            ],
+            [
+                'type' => 'calendar',
+                'name' => 'expires_at',
+                'label' => 'Expires at',
+            ],
+            [
+                'type' => 'toggle',
+                'name' => 'full_access',
+                'label' => 'Full access',
+                'disabled' => $request->user()->cannot('hasFullAccess', User::class),
+                'colorOn' => 'info',
+            ],
+            [
+                'type' => 'toggle',
+                'name' => 'manage_nested',
+                'label' => 'Nested data',
+                'disabled' => $request->user()->cannot('canManageNestedData', User::class),
+                'colorOn' => 'info',
+            ],
+            [
+                'type' => 'toggle',
+                'name' => 'remove_on_change_unit',
+                'label' => 'Remove on transfer',
+                'disabled' => $request->user()->can('canRemoveOnChangeUnit', User::class) && $request->user()->cannot('isSuperAdmin', User::class),
+                'colorOn' => 'info',
+            ],
+        ];
     }
 
     public function index(Request $request): Response
@@ -439,7 +806,7 @@ class RolesController extends Controller
                                                             'actions' => [
                                                                 'index' => [
                                                                     'source' => [
-                                                                        'route' => 'getRoleAuthorizedUsers',
+                                                                        'route' => 'getRoleAuthorized',
                                                                         'transmute' => ['role' => 'id'],
                                                                     ],
                                                                     'selectBoxes' => true,
@@ -481,7 +848,7 @@ class RolesController extends Controller
                                                                     'icon' => 'verified_user',
                                                                     'label' => 'Authorized users',
                                                                     'source' => [
-                                                                        'route' => 'getRoleAuthorizedUsers',
+                                                                        'route' => 'getRoleAuthorized',
                                                                         'transmute' => ['role' => 'id'],
                                                                     ],
                                                                     'visible' => $request->user()->can('canManageNestedData', User::class),
@@ -490,7 +857,7 @@ class RolesController extends Controller
                                                                     'icon' => 'group',
                                                                     'label' => 'All users',
                                                                     'source' => [
-                                                                        'route' => 'getRoleAuthorizedUsers',
+                                                                        'route' => 'getRoleAuthorized',
                                                                         'attributes' => ['show' => 'all'],
                                                                         'transmute' => ['role' => 'id'],
                                                                     ],
@@ -617,377 +984,5 @@ class RolesController extends Controller
                 ],
             ]
         ]);
-    }
-
-    public function __fields(Request $request): array
-    {
-        return [
-            [
-                'type' => 'input',
-                'name' => 'name',
-                'label' => 'Name',
-                'required' => true,
-                'autofocus' => true,
-            ],
-            [
-                'type' => 'input',
-                'name' => 'description',
-                'label' => 'Description',
-                'span' => 2,
-            ],
-            [
-                'type' => 'dropdown',
-                'name' => 'abilities',
-                'label' => 'Abilities',
-                'source' => "getAbilities",
-                'multiple' => true,
-                'span' => 3,
-                'required' => true,
-            ],
-            [
-                'type' => 'toggle',
-                'name' => 'active',
-                'label' => 'Active',
-                'colorOn' => 'success',
-                'colorOff' => 'danger',
-            ],
-            [
-                'type' => 'toggle',
-                'name' => 'lock_on_expire',
-                'label' => 'Lock on expire',
-                'colorOn' => 'info',
-            ],
-            [
-                'type' => 'calendar',
-                'name' => 'expires_at',
-                'label' => 'Expires at',
-            ],
-            [
-                'type' => 'toggle',
-                'name' => 'full_access',
-                'label' => 'Full access',
-                'disabled' => $request->user()->cannot('hasFullAccess', User::class),
-                'colorOn' => 'info',
-            ],
-            [
-                'type' => 'toggle',
-                'name' => 'manage_nested',
-                'label' => 'Nested data',
-                'disabled' => $request->user()->cannot('canManageNestedData', User::class),
-                'colorOn' => 'info',
-            ],
-            [
-                'type' => 'toggle',
-                'name' => 'remove_on_change_unit',
-                'label' => 'Remove on transfer',
-                'disabled' => $request->user()->can('canRemoveOnChangeUnit', User::class) && $request->user()->cannot('isSuperAdmin', User::class),
-                'colorOn' => 'info',
-            ],
-        ];
-    }
-
-    public function putAuthorizeUserInRole(Request $request, Role $role, $mode): JsonResponse
-    {
-        $this->authorize('access', User::class);
-        $this->authorize('fullAccess', [$role, $request]);
-
-        $list = collect($request->list)->pluck('id');
-
-        try {
-            if ($mode == 'toggle') {
-                $user = User::whereIn('id', $list)->first();
-                $hasRole = $role->users()->whereIn('user_id', $list)->first();
-                $hasRole ? $role->users()->detach($list) : $role->users()->attach($list);
-
-                return response()->json([
-                    'type' => 'success',
-                    'deactivate' => $hasRole == true ? true : false,
-                    'title' => $hasRole ? 'Deauthorize' : 'Authorize',
-                    'message' => $hasRole
-                        ? "The user ':user' has been disabled in the ':role' role."
-                        : "The user ':user' was enabled in the ':role' role.",
-                    'length' => 1,
-                    'replacements' => ['user' => $user->name, 'role' => $role->name],
-                ]);
-
-                return Redirect::back()->with([
-                    'toast_type' => 'success',
-                    'toast_message' => $hasRole
-                ]);
-            } elseif ($mode == 'on') {
-                $role->users()->attach($list);
-
-                return response()->json([
-                    'type' => 'success',
-                    'title' => 'Authorize',
-                    'message' => '{0} Nothing to authorize.|[1] Item authorized successfully.|[2,*] :total items successfully authorized.',
-                    'length' => count($list),
-                    'replacements' => ['total' => count($list)],
-                ]);
-            } elseif ($mode == 'off') {
-                $total = $role->users()->detach($list);
-
-                return response()->json([
-                    'type' => 'success',
-                    'title' => 'Deauthorize',
-                    'message' => '{0} Nothing to deauthorize.|[1] Item deauthorized successfully.|[2,*] :total items successfully deauthorized.',
-                    'length' => $total,
-                    'replacements' => ['total' => $total],
-                ]);
-            }
-        } catch (\Throwable $e) {
-            report($e);
-
-            return response()->json([
-                'type' => 'error',
-                'message' => 'Error on edit selected item.|Error on edit selected items.',
-                'length' => count($request->list),
-            ]);
-        }
-    }
-
-    public function postStoreRole(Request $request): JsonResponse
-    {
-        $this->authorize('access', User::class);
-        $this->authorize('isManager', User::class);
-
-        $request->validate([
-            'name' => ['required', 'string', 'max:100', Rule::unique(Role::class)],
-            'description' => ['nullable', 'string', 'max:255'],
-            'active' => ['boolean'],
-            'lock_on_expire' => ['boolean'],
-            'expires_at' => ['nullable', 'date', 'required_if:lock_on_expire,true'],
-            'full_access' => ['boolean', 'accepted_if:manage_nested,true'],
-            'manage_nested' => ['boolean'],
-            'remove_on_change_unit' => ['boolean'],
-        ], $messages = [
-            // 'required' => 'The :attribute field is required.',
-        ], $attributes = [
-            // 'email' => 'email address',
-        ],);
-
-        DB::beginTransaction();
-
-        try {
-            $role = new Role();
-
-            $role->name = $request->name;
-            $role->description = $request->description;
-            $role->owner = $request->user()->id;
-            $role->active = $request->active ?? false;
-            $role->lock_on_expire = $request->lock_on_expire ?? false;
-            $role->expires_at = $request->expires_at;
-            $role->full_access = $request->full_access ?? false;
-            $role->manage_nested = $request->manage_nested ?? false;
-            $role->remove_on_change_unit = $request->remove_on_change_unit ?? false;
-
-            $role->save();
-
-            $abilities = collect($request->abilities)->pluck('id');
-
-            try {
-                if ($request->user()->cannot('isSuperAdmin', User::class)) {
-                    $role->users()->attach($request->user()->id);
-                }
-
-                $role->abilities()->sync($abilities);
-            } catch (\Exception $e) {
-                report($e);
-
-                DB::rollback();
-
-                return response()->json([
-                    'type' => 'error',
-                    'message' => 'Error when syncing abilities to the role.',
-                ]);
-            }
-        } catch (\Throwable $e) {
-            report($e);
-
-            DB::rollback();
-
-            return response()->json([
-                'type' => 'error',
-                'message' => 'Error on add this item.|Error on add the items.',
-                'length' => 1,
-            ]);
-        }
-
-        DB::commit();
-
-        return response()->json([
-            'type' => 'success',
-            'title' => 'Add',
-            'message' => '{0} Nothing to add.|[1] Item added successfully.|[2,*] :total items successfully added.',
-            'length' => 1,
-        ]);
-    }
-
-    public function patchUpdateRole(Request $request, Role $role): JsonResponse
-    {
-        $this->authorize('access', User::class);
-        $this->authorize('isManager', User::class);
-        $this->authorize('isActive', $role);
-        $this->authorize('canEdit', $role);
-        $this->authorize('canEditManagementRoles', $role);
-        $this->authorize('isOwner', $role);
-
-        $request->validate([
-            'name' => ['required', 'string', 'max:100', Rule::unique(Role::class)->ignore($role->id)],
-            'description' => ['nullable', 'string', 'max:255'],
-            'active' => ['boolean'],
-            'lock_on_expire' => ['boolean'],
-            'expires_at' => ['nullable', 'date', 'required_if:lock_on_expire,true'],
-            'full_access' => ['boolean', 'accepted_if:manage_nested,true'],
-            'manage_nested' => ['boolean'],
-            'remove_on_change_unit' => ['boolean'],
-        ], $messages = [
-            // 'required' => 'The :attribute field is required.',
-        ], $attributes = [
-            // 'email' => 'email address',
-        ],);
-
-        DB::beginTransaction();
-
-        try {
-            $role->name = $request->name;
-            $role->description = $request->description;
-            $role->active = $request->active;
-            $role->lock_on_expire = $request->lock_on_expire ? $request->lock_on_expire : false;
-            $role->expires_at = $request->lock_on_expire ? $request->expires_at : null;
-            $role->full_access = $request->full_access;
-            $role->manage_nested = $request->manage_nested;
-            $role->remove_on_change_unit = $request->remove_on_change_unit;
-
-            $role->save();
-
-            $abilities = collect($request->abilities)->pluck('id');
-
-            try {
-                $role->abilities()->sync($abilities);
-            } catch (\Exception $e) {
-                report($e);
-
-                DB::rollback();
-
-                return response()->json([
-                    'type' => 'error',
-                    'message' => 'Error when syncing abilities to the role.',
-                ]);
-            }
-        } catch (\Exception $e) {
-            report($e);
-
-            DB::rollback();
-
-            return response()->json([
-                'type' => 'error',
-                'message' => 'Error on edit selected item.|Error on edit selected items.',
-                'length' => 1,
-            ]);
-        }
-
-        DB::commit();
-
-        return response()->json([
-            'type' => 'success',
-            'title' => 'Edit',
-            'message' => '{0} Nothing to edit.|[1] Item edited successfully.|[2,*] :total items successfully edited.',
-            'length' => 1,
-        ]);
-    }
-
-    public function deleteDestroyRole(Request $request): JsonResponse
-    {
-        $this->authorize('access', User::class);
-        $this->authorize('isManager', User::class);
-        $this->authorize('canDestroyOrRestore', [Role::class, $request]);
-
-        $list = collect($request->list)->pluck('id');
-
-        try {
-            $total = Role::whereIn('id', $list)
-                ->where(function ($query) {
-                    $query->where('inalterable', null);
-                    $query->orWhere('inalterable', false);
-                })->delete();
-
-            return response()->json([
-                'type' => 'success',
-                'title' => 'Remove',
-                'message' => '{0} Nothing to remove.|[1] Item removed successfully.|[2,*] :total items successfully removed.',
-                'length' => $total,
-                'replacements' => ['total' => $total],
-            ]);
-        } catch (\Throwable $e) {
-            report($e);
-
-            return response()->json([
-                'type' => 'error',
-                'message' => 'Error on remove selected item.|Error on remove selected items.',
-                'length' => count($request->list),
-            ]);
-        }
-    }
-
-    public function postRestoreRole(Request $request): JsonResponse
-    {
-        $this->authorize('access', User::class);
-        $this->authorize('isManager', User::class);
-        $this->authorize('canDestroyOrRestore', [Role::class, $request]);
-
-        $list = collect($request->list)->pluck('id');
-
-        try {
-            $total = Role::whereIn('id', $list)->restore();
-
-            return response()->json([
-                'type' => 'success',
-                'title' => 'Restore',
-                'message' => '{0} Nothing to restore.|[1] Item restored successfully.|[2,*] :total items successfully restored.',
-                'length' => $total,
-                'replacements' => ['total' => $total],
-            ]);
-        } catch (\Throwable $e) {
-            report($e);
-
-            return response()->json([
-                'type' => 'error',
-                'message' => 'Error on restore selected item.|Error on restore selected items.',
-                'length' => $request->list,
-            ]);
-        }
-    }
-
-    public function deleteForceDestroyRole(Request $request): JsonResponse
-    {
-        $this->authorize('access', User::class);
-        $this->authorize('isSuperAdmin', User::class);
-
-        $list = collect($request->list)->pluck('id');
-
-        try {
-            $total = Role::whereIn('id', $list)
-                ->where(function ($query) {
-                    $query->where('inalterable', null);
-                    $query->orWhere('inalterable', false);
-                })->forceDelete();
-
-            return response()->json([
-                'type' => 'success',
-                'title' => 'Erase',
-                'message' => '{0} Nothing to erase.|[1] Item erased successfully.|[2,*] :total items successfully erased.',
-                'length' => $total,
-                'replacements' => ['total' => $total],
-            ]);
-        } catch (\Throwable $e) {
-            report($e);
-
-            return response()->json([
-                'type' => 'error',
-                'message' => 'Error on erase selected item.|Error on erase selected items.',
-                'length' => $request->list,
-            ]);
-        }
     }
 }
