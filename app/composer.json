@@ -7,14 +7,12 @@
     "require": {
         "php": "^8.1",
         "emargareten/inertia-modal": "^0.1.2",
-        "glhd/gretel": "^1.7",
         "guzzlehttp/guzzle": "^7.2",
         "inertiajs/inertia-laravel": "^0.6.8",
         "laravel/framework": "^10.10",
         "laravel/sanctum": "^3.2",
         "laravel/socialite": "^5.11",
         "laravel/tinker": "^2.8",
-        "robertboes/inertia-breadcrumbs": "^0.3.2",
         "staudenmeir/laravel-adjacency-list": "^1.19",
         "tightenco/ziggy": "^1.0"
     },

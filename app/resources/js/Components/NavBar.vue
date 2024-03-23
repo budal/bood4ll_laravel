@@ -9,14 +9,7 @@ const menu = ref(false);
 
 <template>
     <div>
-        <Head
-            :title="
-                $t(
-                    $page.props.breadcrumbs[$page.props.breadcrumbs.length - 1]
-                        ?.title || $page.props.appName,
-                )
-            "
-        />
+        <Head :title="$t($page.props.appName as string)" />
         <div>
             <Menubar :model="$page.props.appNavMenu">
                 <template #start>
