@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import ModalLayout from "@/Layouts/ModalLayout.vue";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import GuestLayout from "@/Layouts/GuestLayout.vue";
 import Form from "@/Components/Form/Index.vue";
@@ -38,16 +37,6 @@ withDefaults(
             :statusTheme="statusTheme"
         />
     </GuestLayout>
-    <ModalLayout v-else-if="isModal === true" :title="title">
-        <Form
-            :form="form"
-            :routes="routes"
-            :data="data"
-            :tabs="false"
-            :status="status"
-            :statusTheme="statusTheme"
-        />
-    </ModalLayout>
     <AuthenticatedLayout v-else>
         <Form
             :form="form"
