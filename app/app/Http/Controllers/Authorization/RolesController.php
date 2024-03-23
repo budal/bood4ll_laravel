@@ -12,7 +12,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
@@ -23,10 +22,10 @@ class RolesController extends Controller
     public function getAbilities(Request $request): JsonResponse
     {
         $abilities = Ability::select('abilities.*')
+            ->orderBy('name')
             ->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
                 $query->whereIn('name', $request->user()->getAllAbilities->whereNotNull('ability')->pluck('ability'));
             })
-            ->orderBy('name')
             ->get();
 
         return response()->json($abilities);
@@ -156,28 +155,6 @@ class RolesController extends Controller
         $roles = Role::leftjoin('role_user', 'role_user.role_id', '=', 'roles.id')
             ->select('roles.id', 'roles.name', 'roles.description', 'roles.active', 'roles.deleted_at')
             ->groupBy('roles.id', 'roles.name', 'roles.description', 'roles.active', 'roles.deleted_at')
-            ->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
-                $query->where('roles.superadmin', false);
-                $query->where('roles.manager', false);
-                $query->where('roles.active', true);
-                $query->where(function ($query) {
-                    $query->where('roles.lock_on_expire', false);
-                    $query->orWhere(function ($query) {
-                        $query->where('roles.lock_on_expire', true);
-                        $query->where('roles.expires_at', '>=', 'NOW()');
-                    });
-                });
-                $query->where('role_user.user_id', $request->user()->id);
-            })
-            ->orderBy('name')
-            ->when($request->listItems ?? null, function ($query, $listItems) {
-                if ($listItems == 'both') {
-                    $query->withTrashed();
-                } elseif ($listItems == 'trashed') {
-                    $query->onlyTrashed();
-                }
-            })
-            ->where('name', 'ilike', "%$request->search%")
             ->withCount([
                 'abilities',
                 'users' => function ($query) use ($request) {
@@ -195,6 +172,28 @@ class RolesController extends Controller
                     });
                 }
             ])
+            ->where('name', 'ilike', "%$request->search%")
+            ->orderBy('name')
+            ->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
+                $query->where('roles.superadmin', false);
+                $query->where('roles.manager', false);
+                $query->where('roles.active', true);
+                $query->where(function ($query) {
+                    $query->where('roles.lock_on_expire', false);
+                    $query->orWhere(function ($query) {
+                        $query->where('roles.lock_on_expire', true);
+                        $query->where('roles.expires_at', '>=', 'NOW()');
+                    });
+                });
+                $query->where('role_user.user_id', $request->user()->id);
+            })
+            ->when($request->listItems ?? null, function ($query, $listItems) {
+                if ($listItems == 'both') {
+                    $query->withTrashed();
+                } elseif ($listItems == 'trashed') {
+                    $query->onlyTrashed();
+                }
+            })
             ->cursorPaginate(30)
             ->withQueryString();
 
@@ -247,7 +246,7 @@ class RolesController extends Controller
         return response()->json($role);
     }
 
-    public function putAuthorize(Request $request, Role $role, $mode): JsonResponse
+    public function putRoleAuthorize(Request $request, Role $role, $mode): JsonResponse
     {
         $this->authorize('access', User::class);
         $this->authorize('fullAccess', [$role, $request]);
@@ -302,7 +301,7 @@ class RolesController extends Controller
         }
     }
 
-    public function postStoreRole(Request $request): JsonResponse
+    public function postRoleStore(Request $request): JsonResponse
     {
         $this->authorize('access', User::class);
         $this->authorize('isManager', User::class);
@@ -379,7 +378,7 @@ class RolesController extends Controller
         ]);
     }
 
-    public function patchUpdateRole(Request $request, Role $role): JsonResponse
+    public function patchRoleUpdate(Request $request, Role $role): JsonResponse
     {
         $this->authorize('access', User::class);
         $this->authorize('isManager', User::class);
@@ -453,7 +452,7 @@ class RolesController extends Controller
         ]);
     }
 
-    public function deleteDestroyRole(Request $request): JsonResponse
+    public function deleteRoleDestroy(Request $request): JsonResponse
     {
         $this->authorize('access', User::class);
         $this->authorize('isManager', User::class);
@@ -486,7 +485,7 @@ class RolesController extends Controller
         }
     }
 
-    public function postRestoreRole(Request $request): JsonResponse
+    public function postRoleRestore(Request $request): JsonResponse
     {
         $this->authorize('access', User::class);
         $this->authorize('isManager', User::class);
@@ -515,7 +514,7 @@ class RolesController extends Controller
         }
     }
 
-    public function deleteForceDestroyRole(Request $request): JsonResponse
+    public function deleteRoleForceDestroy(Request $request): JsonResponse
     {
         $this->authorize('access', User::class);
         $this->authorize('isSuperAdmin', User::class);

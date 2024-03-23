@@ -10,7 +10,6 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -39,6 +38,13 @@ class UsersController extends Controller
                 }
 
                 $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
+            })
+            ->when($request->listItems ?? null, function ($query, $listItems) {
+                if ($listItems == 'both') {
+                    $query->withTrashed();
+                } elseif ($listItems == 'trashed') {
+                    $query->onlyTrashed();
+                }
             })
             ->cursorPaginate(30)
             ->withQueryString();
@@ -305,22 +311,25 @@ class UsersController extends Controller
             Auth::loginUsingId($user->id, true);
 
             if ($user->getAllAbilities->whereNotNull('ability')->pluck('ability')->contains(Route::current()->getName())) {
-                return Redirect::back()->with([
-                    'toast_type' => 'warning',
-                    'toast_message' => "Logged as ':user'.",
-                    'toast_replacements' => ['user' => $user->name],
+                return response()->json([
+                    'type' => 'warning',
+                    'title' => 'Toggle user',
+                    'message' => "Logged as ':user'.",
+                    'replacements' => ['user' => $user->name],
                 ]);
             } else {
-                return Redirect::route('dashboard.index')->with([
-                    'toast_type' => 'warning',
-                    'toast_message' => "Logged as ':user'.",
-                    'toast_replacements' => ['user' => $user->name],
+                return response()->json([
+                    'type' => 'warning',
+                    'title' => 'Toggle user',
+                    'message' => "Logged as ':user'.",
+                    'replacements' => ['user' => $user->name],
                 ]);
             }
         } else {
-            return Redirect::back()->with([
-                'toast_type' => 'error',
-                'toast_message' => 'This action is unauthorized.',
+            return response()->json([
+                'type' => 'error',
+                'title' => 'Error',
+                'message' => 'This action is unauthorized.',
             ]);
         }
     }
@@ -338,10 +347,11 @@ class UsersController extends Controller
 
         $request->session()->forget('previousUser');
 
-        return Redirect::back()->with([
-            'toast_type' => 'info',
-            'toast_message' => "Logged as ':user'.",
-            'toast_replacements' => ['user' => $previousUser['name']],
+        return response()->json([
+            'type' => 'info',
+            'title' => 'Toggle user',
+            'message' => "Logged as ':user'.",
+            'replacements' => ['user' => $previousUser['name']],
         ]);
     }
 
@@ -455,7 +465,7 @@ class UsersController extends Controller
         }
     }
 
-    public function deleteDestroyRole(Request $request): JsonResponse
+    public function deleteUserDestroy(Request $request): JsonResponse
     {
         // $this->authorize('access', User::class);
         // $this->authorize('isManager', User::class);
@@ -468,7 +478,7 @@ class UsersController extends Controller
 
             return response()->json([
                 'type' => 'success',
-                'title' => 'Roles',
+                'title' => 'Users',
                 'message' => '{0} Nothing to remove.|[1] Item removed successfully.|[2,*] :total items successfully removed.',
                 'length' => $total,
                 'replacements' => ['total' => $total],
@@ -484,7 +494,7 @@ class UsersController extends Controller
         }
     }
 
-    public function postRestoreRole(Request $request): JsonResponse
+    public function postUserRestore(Request $request): JsonResponse
     {
         // $this->authorize('access', User::class);
         // $this->authorize('isManager', User::class);
@@ -497,7 +507,7 @@ class UsersController extends Controller
 
             return response()->json([
                 'type' => 'success',
-                'title' => 'Roles',
+                'title' => 'Users',
                 'message' => '{0} Nothing to restore.|[1] Item restored successfully.|[2,*] :total items successfully restored.',
                 'length' => $total,
                 'replacements' => ['total' => $total],
@@ -513,7 +523,7 @@ class UsersController extends Controller
         }
     }
 
-    public function deleteForceDestroyRole(Request $request): JsonResponse
+    public function deleteUserForceDestroy(Request $request): JsonResponse
     {
         $this->authorize('access', User::class);
         $this->authorize('isSuperAdmin', User::class);
@@ -525,7 +535,7 @@ class UsersController extends Controller
 
             return response()->json([
                 'type' => 'success',
-                'title' => 'Roles',
+                'title' => 'Users',
                 'message' => '{0} Nothing to erase.|[1] Item erased successfully.|[2,*] :total items successfully erased.',
                 'length' => $total,
                 'replacements' => ['total' => $total],

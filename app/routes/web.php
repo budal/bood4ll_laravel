@@ -78,12 +78,12 @@ Route::middleware('auth')->group(function () {
                     ->defaults('description', 'Define roles, grouping abilities to define specific access.')
                     ->defaults('icon', 'badge');
 
-                Route::put('/roles/authorize/{role}/{mode?}', 'putAuthorize')->name('authorize');
-                Route::post('/roles/create', 'postStoreRole')->name('store');
-                Route::patch('/roles/edit/{role}', 'patchUpdateRole')->name('update');
-                Route::delete('/roles/destroy', 'deleteDestroyRole')->name('destroy');
-                Route::delete('/roles/forcedestroy', 'deleteForceDestroyRole')->name('forceDestroy');
-                Route::post('/roles/restore', 'postRestoreRole')->name('restore');
+                Route::put('/roles/authorize/{role}/{mode?}', 'putRoleAuthorize')->name('authorize');
+                Route::post('/roles/create', 'postRoleStore')->name('store');
+                Route::patch('/roles/edit/{role}', 'patchRoleUpdate')->name('update');
+                Route::delete('/roles/destroy', 'deleteRoleDestroy')->name('destroy');
+                Route::delete('/roles/forcedestroy', 'deleteRoleForceDestroy')->name('forceDestroy');
+                Route::post('/roles/restore', 'postRoleRestore')->name('restore');
             });
         });
 
@@ -115,9 +115,9 @@ Route::middleware('auth')->group(function () {
                 Route::put('/users/authorize/unit/{user}/{mode?}', 'putAuthorizeUnit')->name('authorizeUnit');
                 Route::put('/users/authorize/role/{user}/{mode?}', 'putAuthorizeRole')->name('authorizeRole');
 
-                Route::delete('/users/destroy', 'deleteDestroyRole')->name('destroy');
-                Route::post('/users/restore', 'postRestoreRole')->name('restore');
-                Route::delete('/users/forcedestroy', 'deleteForceDestroyRole')->name('forcedestroy');
+                Route::delete('/users/destroy', 'deleteUserDestroy')->name('destroy');
+                Route::post('/users/restore', 'postUserRestore')->name('restore');
+                Route::delete('/users/forcedestroy', 'deleteUserForceDestroy')->name('forceDestroy');
             });
         });
 
