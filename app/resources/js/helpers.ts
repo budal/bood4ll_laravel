@@ -1,7 +1,5 @@
+import { router } from "@inertiajs/vue3";
 import axios from "axios";
-import { usePage } from "@inertiajs/vue3";
-import { transChoice } from "laravel-vue-i18n";
-import { ReplacementsInterface } from "laravel-vue-i18n/interfaces/replacements";
 
 const isValidUrl = (url: string | { route: string; attributes?: string[] }) => {
     if (url) {
@@ -101,7 +99,13 @@ async function fetchData(
             // },
         })
             .then((response) => {
-                if (options?.onSuccess) options.onSuccess(response.data);
+                if (response.data.redirect === true) {
+                    router.visit(response.data.url);
+                } else {
+                    if (options?.onSuccess) {
+                        options.onSuccess(response.data);
+                    }
+                }
             })
             .catch((error) => {
                 if (error.code === "ECONNABORTED") {

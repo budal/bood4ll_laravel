@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -15,40 +16,28 @@ class ConfirmablePasswordController extends Controller
 {
     public function show(): Response
     {
-        return Inertia::render('Default', [
-            'isGuest' => true,
-            'tabs' => false,
-            'title' => 'Confirm Password',
-            'form' => [
+        return Inertia::render('Bood4ll', [
+            'guest' => true,
+            'build' => [
                 [
-                    'id' => 'confirmablePassword',
-                    'subtitle' => 'This is a secure area of the application. Please confirm your password before continuing.',
+                    'description' => "This is a secure area of the application. Please confirm your password before continuing.",
+                    'callback' => 'password.confirm',
+                    'method' => 'post',
                     'fields' => [
                         [
-                            [
-                                'type' => 'password',
-                                'name' => 'password',
-                                'title' => 'Password',
-                                'required' => true,
-                                'autofocus' => true,
-                            ],
-                        ],
+                            'type' => 'password',
+                            'name' => 'password',
+                            'label' => 'Password',
+                            'required' => true,
+                            'autofocus' => true,
+                        ]
                     ],
                 ],
-            ],
-            'routes' => [
-                'confirmablePassword' => [
-                    'route' => route('password.confirm'),
-                    'method' => 'post',
-                    'buttonTitle' => 'Confirm',
-                    'buttonClass' => 'justify-end',
-                    'reset' => true,
-                ],
-            ],
+            ]
         ]);
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request): JsonResponse
     {
         if (!Auth::guard('web')->validate([
             'email' => $request->user()->email,
@@ -59,6 +48,9 @@ class ConfirmablePasswordController extends Controller
 
         $request->session()->put('auth.password_confirmed_at', time());
 
-        return redirect()->intended(RouteServiceProvider::HOME);
+        return response()->json([
+            'redirect' => true,
+            'url' => redirect()->intended(RouteServiceProvider::HOME)->getTargetUrl(),
+        ]);
     }
 }

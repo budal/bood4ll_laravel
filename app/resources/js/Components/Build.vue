@@ -198,6 +198,18 @@ const getFormValuesonLoad = () => {
                                     inputsWithError.hasOwnProperty(field.name)
                                 "
                             />
+                            <Password
+                                v-if="field.type === 'password'"
+                                :id="field.name"
+                                v-model="formValue[field.name]"
+                                :input-class="'w-full'"
+                                class="w-full"
+                                :invalid="
+                                    inputsWithError.hasOwnProperty(field.name)
+                                "
+                                toggleMask
+                                :feedback="field.feedback ?? false"
+                            />
                             <Calendar
                                 v-if="field.type === 'calendar'"
                                 :inputId="field.name"

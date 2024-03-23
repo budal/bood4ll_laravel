@@ -29,6 +29,7 @@ declare module 'vue' {
     Message: typeof import('primevue/message')['default']
     MultiSelect: typeof import('primevue/multiselect')['default']
     Panel: (typeof import("primevue/panel"))["default"]
+    Password: typeof import('primevue/password')['default']
     ScrollTop: typeof import('primevue/scrolltop')['default']
     Sidebar: typeof import('primevue/sidebar')['default']
     Skeleton: typeof import('primevue/skeleton')['default']
