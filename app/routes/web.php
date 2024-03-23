@@ -128,13 +128,11 @@ Route::middleware('auth')->group(function () {
                     ->defaults('description', "Define which dates will be holidays and optional points.")
                     ->defaults('icon', 'beach_access');
 
-                Route::get('/holidays/create', 'create')->name('create');
                 Route::post('/holidays/create', 'store')->name('store');
-                Route::get('/holidays/edit/{holiday}', 'edit')->name('edit');
                 Route::patch('/holidays/edit/{holiday}', 'update')->name('update');
                 Route::delete('/holidays/destroy', 'destroy')->name('destroy');
-                Route::delete('/holidays/forcedestroy', 'forceDestroy')->name('forcedestroy');
                 Route::post('/holidays/restore', 'restore')->name('restore');
+                Route::delete('/holidays/forcedestroy', 'forceDestroy')->name('forceDestroy');
             });
         });
 

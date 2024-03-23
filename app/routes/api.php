@@ -37,5 +37,6 @@ Route::middleware('auth:sanctum', 'verified', 'password.confirm')->group(functio
 
     Route::controller(HolidaysController::class)->group(function () {
         Route::get('/getHolidaysIndex', 'getHolidaysIndex')->name('getHolidaysIndex');
+        Route::get('/getHolidayInfo/{holiday?}', 'getHolidayInfo')->name('getHolidayInfo');
     });
 });

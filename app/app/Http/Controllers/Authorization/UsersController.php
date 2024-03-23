@@ -475,14 +475,6 @@ class UsersController extends Controller
 
         try {
             $total = User::whereIn('id', $list)->delete();
-
-            return response()->json([
-                'type' => 'success',
-                'title' => 'Users',
-                'message' => '{0} Nothing to remove.|[1] Item removed successfully.|[2,*] :total items successfully removed.',
-                'length' => $total,
-                'replacements' => ['total' => $total],
-            ]);
         } catch (\Throwable $e) {
             report($e);
 
@@ -492,6 +484,14 @@ class UsersController extends Controller
                 'length' => count($list),
             ]);
         }
+
+        return response()->json([
+            'type' => 'success',
+            'title' => 'Users',
+            'message' => '{0} Nothing to remove.|[1] Item removed successfully.|[2,*] :total items successfully removed.',
+            'length' => $total,
+            'replacements' => ['total' => $total],
+        ]);
     }
 
     public function postUserRestore(Request $request): JsonResponse
@@ -504,14 +504,6 @@ class UsersController extends Controller
 
         try {
             $total = User::whereIn('id', $list)->restore();
-
-            return response()->json([
-                'type' => 'success',
-                'title' => 'Users',
-                'message' => '{0} Nothing to restore.|[1] Item restored successfully.|[2,*] :total items successfully restored.',
-                'length' => $total,
-                'replacements' => ['total' => $total],
-            ]);
         } catch (\Throwable $e) {
             report($e);
 
@@ -521,6 +513,14 @@ class UsersController extends Controller
                 'length' => count($list),
             ]);
         }
+
+        return response()->json([
+            'type' => 'success',
+            'title' => 'Users',
+            'message' => '{0} Nothing to restore.|[1] Item restored successfully.|[2,*] :total items successfully restored.',
+            'length' => $total,
+            'replacements' => ['total' => $total],
+        ]);
     }
 
     public function deleteUserForceDestroy(Request $request): JsonResponse
@@ -532,14 +532,6 @@ class UsersController extends Controller
 
         try {
             $total = User::whereIn('id', $list)->forceDelete();
-
-            return response()->json([
-                'type' => 'success',
-                'title' => 'Users',
-                'message' => '{0} Nothing to erase.|[1] Item erased successfully.|[2,*] :total items successfully erased.',
-                'length' => $total,
-                'replacements' => ['total' => $total],
-            ]);
         } catch (\Throwable $e) {
             report($e);
 
@@ -549,6 +541,14 @@ class UsersController extends Controller
                 'length' => $list,
             ]);
         }
+
+        return response()->json([
+            'type' => 'success',
+            'title' => 'Users',
+            'message' => '{0} Nothing to erase.|[1] Item erased successfully.|[2,*] :total items successfully erased.',
+            'length' => $total,
+            'replacements' => ['total' => $total],
+        ]);
     }
 
     public function __fields(Request $request): array
