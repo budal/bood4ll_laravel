@@ -34,8 +34,6 @@ import { Icon } from "@iconify/vue";
 
 import Vue3Toasity, { type ToastContainerOptions } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
-// @ts-expect-error
-import { modal } from "/vendor/emargareten/inertia-modal";
 
 const appName = import.meta.env.VITE_APP_NAME || "Bood4ll";
 
@@ -50,14 +48,7 @@ createInertiaApp({
     setup({ el, App, props, plugin }) {
         const app = createApp({ render: () => h(App, props) });
 
-        app.use(modal, {
-            resolve: (name: string) =>
-                resolvePageComponent(
-                    `./Pages/${name}.vue`,
-                    import.meta.glob("./Pages/**/*.vue"),
-                ),
-        })
-            .use(plugin)
+        app.use(plugin)
             .use(ZiggyVue, Ziggy)
             .use(i18nVue, {
                 lang: "pt_BR",
