@@ -147,7 +147,11 @@ const getFormValuesonLoad = () => {
 
 <template>
     <DeferredContent @load="getFormValuesonLoad" aria-live="polite">
-        <form v-if="components.showIf !== false" class="w-full space-y-6">
+        <form
+            v-if="components.showIf !== false"
+            class="w-full space-y-6"
+            @submit.prevent="send"
+        >
             <div
                 class="grid sm:gap-2"
                 :class="{
@@ -263,19 +267,18 @@ const getFormValuesonLoad = () => {
                                 {{ $t(field.label || "") }}
                             </label>
                         </FloatLabel>
-                        <InlineMessage
-                            v-if="inputsWithError[field.name]"
-                            severity="error"
-                        >
-                            <ol>
-                                <li
-                                    class="text-xs"
-                                    v-for="error in inputsWithError[field.name]"
-                                >
+
+                        <template v-if="inputsWithError[field.name]">
+                            <InlineMessage
+                                v-for="error in inputsWithError[field.name]"
+                                class="w-full mt-1"
+                                severity="error"
+                            >
+                                <span class="text-xs">
                                     {{ error }}
-                                </li>
-                            </ol>
-                        </InlineMessage>
+                                </span>
+                            </InlineMessage>
+                        </template>
 
                         <Table
                             v-if="field.type === 'table'"

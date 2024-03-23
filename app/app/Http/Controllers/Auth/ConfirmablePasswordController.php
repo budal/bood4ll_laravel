@@ -23,6 +23,7 @@ class ConfirmablePasswordController extends Controller
                     'description' => "This is a secure area of the application. Please confirm your password before continuing.",
                     'callback' => 'password.confirm',
                     'method' => 'post',
+                    'dialogConfirm' => 'Log in',
                     'fields' => [
                         [
                             'type' => 'password',
