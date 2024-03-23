@@ -3,8 +3,6 @@ import { Link } from "@inertiajs/vue3";
 import ScrollTop from "primevue/scrolltop";
 import NavBar from "@/Components/NavBar.vue";
 import TailwindIndicator from "@/Components/TailwindIndicator.vue";
-// @ts-expect-error
-import { Modal } from "/vendor/emargareten/inertia-modal";
 </script>
 
 <template>
@@ -38,7 +36,6 @@ import { Modal } from "/vendor/emargareten/inertia-modal";
             </div>
         </div>
     </div>
-    <Modal />
     <TailwindIndicator />
     <ScrollTop />
 </template>
