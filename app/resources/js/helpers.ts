@@ -2,7 +2,6 @@ import axios from "axios";
 import { usePage } from "@inertiajs/vue3";
 import { transChoice } from "laravel-vue-i18n";
 import { ReplacementsInterface } from "laravel-vue-i18n/interfaces/replacements";
-import { ToastType, toast as toasty } from "vue3-toastify";
 
 const isValidUrl = (url: string | { route: string; attributes?: string[] }) => {
     if (url) {
@@ -129,20 +128,4 @@ const formatRouteWithID = (url: any, id: any) =>
               },
     );
 
-const toast = () => {
-    if (usePage().props.toast_message) {
-        toasty(
-            transChoice(
-                usePage().props.toast_message as string,
-                (usePage().props.toast_count || 0) as number,
-                (usePage().props.toast_replacements ||
-                    []) as ReplacementsInterface,
-            ),
-            {
-                type: (usePage().props.toast_type || "info") as ToastType,
-            },
-        );
-    }
-};
-
-export { isValidUrl, fetchData, formatRouteWithID, toast };
+export { isValidUrl, fetchData, formatRouteWithID };

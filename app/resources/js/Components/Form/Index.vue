@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { isValidUrl, toast } from "@/helpers";
+import { isValidUrl } from "@/helpers";
 import Button from "@/Components/Button.vue";
 import Checkbox from "@/Components/Checkbox.vue";
 import InputError from "@/Components/InputError.vue";
@@ -55,12 +55,8 @@ const sendForm = (formId: string) => {
 
     jsForm.submit(props.routes[formId].method, props.routes[formId].route, {
         preserveScroll: true,
-        onSuccess: () => {
-            toast();
-        },
+        onSuccess: () => {},
         onError: () => {
-            toast();
-
             console.log(jsForm.errors);
 
             // if (jsForm.errors.password) {
@@ -121,11 +117,9 @@ const submitModal = () => {
             preserveState: modalInfo.value.preserveState,
 
             onSuccess: () => {
-                toast();
                 closeModal();
             },
             onError: () => {
-                toast();
                 () => passwordInput.value?.focus();
             },
             onFinish: () => {

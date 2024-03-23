@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Button from "@/Components/Button.vue";
 import Modal from "@/Components/Modal.vue";
-import { isValidUrl, toast } from "@/helpers";
+import { isValidUrl } from "@/helpers";
 import { Icon } from "@iconify/vue";
 import { router, useForm } from "@inertiajs/vue3";
 import { transChoice } from "laravel-vue-i18n";
@@ -233,7 +233,6 @@ const onClick = () => {
         //     method: props.method,
         //     preserveState: props.preserveState,
         //     preserveScroll: props.preserveScroll,
-        //     onSuccess: () => toast(),
         // });
     }
 };
@@ -248,11 +247,9 @@ const closeModal = () => (confirmingDeletionModal.value = false);
 //     //     preserveScroll: true,
 //     //     preserveState: modalInfo.value.preserveState,
 //     //     onSuccess: () => {
-//     //         toast();
 //     //         closeModal();
 //     //     },
 //     //     onError: () => {
-//     //         toast();
 //     //         closeModal();
 //     //     },
 //     // });

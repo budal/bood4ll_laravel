@@ -32,9 +32,6 @@ import Toast from "primevue/toast";
 
 import { Icon } from "@iconify/vue";
 
-import Vue3Toasity, { type ToastContainerOptions } from "vue3-toastify";
-import "vue3-toastify/dist/index.css";
-
 const appName = import.meta.env.VITE_APP_NAME || "Bood4ll";
 
 createInertiaApp({
@@ -78,19 +75,6 @@ createInertiaApp({
             .component("InputGroupAddon", InputGroupAddon)
             .component("Toast", Toast)
             .component("Icon", Icon)
-            .use(Vue3Toasity, {
-                autoClose: 3000,
-                limit: 5,
-                theme: "auto",
-                style: {
-                    opacity: "0.9",
-                    userSelect: "initial",
-                },
-                toastStyle: {
-                    fontSize: "14px",
-                    fontFamily: "Figtree",
-                },
-            } as ToastContainerOptions)
             .mount(el);
     },
 });

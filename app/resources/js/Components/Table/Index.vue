@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { isValidUrl, formatRouteWithID, toast } from "@/helpers";
+import { isValidUrl, formatRouteWithID } from "@/helpers";
 import Avatar from "@/Components/Avatar.vue";
 import Button from "@/Components/Button.vue";
 import Checkbox from "@/Components/Checkbox.vue";
@@ -263,13 +263,11 @@ const updateFormToogle = async (
         preserveScroll: true,
 
         onSuccess: () => {
-            toast();
             clear();
             toggleForm.list = [];
             closeModal();
         },
         onError: () => {
-            toast();
             clear();
             toggleForm.list = [];
             closeModal();
@@ -302,13 +300,11 @@ const submitModal = () => {
             preserveState: modalInfo.value.preserveState,
 
             onSuccess: () => {
-                toast();
                 clear();
                 modalForm.list = [];
                 closeModal();
             },
             onError: () => {
-                toast();
                 clear();
                 modalForm.list = [];
                 closeModal();

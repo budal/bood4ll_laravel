@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { isValidUrl, toast } from "@/helpers";
+import { isValidUrl } from "@/helpers";
 import { Icon } from "@iconify/vue";
 import { router } from "@inertiajs/vue3";
 
@@ -85,7 +85,6 @@ const onClick = () => {
             method: props.method,
             preserveState: props.preserveState,
             preserveScroll: props.preserveScroll,
-            onSuccess: () => toast(),
         });
     } else {
         emit("showModal", props.modal);
