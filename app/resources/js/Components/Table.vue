@@ -808,7 +808,7 @@ const onToggle = (
         >
             <template #header>
                 <div
-                    class="flex flex-wrap items-center justify-content-end justify-between gap-2"
+                    class="flex flex-wrap items-center justify-end justify-between gap-2"
                 >
                     <div>
                         <div class="sticky top-200">

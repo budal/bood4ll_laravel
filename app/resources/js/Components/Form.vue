@@ -1,15 +1,16 @@
 <script setup lang="ts">
 import { Ref, ref } from "vue";
+import { Link, router } from "@inertiajs/vue3";
 import { fetchData, isValidUrl } from "@/helpers";
+import { trans, transChoice } from "laravel-vue-i18n";
 
+import { DynamicDialogInstance } from "primevue/dynamicdialogoptions";
 import { useConfirm } from "primevue/useconfirm";
 import { useToast } from "primevue/usetoast";
 
 import Table from "@/Components/Table.vue";
+import Columns from "@/Components/Columns.vue";
 import DropdownComponent from "@/Components/DropdownComponent.vue";
-import { trans, transChoice } from "laravel-vue-i18n";
-import { DynamicDialogInstance } from "primevue/dynamicdialogoptions";
-import { Link, router } from "@inertiajs/vue3";
 
 const props = defineProps<{
     components: any;
@@ -24,6 +25,60 @@ const loading = ref(false);
 const formValue = ref<Record<string, any>>({});
 
 const inputsWithError: Ref<{ [key: string]: boolean }> = ref({});
+
+const go = (
+    event: any,
+    // callback: any,
+    // method: "get" | "post" | "put" | "patch" | "delete",
+    // data: any,
+    // response: any,
+) => {
+    // console.log(event.target?.getAttribute("class"));
+    console.log(event.target);
+    // if (callback) {
+    //     fetchData(callback, {
+    //         complement: {
+    //             id: props.id,
+    //         },
+    //         method: method,
+    //         data: data,
+    //         onBefore: () => {
+    //             response: {
+    //                 loading: true;
+    //             }
+    //         },
+    //         onError: (error: {
+    //             response: {
+    //                 status: number;
+    //                 statusText: string;
+    //                 data: {
+    //                     errors: any;
+    //                     message: string;
+    //                 };
+    //             };
+    //         }) => {
+    //             inputsWithError.value = error.response.data.errors;
+
+    //             toast.add({
+    //                 severity: "error",
+    //                 summary: `${trans(error.response.statusText)} (${error.response.status})`,
+    //                 detail: trans(
+    //                     error.response.data.message || "Unknown error.",
+    //                 ),
+    //                 life: 3000,
+    //             });
+    //         },
+    //         onSuccess: (content: any) => {
+    //             if (content?.redirectUrl) router.visit(content.redirectUrl);
+    //         },
+    //         onFinish: () => {
+    //             response: {
+    //                 loading: true;
+    //             }
+    //         },
+    //     });
+    // }
+};
 
 const send = () => {
     fetchData(props.components.callback, {
@@ -178,7 +233,7 @@ const getFormValuesonLoad = () => {
                 <div
                     v-for="field in components.fields"
                     :class="{
-                        'pt-6': field.type != 'table',
+                        'pt-6': field.type !== 'table',
                         'sm:col-span-1': field.span == 1,
                         'sm:col-span-2': field.span == 2,
                         'sm:col-span-3': field.span == 3,
@@ -197,7 +252,48 @@ const getFormValuesonLoad = () => {
                         borderRadius="16px"
                     />
                     <template v-else>
-                        <FloatLabel class="w-full">
+                        <FloatLabel>
+                            <Button
+                                v-if="field.type === 'button'"
+                                type="button"
+                                :disabled="loading === true"
+                                :severity="field.severity || 'info'"
+                                :class="field.class"
+                                :url="isValidUrl(field.route)"
+                                :method="field.method"
+                                @click="go"
+                            >
+                                <span
+                                    class="material-symbols-rounded"
+                                    v-text="field.icon"
+                                />
+                                {{ $t(field.label) }}
+                            </Button>
+
+                            <Calendar
+                                v-if="field.type === 'calendar'"
+                                :inputId="field.name"
+                                v-model="formValue[field.name]"
+                                :dateFormat="field.dateFormat"
+                                class="w-full"
+                                :invalid="
+                                    inputsWithError.hasOwnProperty(field.name)
+                                "
+                            />
+
+                            <DropdownComponent
+                                v-else-if="field.type === 'dropdown'"
+                                :id="props.id"
+                                v-model="formValue[field.name]"
+                                :source="field.source"
+                                :optionValue="field.optionValue || 'id'"
+                                :optionLabel="field.optionLabel || 'name'"
+                                :multiple="field.multiple"
+                                :invalid="
+                                    inputsWithError.hasOwnProperty(field.name)
+                                "
+                            />
+
                             <InputText
                                 v-if="field.type === 'input'"
                                 :id="field.name"
@@ -210,6 +306,18 @@ const getFormValuesonLoad = () => {
                                     inputsWithError.hasOwnProperty(field.name)
                                 "
                             />
+
+                            <InputMask
+                                v-else-if="field.type === 'mask'"
+                                :id="field.name"
+                                v-model="formValue[field.name]"
+                                :mask="field.mask"
+                                class="w-full"
+                                :invalid="
+                                    inputsWithError.hasOwnProperty(field.name)
+                                "
+                            />
+
                             <Password
                                 v-if="field.type === 'password'"
                                 :input-id="field.name"
@@ -222,26 +330,7 @@ const getFormValuesonLoad = () => {
                                 toggleMask
                                 :feedback="field.feedback ?? false"
                             />
-                            <Calendar
-                                v-if="field.type === 'calendar'"
-                                :inputId="field.name"
-                                v-model="formValue[field.name]"
-                                :dateFormat="field.dateFormat"
-                                class="w-full"
-                                :invalid="
-                                    inputsWithError.hasOwnProperty(field.name)
-                                "
-                            />
-                            <InputMask
-                                v-else-if="field.type === 'mask'"
-                                :id="field.name"
-                                v-model="formValue[field.name]"
-                                :mask="field.mask"
-                                class="w-full"
-                                :invalid="
-                                    inputsWithError.hasOwnProperty(field.name)
-                                "
-                            />
+
                             <ToggleButton
                                 v-else-if="field.type === 'toggle'"
                                 :id="field.name"
@@ -256,21 +345,13 @@ const getFormValuesonLoad = () => {
                                     inputsWithError.hasOwnProperty(field.name)
                                 "
                             />
-                            <DropdownComponent
-                                v-else-if="field.type === 'dropdown'"
-                                :id="props.id"
-                                v-model="formValue[field.name]"
-                                :source="field.source"
-                                :optionValue="field.optionValue || 'id'"
-                                :optionLabel="field.optionLabel || 'name'"
-                                :multiple="field.multiple"
-                                :invalid="
-                                    inputsWithError.hasOwnProperty(field.name)
-                                "
-                            />
+
                             <label
                                 v-if="
+                                    field.type !== 'button' &&
                                     field.type !== 'checkbox' &&
+                                    field.type !== 'columns' &&
+                                    field.type !== 'divider' &&
                                     field.type !== 'links' &&
                                     field.type !== 'table' &&
                                     field.type !== 'toggle'
@@ -324,6 +405,24 @@ const getFormValuesonLoad = () => {
                         </div>
                         <Table
                             v-if="field.type === 'table'"
+                            :structure="field.structure"
+                            :id="id"
+                            :formValue="formValue"
+                        />
+                        <div v-if="field.type === 'divider'">
+                            <Divider layout="vertical" class="hidden md:flex">
+                                <b>{{ field.label }}</b>
+                            </Divider>
+                            <Divider
+                                layout="horizontal"
+                                class="flex md:hidden"
+                                align="center"
+                            >
+                                <b>{{ field.label }}</b>
+                            </Divider>
+                        </div>
+                        <Columns
+                            v-if="field.type === 'columns'"
                             :structure="field.structure"
                             :id="id"
                             :formValue="formValue"

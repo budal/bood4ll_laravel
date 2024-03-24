@@ -25,147 +25,104 @@ class AuthenticatedSessionController extends Controller
             'guest' => true,
             'build' => [
                 [
-                    'label' => 'Log in',
-                    'callback' => 'login',
-                    'method' => 'post',
-                    'dialogConfirm' => 'Log in',
                     'fields' => [
                         [
-                            'type' => 'input',
-                            'name' => 'email',
-                            'label' => 'Email',
-                            'required' => true,
-                            'autofocus' => true,
-                            'autocomplete' => true,
-                        ],
-                        [
-                            'type' => 'password',
-                            'name' => 'password',
-                            'label' => 'Password',
-                            'required' => true,
-                        ],
-                        [
-                            'type' => 'checkbox',
-                            'name' => 'remember',
-                            'label' => 'Remember me',
+                            'type' => 'columns',
+                            'structure' => [
+                                [
+                                    'label' => 'Sign in',
+                                    'callback' => 'login',
+                                    'method' => 'post',
+                                    'fields' => [
+                                        [
+                                            'type' => 'input',
+                                            'name' => 'email',
+                                            'label' => 'Email',
+                                            'required' => true,
+                                            'autofocus' => true,
+                                            'autocomplete' => true,
+                                        ],
+                                        [
+                                            'type' => 'password',
+                                            'name' => 'password',
+                                            'label' => 'Password',
+                                            'required' => true,
+                                        ],
+                                        [
+                                            'type' => 'checkbox',
+                                            'name' => 'remember',
+                                            'label' => 'Remember me',
+                                        ],
+
+                                    ]
+                                ],
+                                [
+                                    'fields' => [
+                                        [
+                                            'type' => 'divider',
+                                            'label' => 'OR',
+                                        ],
+                                    ]
+                                ],
+                                [
+                                    'label' => 'Social sign in',
+                                    'class' => 'grid grid-cols-4 gap-4',
+                                    'fields' => [
+                                        [
+                                            'label' => 'Google',
+                                            'type' => 'button',
+                                            'class' => 'w-full',
+                                            'severity' => 'contrast',
+                                            'visible' => getenv('GOOGLE_CLIENT_ID') != null,
+                                            // 'icon' => 'google',
+                                            'callback' => [
+                                                'route' => 'authRedirect',
+                                                'attributes' => ['google']
+                                            ],
+                                        ],
+                                        [
+                                            'label' => 'Twitter',
+                                            'type' => 'button',
+                                            'class' => 'w-full',
+                                            'severity' => 'contrast',
+                                            'visible' => getenv('TWITTER_CLIENT_ID') != null,
+                                            // 'icon' => 'twitter',
+                                            'callback' => [
+                                                'route' => 'authRedirect',
+                                                'attributes' => ['twitter']
+                                            ],
+                                        ],
+                                        [
+                                            'label' => 'Github',
+                                            'type' => 'button',
+                                            'class' => 'w-full',
+                                            'severity' => 'contrast',
+                                            'visible' => getenv('GITHUB_CLIENT_ID') != null,
+                                            // 'icon' => 'github',
+                                            'callback' => [
+                                                'route' => 'authRedirect',
+                                                'attributes' => ['github']
+                                            ],
+                                        ],
+                                        [
+                                            'label' => 'Facebook',
+                                            'type' => 'button',
+                                            'class' => 'w-full',
+                                            'severity' => 'contrast',
+                                            'visible' => getenv('FACEBOOK_CLIENT_ID') != null,
+                                            // 'icon' => 'facebook',
+                                            'callback' => [
+                                                'route' => 'authRedirect',
+                                                'attributes' => ['facebook']
+                                            ],
+                                        ],
+                                    ]
+                                ],
+                            ],
                         ],
                     ],
                 ],
             ]
-        ]);
-
-
-        return Inertia::render('Default', [
-            'isGuest' => true,
-            'tabs' => false,
-            'title' => 'Log in',
-            'status' => session('status'),
-            'form' => [
-                [
-                    'id' => 'loginScreen',
-                    'fields' => [
-                        [
-                            [
-                                'type' => 'linkGroup',
-                                'showIf' => getenv('GITHUB_CLIENT_ID') || getenv('GOOGLE_CLIENT_ID') || getenv('TWITTER_CLIENT_ID') || getenv('FACEBOOK_CLIENT_ID'),
-                                'values' => [
-                                    [
-                                        'title' => 'Google',
-                                        'type' => 'button',
-                                        'showIf' => getenv('GOOGLE_CLIENT_ID') != null,
-                                        'startIcon' => 'mdi:google',
-                                        'route' => [
-                                            'route' => 'authRedirect',
-                                            'attributes' => ['google']
-                                        ],
-                                    ],
-                                    [
-                                        'title' => 'Twitter',
-                                        'type' => 'button',
-                                        'showIf' => getenv('TWITTER_CLIENT_ID') != null,
-                                        'startIcon' => 'mdi:twitter',
-                                        'route' => [
-                                            'route' => 'authRedirect',
-                                            'attributes' => ['twitter']
-                                        ],
-                                    ],
-                                    [
-                                        'title' => 'Github',
-                                        'type' => 'button',
-                                        'showIf' => getenv('GITHUB_CLIENT_ID') != null,
-                                        'startIcon' => 'mdi:github',
-                                        'route' => [
-                                            'route' => 'authRedirect',
-                                            'attributes' => ['github']
-                                        ],
-                                    ],
-                                    [
-                                        'title' => 'Facebook',
-                                        'type' => 'button',
-                                        'showIf' => getenv('FACEBOOK_CLIENT_ID') != null,
-                                        'startIcon' => 'mdi:facebook',
-                                        'route' => [
-                                            'route' => 'authRedirect',
-                                            'attributes' => ['facebook']
-                                        ],
-                                    ],
-                                ],
-                            ],
-                            [
-                                'type' => 'separator',
-                                'showIf' => getenv('GITHUB_CLIENT_ID') || getenv('GOOGLE_CLIENT_ID') || getenv('TWITTER_CLIENT_ID') || getenv('FACEBOOK_CLIENT_ID'),
-                            ],
-                            [
-                                'type' => 'email',
-                                'name' => 'email',
-                                'title' => 'Email',
-                                'required' => true,
-                                'autofocus' => true,
-                                'autocomplete' => true,
-                            ],
-                            [
-                                'type' => 'password',
-                                'name' => 'password',
-                                'title' => 'Password',
-                                'required' => true,
-                            ],
-                            [
-                                'type' => 'checkbox',
-                                'name' => 'remember',
-                                'title' => 'Remember me',
-                            ],
-                            [
-                                'type' => 'links',
-                                'values' => [
-                                    [
-                                        'title' => 'Not registered?',
-                                        'route' => 'register',
-                                        'showIf' => Route::has('register'),
-                                    ],
-                                    [
-                                        'title' => 'Forgot your password?',
-                                        'route' => 'password.request',
-                                        'showIf' => Route::has('password.request'),
-                                    ],
-                                ],
-                            ],
-                        ],
-                    ],
-                ],
-            ],
-            'routes' => [
-                'loginScreen' => [
-                    'route' => route('login'),
-                    'method' => 'post',
-                    'buttonTitle' => 'Log in',
-                    'buttonClass' => 'justify-end',
-                    'reset' => true,
-                    'fieldsToReset' => ['password'],
-                ],
-            ],
-            'data' => [
-                'remember' => false,
-            ],
         ]);
     }
 
