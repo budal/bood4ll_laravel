@@ -192,7 +192,7 @@ const getFormValuesonLoad = () => {
                     }"
                 >
                     <Skeleton
-                        v-if="loading == true"
+                        v-if="loading == true && field.type !== 'links'"
                         height="3rem"
                         borderRadius="16px"
                     />
@@ -212,7 +212,7 @@ const getFormValuesonLoad = () => {
                             />
                             <Password
                                 v-if="field.type === 'password'"
-                                :id="field.name"
+                                :input-id="field.name"
                                 v-model="formValue[field.name]"
                                 :input-class="'w-full'"
                                 class="w-full"
