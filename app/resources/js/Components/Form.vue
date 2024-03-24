@@ -270,6 +270,7 @@ const getFormValuesonLoad = () => {
                             />
                             <label
                                 v-if="
+                                    field.type !== 'checkbox' &&
                                     field.type !== 'links' &&
                                     field.type !== 'table' &&
                                     field.type !== 'toggle'
@@ -309,7 +310,7 @@ const getFormValuesonLoad = () => {
                         </div>
                         <div
                             v-if="field.type === 'checkbox'"
-                            class="flex align-items-center"
+                            class="flex align-items-center select-none"
                         >
                             <Checkbox
                                 v-model="formValue[field.name]"
