@@ -192,7 +192,7 @@ const getFormValuesonLoad = () => {
                     }"
                 >
                     <Skeleton
-                        v-if="loading == true && field.type !== 'links'"
+                        v-if="loading === true && field.type !== 'links'"
                         height="3rem"
                         borderRadius="16px"
                     />
@@ -270,8 +270,9 @@ const getFormValuesonLoad = () => {
                             />
                             <label
                                 v-if="
-                                    field.type !== 'toggle' &&
-                                    field.type !== 'checkbox'
+                                    field.type !== 'links' &&
+                                    field.type !== 'table' &&
+                                    field.type !== 'toggle'
                                 "
                                 :for="field.name"
                             >
@@ -292,7 +293,7 @@ const getFormValuesonLoad = () => {
                         </template>
 
                         <div
-                            v-if="field.type == 'links'"
+                            v-if="field.type === 'links'"
                             class="flex justify-between underline text-sm text-zero-light dark:text-zero-dark"
                         >
                             <template v-for="link in field.values">
@@ -346,7 +347,7 @@ const getFormValuesonLoad = () => {
                 >
                     <Button
                         type="button"
-                        :disabled="loading == true"
+                        :disabled="loading === true"
                         :severity="components.dialogConfirmClass || 'success'"
                         :icon="components.dialogConfirmIcon || 'pi pi-send'"
                         :label="$t(components.dialogConfirm || 'Send')"
