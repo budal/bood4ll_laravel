@@ -269,7 +269,10 @@ const getFormValuesonLoad = () => {
                                 "
                             />
                             <label
-                                v-if="field.type !== 'toggle'"
+                                v-if="
+                                    field.type !== 'toggle' &&
+                                    field.type !== 'checkbox'
+                                "
                                 :for="field.name"
                             >
                                 {{ $t(field.label || "") }}
@@ -303,7 +306,20 @@ const getFormValuesonLoad = () => {
                                 </Link>
                             </template>
                         </div>
-
+                        <div
+                            v-if="field.type === 'checkbox'"
+                            class="flex align-items-center"
+                        >
+                            <Checkbox
+                                v-model="formValue[field.name]"
+                                :inputId="field.name"
+                                :name="field.name"
+                                :value="true"
+                            />
+                            <label :for="field.name" class="ml-2">
+                                {{ $t(field.label || "") }}
+                            </label>
+                        </div>
                         <Table
                             v-if="field.type === 'table'"
                             :structure="field.structure"

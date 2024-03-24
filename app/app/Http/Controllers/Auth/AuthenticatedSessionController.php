@@ -7,6 +7,7 @@ use App\Http\Requests\Auth\LoginRequest;
 use App\Models\User;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Auth\Events\Registered;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -20,6 +21,40 @@ class AuthenticatedSessionController extends Controller
 {
     public function create(): Response
     {
+        return Inertia::render('Bood4ll', [
+            'guest' => true,
+            'build' => [
+                [
+                    'label' => 'Log in',
+                    'callback' => 'login',
+                    'method' => 'post',
+                    'dialogConfirm' => 'Log in',
+                    'fields' => [
+                        [
+                            'type' => 'input',
+                            'name' => 'email',
+                            'label' => 'Email',
+                            'required' => true,
+                            'autofocus' => true,
+                            'autocomplete' => true,
+                        ],
+                        [
+                            'type' => 'password',
+                            'name' => 'password',
+                            'label' => 'Password',
+                            'required' => true,
+                        ],
+                        [
+                            'type' => 'checkbox',
+                            'name' => 'remember',
+                            'label' => 'Remember me',
+                        ],
+                    ],
+                ],
+            ]
+        ]);
+
+
         return Inertia::render('Default', [
             'isGuest' => true,
             'tabs' => false,
@@ -134,15 +169,17 @@ class AuthenticatedSessionController extends Controller
         ]);
     }
 
-    public function store(LoginRequest $request): RedirectResponse
+    public function store(LoginRequest $request): JsonResponse
     {
         $request->authenticate();
 
-        $request->user()->createToken('token', $request->user()->getAllAbilities->whereNotNull('ability')->pluck('ability')->toArray());
+        // $request->user()->createToken('token', $request->user()->getAllAbilities->whereNotNull('ability')->pluck('ability')->toArray());
 
         $request->session()->regenerate();
 
-        return redirect()->intended(RouteServiceProvider::HOME);
+        return response()->json([
+            'redirectUrl' => redirect()->intended(RouteServiceProvider::HOME)->getTargetUrl(),
+        ]);
     }
 
     public function destroy(Request $request): RedirectResponse

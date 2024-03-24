@@ -70,7 +70,6 @@ const menu = ref(false);
                                 "
                                 shape="circle"
                                 size="large"
-                                class="shadow-[0_2px_15px]"
                             />
                         </button>
                         <Sidebar v-model:visible="menu" position="right">

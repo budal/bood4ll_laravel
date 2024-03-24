@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Providers\RouteServiceProvider;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -24,6 +25,7 @@ class EmailVerificationNotificationController extends Controller
             'type' => 'success',
             'message' => "A new verification link has been sent to the email ':email'.",
             'replacements' => ['email' => $request->user()->email],
+            'redirectUrl' => redirect()->intended(RouteServiceProvider::HOME)->getTargetUrl(),
         ]);
     }
 }

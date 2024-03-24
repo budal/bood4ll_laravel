@@ -31,6 +31,15 @@ class PasswordResetLinkController extends Controller
                             'required' => true,
                             'autocomplete' => true,
                         ],
+                        [
+                            'type' => 'links',
+                            'values' => [
+                                [
+                                    'label' => 'Back to sign in',
+                                    'route' => 'login',
+                                ],
+                            ],
+                        ]
                     ],
                 ],
             ]
