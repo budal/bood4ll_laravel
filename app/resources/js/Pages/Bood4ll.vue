@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import ApplicationLogo from "@/Components/ApplicationLogo.vue";
-import ChangeUser from "@/Components/ChangeUser.vue";
 import NavBar from "@/Components/NavBar.vue";
 import Structure from "@/Components/Structure.vue";
 import TailwindIndicator from "@/Components/TailwindIndicator.vue";
@@ -22,7 +21,22 @@ withDefaults(
 <template>
     <div class="card relative min-h-screen">
         <nav v-if="guest !== true" class="sm:sticky sm:top-0 z-[10]">
-            <ChangeUser v-if="$page.props.auth.previousUser === true" />
+            <div
+                v-if="$page.props.auth.previousUser === true"
+                class="font-medium bg-danger-light dark:bg-danger-dark text-xs text-center text-danger-light dark:text-danger-dark"
+            >
+                {{
+                    $t(
+                        "You are managing information as a different account than you are logged in to. Be cautious.",
+                    )
+                }}
+                <Link
+                    :href="route('apps.users.return_to_my_user')"
+                    as="button"
+                    method="post"
+                    >[ {{ $t("Log out") }} ]
+                </Link>
+            </div>
             <NavBar class="max-w-7xl mx-auto py-1 px-2 sm:px-6 lg:px-8" />
         </nav>
         <div
