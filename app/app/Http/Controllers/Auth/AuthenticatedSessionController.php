@@ -73,11 +73,11 @@ class AuthenticatedSessionController extends Controller
                                             'type' => 'button',
                                             'class' => 'w-full',
                                             'severity' => 'contrast',
-                                            'visible' => getenv('GOOGLE_CLIENT_ID') != null,
+                                            'disabled' => getenv('GOOGLE_CLIENT_ID') == null,
                                             // 'icon' => 'google',
                                             'callback' => [
                                                 'route' => 'authRedirect',
-                                                'attributes' => ['google']
+                                                'attributes' => ['provider' => 'google']
                                             ],
                                         ],
                                         [
@@ -85,11 +85,11 @@ class AuthenticatedSessionController extends Controller
                                             'type' => 'button',
                                             'class' => 'w-full',
                                             'severity' => 'contrast',
-                                            'visible' => getenv('TWITTER_CLIENT_ID') != null,
+                                            'disabled' => getenv('TWITTER_CLIENT_ID') == null,
                                             // 'icon' => 'twitter',
                                             'callback' => [
                                                 'route' => 'authRedirect',
-                                                'attributes' => ['twitter']
+                                                'attributes' => ['provider' => 'twitter']
                                             ],
                                         ],
                                         [
@@ -97,11 +97,11 @@ class AuthenticatedSessionController extends Controller
                                             'type' => 'button',
                                             'class' => 'w-full',
                                             'severity' => 'contrast',
-                                            'visible' => getenv('GITHUB_CLIENT_ID') != null,
+                                            'disabled' => getenv('GITHUB_CLIENT_ID') == null,
                                             // 'icon' => 'github',
                                             'callback' => [
                                                 'route' => 'authRedirect',
-                                                'attributes' => ['github']
+                                                'attributes' => ['provider' => 'github']
                                             ],
                                         ],
                                         [
@@ -109,11 +109,11 @@ class AuthenticatedSessionController extends Controller
                                             'type' => 'button',
                                             'class' => 'w-full',
                                             'severity' => 'contrast',
-                                            'visible' => getenv('FACEBOOK_CLIENT_ID') != null,
+                                            'disabled' => getenv('FACEBOOK_CLIENT_ID') == null,
                                             // 'icon' => 'facebook',
                                             'callback' => [
                                                 'route' => 'authRedirect',
-                                                'attributes' => ['facebook']
+                                                'attributes' => ['provider' => 'facebook']
                                             ],
                                         ],
                                     ]

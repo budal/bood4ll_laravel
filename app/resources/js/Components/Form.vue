@@ -27,57 +27,55 @@ const formValue = ref<Record<string, any>>({});
 const inputsWithError: Ref<{ [key: string]: boolean }> = ref({});
 
 const go = (
-    event: any,
-    // callback: any,
-    // method: "get" | "post" | "put" | "patch" | "delete",
-    // data: any,
-    // response: any,
+    // event: any,
+    callback: any,
+    method: "get" | "post" | "put" | "patch" | "delete",
+    data?: any,
+    response?: any,
 ) => {
-    // console.log(event.target?.getAttribute("class"));
-    console.log(event.target);
-    // if (callback) {
-    //     fetchData(callback, {
-    //         complement: {
-    //             id: props.id,
-    //         },
-    //         method: method,
-    //         data: data,
-    //         onBefore: () => {
-    //             response: {
-    //                 loading: true;
-    //             }
-    //         },
-    //         onError: (error: {
-    //             response: {
-    //                 status: number;
-    //                 statusText: string;
-    //                 data: {
-    //                     errors: any;
-    //                     message: string;
-    //                 };
-    //             };
-    //         }) => {
-    //             inputsWithError.value = error.response.data.errors;
+    if (callback) {
+        fetchData(callback, {
+            complement: {
+                id: props.id,
+            },
+            method: method,
+            data: data,
+            onBefore: () => {
+                response: {
+                    loading: true;
+                }
+            },
+            onError: (error: {
+                response: {
+                    status: number;
+                    statusText: string;
+                    data: {
+                        errors: any;
+                        message: string;
+                    };
+                };
+            }) => {
+                inputsWithError.value = error.response.data.errors;
 
-    //             toast.add({
-    //                 severity: "error",
-    //                 summary: `${trans(error.response.statusText)} (${error.response.status})`,
-    //                 detail: trans(
-    //                     error.response.data.message || "Unknown error.",
-    //                 ),
-    //                 life: 3000,
-    //             });
-    //         },
-    //         onSuccess: (content: any) => {
-    //             if (content?.redirectUrl) router.visit(content.redirectUrl);
-    //         },
-    //         onFinish: () => {
-    //             response: {
-    //                 loading: true;
-    //             }
-    //         },
-    //     });
-    // }
+                toast.add({
+                    severity: "error",
+                    summary: `${trans(error.response.statusText)} (${error.response.status})`,
+                    detail: trans(
+                        error.response.data.message || "Unknown error.",
+                    ),
+                    life: 3000,
+                });
+            },
+            onSuccess: (content: any) => {
+                if (content?.redirectUrl) router.visit(content.redirectUrl);
+            },
+            onFinish: () => {
+                response: {
+                    loading: true;
+                }
+            },
+        });
+    }
 };
 
 const send = () => {
@@ -256,12 +254,12 @@ const getFormValuesonLoad = () => {
                             <Button
                                 v-if="field.type === 'button'"
                                 type="button"
-                                :disabled="loading === true"
+                                :disabled="field.disabled"
                                 :severity="field.severity || 'info'"
                                 :class="field.class"
-                                :url="isValidUrl(field.route)"
+                                :url="isValidUrl(field.callback)"
                                 :method="field.method"
-                                @click="go"
+                                @click="go(field.callback, field.method)"
                             >
                                 <span
                                     class="material-symbols-rounded"

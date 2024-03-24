@@ -34,6 +34,7 @@
         "@material-symbols/font-200": "^0.17.0",
         "@vueuse/core": "^10.8.0",
         "axios": "^1.6.2",
+        "cors": "^2.8.5",
         "laravel-vue-i18n": "^2.7.1",
         "lodash.debounce": "^4.0.8",
         "postcss": "^8.4.18",
