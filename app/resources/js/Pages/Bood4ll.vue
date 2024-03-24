@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import ApplicationLogo from "@/Components/ApplicationLogo.vue";
-import NavBar from "@/Components/NavBar.vue";
+import NavBar from "@/Components/NavbarComponent.vue";
 import Structure from "@/Components/Structure.vue";
 import TailwindIndicator from "@/Components/TailwindIndicator.vue";
 import { Link } from "@inertiajs/vue3";

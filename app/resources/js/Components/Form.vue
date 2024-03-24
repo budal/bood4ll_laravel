@@ -6,7 +6,7 @@ import { useConfirm } from "primevue/useconfirm";
 import { useToast } from "primevue/usetoast";
 
 import Table from "@/Components/Table.vue";
-import Dropdown2 from "@/Components/Dropdown2.vue";
+import DropdownComponent from "@/Components/DropdownComponent.vue";
 import { trans, transChoice } from "laravel-vue-i18n";
 import { DynamicDialogInstance } from "primevue/dynamicdialogoptions";
 import { Link, router } from "@inertiajs/vue3";
@@ -256,7 +256,7 @@ const getFormValuesonLoad = () => {
                                     inputsWithError.hasOwnProperty(field.name)
                                 "
                             />
-                            <Dropdown2
+                            <DropdownComponent
                                 v-else-if="field.type === 'dropdown'"
                                 :id="props.id"
                                 v-model="formValue[field.name]"

@@ -28,8 +28,8 @@ const props = defineProps<{
     formValue?: any;
 }>();
 
-const DialogBody = defineAsyncComponent(
-    () => import("@/Components/DialogBody.vue"),
+const DialogComponent = defineAsyncComponent(
+    () => import("@/Components/DialogComponent.vue"),
 );
 
 const contentItems = ref<any[]>([]);
@@ -567,7 +567,7 @@ const openDialog = (options: {
     action?: any;
     id?: number | string;
 }) => {
-    dialog.open(DialogBody, {
+    dialog.open(DialogComponent, {
         data: { action: options.action, id: options.id },
         props: {
             header: wTrans(

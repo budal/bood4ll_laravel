@@ -1,9 +1,6 @@
 <script setup lang="ts">
-import Build from "@/Components/Build.vue";
-import {
-    DynamicDialogCloseOptions,
-    DynamicDialogInstance,
-} from "primevue/dynamicdialogoptions";
+import Form from "@/Components/Form.vue";
+import { DynamicDialogInstance } from "primevue/dynamicdialogoptions";
 
 withDefaults(
     defineProps<{
@@ -45,7 +42,7 @@ withDefaults(
                             {{ $t(item.description) }}
                         </template>
                         <template #content>
-                            <Build
+                            <Form
                                 :components="item"
                                 :id="id"
                                 :dialogRef="dialogRef"
@@ -71,7 +68,7 @@ withDefaults(
                         {{ $t(item.description) }}
                     </template>
                     <template #content>
-                        <Build
+                        <Form
                             :components="item"
                             :id="id"
                             :dialogRef="dialogRef"

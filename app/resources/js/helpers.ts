@@ -78,8 +78,6 @@ async function fetchData(
 
         const instance = axios;
 
-        // console.log(isValidUrl(routeUrl));
-
         await instance({
             url: isValidUrl(routeUrl) as string,
             method: options?.method,
@@ -118,14 +116,4 @@ async function fetchData(
     }
 }
 
-const formatRouteWithID = (url: any, id: any) =>
-    isValidUrl(
-        typeof url == "string"
-            ? route(url, id)
-            : {
-                  route: url.route,
-                  attributes: url.attributes ? [id, ...url.attributes] : [id],
-              },
-    );
-
-export { isValidUrl, fetchData, formatRouteWithID };
+export { isValidUrl, fetchData };
