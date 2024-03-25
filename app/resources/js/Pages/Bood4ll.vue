@@ -3,7 +3,7 @@ import ApplicationLogo from "@/Components/ApplicationLogo.vue";
 import NavBar from "@/Components/NavbarComponent.vue";
 import Structure from "@/Components/Structure.vue";
 import TailwindIndicator from "@/Components/TailwindIndicator.vue";
-import { Link } from "@inertiajs/vue3";
+import { Head, Link } from "@inertiajs/vue3";
 
 withDefaults(
     defineProps<{
@@ -19,6 +19,8 @@ withDefaults(
 </script>
 
 <template>
+    <Head :title="$t(build[0].label || $page.props.appName)" />
+
     <div class="card relative min-h-screen">
         <nav v-if="guest !== true" class="sm:sticky sm:top-0 z-[10]">
             <div

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import Form from "@/Components/Form.vue";
 import { DynamicDialogInstance } from "primevue/dynamicdialogoptions";
+import { Head } from "@inertiajs/vue3";
 
 withDefaults(
     defineProps<{

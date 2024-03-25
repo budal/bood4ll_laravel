@@ -12,7 +12,6 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Inertia\Response;
 use Laravel\Socialite\Facades\Socialite;
@@ -25,49 +24,14 @@ class AuthenticatedSessionController extends Controller
             'guest' => true,
             'build' => [
                 [
+                    'label' => 'Sign in',
                     'fields' => [
                         [
                             'type' => 'columns',
                             'structure' => [
-                                [
-                                    'label' => 'Sign in',
-                                    'class' => 'w-[400px]',
-                                    'callback' => 'login',
-                                    'method' => 'post',
-                                    'fields' => [
-                                        [
-                                            'type' => 'input',
-                                            'name' => 'email',
-                                            'label' => 'Email',
-                                            'required' => true,
-                                            'autofocus' => true,
-                                            'autocomplete' => true,
-                                        ],
-                                        [
-                                            'type' => 'password',
-                                            'name' => 'password',
-                                            'label' => 'Password',
-                                            'required' => true,
-                                        ],
-                                        [
-                                            'type' => 'checkbox',
-                                            'name' => 'remember',
-                                            'label' => 'Remember me',
-                                        ],
 
-                                    ]
-                                ],
+
                                 [
-                                    'class' => 'w-2',
-                                    'fields' => [
-                                        [
-                                            'type' => 'divider',
-                                            'label' => 'OR',
-                                        ],
-                                    ]
-                                ],
-                                [
-                                    'label' => 'Social sign in',
                                     'class' => 'grid grid-cols-2 gap-2 w-[400px]',
                                     'fields' => [
                                         [
@@ -122,6 +86,42 @@ class AuthenticatedSessionController extends Controller
                                                 'external' => true,
                                             ],
                                         ],
+                                    ]
+                                ],
+                                [
+                                    'class' => 'w-2',
+                                    'fields' => [
+                                        [
+                                            'type' => 'divider',
+                                            'label' => 'OR',
+                                        ],
+                                    ]
+                                ],
+                                [
+                                    'class' => 'w-[400px]',
+                                    'callback' => 'login',
+                                    'method' => 'post',
+                                    'fields' => [
+                                        [
+                                            'type' => 'input',
+                                            'name' => 'email',
+                                            'label' => 'Email',
+                                            'required' => true,
+                                            'autofocus' => true,
+                                            'autocomplete' => true,
+                                        ],
+                                        [
+                                            'type' => 'password',
+                                            'name' => 'password',
+                                            'label' => 'Password',
+                                            'required' => true,
+                                        ],
+                                        [
+                                            'type' => 'checkbox',
+                                            'name' => 'remember',
+                                            'label' => 'Remember me',
+                                        ],
+
                                     ]
                                 ],
                             ],
