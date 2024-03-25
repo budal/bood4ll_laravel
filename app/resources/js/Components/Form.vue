@@ -216,7 +216,7 @@ const getFormValuesonLoad = () => {
             @submit.prevent="handleConfirm"
         >
             <div
-                class="grid sm:gap-2 w-full"
+                class="grid sm:gap-2"
                 :class="{
                     'sm:grid-cols-1': components.cols == 1,
                     'sm:grid-cols-2': components.cols == 2,
@@ -230,250 +230,234 @@ const getFormValuesonLoad = () => {
                     'sm:grid-cols-10': components.cols == 10,
                 }"
             >
-                <div :class="components.class">
-                    <div
-                        v-for="field in components.fields"
-                        :class="{
-                            'pt-6': field.type !== 'table',
-                            'sm:col-span-1': field.span == 1,
-                            'sm:col-span-2': field.span == 2,
-                            'sm:col-span-3': field.span == 3,
-                            'sm:col-span-4': field.span == 4,
-                            'sm:col-span-5': field.span == 5,
-                            'sm:col-span-6': field.span == 6,
-                            'sm:col-span-7': field.span == 7,
-                            'sm:col-span-8': field.span == 8,
-                            'sm:col-span-9': field.span == 9,
-                            'sm:col-span-10': field.span == 10,
-                        }"
-                    >
-                        <Skeleton
-                            v-if="loading === true && field.type !== 'links'"
-                            height="3rem"
-                            borderRadius="16px"
-                        />
-                        <template v-else>
-                            <FloatLabel>
-                                <Button
-                                    v-if="field.type === 'button'"
-                                    type="button"
-                                    :disabled="field.disabled"
-                                    :severity="field.severity || 'info'"
-                                    :class="field.class"
-                                    @click="go(field.callback, field.method)"
-                                >
-                                    <span
-                                        class="material-symbols-rounded"
-                                        v-text="field.icon"
-                                    />
-                                    {{ $t(field.label) }}
-                                </Button>
-
-                                <Calendar
-                                    v-if="field.type === 'calendar'"
-                                    :inputId="field.name"
-                                    v-model="formValue[field.name]"
-                                    :dateFormat="field.dateFormat"
-                                    class="w-full"
-                                    :invalid="
-                                        inputsWithError.hasOwnProperty(
-                                            field.name,
-                                        )
-                                    "
-                                />
-
-                                <DropdownComponent
-                                    v-else-if="field.type === 'dropdown'"
-                                    :id="props.id"
-                                    v-model="formValue[field.name]"
-                                    :source="field.source"
-                                    :optionValue="field.optionValue || 'id'"
-                                    :optionLabel="field.optionLabel || 'name'"
-                                    :multiple="field.multiple"
-                                    :invalid="
-                                        inputsWithError.hasOwnProperty(
-                                            field.name,
-                                        )
-                                    "
-                                />
-
-                                <InputText
-                                    v-if="field.type === 'input'"
-                                    :id="field.name"
-                                    v-model="formValue[field.name]"
-                                    class="w-full"
-                                    :autocomplete="
-                                        field.name === true ? field.name : 'off'
-                                    "
-                                    :invalid="
-                                        inputsWithError.hasOwnProperty(
-                                            field.name,
-                                        )
-                                    "
-                                />
-
-                                <InputMask
-                                    v-else-if="field.type === 'mask'"
-                                    :id="field.name"
-                                    v-model="formValue[field.name]"
-                                    :mask="field.mask"
-                                    class="w-full"
-                                    :invalid="
-                                        inputsWithError.hasOwnProperty(
-                                            field.name,
-                                        )
-                                    "
-                                />
-
-                                <Password
-                                    v-if="field.type === 'password'"
-                                    :input-id="field.name"
-                                    v-model="formValue[field.name]"
-                                    :input-class="'w-full'"
-                                    class="w-full"
-                                    :invalid="
-                                        inputsWithError.hasOwnProperty(
-                                            field.name,
-                                        )
-                                    "
-                                    toggleMask
-                                    :feedback="field.feedback ?? false"
-                                />
-
-                                <ToggleButton
-                                    v-else-if="field.type === 'toggle'"
-                                    :id="field.name"
-                                    :inputId="field.name"
-                                    v-model="formValue[field.name]"
-                                    class="w-full"
-                                    onIcon="pi pi-check"
-                                    offIcon="pi pi-times"
-                                    :onLabel="$t(field.label)"
-                                    :offLabel="$t(field.label)"
-                                    :invalid="
-                                        inputsWithError.hasOwnProperty(
-                                            field.name,
-                                        )
-                                    "
-                                />
-
-                                <label
-                                    v-if="
-                                        field.type !== 'button' &&
-                                        field.type !== 'checkbox' &&
-                                        field.type !== 'columns' &&
-                                        field.type !== 'divider' &&
-                                        field.type !== 'links' &&
-                                        field.type !== 'table' &&
-                                        field.type !== 'toggle'
-                                    "
-                                    :for="field.name"
-                                >
-                                    {{ $t(field.label || "") }}
-                                </label>
-                            </FloatLabel>
-
-                            <template v-if="inputsWithError[field.name]">
-                                <InlineMessage
-                                    v-for="error in inputsWithError[field.name]"
-                                    class="w-full mt-1"
-                                    severity="error"
-                                >
-                                    <span class="text-xs">
-                                        {{ error }}
-                                    </span>
-                                </InlineMessage>
-                            </template>
-
-                            <div
-                                v-if="field.type === 'checkbox'"
-                                class="flex align-items-center select-none"
+                <div
+                    v-for="field in components.fields"
+                    :class="{
+                        'pt-6': field.type !== 'table',
+                        'sm:col-span-1': field.span == 1,
+                        'sm:col-span-2': field.span == 2,
+                        'sm:col-span-3': field.span == 3,
+                        'sm:col-span-4': field.span == 4,
+                        'sm:col-span-5': field.span == 5,
+                        'sm:col-span-6': field.span == 6,
+                        'sm:col-span-7': field.span == 7,
+                        'sm:col-span-8': field.span == 8,
+                        'sm:col-span-9': field.span == 9,
+                        'sm:col-span-10': field.span == 10,
+                    }"
+                >
+                    <Skeleton
+                        v-if="loading === true && field.type !== 'links'"
+                        height="3rem"
+                        borderRadius="16px"
+                    />
+                    <template v-else>
+                        <FloatLabel>
+                            <Button
+                                v-if="field.type === 'button'"
+                                type="button"
+                                :disabled="field.disabled"
+                                :severity="field.severity || 'info'"
+                                :class="field.class"
+                                @click="go(field.callback, field.method)"
                             >
-                                <Checkbox
-                                    v-model="formValue[field.name]"
-                                    :inputId="field.name"
-                                    :name="field.name"
-                                    :value="true"
+                                <span
+                                    class="material-symbols-rounded"
+                                    v-text="field.icon"
                                 />
-                                <label :for="field.name" class="ml-2">
-                                    {{ $t(field.label || "") }}
-                                </label>
-                            </div>
+                                {{ $t(field.label) }}
+                            </Button>
 
-                            <Columns
-                                v-if="field.type === 'columns'"
-                                :structure="field.structure"
-                                :id="id"
-                                :formValue="formValue"
+                            <Calendar
+                                v-if="field.type === 'calendar'"
+                                :inputId="field.name"
+                                v-model="formValue[field.name]"
+                                :dateFormat="field.dateFormat"
+                                class="w-full"
+                                :invalid="
+                                    inputsWithError.hasOwnProperty(field.name)
+                                "
                             />
 
-                            <Divider
-                                v-if="field.type === 'divider'"
-                                layout="vertical"
-                                class="hidden md:flex h-full"
-                            >
-                                <b>{{ field.label }}</b>
-                            </Divider>
-                            <Divider
-                                v-if="field.type === 'divider'"
-                                layout="horizontal"
-                                class="flex md:hidden"
-                                align="center"
-                            >
-                                <b>{{ field.label }}</b>
-                            </Divider>
-
-                            <div
-                                v-if="field.type === 'links'"
-                                class="flex justify-between underline text-sm"
-                            >
-                                <template v-for="link in field.values">
-                                    <Link
-                                        :href="isValidUrl(link.route) as string"
-                                        :method="link.method || 'get'"
-                                        as="button"
-                                        type="button"
-                                    >
-                                        {{ $t(link.label) }}
-                                    </Link>
-                                </template>
-                            </div>
-
-                            <Table
-                                v-if="field.type === 'table'"
-                                :structure="field.structure"
-                                :id="id"
-                                :formValue="formValue"
+                            <DropdownComponent
+                                v-else-if="field.type === 'dropdown'"
+                                :id="props.id"
+                                v-model="formValue[field.name]"
+                                :source="field.source"
+                                :optionValue="field.optionValue || 'id'"
+                                :optionLabel="field.optionLabel || 'name'"
+                                :multiple="field.multiple"
+                                :invalid="
+                                    inputsWithError.hasOwnProperty(field.name)
+                                "
                             />
+
+                            <InputText
+                                v-if="field.type === 'input'"
+                                :id="field.name"
+                                v-model="formValue[field.name]"
+                                class="w-full"
+                                :autocomplete="
+                                    field.name === true ? field.name : 'off'
+                                "
+                                :invalid="
+                                    inputsWithError.hasOwnProperty(field.name)
+                                "
+                            />
+
+                            <InputMask
+                                v-else-if="field.type === 'mask'"
+                                :id="field.name"
+                                v-model="formValue[field.name]"
+                                :mask="field.mask"
+                                class="w-full"
+                                :invalid="
+                                    inputsWithError.hasOwnProperty(field.name)
+                                "
+                            />
+
+                            <Password
+                                v-if="field.type === 'password'"
+                                :input-id="field.name"
+                                v-model="formValue[field.name]"
+                                :input-class="'w-full'"
+                                class="w-full"
+                                :invalid="
+                                    inputsWithError.hasOwnProperty(field.name)
+                                "
+                                toggleMask
+                                :feedback="field.feedback ?? false"
+                            />
+
+                            <ToggleButton
+                                v-else-if="field.type === 'toggle'"
+                                :id="field.name"
+                                :inputId="field.name"
+                                v-model="formValue[field.name]"
+                                class="w-full"
+                                onIcon="pi pi-check"
+                                offIcon="pi pi-times"
+                                :onLabel="$t(field.label)"
+                                :offLabel="$t(field.label)"
+                                :invalid="
+                                    inputsWithError.hasOwnProperty(field.name)
+                                "
+                            />
+
+                            <label
+                                v-if="
+                                    field.type !== 'button' &&
+                                    field.type !== 'checkbox' &&
+                                    field.type !== 'columns' &&
+                                    field.type !== 'divider' &&
+                                    field.type !== 'links' &&
+                                    field.type !== 'table' &&
+                                    field.type !== 'toggle'
+                                "
+                                :for="field.name"
+                            >
+                                {{ $t(field.label || "") }}
+                            </label>
+                        </FloatLabel>
+
+                        <template v-if="inputsWithError[field.name]">
+                            <InlineMessage
+                                v-for="error in inputsWithError[field.name]"
+                                class="w-full mt-1"
+                                severity="error"
+                            >
+                                <span class="text-xs">
+                                    {{ error }}
+                                </span>
+                            </InlineMessage>
                         </template>
-                    </div>
-                    <div
-                        v-if="components.callback"
-                        class="flex sticky bottom-0 p-2 mt-4 justify-end gap-2 rounded-xl backdrop-blur-sm"
-                        :class="{
-                            'sm:col-span-1': components.cols == 1,
-                            'sm:col-span-2': components.cols == 2,
-                            'sm:col-span-3': components.cols == 3,
-                            'sm:col-span-4': components.cols == 4,
-                            'sm:col-span-5': components.cols == 5,
-                            'sm:col-span-6': components.cols == 6,
-                            'sm:col-span-7': components.cols == 7,
-                            'sm:col-span-8': components.cols == 8,
-                            'sm:col-span-9': components.cols == 9,
-                            'sm:col-span-10': components.cols == 10,
-                        }"
-                    >
-                        <Button
-                            type="submit"
-                            :disabled="loading === true"
-                            :severity="
-                                components.dialogConfirmClass || 'success'
-                            "
-                            :icon="components.dialogConfirmIcon || 'pi pi-send'"
-                            :label="$t(components.dialogConfirm || 'Send')"
-                            @click="handleConfirm"
+
+                        <div
+                            v-if="field.type === 'checkbox'"
+                            class="flex align-items-center select-none"
+                        >
+                            <Checkbox
+                                v-model="formValue[field.name]"
+                                :inputId="field.name"
+                                :name="field.name"
+                                :value="true"
+                            />
+                            <label :for="field.name" class="ml-2">
+                                {{ $t(field.label || "") }}
+                            </label>
+                        </div>
+
+                        <Columns
+                            v-if="field.type === 'columns'"
+                            :structure="field.structure"
+                            :id="id"
+                            :formValue="formValue"
                         />
-                    </div>
+
+                        <Divider
+                            v-if="field.type === 'divider'"
+                            layout="vertical"
+                            class="hidden md:flex h-full"
+                        >
+                            <b>{{ field.label }}</b>
+                        </Divider>
+                        <Divider
+                            v-if="field.type === 'divider'"
+                            layout="horizontal"
+                            class="flex md:hidden"
+                            align="center"
+                        >
+                            <b>{{ field.label }}</b>
+                        </Divider>
+
+                        <div
+                            v-if="field.type === 'links'"
+                            class="flex justify-between underline text-sm"
+                        >
+                            <template v-for="link in field.values">
+                                <Link
+                                    :href="isValidUrl(link.route) as string"
+                                    :method="link.method || 'get'"
+                                    as="button"
+                                    type="button"
+                                >
+                                    {{ $t(link.label) }}
+                                </Link>
+                            </template>
+                        </div>
+
+                        <Table
+                            v-if="field.type === 'table'"
+                            :structure="field.structure"
+                            :id="id"
+                            :formValue="formValue"
+                        />
+                    </template>
+                </div>
+                <div
+                    v-if="components.callback"
+                    class="flex sticky bottom-0 p-2 mt-4 justify-end gap-2 rounded-xl backdrop-blur-sm"
+                    :class="{
+                        'sm:col-span-1': components.cols == 1,
+                        'sm:col-span-2': components.cols == 2,
+                        'sm:col-span-3': components.cols == 3,
+                        'sm:col-span-4': components.cols == 4,
+                        'sm:col-span-5': components.cols == 5,
+                        'sm:col-span-6': components.cols == 6,
+                        'sm:col-span-7': components.cols == 7,
+                        'sm:col-span-8': components.cols == 8,
+                        'sm:col-span-9': components.cols == 9,
+                        'sm:col-span-10': components.cols == 10,
+                    }"
+                >
+                    <Button
+                        type="submit"
+                        :disabled="loading === true"
+                        :severity="components.dialogConfirmClass || 'success'"
+                        :icon="components.dialogConfirmIcon || 'pi pi-send'"
+                        :label="$t(components.dialogConfirm || 'Send')"
+                        @click="handleConfirm"
+                    />
                 </div>
             </div>
         </form>

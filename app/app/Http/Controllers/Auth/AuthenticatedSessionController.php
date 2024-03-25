@@ -31,7 +31,7 @@ class AuthenticatedSessionController extends Controller
                             'structure' => [
                                 [
                                     'description' => 'Social',
-                                    // 'class' => 'grid grid-cols-2 gap-2 w-[400px]',
+                                    'class' => 'grid grid-cols-2 gap-2 w-[400px]',
                                     'fields' => [
                                         [
                                             'label' => 'Google',
