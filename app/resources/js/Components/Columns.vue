@@ -18,12 +18,8 @@ withDefaults(
 </script>
 
 <template>
-    <div class="flex flex-column md:flex-row">
-        <div
-            v-for="(build, key) of structure"
-            class="w-full flex align-items-center justify-center"
-        >
-            <!-- <Structure :build="build" :tabs="tabs" /> -->
+    <div class="flex flex-column md:flex-row gap-2">
+        <div v-for="(build, key) of structure">
             <Form
                 :components="build"
                 :key="key"

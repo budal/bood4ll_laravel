@@ -31,7 +31,7 @@ class AuthenticatedSessionController extends Controller
                             'structure' => [
                                 [
                                     'description' => 'Social',
-                                    'class' => 'grid grid-cols-2 gap-2 w-[400px]',
+                                    // 'class' => 'grid grid-cols-2 gap-2 w-[400px]',
                                     'fields' => [
                                         [
                                             'label' => 'Google',
@@ -87,20 +87,21 @@ class AuthenticatedSessionController extends Controller
                                         ],
                                     ]
                                 ],
-                                [
-                                    // 'class' => 'w-full md:w-2',
-                                    'fields' => [
-                                        [
-                                            'type' => 'divider',
-                                            'label' => 'OR',
-                                        ],
-                                    ]
-                                ],
+                                // [
+                                //     // 'class' => 'w-full md:w-2',
+                                //     'fields' => [
+                                //         [
+                                //             'type' => 'divider',
+                                //             'label' => 'OR',
+                                //         ],
+                                //     ]
+                                // ],
                                 [
                                     'description' => 'Account',
                                     // 'class' => 'w-[400px]',
                                     'callback' => 'login',
                                     'method' => 'post',
+                                    'visible' => true,
                                     'fields' => [
                                         [
                                             'type' => 'input',

@@ -25,43 +25,21 @@ withDefaults(
 
     <TabView v-if="build.length > 1 && tabs == true">
         <template
-            v-for="item in build.filter((item: any) => item.visible != false)"
+            v-for="item in build.filter((item: any) => item?.visible != false)"
         >
             <TabPanel
                 :header="$t(item.label)"
                 :pt="{ content: { class: '-mx-4' } }"
             >
-                <Card>
-                    <template v-if="item.label" #title>
-                        {{ $t(item.label) }}
-                    </template>
-                    <template v-if="item.description" #subtitle>
-                        {{ $t(item.description) }}
-                    </template>
-                    <template #content>
-                        <Form
-                            :components="item"
-                            :id="id"
-                            :dialogRef="dialogRef"
-                        />
-                    </template>
-                </Card>
+                <Form :components="item" :id="id" :dialogRef="dialogRef" />
             </TabPanel>
         </template>
     </TabView>
     <div v-else class="grid gap-4 grid-cols-1">
-        <Card
+        <template
             v-for="item in build.filter((item: any) => item.visible != false)"
         >
-            <template v-if="item.label" #title>
-                {{ $t(item.label) }}
-            </template>
-            <template v-if="item.description" #subtitle>
-                {{ $t(item.description) }}
-            </template>
-            <template #content>
-                <Form :components="item" :id="id" :dialogRef="dialogRef" />
-            </template>
-        </Card>
+            <Form :components="item" :id="id" :dialogRef="dialogRef" />
+        </template>
     </div>
 </template>
