@@ -213,7 +213,7 @@ const getFormValuesonLoad = () => {
         <form
             v-if="components.showIf !== false"
             class="w-full space-y-6"
-            @submit.prevent="send"
+            @submit.prevent="handleConfirm"
         >
             <div
                 class="grid sm:gap-2 w-full"
