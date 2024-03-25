@@ -12,7 +12,7 @@ use Inertia\Response;
 
 class EmailVerificationPromptController extends Controller
 {
-    public function __invoke(Request $request): JsonResponse
+    public function __invoke(Request $request): JsonResponse | Response
     {
         if ($request->user()->hasVerifiedEmail()) {
             return response()->json([

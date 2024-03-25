@@ -215,15 +215,7 @@ const getFormValuesonLoad = () => {
             class="w-full space-y-6"
             @submit.prevent="handleConfirm"
         >
-            <Card
-                v-if="
-                    components.fields.filter((item: any) => {
-                        if (item.type != 'divider') console.log(item.type);
-
-                        item.type != 'divider';
-                    })
-                "
-            >
+            <Card>
                 <template v-if="components.label" #title>
                     {{ $t(components.label) }}
                 </template>

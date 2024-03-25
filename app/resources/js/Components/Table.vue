@@ -621,6 +621,8 @@ const onTableDataLoad = () => {
                 };
             };
         }) => {
+            contentItems.value = [];
+
             toast.add({
                 severity: "error",
                 summary: `${trans(error.response.statusText)} (${error.response.status})`,
