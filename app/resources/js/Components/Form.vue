@@ -216,7 +216,7 @@ const getFormValuesonLoad = () => {
             @submit.prevent="send"
         >
             <div
-                class="grid sm:gap-2"
+                class="grid sm:gap-2 w-full"
                 :class="{
                     'sm:grid-cols-1': components.cols == 1,
                     'sm:grid-cols-2': components.cols == 2,
@@ -464,7 +464,7 @@ const getFormValuesonLoad = () => {
                         }"
                     >
                         <Button
-                            type="button"
+                            type="submit"
                             :disabled="loading === true"
                             :severity="
                                 components.dialogConfirmClass || 'success'
