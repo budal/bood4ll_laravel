@@ -78,16 +78,6 @@ async function fetchData(
 
         const instance = axios;
 
-        instance.defaults.headers.common["Access-Control-Allow-Origin"] = "'*'";
-        instance.defaults.headers.common["Access-Control-Allow-Methods"] =
-            "GET, PUT, POST, DELETE, OPTIONS, post, get";
-        instance.defaults.headers.common["Access-Control-Request-Method"] = "*";
-        instance.defaults.headers.common["Access-Control-Max-Age"] = "3600";
-        instance.defaults.headers.common["Access-Control-Allow-Headers"] =
-            "Origin, Content-Type, X-Auth-Token";
-        instance.defaults.headers.common["Access-Control-Allow-Credentials"] =
-            "true";
-
         await instance({
             url: isValidUrl(routeUrl) as string,
             method: options?.method,

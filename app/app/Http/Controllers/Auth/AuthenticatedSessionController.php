@@ -31,6 +31,7 @@ class AuthenticatedSessionController extends Controller
                             'structure' => [
                                 [
                                     'label' => 'Sign in',
+                                    'class' => 'w-[400px]',
                                     'callback' => 'login',
                                     'method' => 'post',
                                     'fields' => [
@@ -57,6 +58,7 @@ class AuthenticatedSessionController extends Controller
                                     ]
                                 ],
                                 [
+                                    'class' => 'w-2',
                                     'fields' => [
                                         [
                                             'type' => 'divider',
@@ -66,7 +68,7 @@ class AuthenticatedSessionController extends Controller
                                 ],
                                 [
                                     'label' => 'Social sign in',
-                                    'class' => 'grid grid-cols-4 gap-4',
+                                    'class' => 'grid grid-cols-2 gap-2 w-[400px]',
                                     'fields' => [
                                         [
                                             'label' => 'Google',
@@ -77,7 +79,8 @@ class AuthenticatedSessionController extends Controller
                                             // 'icon' => 'google',
                                             'callback' => [
                                                 'route' => 'authRedirect',
-                                                'attributes' => ['provider' => 'google']
+                                                'attributes' => ['provider' => 'google'],
+                                                'external' => true,
                                             ],
                                         ],
                                         [
@@ -89,7 +92,8 @@ class AuthenticatedSessionController extends Controller
                                             // 'icon' => 'twitter',
                                             'callback' => [
                                                 'route' => 'authRedirect',
-                                                'attributes' => ['provider' => 'twitter']
+                                                'attributes' => ['provider' => 'twitter'],
+                                                'external' => true,
                                             ],
                                         ],
                                         [
@@ -101,7 +105,8 @@ class AuthenticatedSessionController extends Controller
                                             // 'icon' => 'github',
                                             'callback' => [
                                                 'route' => 'authRedirect',
-                                                'attributes' => ['provider' => 'github']
+                                                'attributes' => ['provider' => 'github'],
+                                                'external' => true,
                                             ],
                                         ],
                                         [
@@ -113,7 +118,8 @@ class AuthenticatedSessionController extends Controller
                                             // 'icon' => 'facebook',
                                             'callback' => [
                                                 'route' => 'authRedirect',
-                                                'attributes' => ['provider' => 'facebook']
+                                                'attributes' => ['provider' => 'facebook'],
+                                                'external' => true,
                                             ],
                                         ],
                                     ]
