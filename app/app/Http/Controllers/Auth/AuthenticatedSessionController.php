@@ -29,10 +29,9 @@ class AuthenticatedSessionController extends Controller
                         [
                             'type' => 'columns',
                             'structure' => [
-
-
                                 [
-                                    'class' => 'grid grid-cols-2 gap-2 w-[400px]',
+                                    'description' => 'Social',
+                                    // 'class' => 'grid grid-cols-2 gap-2 w-[400px]',
                                     'fields' => [
                                         [
                                             'label' => 'Google',
@@ -89,7 +88,7 @@ class AuthenticatedSessionController extends Controller
                                     ]
                                 ],
                                 [
-                                    'class' => 'w-2',
+                                    // 'class' => 'w-full md:w-2',
                                     'fields' => [
                                         [
                                             'type' => 'divider',
@@ -98,7 +97,8 @@ class AuthenticatedSessionController extends Controller
                                     ]
                                 ],
                                 [
-                                    'class' => 'w-[400px]',
+                                    'description' => 'Account',
+                                    // 'class' => 'w-[400px]',
                                     'callback' => 'login',
                                     'method' => 'post',
                                     'fields' => [

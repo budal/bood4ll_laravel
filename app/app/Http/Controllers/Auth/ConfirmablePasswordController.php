@@ -21,7 +21,7 @@ class ConfirmablePasswordController extends Controller
                 [
                     'label' => 'Secure area',
                     'description' => "This is a secure area of the application. Please confirm your password before continuing.",
-                    'class' => 'w-[400px]',
+                    // 'class' => 'w-[400px]',
                     'callback' => 'password.confirm',
                     'method' => 'post',
                     'dialogConfirm' => 'Log in',

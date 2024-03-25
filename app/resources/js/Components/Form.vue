@@ -27,7 +27,6 @@ const formValue = ref<Record<string, any>>({});
 const inputsWithError: Ref<{ [key: string]: boolean }> = ref({});
 
 const go = (
-    // event: any,
     callback: any,
     method: "get" | "post" | "put" | "patch" | "delete",
     data?: any,
@@ -184,7 +183,6 @@ const getFormValuesonLoad = () => {
             },
             onSuccess: (content: never[]) => {
                 formValue.value = content;
-                // console.log(content);
             },
             onFinish: () => {
                 loading.value = false;
