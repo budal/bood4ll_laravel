@@ -20,7 +20,7 @@ class UserPolicy
     public function access(User $user, string $route = null): Response
     {
         return $user->getAllAbilities->whereNotNull('ability')->pluck('ability')
-            ->contains($route || Route::current()->getName())
+            ->contains($route ?? Route::current()->getName())
             ? Response::allow()
             : Response::deny("You cannot access this feature.");
     }

@@ -19,7 +19,7 @@ class UsersController extends Controller
 
     public function getUsersIndex(Request $request): JsonResponse
     {
-        $this->authorize('access', [User::class, 'apps.uses.index']);
+        $this->authorize('access', [User::class, 'apps.users.index']);
 
         $users = User::with('unitsClassified', 'unitsWorking')
             ->withCount('roles')
@@ -54,7 +54,7 @@ class UsersController extends Controller
 
     public function getUserInfo(Request $request, User $user): JsonResponse
     {
-        $this->authorize('access', [User::class, 'apps.uses.update']);
+        $this->authorize('access', [User::class, 'apps.users.update']);
         // $this->authorize('fullAccess', $user);
         // $this->authorize('allowedUnits', $user);
 
@@ -63,7 +63,7 @@ class UsersController extends Controller
 
     public function postUserStore(Request $request): JsonResponse
     {
-        $this->authorize('access', User::class);
+        $this->authorize('access', [User::class, 'apps.users.store']);
 
         // $request->validate([
         //     'name' => ['required', 'string', 'max:100', Rule::unique(Role::class)],
@@ -603,7 +603,7 @@ class UsersController extends Controller
                                     ],
                                     'create' => [
                                         'visible' => (
-                                            $request->user()->can('access', [User::class, 'apps.uses.store'])
+                                            $request->user()->can('access', [User::class, 'apps.users.store'])
                                         ),
                                         // 'disabled' => $request->user()->cannot('isManager', User::class),
                                         'components' => [
@@ -628,7 +628,7 @@ class UsersController extends Controller
                                     ],
                                     'edit' => [
                                         'visible' => (
-                                            $request->user()->can('access', [User::class, 'apps.uses.edit'])
+                                            $request->user()->can('access', [User::class, 'apps.users.edit'])
                                         ),
                                         'disabled' => $request->user()->cannot('isManager', User::class),
                                         'components' => [
