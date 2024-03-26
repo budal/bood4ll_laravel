@@ -1004,7 +1004,7 @@ const onToggle = (
                 v-if="
                     structure.actions.edit?.visible != false &&
                     isDefined(structure.actions.edit) &&
-                    props.structure.actions.edit.components.filter(
+                    structure.actions.edit.components.filter(
                         (item: any) => item?.visible != false,
                     ).length >= 1
                 "
