@@ -6,21 +6,17 @@ import {
     defineAsyncComponent,
     onBeforeUnmount,
 } from "vue";
-import { Link } from "@inertiajs/vue3";
 import { isDefined, useIntersectionObserver } from "@vueuse/core";
-
-import { useConfirm } from "primevue/useconfirm";
-import { fetchData } from "@/helpers";
-
-import { useToast } from "primevue/usetoast";
-import { DataTableRowReorderEvent } from "primevue/datatable";
-import { useDialog } from "primevue/usedialog";
-
 import { trans, transChoice, wTrans } from "laravel-vue-i18n";
-import { MenuItem } from "primevue/menuitem";
-
 import { ReplacementsInterface } from "laravel-vue-i18n/interfaces/replacements";
 import debounce from "lodash.debounce";
+import { fetchData } from "@/helpers";
+
+import { useConfirm } from "primevue/useconfirm";
+import { useDialog } from "primevue/usedialog";
+import { useToast } from "primevue/usetoast";
+import { MenuItem } from "primevue/menuitem";
+import { DataTableRowReorderEvent } from "primevue/datatable";
 
 const props = defineProps<{
     structure?: any;
@@ -65,8 +61,12 @@ const tableMenuToggle = (event: MouseEvent) => {
     const _tableMenuItemsEdit: MenuItem[] = [
         {
             label: props.structure.actions.create?.title || "Add",
-            visible: props.structure.actions.create?.visible == true,
-            disabled: props.structure.actions.create?.disabled == true,
+            visible: props.structure.actions.create?.visible != false,
+            // &&
+            // props.structure.actions.create.components.filter(
+            //     (item: any) => item?.visible != false,
+            // ).length >= 1
+            disabled: props.structure.actions.create?.disabled === true,
             icon: "add",
             command: () => {
                 openDialog({
@@ -78,7 +78,7 @@ const tableMenuToggle = (event: MouseEvent) => {
         {
             label: props.structure.actions.destroy?.title || "Remove",
             visible:
-                props.structure.actions.destroy?.visible == true &&
+                props.structure.actions.destroy?.visible != false &&
                 isDefined(props.structure.actions.destroy?.callback) &&
                 listItems.value !== "trashed",
             disabled: activeItems.length < 1 ? true : false,
@@ -150,7 +150,7 @@ const tableMenuToggle = (event: MouseEvent) => {
         {
             label: props.structure.actions.restore?.title || "Restore",
             visible:
-                props.structure.actions.restore?.visible == true &&
+                props.structure.actions.restore?.visible != false &&
                 isDefined(props.structure.actions.restore?.callback) &&
                 (listItems.value === "trashed" || listItems.value === "both"),
             disabled: deletedItems.length < 1 ? true : false,
@@ -222,7 +222,7 @@ const tableMenuToggle = (event: MouseEvent) => {
         {
             label: props.structure.actions.forceDestroy?.title || "Erase",
             visible:
-                props.structure.actions.forceDestroy?.visible == true &&
+                props.structure.actions.forceDestroy?.visible != false &&
                 isDefined(props.structure.actions.forceDestroy?.callback) &&
                 listItems.value === "trashed",
             disabled: deletedItems.length < 1,
@@ -380,9 +380,6 @@ const tableMenuToggle = (event: MouseEvent) => {
             if (item.separator === true) {
                 _tableMenuItemsComplementar.push({
                     separator: true,
-                    visible: true,
-                    // _tableMenuItemsEdit.filter((item: any) => item.visible == true)
-                    //     .length > 0,
                 });
             } else {
                 const conditionsKeys = item.condition
@@ -409,7 +406,7 @@ const tableMenuToggle = (event: MouseEvent) => {
                     badgeClass: item.badgeClass,
                     command: () => {
                         if (item.source) {
-                            if (item.dialog == true) {
+                            if (item.dialog === true) {
                                 openDialog({
                                     header: item.label,
                                     action: item,
@@ -502,7 +499,7 @@ const tableMenuToggle = (event: MouseEvent) => {
         {
             separator: true,
             visible:
-                _tableMenuItemsEdit.filter((item: any) => item.visible == true)
+                _tableMenuItemsEdit.filter((item: any) => item.visible != false)
                     .length > 0,
         },
         ..._tableMenuItemsComplementar,
@@ -510,7 +507,7 @@ const tableMenuToggle = (event: MouseEvent) => {
             separator: true,
             visible:
                 _tableMenuItemsComplementar.filter(
-                    (item: any) => item.visible == true,
+                    (item: any) => item.visible != false,
                 ).length > 0,
         },
         ..._tableMenuItemsShow,
@@ -898,7 +895,7 @@ const onToggle = (
             <Column
                 style="width: 1rem"
                 v-bind="
-                    structure.actions.index?.selectBoxes == true ||
+                    structure.actions.index?.selectBoxes === true ||
                     (structure.actions.destroy?.visible != false &&
                         isDefined(structure.actions.destroy?.callback)) ||
                     (structure.actions.restore?.visible != false &&
@@ -934,12 +931,12 @@ const onToggle = (
                         shape="circle"
                         size="large"
                     />
-                    <p v-if="col.type == 'text'">
+                    <p v-if="col.type === 'text'">
                         {{ slotProps.data[col.field] ?? "-" }}
                     </p>
 
                     <template
-                        v-if="col.type == 'composite' && col.showIf !== false"
+                        v-if="col.type === 'composite' && col.showIf !== false"
                     >
                         <template
                             v-if="col.values"
@@ -966,22 +963,22 @@ const onToggle = (
                                 </p>
                             </template>
                         </template>
-                        <p v-if="slotProps.data[col.field]?.length == 0">-</p>
+                        <p v-if="slotProps.data[col.field]?.length === 0">-</p>
                     </template>
 
-                    <template v-if="col.type == 'toggle'">
+                    <template v-if="col.type === 'toggle'">
                         <Button
                             rounded
                             :loading="slotProps.data.loading"
                             :icon="
-                                slotProps.data.checked == true
+                                slotProps.data.checked === true
                                     ? slotProps.data.deleteOnly === true
                                         ? 'pi pi-trash'
                                         : 'pi pi-check'
                                     : 'pi pi-times'
                             "
                             :severity="
-                                slotProps.data.checked == true
+                                slotProps.data.checked === true
                                     ? slotProps.data.deleteOnly === true
                                         ? 'warning'
                                         : 'success'
@@ -993,7 +990,7 @@ const onToggle = (
                         />
                     </template>
                     <span
-                        v-if="col.type == 'active'"
+                        v-if="col.type === 'active'"
                         class="material-symbols-rounded"
                         :class="{
                             'text-green-500': slotProps.data[col.field],
@@ -1006,7 +1003,10 @@ const onToggle = (
             <Column
                 v-if="
                     structure.actions.edit?.visible != false &&
-                    isDefined(structure.actions.edit)
+                    isDefined(structure.actions.edit) &&
+                    props.structure.actions.edit.components.filter(
+                        (item: any) => item?.visible != false,
+                    ).length >= 1
                 "
                 frozen
                 alignFrozen="right"
@@ -1019,6 +1019,7 @@ const onToggle = (
                         v-text="'edit_square'"
                         text
                         size="small"
+                        :disabled="false"
                         @click="
                             openDialog({
                                 header: `Edit`,

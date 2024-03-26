@@ -25,6 +25,13 @@ class UserPolicy
             : Response::deny("You cannot access this feature.");
     }
 
+    public function verify(User $user, string $attribute = null): Response
+    {
+        return $user->isSuperAdmin()
+            ? Response::allow()
+            : Response::deny("Only superadministrators can access this feature.");
+    }
+
     public function isSuperAdmin(User $user): Response
     {
         return $user->isSuperAdmin()

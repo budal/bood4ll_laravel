@@ -46,16 +46,9 @@ class User extends Authenticatable implements MustVerifyEmail
         'password' => 'hashed',
     ];
 
-    private $abilities;
-
     protected static function booted()
     {
         // static::creating(fn(User $user) => $user->uuid = (string) Uuid::uuid4());
-    }
-
-    public function __construct()
-    {
-        // $this->abilities = $this->getAllAbilities();
     }
 
     public function roles(): BelongsToMany
@@ -155,6 +148,12 @@ class User extends Authenticatable implements MustVerifyEmail
             ->where('primary', false)
             ->select('shortpath as name')
             ->orderBy('shortpath');
+    }
+
+    public function scopeFilter($query, Request $request, string $prefix = null, array $options = []): void
+    {
+        $base = new Base();
+        $base->scopeFilter($query, $request, $prefix, $options);
     }
 
     public function scopeUnitsIds()
