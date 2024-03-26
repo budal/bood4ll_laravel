@@ -19,7 +19,7 @@ class UsersController extends Controller
 
     public function getUsersIndex(Request $request): JsonResponse
     {
-        $this->authorize('access', User::class);
+        $this->authorize('access', [User::class, 'apps.uses.index']);
 
         $users = User::with('unitsClassified', 'unitsWorking')
             ->withCount('roles')
@@ -54,9 +54,9 @@ class UsersController extends Controller
 
     public function getUserInfo(Request $request, User $user): JsonResponse
     {
-        $this->authorize('access', User::class);
-        $this->authorize('fullAccess', $user);
-        $this->authorize('allowedUnits', $user);
+        $this->authorize('access', [User::class, 'apps.uses.update']);
+        // $this->authorize('fullAccess', $user);
+        // $this->authorize('allowedUnits', $user);
 
         return response()->json($user);
     }
@@ -603,10 +603,9 @@ class UsersController extends Controller
                                     ],
                                     'create' => [
                                         'visible' => (
-                                            Gate::allows('apps.users.store')
-                                            && $request->user()->can('isManager', User::class)
+                                            $request->user()->can('access', [User::class, 'apps.uses.store'])
                                         ),
-                                        'disabled' => $request->user()->cannot('isManager', User::class),
+                                        // 'disabled' => $request->user()->cannot('isManager', User::class),
                                         'components' => [
                                             [
                                                 'label' => 'Main data',
@@ -629,9 +628,7 @@ class UsersController extends Controller
                                     ],
                                     'edit' => [
                                         'visible' => (
-                                            Gate::allows('apps.users.update')
-                                            && $request->user()->can('isManager', User::class)
-                                            && $request->user()->can('canManageNestedData', User::class)
+                                            $request->user()->can('access', [User::class, 'apps.uses.edit'])
                                         ),
                                         'disabled' => $request->user()->cannot('isManager', User::class),
                                         'components' => [
