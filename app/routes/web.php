@@ -92,14 +92,14 @@ Route::middleware('auth')->group(function () {
                 Route::get('/units', 'index')->name('index')
                     ->defaults('title', 'Units')
                     ->defaults('description', 'Manage units registered in the system, their subunits and users.')
-                    ->defaults('icon', 'apartment');;
+                    ->defaults('icon', 'apartment');
                 Route::post('/units/hierarchy', 'postRefreshUnitsHierarchy')->name('hierarchy');
                 Route::post('/units/create', 'postUnitStore')->name('store');
                 Route::patch('/units/edit/{unit}', 'patchUnitUpdate')->name('update');
                 Route::delete('/units/destroy', 'deleteUnitsDestroy')->name('destroy');
                 Route::post('/units/restore', 'postUnitsRestore')->name('restore');
                 Route::delete('/units/destroy', 'deleteUnitsForceDestroy')->name('forceDestroy');
-                Route::post('/units/reorder', 'restore')->name('reorder');
+                Route::post('/units/reorder', 'postUnitsReorder')->name('reorder');
             });
         });
 

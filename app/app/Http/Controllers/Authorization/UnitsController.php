@@ -514,34 +514,24 @@ class UnitsController extends Controller
                                         'visible' => Gate::allows('apps.units.index'),
                                     ],
                                     'create' => [
-                                        'visible' => (
-                                            Gate::allows('apps.units.store')
-                                            && $request->user()->can('isManager', User::class)
-                                        ),
-                                        'disabled' => $request->user()->cannot('isManager', User::class),
+                                        'visible' => $request->user()->can('access', [User::class, 'apps.units.store'])
+                                            && $request->user()->can('isManager', User::class),
                                         'components' => [
                                             [
                                                 'label' => 'Main data',
                                                 'description' => 'Unit data management.',
                                                 'cols' => 4,
                                                 'fields' => $this->__fields(),
-                                                'visible' => (
-                                                    Gate::allows('apps.units.store')
-                                                    && $request->user()->can('isManager', User::class)
-                                                ),
+                                                'visible' => $request->user()->can('access', [User::class, 'apps.units.store'])
+                                                    && $request->user()->can('isManager', User::class),
                                                 'callback' => 'apps.units.create',
                                                 'method' => 'post',
                                             ],
                                         ],
                                     ],
                                     'edit' => [
-                                        'visible' => (
-                                            Gate::allows('apps.units.update')
-                                            && $request->user()->can('isManager', User::class)
-                                            && $request->user()->can('canManageNestedData', User::class)
-                                        ),
-                                        'disabled' => $request->user()->cannot('isManager', User::class),
-                                        // 'tabs' => false,
+                                        'visible' => $request->user()->can('access', [User::class, 'apps.units.update'])
+                                            && $request->user()->cannot('isManager', User::class),
                                         'components' => [
                                             [
                                                 'label' => 'Main data',
@@ -551,12 +541,8 @@ class UnitsController extends Controller
                                                     'transmute' => ['unit' => 'id'],
                                                 ],
                                                 'cols' => 4,
-                                                'visible' => (
-                                                    Gate::allows('apps.units.update')
-                                                    && $request->user()->can('isManager', User::class)
-                                                    && $request->user()->can('canManageNestedData', User::class)
-                                                ),
-                                                'disabled' => $request->user()->cannot('isManager', User::class),
+                                                'visible' => $request->user()->can('access', [User::class, 'apps.units.update'])
+                                                    && $request->user()->can('isManager', User::class),
                                                 'fields' => $this->__fields(),
                                                 'confirm' => true,
                                                 'popup' => 'Do you want to edit unit?',
@@ -569,11 +555,7 @@ class UnitsController extends Controller
                                             [
                                                 'label' => 'Staff',
                                                 'description' => 'Staff management of this unit.',
-                                                'visible' => (
-                                                    Gate::allows('apps.units.update')
-                                                    && $request->user()->can('isManager', User::class)
-                                                    && $request->user()->can('canManageNestedData', User::class)
-                                                ),
+                                                'visible' => $request->user()->can('access', [User::class, 'apps.units.update']),
                                                 'fields' => [
                                                     [
                                                         'type' => 'table',
@@ -597,8 +579,6 @@ class UnitsController extends Controller
                                                                         'route' => 'getUnitStaff',
                                                                         'transmute' => ['unit' => 'id'],
                                                                     ],
-                                                                    'reload' => true,
-                                                                    'visible' => $request->user()->can('canManageNestedData', User::class),
                                                                 ],
                                                                 [
                                                                     'icon' => 'groups',
@@ -608,8 +588,6 @@ class UnitsController extends Controller
                                                                         'attributes' => ['show' => 'all'],
                                                                         'transmute' => ['unit' => 'id'],
                                                                     ],
-                                                                    'reload' => true,
-                                                                    'visible' => $request->user()->can('canManageNestedData', User::class)
                                                                 ],
                                                             ],
                                                             'titles' => [
@@ -660,11 +638,7 @@ class UnitsController extends Controller
                                         'toastClass' => 'warning',
                                         'callback' => 'apps.units.destroy',
                                         'method' => 'delete',
-                                        'visible' => (
-                                            Gate::allows('apps.units.destroy')
-                                            && $request->user()->can('isManager', User::class)
-                                            && $request->user()->can('canManageNestedData', User::class)
-                                        ),
+                                        'visible' => $request->user()->can('access', [User::class, 'apps.units.destroys']),
                                     ],
                                     'restore' => [
                                         'dialog' => 'Do you want to restore this unit?|Do you want to restore this units?',
@@ -672,25 +646,17 @@ class UnitsController extends Controller
                                         'toastClass' => 'warning',
                                         'callback' => 'apps.units.restore',
                                         'method' => 'post',
-                                        'visible' => (
-                                            Gate::allows('apps.units.restore')
-                                            && $request->user()->can('isManager', User::class)
-                                            && $request->user()->can('canManageNestedData', User::class)
-                                        ),
+                                        'visible' => $request->user()->can('access', [User::class, 'apps.units.restore']),
                                     ],
-                                    // 'forceDestroy' => [
-                                    //     'dialog' => 'Do you want to erase this unit?|Do you want to erase this units?',
-                                    //     'dialogClass' => 'danger',
-                                    //     'toast' => 'Unit erased.',
-                                    //     'toastClass' => 'warning',
-                                    //     'callback' => 'apps.units.forceDestroy',
-                                    //     'method' => 'delete',
-                                    //     'visible' => (
-                                    //         Gate::allows('apps.units.forceDestroy')
-                                    //         && $request->user()->can('isManager', User::class)
-                                    //         && $request->user()->can('canManageNestedData', User::class)
-                                    //     ),
-                                    // ],
+                                    'forceDestroy' => [
+                                        'dialog' => 'Do you want to erase this unit?|Do you want to erase this units?',
+                                        'dialogClass' => 'danger',
+                                        'toast' => 'Unit erased.',
+                                        'toastClass' => 'warning',
+                                        'callback' => 'apps.units.forceDestroy',
+                                        'method' => 'delete',
+                                        'visible' => $request->user()->can('access', [User::class, 'apps.units.forceDestroy']),
+                                    ],
                                     // 'reorder' => [
                                     //     'toast' => 'Unit reordered.',
                                     //     'toastClass' => 'warning',
@@ -708,7 +674,8 @@ class UnitsController extends Controller
                                         'label' => 'Refresh units hierarchy',
                                         'callback' => 'apps.units.hierarchy',
                                         'method' => 'post',
-                                        'visible' => $request->user()->can('isSuperAdmin', User::class),
+                                        'visible' => $request->user()->can('isSuperAdmin', User::class)
+                                            && $request->user()->can('access', [User::class, 'apps.units.hierachy']),
                                     ],
                                 ],
                                 'titles' => [
