@@ -137,9 +137,7 @@ class UsersController extends Controller
 
     public function patchUserUpdate(Request $request, User $user): JsonResponse
     {
-        $this->authorize('access', [User::class, 'apps.users.update']);
-        $this->authorize('fullAccess', $user);
-        $this->authorize('allowedUnits', $user);
+        $this->authorize('access', [User::class, 'apps.users.update', $user]);
 
         // $this->authorize('access', User::class);
         // $this->authorize('isManager', User::class);
@@ -226,7 +224,7 @@ class UsersController extends Controller
                 $show == 'all',
                 function ($query) use ($request, $user) {
                     $query->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request, $user) {
-                        $query->whereIn('unit_user.unit_id', $request->user()->unitsIds('apps.users.update'));
+                        $query->whereIn('unit_user.unit_id', $request->user()->unitsIds('apps.users.authorizeUnit'));
                     });
                 },
                 function ($query) use ($user) {
@@ -242,6 +240,60 @@ class UsersController extends Controller
             });
 
         return response()->json($units);
+    }
+
+    public function putAuthorizeUnit(Request $request, User $user, string $mode = null): JsonResponse
+    {
+        $this->authorize('access', [User::class, 'apps.users.authorizeUnit', $user]);
+
+        $list = collect($request->list)->pluck('id');
+
+        try {
+            if ($mode == 'toggle') {
+                $unit = Unit::whereIn('id', $list)->first();
+                $hasUnit = $user->units()->whereIn('units.id', $list)->first();
+                $hasUnit ? $user->units()->detach($list) : $user->units()->attach($list);
+
+                return response()->json([
+                    'type' => 'success',
+                    'deactivate' => $hasUnit == true ? true : false,
+                    'title' => $hasUnit ? 'Attach' : 'Authorize',
+                    'message' => $hasUnit
+                        ? "The user ':user' was detached in the unit ':unit'."
+                        : "The user ':user' was attached in the unit ':unit'.",
+                    'length' => 1,
+                    'replacements' => ['user' => $user->name, 'unit' => $unit->name],
+                ]);
+            } elseif ($mode == 'on') {
+                $user->units()->attach($list);
+
+                return response()->json([
+                    'type' => 'success',
+                    'title' => 'Attach',
+                    'message' => '{0} Nothing to attach.|[1] Item attached successfully.|[2,*] :total items successfully attached.',
+                    'length' => count($list),
+                    'replacements' => ['total' => count($list)],
+                ]);
+            } elseif ($mode == 'off') {
+                $total = $user->units()->detach($list);
+
+                return response()->json([
+                    'type' => 'success',
+                    'title' => 'Detach',
+                    'message' => '{0} Nothing to detach.|[1] Item detached successfully.|[2,*] :total items successfully detached.',
+                    'length' => $total,
+                    'replacements' => ['total' => $total],
+                ]);
+            }
+        } catch (\Throwable $e) {
+            report($e);
+
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Error on edit selected item.|Error on edit selected items.',
+                'length' => count($list),
+            ]);
+        }
     }
 
     public function getUserRoles(Request $request, User $user, string $show = null): JsonResponse
@@ -293,6 +345,62 @@ class UsersController extends Controller
 
         return response()->json($roles);
     }
+
+    public function putAuthorizeRole(Request $request, User $user, string $mode = null): JsonResponse
+    {
+        $this->authorize('access', [User::class, 'apps.users.authorizeRole', $user]);
+
+        $list = collect($request->list)->pluck('id');
+
+        try {
+            if ($mode == 'toggle') {
+                $role = Role::whereIn('id', $list)->first();
+                $hasRole = $user->roles()->whereIn('roles.id', $list)->first();
+                $hasRole ? $user->roles()->detach($list) : $user->roles()->attach($list);
+
+                return response()->json([
+                    'type' => 'success',
+                    'deactivate' => $hasRole == true ? true : false,
+                    'title' => $hasRole ? 'Deauthorize' : 'Authorize',
+                    'message' => $hasRole
+                        ? "The user ':user' has been disabled in the ':role' role."
+                        : "The user ':user' was enabled in the ':role' role.",
+                    'length' => 1,
+                    'replacements' => ['user' => $user->name, 'role' => $role->name],
+                ]);
+            } elseif ($mode == 'on') {
+                $user->roles()->attach($list);
+
+                return response()->json([
+                    'type' => 'success',
+                    'title' => 'Authorize',
+                    'message' => '{0} Nothing to authorize.|[1] Item authorized successfully.|[2,*] :total items successfully authorized.',
+                    'length' => count($list),
+                    'replacements' => ['total' => count($list)],
+                ]);
+            } elseif ($mode == 'off') {
+                $total = $user->roles()->detach($list);
+
+                return response()->json([
+                    'type' => 'success',
+                    'title' => 'Deauthorize',
+                    'message' => '{0} Nothing to deauthorize.|[1] Item deauthorized successfully.|[2,*] :total items successfully deauthorized.',
+                    'length' => $total,
+                    'replacements' => ['total' => $total],
+                ]);
+            }
+        } catch (\Throwable $e) {
+            report($e);
+
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Error on edit selected item.|Error on edit selected items.',
+                'length' => count($list),
+            ]);
+        }
+    }
+
+
 
     public function changeUser(Request $request, User $user): JsonResponse
     {
@@ -353,115 +461,7 @@ class UsersController extends Controller
         ]);
     }
 
-    public function putAuthorizeUnit(Request $request, User $user, string $mode = null): JsonResponse
-    {
-        $this->authorize('access', [User::class, 'apps.users.authorizeUnit']);
-        // $this->authorize('fullAccess', [$user, $request]);
 
-        $list = collect($request->list)->pluck('id');
-
-        try {
-            if ($mode == 'toggle') {
-                $unit = Unit::whereIn('id', $list)->first();
-                $hasUnit = $user->units()->whereIn('units.id', $list)->first();
-                $hasUnit ? $user->units()->detach($list) : $user->units()->attach($list);
-
-                return response()->json([
-                    'type' => 'success',
-                    'deactivate' => $hasUnit == true ? true : false,
-                    'title' => $hasUnit ? 'Attach' : 'Authorize',
-                    'message' => $hasUnit
-                        ? "The user ':user' was detached in the unit ':unit'."
-                        : "The user ':user' was attached in the unit ':unit'.",
-                    'length' => 1,
-                    'replacements' => ['user' => $user->name, 'unit' => $unit->name],
-                ]);
-            } elseif ($mode == 'on') {
-                $user->units()->attach($list);
-
-                return response()->json([
-                    'type' => 'success',
-                    'title' => 'Attach',
-                    'message' => '{0} Nothing to attach.|[1] Item attached successfully.|[2,*] :total items successfully attached.',
-                    'length' => count($list),
-                    'replacements' => ['total' => count($list)],
-                ]);
-            } elseif ($mode == 'off') {
-                $total = $user->units()->detach($list);
-
-                return response()->json([
-                    'type' => 'success',
-                    'title' => 'Detach',
-                    'message' => '{0} Nothing to detach.|[1] Item detached successfully.|[2,*] :total items successfully detached.',
-                    'length' => $total,
-                    'replacements' => ['total' => $total],
-                ]);
-            }
-        } catch (\Throwable $e) {
-            report($e);
-
-            return response()->json([
-                'type' => 'error',
-                'message' => 'Error on edit selected item.|Error on edit selected items.',
-                'length' => count($list),
-            ]);
-        }
-    }
-
-    public function putAuthorizeRole(Request $request, User $user, string $mode = null): JsonResponse
-    {
-        $this->authorize('access', [User::class, 'apps.users.authorizeRole']);
-        // $this->authorize('fullAccess', [$user, $request]);
-
-        $list = collect($request->list)->pluck('id');
-
-        try {
-            if ($mode == 'toggle') {
-                $role = Role::whereIn('id', $list)->first();
-                $hasRole = $user->roles()->whereIn('roles.id', $list)->first();
-                $hasRole ? $user->roles()->detach($list) : $user->roles()->attach($list);
-
-                return response()->json([
-                    'type' => 'success',
-                    'deactivate' => $hasRole == true ? true : false,
-                    'title' => $hasRole ? 'Deauthorize' : 'Authorize',
-                    'message' => $hasRole
-                        ? "The user ':user' has been disabled in the ':role' role."
-                        : "The user ':user' was enabled in the ':role' role.",
-                    'length' => 1,
-                    'replacements' => ['user' => $user->name, 'role' => $role->name],
-                ]);
-            } elseif ($mode == 'on') {
-                $user->roles()->attach($list);
-
-                return response()->json([
-                    'type' => 'success',
-                    'title' => 'Authorize',
-                    'message' => '{0} Nothing to authorize.|[1] Item authorized successfully.|[2,*] :total items successfully authorized.',
-                    'length' => count($list),
-                    'replacements' => ['total' => count($list)],
-                ]);
-            } elseif ($mode == 'off') {
-                $total = $user->roles()->detach($list);
-
-                return response()->json([
-                    'type' => 'success',
-                    'title' => 'Deauthorize',
-                    'message' => '{0} Nothing to deauthorize.|[1] Item deauthorized successfully.|[2,*] :total items successfully deauthorized.',
-                    'length' => $total,
-                    'replacements' => ['total' => $total],
-                ]);
-            }
-        } catch (\Throwable $e) {
-            report($e);
-
-            return response()->json([
-                'type' => 'error',
-                'message' => 'Error on edit selected item.|Error on edit selected items.',
-                'length' => count($list),
-            ]);
-        }
-    }
 
     public function deleteUserDestroy(Request $request): JsonResponse
     {
