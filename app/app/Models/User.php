@@ -14,7 +14,6 @@ use Illuminate\Http\Request;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Ramsey\Uuid\Uuid;
-use Illuminate\Support\Facades\Route;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -120,11 +119,11 @@ class User extends Authenticatable implements MustVerifyEmail
         $base->scopeFilter($query, $request, $prefix, $options);
     }
 
-    public function scopeUnitsIds($filter, $route)
+    public function scopeUnitsIds($query, $routes)
     {
         $userPolicy = new UserPolicy;
 
-        if ($userPolicy->canManageNestedData($this, $route)) {
+        if ($userPolicy->canManageNestedData($this, $routes)) {
             $units = $this->units->map->getDescendants()->flatten();
         } else {
             $units = $this->units->pluck('id');
