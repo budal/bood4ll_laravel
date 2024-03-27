@@ -615,7 +615,7 @@ class RolesController extends Controller
 
     public function index(Request $request): Response
     {
-        // $this->authorize('access', User::class);
+        $this->authorize('access', User::class);
 
         return Inertia::render('Bood4ll', [
             'build' => [
@@ -637,11 +637,7 @@ class RolesController extends Controller
                                             [
                                                 'label' => 'Abilities',
                                                 'description' => 'Define which abilities will be showed in the roles management.',
-                                                'visible' => (
-                                                    Gate::allows('apps.roles.update')
-                                                    && $request->user()->can('isManager', User::class)
-                                                    && $request->user()->can('canManageNestedData', User::class)
-                                                ),
+                                                'visible' => $request->user()->can('isSuperAdmin', User::class),
                                                 'fields' => [
                                                     [
                                                         'type' => 'table',
@@ -664,7 +660,6 @@ class RolesController extends Controller
                                                                         'attributes' => ['mode' => 'on']
                                                                     ],
                                                                     'method' => 'put',
-                                                                    'visible' => $request->user()->can('canManageNestedData', User::class),
                                                                     'condition' => ['checked' => false],
                                                                     'badgeClass' => 'success',
                                                                     'dialogTitle' => 'Are you sure you want to authorize the selected users?|Are you sure you want to authorize the selected users?',
@@ -680,7 +675,6 @@ class RolesController extends Controller
                                                                         'attributes' => ['mode' => 'off']
                                                                     ],
                                                                     'method' => 'put',
-                                                                    'visible' => $request->user()->can('canManageNestedData', User::class),
                                                                     'condition' => ['checked' => true],
                                                                     'badgeClass' => 'danger',
                                                                     'dialogTitle' => 'Are you sure you want to deauthorize the selected users?|Are you sure you want to deauthorize the selected users?',
@@ -726,14 +720,10 @@ class RolesController extends Controller
                                 'actions' => [
                                     'index' => [
                                         'source' => 'getRolesIndex',
-                                        'visible' => Gate::allows('apps.roles.index'),
-                                        'disabled' => $request->user()->cannot('isManager', User::class),
+                                        'visible' => $request->user()->can('access', [User::class, 'apps.roles.index']),
                                     ],
                                     'create' => [
-                                        'visible' => (
-                                            Gate::allows('apps.roles.store')
-                                            && $request->user()->can('isManager', User::class)
-                                        ),
+                                        'visible' => $request->user()->can('access', [User::class, 'apps.roles.index']),
                                         'disabled' => $request->user()->cannot('isManager', User::class),
                                         'components' => [
                                             [
@@ -741,11 +731,7 @@ class RolesController extends Controller
                                                 'description' => 'Role name, abilities and settings.',
                                                 'cols' => 3,
                                                 'fields' => $this->__fields($request),
-                                                'visible' => (
-                                                    Gate::allows('apps.roles.store')
-                                                    && $request->user()->can('isManager', User::class)
-                                                ),
-                                                'disabled' => $request->user()->cannot('isManager', User::class),
+                                                'visible' => $request->user()->can('access', [User::class, 'apps.roles.store']),
                                                 'confirm' => true,
                                                 'toastTitle' => 'Add',
                                                 'toast' => '{0} Nothing to add.|[1] Item added successfully.|[2,*] :total items successfully added.',

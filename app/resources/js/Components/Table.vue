@@ -61,11 +61,12 @@ const tableMenuToggle = (event: MouseEvent) => {
     const _tableMenuItemsEdit: MenuItem[] = [
         {
             label: props.structure.actions.create?.title || "Add",
-            visible: props.structure.actions.create?.visible != false,
-            // &&
-            // props.structure.actions.create.components.filter(
-            //     (item: any) => item?.visible != false,
-            // ).length >= 1
+            visible:
+                props.structure.actions.create?.visible != false &&
+                isDefined(props.structure.actions.create?.callback) &&
+                props.structure.actions.create.components.filter(
+                    (item: any) => item?.visible != false,
+                ).length >= 1,
             disabled: props.structure.actions.create?.disabled === true,
             icon: "add",
             command: () => {

@@ -597,11 +597,9 @@ class UsersController extends Controller
                                     'index' => [
                                         'source' => 'getUsersIndex',
                                         'visible' => $request->user()->can('access', User::class),
-                                        'disabled' => $request->user()->cannot('isManager', User::class),
                                     ],
                                     'create' => [
                                         'visible' => $request->user()->can('access', [User::class, 'apps.users.store']),
-                                        'disabled' => $request->user()->cannot('isManager', User::class),
                                         'components' => [
                                             [
                                                 'label' => 'Main data',
@@ -609,7 +607,6 @@ class UsersController extends Controller
                                                 'cols' => 3,
                                                 'fields' => $this->__fields($request),
                                                 'visible' => $request->user()->can('access', [User::class, 'apps.users.store']),
-                                                'disabled' => $request->user()->cannot('isManager', User::class),
                                                 'confirm' => true,
                                                 'toastTitle' => 'Add',
                                                 'toast' => '{0} Nothing to add.|[1] Item added successfully.|[2,*] :total items successfully added.',

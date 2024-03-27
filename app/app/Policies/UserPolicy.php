@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Route;
 
 class UserPolicy
 {
-    public function before(User $user): bool | null
+    public function before(User $user): bool|null
     {
         if ($user->isSuperAdmin()) {
             return true;
@@ -44,7 +44,7 @@ class UserPolicy
             : Response::deny("You cannot access this feature.");
     }
 
-    public function hasFullAccess(User $user, string $route = null): Response
+    public function hasFullAccess(User $user, string $route = null, User $userToEdit = null): Response
     {
         return $user->getAbilities()
             ->where('full_access', true)
