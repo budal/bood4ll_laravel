@@ -71,24 +71,14 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->belongsToMany(Absence::class);
     }
 
-    public function getAllAbilities()
+    public function getAbilities()
     {
         return $this->roles()
             ->leftjoin('ability_role', 'ability_role.role_id', '=', 'roles.id')
             ->leftjoin('abilities', 'abilities.id', '=', 'ability_role.ability_id')
-            ->select(
-                'abilities.name AS ability',
-                'roles.id AS role_id',
-                'roles.superadmin',
-                'roles.manager',
-                'roles.active',
-                'roles.lock_on_expire',
-                'roles.expires_at',
-                'roles.full_access',
-                'roles.manage_nested',
-                'roles.remove_on_change_unit',
-                'roles.owner',
-            )
+            ->select('abilities.name AS ability')
+            ->where('roles.superadmin', '<>', true)
+            ->where('roles.manager', '<>', true)
             ->where('roles.active', true)
             ->where(function ($query) {
                 $query->where('roles.lock_on_expire', true);
@@ -99,37 +89,34 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function isSuperAdmin()
     {
-        return $this->getAllAbilities()->pluck('superadmin')->contains(true) ? true : false;
+        return $this->roles()->pluck('superadmin')->contains(true);
     }
 
     public function isManager()
     {
-        return $this->getAllAbilities()->pluck('manager')->contains(true) ? true : false;
+        return $this->roles()->pluck('manager')->contains(true);
     }
 
     public function hasFullAccess()
     {
-        return $this->getAllAbilities()
+        return $this->getAbilities()
             ->where('full_access', true)
-            ->where('abilities.name', '!=', null)
             ->pluck('ability')
             ->contains(Route::current()->getName());
     }
 
     public function canManageNested()
     {
-        return $this->getAllAbilities()
+        return $this->getAbilities()
             ->where('manage_nested', true)
-            ->where('abilities.name', '!=', null)
             ->pluck('ability')
             ->contains(Route::current()->getName());
     }
 
     public function canRemoveOnChangeUnit()
     {
-        return $this->getAllAbilities()
+        return $this->getAbilities()
             ->where('remove_on_change_unit', true)
-            ->where('abilities.name', '!=', null)
             ->pluck('ability')
             ->contains(Route::current()->getName());
     }

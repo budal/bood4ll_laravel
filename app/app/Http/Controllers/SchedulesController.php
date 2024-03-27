@@ -123,7 +123,7 @@ class SchedulesController extends Controller
     {
         $abilities = Ability::select('abilities.*')
             ->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
-                $query->whereIn('name', $request->user()->getAllAbilities->whereNotNull('ability')->pluck('ability'));
+                $query->whereIn('name', $request->user()->getAbilities->pluck('ability'));
             })
             ->orderBy('name')
             ->get();

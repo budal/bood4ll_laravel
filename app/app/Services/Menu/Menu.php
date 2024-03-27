@@ -18,7 +18,7 @@ class Menu
         $this->user = $user;
 
         if ($user) {
-            $this->abilities = $this->user->getAllAbilities()
+            $this->abilities = $this->user->getAbilities()
                 ->where('abilities.name', 'like', '%index')
                 ->get()
                 ->pluck('ability');

@@ -19,17 +19,10 @@ class UserPolicy
 
     public function access(User $user, string $route = null): Response
     {
-        return $user->getAllAbilities->whereNotNull('ability')->pluck('ability')
+        return $user->getAbilities->pluck('ability')
             ->contains($route ?? Route::current()->getName())
             ? Response::allow()
             : Response::deny("You cannot access this feature.");
-    }
-
-    public function verify(User $user, string $attributes = null): Response
-    {
-        return $user->isSuperAdmin()
-            ? Response::allow()
-            : Response::deny("Only superadministrators can access this feature.");
     }
 
     public function isSuperAdmin(User $user): Response

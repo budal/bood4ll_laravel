@@ -310,7 +310,7 @@ class UsersController extends Controller
 
             Auth::loginUsingId($user->id, true);
 
-            if ($user->getAllAbilities->whereNotNull('ability')->pluck('ability')->contains(Route::current()->getName())) {
+            if ($user->getAbilities->pluck('ability')->contains(Route::current()->getName())) {
                 return response()->json([
                     'type' => 'warning',
                     'title' => 'Toggle user',
@@ -585,6 +585,10 @@ class UsersController extends Controller
     public function index(Request $request): Response
     {
         $this->authorize('access', User::class);
+
+        // echo "<pre>";
+        // print_r($request->user()->getAbilities);
+        // echo "</pre>";
 
         return Inertia::render('Bood4ll', [
             'build' => [

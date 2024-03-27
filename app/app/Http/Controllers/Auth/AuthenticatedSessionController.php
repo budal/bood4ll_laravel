@@ -137,7 +137,7 @@ class AuthenticatedSessionController extends Controller
     {
         $request->authenticate();
 
-        // $request->user()->createToken('token', $request->user()->getAllAbilities->whereNotNull('ability')->pluck('ability')->toArray());
+        // $request->user()->createToken('token', $request->user()->getAbilities->pluck('ability')->toArray());
 
         $request->session()->regenerate();
 
@@ -192,7 +192,7 @@ class AuthenticatedSessionController extends Controller
 
             Auth::login($user);
 
-            $user->createToken('token', $user->getAllAbilities->whereNotNull('ability')->pluck('ability')->toArray());
+            $user->createToken('token', $user->getAbilities->pluck('ability')->toArray());
 
             return redirect('/dashboard');
         }

@@ -19,7 +19,7 @@ class AuthServiceProvider extends ServiceProvider
                 return true;
             }
 
-            if ($user->getAllAbilities->whereNotNull('ability')->pluck('ability')->contains($ability)) {
+            if ($user->getAbilities->pluck('ability')->contains($ability)) {
                 return true;
             }
         });
