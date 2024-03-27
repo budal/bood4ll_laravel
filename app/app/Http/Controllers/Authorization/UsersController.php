@@ -217,7 +217,7 @@ class UsersController extends Controller
 
     public function getUserUnits(Request $request, User $user, string $show = null): JsonResponse
     {
-        $this->authorize('access', [User::class, 'apps.users.authorizeUnit']);
+        // $this->authorize('access', [User::class, 'apps.users.authorizeUnit']);
 
         $units = Unit::leftJoin('unit_user', 'unit_user.unit_id', '=', 'units.id')
             ->select('units.id', 'units.parent_id', 'units.shortpath', 'units.active')
@@ -248,7 +248,7 @@ class UsersController extends Controller
 
     public function getUserRoles(Request $request, User $user, string $show = null): JsonResponse
     {
-        $this->authorize('access', [User::class, 'apps.users.authorizeRole']);
+        // $this->authorize('access', [User::class, 'apps.users.authorizeRole']);
 
         $roles = Role::leftjoin('role_user', 'role_user.role_id', '=', 'roles.id')
             ->select('roles.id', 'roles.name')
@@ -412,7 +412,7 @@ class UsersController extends Controller
 
     public function putAuthorizeRole(Request $request, User $user, string $mode = null): JsonResponse
     {
-        $this->authorize('access', [User::class, 'apps.users.authorizeRole']);
+        // $this->authorize('access', [$user, 'apps.users.authorizeRole']);
         // $this->authorize('fullAccess', [$user, $request]);
 
         $list = collect($request->list)->pluck('id');
@@ -586,10 +586,6 @@ class UsersController extends Controller
     {
         $this->authorize('access', User::class);
 
-        // echo "<pre>";
-        // print_r($request->user()->getAbilities);
-        // echo "</pre>";
-
         return Inertia::render('Bood4ll', [
             'build' => [
                 [
@@ -606,9 +602,7 @@ class UsersController extends Controller
                                         'disabled' => $request->user()->cannot('isManager', User::class),
                                     ],
                                     'create' => [
-                                        'visible' => (
-                                            $request->user()->can('access', [User::class, 'apps.users.store'])
-                                        ),
+                                        'visible' => $request->user()->can('access', [User::class, 'apps.users.store']),
                                         'disabled' => $request->user()->cannot('isManager', User::class),
                                         'components' => [
                                             [
@@ -616,10 +610,7 @@ class UsersController extends Controller
                                                 'description' => 'User account profile information.',
                                                 'cols' => 3,
                                                 'fields' => $this->__fields($request),
-                                                'visible' => (
-                                                    Gate::allows('apps.users.store')
-                                                    && $request->user()->can('isManager', User::class)
-                                                ),
+                                                'visible' => $request->user()->can('access', [User::class, 'apps.users.store']),
                                                 'disabled' => $request->user()->cannot('isManager', User::class),
                                                 'confirm' => true,
                                                 'toastTitle' => 'Add',
@@ -631,9 +622,7 @@ class UsersController extends Controller
                                         ],
                                     ],
                                     'edit' => [
-                                        'visible' => (
-                                            $request->user()->can('access', [User::class, 'apps.users.update'])
-                                        ),
+                                        'visible' => $request->user()->can('access', [User::class, 'apps.users.update']),
                                         'disabled' => $request->user()->cannot('isManager', User::class),
                                         'components' => [
                                             [
@@ -645,11 +634,7 @@ class UsersController extends Controller
                                                 'description' => 'User account profile information.',
                                                 'cols' => 3,
                                                 'fields' => $this->__fields($request),
-                                                'visible' => (
-                                                    $request->user()->can('access', [User::class, 'apps.users.update'])
-                                                    // && $request->user()->can('isManager', User::class)
-                                                    // && $request->user()->can('canManageNestedData', User::class)
-                                                ),
+                                                'visible' => $request->user()->can('access', [User::class, 'apps.users.update']),
                                                 'disabled' => $request->user()->cannot('isManager', User::class),
                                                 'confirm' => true,
                                                 'toastTitle' => 'Edit',
@@ -661,11 +646,8 @@ class UsersController extends Controller
                                             [
                                                 'label' => 'Units',
                                                 'description' => 'User units management.',
-                                                'visible' => (
-                                                    $request->user()->can('access', [User::class, 'apps.users.authorizeUnit'])
-                                                    // && $request->user()->can('isManager', User::class)
-                                                    // && $request->user()->can('canManageNestedData', User::class)
-                                                ),
+                                                'visible' => $request->user()->can('access', [User::class, 'apps.users.authorizeUnit']),
+                                                'disabled' => $request->user()->cannot('isManager', User::class),
                                                 'fields' => [
                                                     [
                                                         'type' => 'table',
@@ -678,8 +660,6 @@ class UsersController extends Controller
                                                                         'transmute' => ['user' => 'id'],
                                                                     ],
                                                                     'selectBoxes' => true,
-                                                                    'visible' => true,
-                                                                    'disabled' => true,
                                                                 ],
                                                             ],
                                                             'menu' => [
@@ -692,7 +672,6 @@ class UsersController extends Controller
                                                                         'transmute' => ['user' => 'id'],
                                                                     ],
                                                                     'method' => 'put',
-                                                                    // 'visible' => $request->user()->can('canManageNestedData', User::class),
                                                                     'condition' => ['checked' => false],
                                                                     'badgeClass' => 'success',
                                                                 ],
@@ -705,13 +684,11 @@ class UsersController extends Controller
                                                                         'transmute' => ['user' => 'id'],
                                                                     ],
                                                                     'method' => 'put',
-                                                                    // 'visible' => $request->user()->can('canManageNestedData', User::class),
                                                                     'condition' => ['checked' => true],
                                                                     'badgeClass' => 'danger',
                                                                 ],
                                                                 [
                                                                     'separator' => true,
-                                                                    // 'visible' => $request->user()->can('canManageNestedData', User::class),
                                                                 ],
                                                                 [
                                                                     'icon' => 'house_with_shield',
@@ -720,7 +697,6 @@ class UsersController extends Controller
                                                                         'route' => 'getUserUnits',
                                                                         'transmute' => ['user' => 'id'],
                                                                     ],
-                                                                    // 'visible' => $request->user()->can('canManageNestedData', User::class),
                                                                 ],
                                                                 [
                                                                     'icon' => 'other_houses',
@@ -730,7 +706,6 @@ class UsersController extends Controller
                                                                         'attributes' => ['show' => 'all'],
                                                                         'transmute' => ['user' => 'id'],
                                                                     ],
-                                                                    // 'visible' => $request->user()->can('canManageNestedData', User::class)
                                                                 ],
                                                             ],
                                                             'titles' => [
@@ -761,11 +736,8 @@ class UsersController extends Controller
                                             [
                                                 'label' => 'Roles',
                                                 'description' => 'User roles management.',
-                                                'visible' => (
-                                                    $request->user()->can('access', [User::class, 'apps.users.authorizeRole'])
-                                                    // && $request->user()->can('isManager', User::class)
-                                                    // && $request->user()->can('canManageNestedData', User::class)
-                                                ),
+                                                'visible' => $request->user()->can('access', [User::class, 'apps.users.authorizeRole']),
+                                                'disabled' => $request->user()->cannot('isManager', User::class),
                                                 'fields' => [
                                                     [
                                                         'type' => 'table',
@@ -778,8 +750,6 @@ class UsersController extends Controller
                                                                         'transmute' => ['user' => 'id'],
                                                                     ],
                                                                     'selectBoxes' => true,
-                                                                    // 'visible' => true,
-                                                                    'disabled' => true,
                                                                 ],
                                                             ],
                                                             'menu' => [
@@ -792,7 +762,6 @@ class UsersController extends Controller
                                                                         'transmute' => ['user' => 'id'],
                                                                     ],
                                                                     'method' => 'put',
-                                                                    // 'visible' => $request->user()->can('canManageNestedData', User::class),
                                                                     'condition' => ['checked' => false],
                                                                     'badgeClass' => 'success',
                                                                 ],
@@ -805,7 +774,6 @@ class UsersController extends Controller
                                                                         'transmute' => ['user' => 'id'],
                                                                     ],
                                                                     'method' => 'put',
-                                                                    // 'visible' => $request->user()->can('canManageNestedData', User::class),
                                                                     'condition' => ['checked' => true],
                                                                     'badgeClass' => 'danger',
                                                                 ],
@@ -819,7 +787,6 @@ class UsersController extends Controller
                                                                         'route' => 'getUserRoles',
                                                                         'transmute' => ['user' => 'id'],
                                                                     ],
-                                                                    // 'visible' => $request->user()->can('canManageNestedData', User::class),
                                                                 ],
                                                                 [
                                                                     'icon' => 'list_alt',
@@ -829,7 +796,6 @@ class UsersController extends Controller
                                                                         'attributes' => ['show' => 'all'],
                                                                         'transmute' => ['user' => 'id'],
                                                                     ],
-                                                                    // 'visible' => $request->user()->can('canManageNestedData', User::class)
                                                                 ],
                                                             ],
                                                             'titles' => [

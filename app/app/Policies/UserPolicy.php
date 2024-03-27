@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Route;
 
 class UserPolicy
 {
-    public function before(User $user, string $ability): bool|null
+    public function before(User $user): bool|null
     {
         if ($user->isSuperAdmin()) {
             return true;
@@ -19,8 +19,7 @@ class UserPolicy
 
     public function access(User $user, string $route = null): Response
     {
-        return $user->getAbilities->pluck('ability')
-            ->contains($route ?? Route::current()->getName())
+        return $user->getAbilities->pluck('ability')->contains($route ?? Route::current()->getName())
             ? Response::allow()
             : Response::deny("You cannot access this feature.");
     }
@@ -39,23 +38,32 @@ class UserPolicy
             : Response::deny("Only managers can access this feature.");
     }
 
-    public function hasFullAccess(User $user): Response
+    public function hasFullAccess(User $user, string $route = null): Response
     {
-        return $user->hasFullAccess()
+        return $user->getAbilities()
+            ->where('full_access', true)
+            ->pluck('ability')
+            ->contains($route ?? Route::current()->getName())
             ? Response::allow()
             : Response::deny("You can only manage your own data.");
     }
 
-    public function canManageNestedData(User $user): Response
+    public function canManageNestedData(User $user, string $route = null): Response
     {
-        return $user->canManageNested()
+        return $user->getAbilities()
+            ->where('manage_nested', true)
+            ->pluck('ability')
+            ->contains($route ?? Route::current()->getName())
             ? Response::allow()
             : Response::deny("You cannot manage nested data.");
     }
 
-    public function canRemoveOnChangeUnit(User $user): Response
+    public function canRemoveOnChangeUnit(User $user, string $route = null): Response
     {
-        return $user->canRemoveOnChangeUnit()
+        return $user->getAbilities()
+            ->where('remove_on_change_unit', true)
+            ->pluck('ability')
+            ->contains($route ?? Route::current()->getName())
             ? Response::allow()
             : Response::deny("This role will be removed when user change unit.");
     }
