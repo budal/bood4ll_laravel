@@ -723,7 +723,7 @@ class RolesController extends Controller
                                         'visible' => $request->user()->can('access', [User::class, 'apps.roles.index']),
                                     ],
                                     'create' => [
-                                        'visible' => $request->user()->can('access', [User::class, 'apps.roles.index']),
+                                        'visible' => $request->user()->can('access', [User::class, 'apps.roles.store']),
                                         'disabled' => $request->user()->cannot('isManager', User::class),
                                         'components' => [
                                             [
@@ -742,11 +742,8 @@ class RolesController extends Controller
                                         ],
                                     ],
                                     'edit' => [
-                                        'visible' => (
-                                            Gate::allows('apps.roles.update')
-                                            && $request->user()->can('isManager', User::class)
-                                            && $request->user()->can('canManageNestedData', User::class)
-                                        ),
+                                        'visible' => $request->user()->can('access', [User::class, 'apps.roles.update'])
+                                            && $request->user()->can('isManager', User::class),
                                         'disabled' => $request->user()->cannot('isManager', User::class),
                                         'components' => [
                                             [
@@ -759,9 +756,8 @@ class RolesController extends Controller
                                                 'cols' => 3,
                                                 'fields' => $this->__fields($request),
                                                 'visible' => (
-                                                    Gate::allows('apps.roles.update')
+                                                    $request->user()->can('access', [User::class, 'apps.roles.update'])
                                                     && $request->user()->can('isManager', User::class)
-                                                    && $request->user()->can('canManageNestedData', User::class)
                                                 ),
                                                 'disabled' => $request->user()->cannot('isManager', User::class),
                                                 'confirm' => true,
@@ -774,11 +770,7 @@ class RolesController extends Controller
                                             [
                                                 'label' => 'Authorized users',
                                                 'description' => 'Define which users will have access to this authorization.',
-                                                'visible' => (
-                                                    Gate::allows('apps.roles.update')
-                                                    && $request->user()->can('isManager', User::class)
-                                                    && $request->user()->can('canManageNestedData', User::class)
-                                                ),
+                                                'visible' => $request->user()->can('access', [User::class, 'apps.roles.authorize']),
 
                                                 // 'showIf' => $role->id === null || $request->user()->can('isOwner', $role),
                                                 // 'disabledIf' => $role->inalterable == true || $role->id !== null && $request->user()->cannot('isOwner', $role),
