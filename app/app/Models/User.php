@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Policies\UserPolicy;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -97,26 +98,10 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->roles()->pluck('manager')->contains(true);
     }
 
-    public function hasFullAccess()
-    {
-        return $this->getAbilities()
-            ->where('full_access', true)
-            ->pluck('ability')
-            ->contains(Route::current()->getName());
-    }
-
     public function canManageNested()
     {
         return $this->getAbilities()
             ->where('manage_nested', true)
-            ->pluck('ability')
-            ->contains(Route::current()->getName());
-    }
-
-    public function canRemoveOnChangeUnit()
-    {
-        return $this->getAbilities()
-            ->where('remove_on_change_unit', true)
             ->pluck('ability')
             ->contains(Route::current()->getName());
     }
@@ -143,9 +128,11 @@ class User extends Authenticatable implements MustVerifyEmail
         $base->scopeFilter($query, $request, $prefix, $options);
     }
 
-    public function scopeUnitsIds()
+    public function scopeUnitsIds($route = null)
     {
-        if ($this->canManageNested() === true) {
+        $userPolicy = new UserPolicy;
+
+        if ($userPolicy->canManageNestedData($this, 'apps.users.index')) {
             $units = $this->units->map->getDescendants()->flatten();
         } else {
             $units = $this->units->pluck('id');

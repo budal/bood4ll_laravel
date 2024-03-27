@@ -17,13 +17,6 @@ class UserPolicy
         return null;
     }
 
-    public function access(User $user, string $route = null): Response
-    {
-        return $user->getAbilities->pluck('ability')->contains($route ?? Route::current()->getName())
-            ? Response::allow()
-            : Response::deny("You cannot access this feature.");
-    }
-
     public function isSuperAdmin(User $user): Response
     {
         return $user->isSuperAdmin()
@@ -38,7 +31,20 @@ class UserPolicy
             : Response::deny("Only managers can access this feature.");
     }
 
-    public function hasFullAccess(User $user, string $route = null): Response
+    public function access(User $user, string $route = null, User $userToEdit = null): Response
+    {
+        return $user->getAbilities
+            ->pluck('ability')
+            ->contains($route ?? Route::current()->getName())
+            ? (
+                $userToEdit == null || $user->id === $userToEdit->id
+                ? Response::allow()
+                : $this->hasFullAccess($user, $route, $userToEdit)
+            )
+            : Response::deny("You cannot access this feature.");
+    }
+
+    public function hasFullAccess(User $user, string $route = null, User $userToEdit = null): Response
     {
         return $user->getAbilities()
             ->where('full_access', true)
@@ -48,14 +54,14 @@ class UserPolicy
             : Response::deny("You can only manage your own data.");
     }
 
-    public function canManageNestedData(User $user, string $route = null): Response
+    public function canManageNestedData(User $user, string $route = null): bool
     {
         return $user->getAbilities()
             ->where('manage_nested', true)
             ->pluck('ability')
             ->contains($route ?? Route::current()->getName())
-            ? Response::allow()
-            : Response::deny("You cannot manage nested data.");
+            ? true
+            : false;
     }
 
     public function canRemoveOnChangeUnit(User $user, string $route = null): Response
@@ -71,17 +77,6 @@ class UserPolicy
 
 
 
-
-    public function fullAccess(User $user, User $userToEdit): Response
-    {
-        if (!$user->hasFullAccess()) {
-            return $user->id === $userToEdit->id
-                ? Response::allow()
-                : Response::deny("You can only manage your own data 2.");
-        } else {
-            return Response::allow();
-        }
-    }
 
     public function allowedUnits(User $user, User $userToEdit): Response
     {

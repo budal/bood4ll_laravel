@@ -33,7 +33,7 @@ class UsersController extends Controller
                 $query->select('users.id', 'users.name', 'users.email');
                 $query->groupBy('users.id', 'users.name', 'users.email');
 
-                if ($request->user()->cannot('hasFullAccess', User::class)) {
+                if ($request->user()->cannot('hasFullAccess', [User::class, 'apps.users.index'])) {
                     $query->where('unit_user.user_id', $request->user()->id);
                 }
 
@@ -50,6 +50,13 @@ class UsersController extends Controller
             ->withQueryString();
 
         return response()->json($users);
+    }
+
+    public function getUserInfo(User $user): JsonResponse
+    {
+        $this->authorize('access', [User::class, 'apps.users.update', $user]);
+
+        return response()->json($user);
     }
 
     public function postUserStore(Request $request): JsonResponse
@@ -126,15 +133,6 @@ class UsersController extends Controller
             'message' => '{0} Nothing to add.|[1] Item added successfully.|[2,*] :total items successfully added.',
             'length' => 1,
         ]);
-    }
-
-    public function getUserInfo(Request $request, User $user): JsonResponse
-    {
-        $this->authorize('access', [User::class, 'apps.users.update']);
-        // $this->authorize('fullAccess', $user);
-        // $this->authorize('allowedUnits', $user);
-
-        return response()->json($user);
     }
 
     public function patchUserUpdate(Request $request, User $user): JsonResponse
@@ -217,7 +215,7 @@ class UsersController extends Controller
 
     public function getUserUnits(Request $request, User $user, string $show = null): JsonResponse
     {
-        // $this->authorize('access', [User::class, 'apps.users.authorizeUnit']);
+        $this->authorize('access', [User::class, 'apps.users.authorizeUnit', $user]);
 
         $units = Unit::leftJoin('unit_user', 'unit_user.unit_id', '=', 'units.id')
             ->select('units.id', 'units.parent_id', 'units.shortpath', 'units.active')
@@ -248,7 +246,7 @@ class UsersController extends Controller
 
     public function getUserRoles(Request $request, User $user, string $show = null): JsonResponse
     {
-        // $this->authorize('access', [User::class, 'apps.users.authorizeRole']);
+        $this->authorize('access', [User::class, 'apps.users.authorizeRole', $user]);
 
         $roles = Role::leftjoin('role_user', 'role_user.role_id', '=', 'roles.id')
             ->select('roles.id', 'roles.name')
@@ -412,7 +410,7 @@ class UsersController extends Controller
 
     public function putAuthorizeRole(Request $request, User $user, string $mode = null): JsonResponse
     {
-        // $this->authorize('access', [$user, 'apps.users.authorizeRole']);
+        $this->authorize('access', [User::class, 'apps.users.authorizeRole']);
         // $this->authorize('fullAccess', [$user, $request]);
 
         $list = collect($request->list)->pluck('id');
