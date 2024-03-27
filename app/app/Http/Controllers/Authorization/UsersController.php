@@ -226,7 +226,7 @@ class UsersController extends Controller
                 $show == 'all',
                 function ($query) use ($request, $user) {
                     $query->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request, $user) {
-                        $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
+                        $query->whereIn('unit_user.unit_id', $request->user()->unitsIds('apps.users.update'));
                     });
                 },
                 function ($query) use ($user) {
