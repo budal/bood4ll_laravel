@@ -50,6 +50,8 @@ class UnitsController extends Controller
 
     public function getUnitsIndex(Request $request): JsonResponse
     {
+        $this->authorize('access', [User::class, 'apps.units.index']);
+
         $units = Unit::leftJoin('unit_user', 'unit_user.unit_id', '=', 'units.id')
             ->select('units.id', 'units.shortpath', 'units.active', 'units.deleted_at')
             ->groupBy('units.id', 'units.shortpath', 'units.active', 'units.deleted_at')
@@ -77,7 +79,7 @@ class UnitsController extends Controller
                     $query->where('unit_user.user_id', $request->user()->id);
                 }
 
-                $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
+                $query->whereIn('unit_user.unit_id', $request->user()->unitsIds('apps.units.index'));
             })
             ->cursorPaginate(30)
             ->withQueryString();
@@ -85,8 +87,19 @@ class UnitsController extends Controller
         return response()->json($units);
     }
 
+    public function getUnitInfo(Unit $unit): JsonResponse
+    {
+        $this->authorize('access', [User::class, 'apps.units.update']);
+
+        $unit['abilities_disabled'] = $unit->id;
+
+        return response()->json($unit);
+    }
+
     public function getUnitStaff(Request $request, Unit $unit): JsonResponse
     {
+        $this->authorize('access', [User::class, 'apps.units.update']);
+
         $staff = User::leftJoin('unit_user', 'unit_user.user_id', '=', 'users.id')
             ->select('users.id', 'users.name', 'users.email')
             ->groupBy('users.id', 'users.name', 'users.email')
@@ -114,7 +127,7 @@ class UnitsController extends Controller
                     $query->where('unit_user.user_id', $request->user()->id);
                 }
 
-                $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
+                $query->whereIn('unit_user.unit_id', $request->user()->unitsIds('apps.units.index'));
             })
             ->cursorPaginate(30)
             ->withQueryString();
@@ -124,8 +137,8 @@ class UnitsController extends Controller
 
     public function postRefreshUnitsHierarchy(): JsonResponse
     {
-        // $this->authorize('access', User::class);
-        // $this->authorize('isSuperAdmin', User::class);
+        $this->authorize('isSuperAdmin', User::class);
+        $this->authorize('access', [User::class, 'apps.units.hierarchy']);
 
         $this->length = 0;
 
@@ -151,12 +164,340 @@ class UnitsController extends Controller
         ]);
     }
 
+    public function postUnitStore(Request $request, Unit $unit): JsonResponse
+    {
+        $this->authorize('access', [User::class, 'apps.units.store']);
+
+        DB::beginTransaction();
+
+        try {
+            $unit->name = $request->name;
+            $unit->nickname = $request->nickname;
+            $unit->owner = $request->user()->id;
+            $unit->founded = $request->founded;
+            $unit->parent_id = $request->parent_id;
+            $unit->active = $request->active;
+            $unit->expires = $request->expires;
+            $unit->cellphone = $request->cellphone;
+            $unit->landline = $request->landline;
+            $unit->email = $request->email;
+            $unit->country = $request->country;
+            $unit->state = $request->state;
+            $unit->city = $request->city;
+            $unit->address = $request->address;
+            $unit->complement = $request->complement;
+            $unit->postcode = $request->postcode;
+            $unit->geo = $request->geo;
+
+            $unit->save();
+
+            $unit->fullpath = $unit->getParentsNames();
+            $unit->shortpath = $unit->getParentsNicknames();
+            $unit->children_id = collect($unit->getDescendants())->toJson();
+
+            $unit->save();
+
+            $unit->users()->attach($request->user()->id, ['primary' => false]);
+
+            $newParentUnit = Unit::where('id', $request->parent_id)->first();
+            $newParentUnit->children_id = collect($newParentUnit->getDescendants())->toJson();
+
+            $newParentUnit->save();
+        } catch (\Exception $e) {
+            report($e);
+
+            DB::rollback();
+
+            return response()->json([
+                'type' => 'error',
+                'title' => 'Error',
+                'message' => 'Error on add selected item.|Error on add selected items.',
+                'length' => 1,
+            ]);
+        }
+
+        DB::commit();
+
+        return response()->json([
+            'type' => 'success',
+            'title' => 'Add',
+            'message' => '{0} Nothing to add.|[1] Item added successfully.|[2,*] :total items successfully added.',
+            'length' => 1,
+        ]);
+    }
+
+    public function patchUnitUpdate(Unit $unit, Request $request): JsonResponse
+    {
+        $this->authorize('access', [User::class, 'apps.units.update']);
+
+        // $this->authorize('access', User::class);
+        // $this->authorize('isActive', $unit);
+        // $this->authorize('isManager', User::class);
+        // $this->authorize('canEdit', $unit);
+        // $this->authorize('isOwner', $unit);
+
+        if (
+            $request->user()->cannot('isSuperAdmin', User::class)
+            && $request->user()->unitsIds()->contains($unit->parent_id) === false
+            && $unit->parent_id != $request->parent_id
+        ) {
+            return response()->json([
+                'type' => 'error',
+                'title' => 'Error',
+                'message' => 'You cannot change the unit this record belongs to.',
+                'length' => 1,
+            ]);
+        }
+
+        DB::beginTransaction();
+
+        try {
+            $parentId = $unit->parent_id;
+
+            $unit->name = $request->name;
+            $unit->nickname = $request->nickname;
+            $unit->founded = $request->founded;
+            $unit->parent_id = $request->parent_id;
+            $unit->active = $request->active;
+            $unit->expires = $request->expires;
+            $unit->cellphone = $request->cellphone;
+            $unit->landline = $request->landline;
+            $unit->email = $request->email;
+            $unit->country = $request->country;
+            $unit->state = $request->state;
+            $unit->city = $request->city;
+            $unit->address = $request->address;
+            $unit->complement = $request->complement;
+            $unit->postcode = $request->postcode;
+            $unit->geo = $request->geo;
+
+            $unit->save();
+
+            $unit->fullpath = $unit->getParentsNames();
+            $unit->shortpath = $unit->getParentsNicknames();
+            $unit->children_id = collect($unit->getDescendants())->toJson();
+
+            $unit->save();
+
+            if ($parentId) {
+                $oldParentUnit = Unit::where('id', $parentId)->first();
+                $oldParentUnit->children_id = collect($oldParentUnit->getDescendants())->toJson();
+
+                $oldParentUnit->save();
+            }
+
+            if ($request->parent_id) {
+                $newParentUnit = Unit::where('id', $request->parent_id)->first();
+                $newParentUnit->children_id = collect($newParentUnit->getDescendants())->toJson();
+
+                $newParentUnit->save();
+            }
+        } catch (\Exception $e) {
+            report($e);
+
+            DB::rollback();
+
+            return response()->json([
+                'type' => 'error',
+                'title' => 'Error',
+                'message' => 'Error on edit selected item.|Error on edit selected items.',
+                'length' => 1,
+            ]);
+        }
+
+        DB::commit();
+
+        return response()->json([
+            'type' => 'success',
+            'title' => 'Edit',
+            'message' => '{0} Nothing to edit.|[1] Item edited successfully.|[2,*] :total items successfully edited.',
+            'length' => 1,
+        ]);
+    }
+
+    public function deleteUnitsDestroy(Request $request): RedirectResponse
+    {
+        $this->authorize('access', [User::class, 'apps.units.delete']);
+
+        try {
+            $total = Unit::whereIn('id', $request->list)->delete();
+
+            return back()->with([
+                'toast_type' => 'success',
+                'toast_message' => '{0} Nothing to remove.|[1] Item removed successfully.|[2,*] :total items successfully removed.',
+                'toast_count' => $total,
+                'toast_replacements' => ['total' => $total],
+            ]);
+        } catch (\Throwable $e) {
+            report($e);
+
+            return back()->with([
+                'toast_type' => 'error',
+                'toast_message' => 'Error on remove selected item.|Error on remove selected items.',
+                'toast_count' => count($request->list),
+            ]);
+        }
+    }
+
+    public function postUnitsRestore(Request $request): RedirectResponse
+    {
+        $this->authorize('access', [User::class, 'apps.units.restore']);
+
+        try {
+            $total = Unit::whereIn('id', $request->list)->restore();
+
+            return back()->with([
+                'toast_type' => 'success',
+                'toast_message' => '{0} Nothing to restore.|[1] Item restored successfully.|[2,*] :total items successfully restored.',
+                'toast_count' => $total,
+                'toast_replacements' => ['total' => $total],
+            ]);
+        } catch (\Throwable $e) {
+            report($e);
+
+            return back()->with([
+                'toast_type' => 'error',
+                'toast_message' => 'Error on restore selected item.|Error on restore selected items.',
+                'toast_count' => $request->list,
+            ]);
+        }
+    }
+
+    public function deleteUnitsForceDestroy(Request $request): RedirectResponse
+    {
+        $this->authorize('access', [User::class, 'apps.units.forceDestroy']);
+
+        try {
+            $total = Unit::whereIn('id', $request->list)->forceDelete();
+
+            return back()->with([
+                'toast_type' => 'success',
+                'toast_message' => '{0} Nothing to erase.|[1] Item erased successfully.|[2,*] :total items successfully erased.',
+                'toast_count' => $total,
+                'toast_replacements' => ['total' => $total],
+            ]);
+        } catch (\Throwable $e) {
+            report($e);
+
+            return back()->with([
+                'toast_type' => 'error',
+                'toast_message' => 'Error on erase selected item.|Error on erase selected items.',
+                'toast_count' => $request->list,
+            ]);
+        }
+    }
+
+    public function __fields(): array
+    {
+        return [
+            [
+                'type' => 'input',
+                'name' => 'name',
+                'label' => 'Name',
+                'span' => 2,
+                'required' => true,
+            ],
+            [
+                'type' => 'dropdown',
+                'name' => 'parent_id',
+                'label' => 'Belongs to',
+                'source' => [
+                    'route' => 'getUnits',
+                    'replace' => ['unit' => 'id']
+                ],
+                'span' => 2,
+                'required' => true,
+            ],
+            [
+                'type' => 'input',
+                'name' => 'nickname',
+                'label' => 'Nickname',
+                'required' => true,
+            ],
+            [
+                'type' => 'calendar',
+                'name' => 'founded',
+                'dateFormat' => 'dd/mm/yy',
+                'label' => 'Founded',
+                'required' => true,
+            ],
+            [
+                'type' => 'toggle',
+                'name' => 'active',
+                'label' => 'Active',
+                'colorOn' => 'success',
+                'colorOff' => 'danger',
+            ],
+            [
+                'type' => 'calendar',
+                'name' => 'expires',
+                // 'dateFormat' => 'dd/mm/yy',
+                'label' => 'Inactivated at',
+            ],
+            [
+                'type' => 'mask',
+                'name' => 'cellphone',
+                'mask' => '(99) 99999-9999',
+                'label' => 'Cell phone',
+            ],
+            [
+                'type' => 'mask',
+                'name' => 'landline',
+                'mask' => '(99) 9999-9999',
+                'label' => 'Land line',
+            ],
+            [
+                'type' => 'email',
+                'name' => 'email',
+                'label' => 'Email',
+                'span' => 2,
+            ],
+            [
+                'type' => 'input',
+                'name' => 'country',
+                'label' => 'Country',
+            ],
+            [
+                'type' => 'input',
+                'name' => 'state',
+                'label' => 'State',
+            ],
+            [
+                'type' => 'input',
+                'name' => 'city',
+                'label' => 'City',
+            ],
+            [
+                'type' => 'mask',
+                'name' => 'postcode',
+                'mask' => '99999-999',
+                'label' => 'Post code',
+            ],
+            [
+                'type' => 'input',
+                'name' => 'address',
+                'label' => 'Address',
+                'span' => 3,
+            ],
+            [
+                'type' => 'input',
+                'name' => 'complement',
+                'label' => 'Complement',
+            ],
+            [
+                'type' => 'input',
+                'name' => 'geo',
+                'label' => 'Geographic coordinates',
+                'span' => 4,
+            ],
+        ];
+    }
+
     public function index(Request $request): Response
     {
-        $this->authorize('access', User::class);
+        $this->authorize('access', [User::class, 'apps.units.index']);
 
         return Inertia::render('Bood4ll', [
-            // 'tabs' => false,
             'build' => [
                 [
                     'label' => Route::current()->title,
@@ -171,7 +512,6 @@ class UnitsController extends Controller
                                     'index' => [
                                         'source' => 'getUnitsIndex',
                                         'visible' => Gate::allows('apps.units.index'),
-                                        'disabled' => $request->user()->cannot('isManager', User::class),
                                     ],
                                     'create' => [
                                         'visible' => (
@@ -407,350 +747,5 @@ class UnitsController extends Controller
                 ],
             ]
         ]);
-    }
-
-    public function __fields(): array
-    {
-        return [
-            [
-                'type' => 'input',
-                'name' => 'name',
-                'label' => 'Name',
-                'span' => 2,
-                'required' => true,
-            ],
-            [
-                'type' => 'dropdown',
-                'name' => 'parent_id',
-                'label' => 'Belongs to',
-                'source' => [
-                    'route' => 'getUnits',
-                    'replace' => ['unit' => 'id']
-                ],
-                'span' => 2,
-                'required' => true,
-            ],
-            [
-                'type' => 'input',
-                'name' => 'nickname',
-                'label' => 'Nickname',
-                'required' => true,
-            ],
-            [
-                'type' => 'calendar',
-                'name' => 'founded',
-                'dateFormat' => 'dd/mm/yy',
-                'label' => 'Founded',
-                'required' => true,
-            ],
-            [
-                'type' => 'toggle',
-                'name' => 'active',
-                'label' => 'Active',
-                'colorOn' => 'success',
-                'colorOff' => 'danger',
-            ],
-            [
-                'type' => 'calendar',
-                'name' => 'expires',
-                // 'dateFormat' => 'dd/mm/yy',
-                'label' => 'Inactivated at',
-            ],
-            [
-                'type' => 'mask',
-                'name' => 'cellphone',
-                'mask' => '(99) 99999-9999',
-                'label' => 'Cell phone',
-            ],
-            [
-                'type' => 'mask',
-                'name' => 'landline',
-                'mask' => '(99) 9999-9999',
-                'label' => 'Land line',
-            ],
-            [
-                'type' => 'email',
-                'name' => 'email',
-                'label' => 'Email',
-                'span' => 2,
-            ],
-            [
-                'type' => 'input',
-                'name' => 'country',
-                'label' => 'Country',
-            ],
-            [
-                'type' => 'input',
-                'name' => 'state',
-                'label' => 'State',
-            ],
-            [
-                'type' => 'input',
-                'name' => 'city',
-                'label' => 'City',
-            ],
-            [
-                'type' => 'mask',
-                'name' => 'postcode',
-                'mask' => '99999-999',
-                'label' => 'Post code',
-            ],
-            [
-                'type' => 'input',
-                'name' => 'address',
-                'label' => 'Address',
-                'span' => 3,
-            ],
-            [
-                'type' => 'input',
-                'name' => 'complement',
-                'label' => 'Complement',
-            ],
-            [
-                'type' => 'input',
-                'name' => 'geo',
-                'label' => 'Geographic coordinates',
-                'span' => 4,
-            ],
-        ];
-    }
-
-    public function store(Request $request, Unit $unit): JsonResponse
-    {
-        // $this->authorize('access', User::class);
-        // $this->authorize('isManager', User::class);
-        // $this->authorize('canManageNestedData', User::class);
-
-        DB::beginTransaction();
-
-        try {
-            $unit->name = $request->name;
-            $unit->nickname = $request->nickname;
-            $unit->owner = $request->user()->id;
-            $unit->founded = $request->founded;
-            $unit->parent_id = $request->parent_id;
-            $unit->active = $request->active;
-            $unit->expires = $request->expires;
-            $unit->cellphone = $request->cellphone;
-            $unit->landline = $request->landline;
-            $unit->email = $request->email;
-            $unit->country = $request->country;
-            $unit->state = $request->state;
-            $unit->city = $request->city;
-            $unit->address = $request->address;
-            $unit->complement = $request->complement;
-            $unit->postcode = $request->postcode;
-            $unit->geo = $request->geo;
-
-            $unit->save();
-
-            $unit->fullpath = $unit->getParentsNames();
-            $unit->shortpath = $unit->getParentsNicknames();
-            $unit->children_id = collect($unit->getDescendants())->toJson();
-
-            $unit->save();
-
-            $unit->users()->attach($request->user()->id, ['primary' => false]);
-
-            $newParentUnit = Unit::where('id', $request->parent_id)->first();
-            $newParentUnit->children_id = collect($newParentUnit->getDescendants())->toJson();
-
-            $newParentUnit->save();
-        } catch (\Exception $e) {
-            report($e);
-
-            DB::rollback();
-
-            return response()->json([
-                'type' => 'error',
-                'title' => 'Error',
-                'message' => 'Error on add selected item.|Error on add selected items.',
-                'length' => 1,
-            ]);
-        }
-
-        DB::commit();
-
-        return response()->json([
-            'type' => 'success',
-            'title' => 'Add',
-            'message' => '{0} Nothing to add.|[1] Item added successfully.|[2,*] :total items successfully added.',
-            'length' => 1,
-        ]);
-    }
-
-    public function edit(Request $request, Unit $unit): JsonResponse
-    {
-        // $this->authorize('access', User::class);
-        // $this->authorize('isActive', $unit);
-        // $this->authorize('canEdit', $unit);
-
-        $unit['abilities_disabled'] = $unit->id;
-
-        return response()->json($unit);
-    }
-
-    public function update(Unit $unit, Request $request): JsonResponse
-    {
-        // $this->authorize('access', User::class);
-        // $this->authorize('isActive', $unit);
-        // $this->authorize('isManager', User::class);
-        // $this->authorize('canEdit', $unit);
-        // $this->authorize('isOwner', $unit);
-
-        if (
-            $request->user()->cannot('isSuperAdmin', User::class)
-            && $request->user()->unitsIds()->contains($unit->parent_id) === false
-            && $unit->parent_id != $request->parent_id
-        ) {
-            return response()->json([
-                'type' => 'error',
-                'title' => 'Error',
-                'message' => 'You cannot change the unit this record belongs to.',
-                'length' => 1,
-            ]);
-        }
-
-        DB::beginTransaction();
-
-        try {
-            $parentId = $unit->parent_id;
-
-            $unit->name = $request->name;
-            $unit->nickname = $request->nickname;
-            $unit->founded = $request->founded;
-            $unit->parent_id = $request->parent_id;
-            $unit->active = $request->active;
-            $unit->expires = $request->expires;
-            $unit->cellphone = $request->cellphone;
-            $unit->landline = $request->landline;
-            $unit->email = $request->email;
-            $unit->country = $request->country;
-            $unit->state = $request->state;
-            $unit->city = $request->city;
-            $unit->address = $request->address;
-            $unit->complement = $request->complement;
-            $unit->postcode = $request->postcode;
-            $unit->geo = $request->geo;
-
-            $unit->save();
-
-            $unit->fullpath = $unit->getParentsNames();
-            $unit->shortpath = $unit->getParentsNicknames();
-            $unit->children_id = collect($unit->getDescendants())->toJson();
-
-            $unit->save();
-
-            if ($parentId) {
-                $oldParentUnit = Unit::where('id', $parentId)->first();
-                $oldParentUnit->children_id = collect($oldParentUnit->getDescendants())->toJson();
-
-                $oldParentUnit->save();
-            }
-
-            if ($request->parent_id) {
-                $newParentUnit = Unit::where('id', $request->parent_id)->first();
-                $newParentUnit->children_id = collect($newParentUnit->getDescendants())->toJson();
-
-                $newParentUnit->save();
-            }
-        } catch (\Exception $e) {
-            report($e);
-
-            DB::rollback();
-
-            return response()->json([
-                'type' => 'error',
-                'title' => 'Error',
-                'message' => 'Error on edit selected item.|Error on edit selected items.',
-                'length' => 1,
-            ]);
-        }
-
-        DB::commit();
-
-        return response()->json([
-            'type' => 'success',
-            'title' => 'Edit',
-            'message' => '{0} Nothing to edit.|[1] Item edited successfully.|[2,*] :total items successfully edited.',
-            'length' => 1,
-        ]);
-    }
-
-    public function destroy(Request $request): RedirectResponse
-    {
-        $this->authorize('access', User::class);
-        $this->authorize('isManager', User::class);
-        $this->authorize('canDestroyOrRestore', [Unit::class, $request]);
-
-        try {
-            $total = Unit::whereIn('id', $request->list)->delete();
-
-            return back()->with([
-                'toast_type' => 'success',
-                'toast_message' => '{0} Nothing to remove.|[1] Item removed successfully.|[2,*] :total items successfully removed.',
-                'toast_count' => $total,
-                'toast_replacements' => ['total' => $total],
-            ]);
-        } catch (\Throwable $e) {
-            report($e);
-
-            return back()->with([
-                'toast_type' => 'error',
-                'toast_message' => 'Error on remove selected item.|Error on remove selected items.',
-                'toast_count' => count($request->list),
-            ]);
-        }
-    }
-
-    public function forceDestroy(Request $request): RedirectResponse
-    {
-        $this->authorize('access', User::class);
-        $this->authorize('isSuperAdmin', User::class);
-
-        try {
-            $total = Unit::whereIn('id', $request->list)->forceDelete();
-
-            return back()->with([
-                'toast_type' => 'success',
-                'toast_message' => '{0} Nothing to erase.|[1] Item erased successfully.|[2,*] :total items successfully erased.',
-                'toast_count' => $total,
-                'toast_replacements' => ['total' => $total],
-            ]);
-        } catch (\Throwable $e) {
-            report($e);
-
-            return back()->with([
-                'toast_type' => 'error',
-                'toast_message' => 'Error on erase selected item.|Error on erase selected items.',
-                'toast_count' => $request->list,
-            ]);
-        }
-    }
-
-    public function restore(Request $request): RedirectResponse
-    {
-        $this->authorize('access', User::class);
-        $this->authorize('isManager', User::class);
-        $this->authorize('canDestroyOrRestore', [Unit::class, $request]);
-
-        try {
-            $total = Unit::whereIn('id', $request->list)->restore();
-
-            return back()->with([
-                'toast_type' => 'success',
-                'toast_message' => '{0} Nothing to restore.|[1] Item restored successfully.|[2,*] :total items successfully restored.',
-                'toast_count' => $total,
-                'toast_replacements' => ['total' => $total],
-            ]);
-        } catch (\Throwable $e) {
-            report($e);
-
-            return back()->with([
-                'toast_type' => 'error',
-                'toast_message' => 'Error on restore selected item.|Error on restore selected items.',
-                'toast_count' => $request->list,
-            ]);
-        }
     }
 }

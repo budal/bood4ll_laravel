@@ -24,7 +24,7 @@ Route::middleware('auth:sanctum', 'verified', 'password.confirm')->group(functio
     Route::controller(UnitsController::class)->group(function () {
         Route::get('/getUnits/{unit?}', 'getUnits')->name('getUnits');
         Route::get('/getUnitsIndex', 'getUnitsIndex')->name('getUnitsIndex');
-        Route::get('/getUnitInfo/{unit?}', 'edit')->name('getUnitInfo');
+        Route::get('/getUnitInfo/{unit?}', 'getUnitInfo')->name('getUnitInfo');
         Route::get('/getUnitStaff/{unit?}/{show?}', 'getUnitStaff')->name('getUnitStaff');
     });
 

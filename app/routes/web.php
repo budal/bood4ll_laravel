@@ -93,11 +93,12 @@ Route::middleware('auth')->group(function () {
                     ->defaults('title', 'Units')
                     ->defaults('description', 'Manage units registered in the system, their subunits and users.')
                     ->defaults('icon', 'apartment');;
-                Route::post('/units/create', 'store')->name('store');
-                Route::patch('/units/edit/{unit}', 'update')->name('update');
                 Route::post('/units/hierarchy', 'postRefreshUnitsHierarchy')->name('hierarchy');
-                Route::delete('/units/destroy', 'destroy')->name('destroy');
-                Route::post('/units/restore', 'restore')->name('restore');
+                Route::post('/units/create', 'postUnitStore')->name('store');
+                Route::patch('/units/edit/{unit}', 'patchUnitUpdate')->name('update');
+                Route::delete('/units/destroy', 'deleteUnitsDestroy')->name('destroy');
+                Route::post('/units/restore', 'postUnitsRestore')->name('restore');
+                Route::delete('/units/destroy', 'deleteUnitsForceDestroy')->name('forceDestroy');
                 Route::post('/units/reorder', 'restore')->name('reorder');
             });
         });
@@ -115,9 +116,9 @@ Route::middleware('auth')->group(function () {
                 Route::put('/users/authorize/unit/{user}/{mode?}', 'putAuthorizeUnit')->name('authorizeUnit');
                 Route::put('/users/authorize/role/{user}/{mode?}', 'putAuthorizeRole')->name('authorizeRole');
 
-                Route::delete('/users/destroy', 'deleteUserDestroy')->name('destroy');
-                Route::post('/users/restore', 'postUserRestore')->name('restore');
-                Route::delete('/users/forcedestroy', 'deleteUserForceDestroy')->name('forceDestroy');
+                Route::delete('/users/destroy', 'deleteUsersDestroy')->name('destroy');
+                Route::post('/users/restore', 'postUsersRestore')->name('restore');
+                Route::delete('/users/forcedestroy', 'deleteUsersForceDestroy')->name('forceDestroy');
             });
         });
 

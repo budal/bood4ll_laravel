@@ -167,7 +167,7 @@ class RolesController extends Controller
                                 $query->where('unit_user.user_id', $request->user()->id);
                             }
 
-                            $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
+                            $query->whereIn('unit_user.unit_id', $request->user()->unitsIds('apps.roles.index'));
                         });
                     });
                 }

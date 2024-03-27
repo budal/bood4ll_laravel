@@ -463,7 +463,7 @@ class UsersController extends Controller
 
 
 
-    public function deleteUserDestroy(Request $request): JsonResponse
+    public function deleteUsersDestroy(Request $request): JsonResponse
     {
         $this->authorize('access', [User::class, 'apps.users.destroy']);
         // $this->authorize('isManager', User::class);
@@ -492,7 +492,7 @@ class UsersController extends Controller
         ]);
     }
 
-    public function postUserRestore(Request $request): JsonResponse
+    public function postUsersRestore(Request $request): JsonResponse
     {
         // $this->authorize('access', [User::class, 'apps.users.restore']);
         // $this->authorize('isManager', User::class);
@@ -521,7 +521,7 @@ class UsersController extends Controller
         ]);
     }
 
-    public function deleteUserForceDestroy(Request $request): JsonResponse
+    public function deleteUsersForceDestroy(Request $request): JsonResponse
     {
         $this->authorize('access', [User::class, 'apps.users.forceDestroy']);
         $this->authorize('isSuperAdmin', User::class);
