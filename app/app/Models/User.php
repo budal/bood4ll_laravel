@@ -98,14 +98,6 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->roles()->pluck('manager')->contains(true);
     }
 
-    public function canManageNested()
-    {
-        return $this->getAbilities()
-            ->where('manage_nested', true)
-            ->pluck('ability')
-            ->contains(Route::current()->getName());
-    }
-
     public function unitsClassified(): BelongsToMany
     {
         return $this->belongsToMany(Unit::class)
@@ -128,11 +120,11 @@ class User extends Authenticatable implements MustVerifyEmail
         $base->scopeFilter($query, $request, $prefix, $options);
     }
 
-    public function scopeUnitsIds($route = null)
+    public function scopeUnitsIds($filter, $route)
     {
         $userPolicy = new UserPolicy;
 
-        if ($userPolicy->canManageNestedData($this, 'apps.users.index')) {
+        if ($userPolicy->canManageNestedData($this, $route)) {
             $units = $this->units->map->getDescendants()->flatten();
         } else {
             $units = $this->units->pluck('id');

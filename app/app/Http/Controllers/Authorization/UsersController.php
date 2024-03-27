@@ -37,7 +37,7 @@ class UsersController extends Controller
                     $query->where('unit_user.user_id', $request->user()->id);
                 }
 
-                $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
+                $query->whereIn('unit_user.unit_id', $request->user()->unitsIds('apps.users.index'));
             })
             ->when($request->listItems ?? null, function ($query, $listItems) {
                 if ($listItems == 'both') {
