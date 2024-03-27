@@ -44,8 +44,7 @@ class Menu
 
         $tree = collect();
 
-        // $isSuperAdmin = $this->user?->isSuperAdmin();
-        $isSuperAdmin = true;
+        $isSuperAdmin = $this->user?->isSuperAdmin();
 
         collect($source)->map(function ($value) use ($routes, $tree, $isSuperAdmin) {
             return is_array($value)
