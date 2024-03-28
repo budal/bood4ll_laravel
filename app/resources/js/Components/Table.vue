@@ -58,7 +58,6 @@ const tableMenuToggle = (event: MouseEvent) => {
         (item: { deleted_at: string }) => item.deleted_at !== null,
     );
 
-    console.log(props.structure.actions.create);
     const _tableMenuItemsEdit: MenuItem[] = [
         {
             label: props.structure.actions.create?.title || "Add",
@@ -400,7 +399,9 @@ const tableMenuToggle = (event: MouseEvent) => {
                 _tableMenuItemsComplementar.push({
                     label: item.label,
                     method: item.method,
-                    disabled: item.condition && items.length < 1,
+                    disabled:
+                        item.disabled == true ||
+                        (item.condition && items.length < 1),
                     visible: item.visible,
                     icon: item.icon,
                     badge: item.condition ? items.length : null,

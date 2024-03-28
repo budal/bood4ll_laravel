@@ -44,7 +44,7 @@ class UserPolicy
             : Response::deny("You cannot access this feature.");
     }
 
-    public function hasFullAccess(User $user, string $route = null, User $userToEdit = null): Response
+    public function hasFullAccess(User $user, string $route = null): Response
     {
         return $user->getAbilities()
             ->where('full_access', true)

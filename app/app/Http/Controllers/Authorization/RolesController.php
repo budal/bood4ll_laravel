@@ -150,7 +150,7 @@ class RolesController extends Controller
 
     public function getRolesIndex(Request $request): JsonResponse
     {
-        // $this->authorize('access', User::class);
+        $this->authorize('access', [User::class, 'apps.roles.index']);
 
         $roles = Role::leftjoin('role_user', 'role_user.role_id', '=', 'roles.id')
             ->select('roles.id', 'roles.name', 'roles.description', 'roles.active', 'roles.deleted_at')
@@ -163,8 +163,8 @@ class RolesController extends Controller
                             $join->on('unit_user.user_id', '=', 'role_user.user_id')
                                 ->where('unit_user.primary', true);
 
-                            if ($request->user()->cannot('hasFullAccess', User::class)) {
-                                $query->where('unit_user.user_id', $request->user()->id);
+                            if ($request->user()->cannot('hasFullAccess', [User::class, 'apps.roles.index'])) {
+                                // $query->where('unit_user.user_id', $request->user()->id);
                             }
 
                             $query->whereIn('unit_user.unit_id', $request->user()->unitsIds('apps.roles.index'));
@@ -175,6 +175,7 @@ class RolesController extends Controller
             ->where('name', 'ilike', "%$request->search%")
             ->orderBy('name')
             ->when($request->user()->cannot('isSuperAdmin', User::class), function ($query) use ($request) {
+                // $query->where('roles.owner', $request->user()->id);
                 $query->where('roles.superadmin', false);
                 $query->where('roles.manager', false);
                 $query->where('roles.active', true);
@@ -200,8 +201,21 @@ class RolesController extends Controller
         return response()->json($roles);
     }
 
+    public function getRoleInfo(Role $role): JsonResponse
+    {
+        // $this->authorize('ismanager', User::class);
+        // $this->authorize('access', [User::class, 'apps.roles.update', User::find($role->owner)]);
+
+        $role['abilities'] = $role->abilities;
+
+        return response()->json($role);
+    }
+
     public function getRoleAuthorized(Request $request, Role $role): JsonResponse
     {
+        // $this->authorize('ismanager', User::class);
+        // $this->authorize('access', [User::class, 'apps.roles.update', User::find($role->owner)]);
+
         $users = User::leftjoin('unit_user', 'unit_user.user_id', '=', 'users.id')
             ->leftjoin('role_user', 'role_user.user_id', '=', 'users.id')
             ->select('users.id', 'users.name', 'users.email')
@@ -221,7 +235,7 @@ class RolesController extends Controller
                 if ($request->user()->cannot('hasFullAccess', User::class)) {
                     $query->where('unit_user.user_id', $request->user()->id);
                 }
-                $query->whereIn('unit_user.unit_id', $request->user()->unitsIds());
+                $query->whereIn('unit_user.unit_id', $request->user()->unitsIds('apps.roles.authorize'));
             })
             ->cursorPaginate(30)
             ->withQueryString()
@@ -234,22 +248,9 @@ class RolesController extends Controller
         return response()->json($users);
     }
 
-    public function getRoleInfo(Request $request, Role $role): JsonResponse
-    {
-        // $this->authorize('access', User::class);
-        // $this->authorize('isActive', $role);
-        // $this->authorize('canEdit', $role);
-        // $this->authorize('canEditManagementRoles', $role);
-
-        $role['abilities'] = $role->abilities;
-
-        return response()->json($role);
-    }
-
     public function putRoleAuthorize(Request $request, Role $role, $mode): JsonResponse
     {
-        $this->authorize('access', User::class);
-        $this->authorize('fullAccess', [$role, $request]);
+        $this->authorize('access', [User::class, 'apps.roles.update', User::find($role->owner)]);
 
         $list = collect($request->list)->pluck('id');
 
@@ -724,7 +725,6 @@ class RolesController extends Controller
                                     ],
                                     'create' => [
                                         'visible' => $request->user()->can('access', [User::class, 'apps.roles.store']),
-                                        'disabled' => $request->user()->cannot('isManager', User::class),
                                         'components' => [
                                             [
                                                 'label' => 'Main data',
@@ -742,9 +742,7 @@ class RolesController extends Controller
                                         ],
                                     ],
                                     'edit' => [
-                                        'visible' => $request->user()->can('access', [User::class, 'apps.roles.update'])
-                                            && $request->user()->can('isManager', User::class),
-                                        'disabled' => $request->user()->cannot('isManager', User::class),
+                                        'visible' => $request->user()->can('access', [User::class, 'apps.roles.update']),                                        'disabled' => $request->user()->cannot('isManager', User::class),
                                         'components' => [
                                             [
                                                 'source' => [
@@ -759,7 +757,6 @@ class RolesController extends Controller
                                                     $request->user()->can('access', [User::class, 'apps.roles.update'])
                                                     && $request->user()->can('isManager', User::class)
                                                 ),
-                                                'disabled' => $request->user()->cannot('isManager', User::class),
                                                 'confirm' => true,
                                                 'toastTitle' => 'Edit',
                                                 'toast' => '{0} Nothing to edit.|[1] Item edited successfully.|[2,*] :total items successfully edited.',
@@ -771,10 +768,6 @@ class RolesController extends Controller
                                                 'label' => 'Authorized users',
                                                 'description' => 'Define which users will have access to this authorization.',
                                                 'visible' => $request->user()->can('access', [User::class, 'apps.roles.authorize']),
-
-                                                // 'showIf' => $role->id === null || $request->user()->can('isOwner', $role),
-                                                // 'disabledIf' => $role->inalterable == true || $role->id !== null && $request->user()->cannot('isOwner', $role),
-
                                                 'fields' => [
                                                     [
                                                         'type' => 'table',
@@ -801,7 +794,6 @@ class RolesController extends Controller
                                                                         'transmute' => ['role' => 'id'],
                                                                     ],
                                                                     'method' => 'put',
-                                                                    'visible' => $request->user()->can('canManageNestedData', User::class),
                                                                     'condition' => ['checked' => false],
                                                                     'badgeClass' => 'success',
                                                                 ],
@@ -814,12 +806,12 @@ class RolesController extends Controller
                                                                         'transmute' => ['role' => 'id'],
                                                                     ],
                                                                     'method' => 'put',
-                                                                    'visible' => $request->user()->can('canManageNestedData', User::class),
                                                                     'condition' => ['checked' => true],
                                                                     'badgeClass' => 'danger',
                                                                 ],
                                                                 [
                                                                     'separator' => true,
+                                                                    'visible' => $request->user()->can('canManageNestedData', [User::class, 'apps.roles.authorize']),
                                                                 ],
                                                                 [
                                                                     'icon' => 'verified_user',
@@ -828,7 +820,7 @@ class RolesController extends Controller
                                                                         'route' => 'getRoleAuthorized',
                                                                         'transmute' => ['role' => 'id'],
                                                                     ],
-                                                                    'visible' => $request->user()->can('canManageNestedData', User::class),
+                                                                    'disabled' => $request->user()->cannot('hasFullAccess', [User::class, 'apps.roles.authorize']),
                                                                 ],
                                                                 [
                                                                     'icon' => 'group',
@@ -838,7 +830,7 @@ class RolesController extends Controller
                                                                         'attributes' => ['show' => 'all'],
                                                                         'transmute' => ['role' => 'id'],
                                                                     ],
-                                                                    'visible' => $request->user()->can('canManageNestedData', User::class)
+                                                                    'disabled' => $request->user()->cannot('hasFullAccess', [User::class, 'apps.roles.authorize'])
                                                                 ],
                                                             ],
                                                             'titles' => [
